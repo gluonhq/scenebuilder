@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+version = '8.0.0'
+mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
+ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
+
+processResources {
+    def buildDate = new Date().format(buildDateFormat)
+    from ('src/main/resources') {
+        include '**/*.properties'
+        expand([
+            version: version,
+            javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
+            buildDate: buildDate,
+            mainClassName: mainClassName
+        ])
+    }
+    into buildDir
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}

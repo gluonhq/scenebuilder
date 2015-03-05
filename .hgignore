@@ -1,0 +1,4 @@
+syntax: glob
+.gradle/*
+.nb-gradle/*
+build/*
