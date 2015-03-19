@@ -24,3 +24,10 @@ jar {
         attributes 'Main-Class': mainClassName
     }
 }
+
+task kitJar(type: Jar) {
+    baseName = "SceneBuilderKit"
+    from (sourceSets.main.output) {
+        include "com/oracle/javafx/scenebuilder/kit/**/*"
+    }
+}
