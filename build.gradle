@@ -3,6 +3,15 @@ import org.apache.tools.ant.filters.EscapeUnicode
 apply plugin: 'java'
 apply plugin: 'application'
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.2.0'
+}
+
 version = '8.0.0'
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
