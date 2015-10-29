@@ -1258,6 +1258,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } else {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.LIST);
         }
+
+        final PreferencesController preferencesController
+                = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal
+                = preferencesController.getRecordGlobal();
+        // Update preferences
+        recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
     
     @FXML
@@ -1267,6 +1274,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } else {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.SECTIONS);
         }
+
+        final PreferencesController preferencesController
+                = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal
+                = preferencesController.getRecordGlobal();
+        // Update preferences
+        recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
 
     // This method cannot be called if there is not a valid selection, a selection
