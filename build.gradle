@@ -3,6 +3,14 @@ import org.apache.tools.ant.filters.EscapeUnicode
 apply plugin: 'java'
 apply plugin: 'application'
 
+def tryGetProperty = {String name, String defaultValue ->
+    if (!project.hasProperty(name)) {
+        return defaultValue
+    }
+
+    return project.property(name)?.toString()
+}
+
 repositories {
     mavenCentral()
 }
@@ -13,7 +21,7 @@ dependencies {
 }
 
 group = 'com.gluonhq.scenebuilder'
-version = '8.0.1-SNAPSHOT'
+version = tryGetProperty('VERSION', '8.0.1-SNAPSHOT')
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
