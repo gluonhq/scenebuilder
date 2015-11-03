@@ -114,7 +114,8 @@ public class Deprecation {
         
         final List<String> stylesheets = parent.getStylesheets();
         for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(stylesheetPath)) {
+            String tempS = s.replace("/", "\\");
+            if (tempS.endsWith(stylesheetPath)) {
                 final int index = stylesheets.indexOf(s);
                 assert index != -1;
                 stylesheets.remove(index);
