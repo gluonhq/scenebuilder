@@ -111,10 +111,12 @@ public class Deprecation {
 
     public static void reapplyCSS(Parent parent, String stylesheetPath) {
         assert parent != null;
-        
+
+        String stylesheetPathWithForwardSlashes = stylesheetPath.replace("\\", "/");
+
         final List<String> stylesheets = parent.getStylesheets();
         for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(stylesheetPath)) {
+            if (s.endsWith(stylesheetPathWithForwardSlashes)) {
                 final int index = stylesheets.indexOf(s);
                 assert index != -1;
                 stylesheets.remove(index);
