@@ -163,7 +163,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
             fileName = "Empty";
             break;
         case 2:
-            fileName = "NoWildCard";
+            fileName = "NoWildcard";
             break;
         case 3:
             fileName = "UnusedImports";
