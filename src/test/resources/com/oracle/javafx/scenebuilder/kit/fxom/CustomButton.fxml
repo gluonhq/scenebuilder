@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.oracle.javafx.scenebuilder.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import com.oracle.javafx.scenebuilder.kit.fxom.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ComboBox layoutX="68.0" layoutY="61.0" prefWidth="150.0" />
+      <TestCustomButton layoutX="-111.0" layoutY="-188.0" text="test" />
+   </children>
+</AnchorPane>
