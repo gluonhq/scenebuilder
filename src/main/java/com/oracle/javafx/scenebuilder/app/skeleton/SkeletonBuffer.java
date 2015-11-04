@@ -31,20 +31,17 @@
  */
 package com.oracle.javafx.scenebuilder.app.skeleton;
 
-import java.lang.reflect.TypeVariable;
-import java.net.URL;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javafx.fxml.FXML;
-
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
+import javafx.fxml.FXML;
+
+import java.lang.reflect.TypeVariable;
+import java.net.URL;
+import java.util.*;
 
 /**
  *
@@ -204,22 +201,35 @@ class SkeletonBuffer {
         if (textFormat == FORMAT_TYPE.FULL) {
             addImportsFor(imports, URL.class, ResourceBundle.class);
         }
-        
-        // Event handlers
-        final TreeSet<String> uniqMethodNames = new TreeSet<>();
-        for (FXOMPropertyT handler : document.getFxomRoot().collectEventHandlers()) {
-            uniqMethodNames.add(handler.getValue());
-        }
-        
-        for (String rawMethodName : uniqMethodNames) {
-            handlers.append(INDENT).append("@FXML\n").append(INDENT).append("void "); //NOI18N
-            final String methodName = rawMethodName.replace("#", ""); //NOI18N
-            handlers.append(methodName);
-            handlers.append("(ActionEvent event) {\n\n").append(INDENT).append("}\n\n"); //NOI18N
-        }
 
+        // Event handlers
+        // Map with pairs of methodNames and eventTypeNames
+        final Map<String, String> methodsAndEvents = new TreeMap<>();
+        // need to initialize the internal events map
+        FindEventNamesUtil.initializeEventsMap();
+        for (FXOMPropertyT handler : document.getFxomRoot().collectEventHandlers()) {
+            String eventTypeName = handler.getName().getName();
+            methodsAndEvents.put(handler.getValue(), eventTypeName);
+        }
+        // for each method name
+        methodsAndEvents.forEach(this::generateControllerSkeleton);
         // This method must be called once asserts has been populated.
         constructInitialize();
+    }
+
+    /**
+     * Generates the skeleton for the controller event handler methods.
+     * For every eventTypeName, it searches for the appropriate event name.
+     *
+     * @param methodName method name chosen by the user
+     * @param eventTypeName eventTypeName, e.g. onMouseClicked
+     */
+    private void generateControllerSkeleton(String methodName, String eventTypeName) {
+        handlers.append(INDENT).append("@FXML\n").append(INDENT).append("void "); //NOI18N
+        final String methodNamePured = methodName.replace("#", ""); //NOI18N
+        handlers.append(methodNamePured);
+        String eventName = FindEventNamesUtil.findEventName(eventTypeName);
+        handlers.append("(").append(eventName).append(" event) {\n\n").append(INDENT).append("}\n\n"); //NOI18N
     }
 
     private void addImportsFor(Set<String> imports, Class<?>... classes) {
