@@ -42,6 +42,7 @@ import com.oracle.javafx.scenebuilder.app.template.FxmlTemplates;
 import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
@@ -416,6 +417,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             fileObjs.add(new File(file));
         }
 
+        EditorController.updateNextInitialDirectory(fileObjs.get(0));
         performOpenFiles(fileObjs, null);
     }
 
