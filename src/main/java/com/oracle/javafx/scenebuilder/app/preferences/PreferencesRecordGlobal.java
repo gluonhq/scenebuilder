@@ -207,6 +207,11 @@ public class PreferencesRecordGlobal {
         libraryDisplayOption = value;
     }
 
+    public void updateLibraryDisplayOption(DISPLAY_MODE value) {
+        libraryDisplayOption = value;
+        writeToJavaPreferences(LIBRARY_DISPLAY_OPTION);
+    }
+
     public DisplayOption getHierarchyDisplayOption() {
         return hierarchyDisplayOption;
     }
