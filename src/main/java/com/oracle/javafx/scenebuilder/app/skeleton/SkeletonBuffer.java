@@ -33,6 +33,8 @@ package com.oracle.javafx.scenebuilder.app.skeleton;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.util.eventnames.EventNames;
+import com.oracle.javafx.scenebuilder.app.util.eventnames.ImportBuilder;
 import com.oracle.javafx.scenebuilder.app.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -230,13 +232,39 @@ class SkeletonBuffer {
         handlers.append(methodNamePured);
         String eventName = FindEventNamesUtil.findEventName(eventTypeName);
         handlers.append("(").append(eventName).append(" event) {\n\n").append(INDENT).append("}\n\n"); //NOI18N
+        if (textFormat == FORMAT_TYPE.FULL) {
+            addImportsForEvents(imports, eventName);
+        }
     }
 
+    /**
+     * Constructs import statements for event classes.
+     *
+     * @param imports Collection which holds the constructed statements.
+     * @param eventName event name, for which a statement should be built.
+     */
+    private void addImportsForEvents(Set<String> imports, String eventName) {
+        if(EventNames.ACTION_EVENT.equals(eventName)) {
+            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.EVENT_PACKAGE), eventName);
+        }
+        else {
+            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.INPUT_PACKAGE), eventName);
+        }
+        imports.add(ImportBuilder.build());
+        ImportBuilder.reset();
+    }
+
+    /**
+     * Constructs import statements for other classes (like URL, ResourceBundle).
+     *
+     * @param imports Collection which holds the constructed statements.
+     * @param classes other classes the statement should be built.
+     */
     private void addImportsFor(Set<String> imports, Class<?>... classes) {
         for (Class<?> c : classes) {
-            final StringBuilder importb = new StringBuilder();
-            importb.append("import ").append(c.getName().replace("$", ".")).append(";\n"); //NOI18N
-            imports.add(importb.toString());
+            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT, c.getName().replace("$", "."));
+            imports.add(ImportBuilder.build());
+            ImportBuilder.reset();
         }
     }
 

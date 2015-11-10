@@ -1,6 +1,7 @@
 package com.oracle.javafx.scenebuilder.app.util.eventnames;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -19,13 +20,17 @@ public class FindEventNamesUtil {
     }
 
     /**
-     * Gets the event name to the given event type name.
+     * Gets the event name to the given event type name. If no event name was found, a default value (ActionEvent) is returned.
      *
      * @param eventType event type name
      * @return event name
      */
     public static String findEventName(String eventType) {
-        return events.get(eventType);
+        Optional<String> eventNameOptional = Optional.ofNullable(events.get(eventType));
+        if(!eventNameOptional.isPresent()) {
+            return EventNames.ACTION_EVENT;
+        }
+        return eventNameOptional.get();
     }
 
     /**
