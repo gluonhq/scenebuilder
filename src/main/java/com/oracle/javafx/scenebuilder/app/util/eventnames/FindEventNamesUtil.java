@@ -12,6 +12,10 @@ public class FindEventNamesUtil {
 
     private static Map<String, String> events = new TreeMap<String, String>();
 
+    // should be used in a static way
+    private FindEventNamesUtil() {
+    }
+
     /**
      * Initializes the internal map by loading it with data.
      */

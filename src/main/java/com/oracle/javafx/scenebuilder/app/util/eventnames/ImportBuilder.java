@@ -11,8 +11,13 @@ public class ImportBuilder {
     public static final String IMPORT_STATEMENT = "import ";
     public static final String INPUT_PACKAGE = "javafx.scene.input.";
     public static final String EVENT_PACKAGE = "javafx.event.";
+    public static final String FXML_PACKAGE = "javafx.fxml.FXML";
 
     private static Map<String, String> imports = new TreeMap<>();
+
+    // should be used in a static way
+    private ImportBuilder() {
+    }
 
     /**
      * Adds an imported class with its package.

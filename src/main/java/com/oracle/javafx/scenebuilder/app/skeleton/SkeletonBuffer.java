@@ -62,6 +62,7 @@ class SkeletonBuffer {
     private final StringBuilder header = new StringBuilder();
     private final StringBuilder initialize = new StringBuilder();
     private final StringBuilder handlers = new StringBuilder();
+    private static final String FXML_ANNOTATION = "@FXML\n";
 
     enum TEXT_TYPE {
 
@@ -166,7 +167,7 @@ class SkeletonBuffer {
             final Object obj = value.getSceneGraphObject();
             final Class<?> type = obj.getClass();
 
-            addImportsFor(imports, FXML.class, type);
+            addImportsFor(FXML.class, type);
             variables.append(INDENT).append("@FXML"); //NOI18N
 
             if (textType == TEXT_TYPE.WITH_COMMENTS) {
@@ -201,7 +202,7 @@ class SkeletonBuffer {
         }
 
         if (textFormat == FORMAT_TYPE.FULL) {
-            addImportsFor(imports, URL.class, ResourceBundle.class);
+            addImportsFor(URL.class, ResourceBundle.class);
         }
 
         // Event handlers
@@ -227,45 +228,50 @@ class SkeletonBuffer {
      * @param eventTypeName eventTypeName, e.g. onMouseClicked
      */
     private void generateControllerSkeleton(String methodName, String eventTypeName) {
-        handlers.append(INDENT).append("@FXML\n").append(INDENT).append("void "); //NOI18N
+        handlers.append(INDENT).append(FXML_ANNOTATION).append(INDENT).append("void "); //NOI18N
         final String methodNamePured = methodName.replace("#", ""); //NOI18N
         handlers.append(methodNamePured);
         String eventName = FindEventNamesUtil.findEventName(eventTypeName);
         handlers.append("(").append(eventName).append(" event) {\n\n").append(INDENT).append("}\n\n"); //NOI18N
         if (textFormat == FORMAT_TYPE.FULL) {
-            addImportsForEvents(imports, eventName);
+            addImportsForEvents(eventName);
         }
     }
 
     /**
      * Constructs import statements for event classes.
      *
-     * @param imports Collection which holds the constructed statements.
      * @param eventName event name, for which a statement should be built.
      */
-    private void addImportsForEvents(Set<String> imports, String eventName) {
+    private void addImportsForEvents(String eventName) {
         if(EventNames.ACTION_EVENT.equals(eventName)) {
             ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.EVENT_PACKAGE), eventName);
         }
         else {
             ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.INPUT_PACKAGE), eventName);
         }
-        imports.add(ImportBuilder.build());
-        ImportBuilder.reset();
+        buildAndCollectImports();
     }
+
 
     /**
      * Constructs import statements for other classes (like URL, ResourceBundle).
      *
-     * @param imports Collection which holds the constructed statements.
      * @param classes other classes the statement should be built.
      */
-    private void addImportsFor(Set<String> imports, Class<?>... classes) {
+    private void addImportsFor(Class<?>... classes) {
         for (Class<?> c : classes) {
             ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT, c.getName().replace("$", "."));
-            imports.add(ImportBuilder.build());
-            ImportBuilder.reset();
-        }
+            buildAndCollectImports();
+    }
+        // need an import statement for @FXML, too
+        ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT, ImportBuilder.FXML_PACKAGE);
+        buildAndCollectImports();
+    }
+
+    private void buildAndCollectImports() {
+        imports.add(ImportBuilder.build());
+        ImportBuilder.reset();
     }
 
     @Override
@@ -291,9 +297,9 @@ class SkeletonBuffer {
                         .append(INDENT).append("@FXML // URL location of the FXML file that was given to the FXMLLoader\n") //NOI18N
                         .append(INDENT).append("private URL location;\n\n"); //NOI18N
             } else if (textFormat == FORMAT_TYPE.FULL) {
-                code.append(INDENT).append("@FXML\n") //NOI18N
+                code.append(INDENT).append(FXML_ANNOTATION) //NOI18N
                         .append(INDENT).append("private ResourceBundle resources;\n\n") //NOI18N
-                        .append(INDENT).append("@FXML\n") //NOI18N
+                        .append(INDENT).append(FXML_ANNOTATION) //NOI18N
                         .append(INDENT).append("private URL location;\n\n"); //NOI18N
             }
 
