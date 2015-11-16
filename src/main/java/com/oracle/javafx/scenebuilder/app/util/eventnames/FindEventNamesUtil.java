@@ -1,6 +1,7 @@
 package com.oracle.javafx.scenebuilder.app.util.eventnames;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -11,6 +12,10 @@ public class FindEventNamesUtil {
 
     private static Map<String, String> events = new TreeMap<String, String>();
 
+    // should be used in a static way
+    private FindEventNamesUtil() {
+    }
+
     /**
      * Initializes the internal map by loading it with data.
      */
@@ -19,13 +24,13 @@ public class FindEventNamesUtil {
     }
 
     /**
-     * Gets the event name to the given event type name.
+     * Gets the event name to the given event type name. If no event name was found, a default value (ActionEvent) is returned.
      *
      * @param eventType event type name
      * @return event name
      */
     public static String findEventName(String eventType) {
-        return events.get(eventType);
+        return Optional.ofNullable(events.get(eventType)).orElse(EventNames.ACTION_EVENT);
     }
 
     /**

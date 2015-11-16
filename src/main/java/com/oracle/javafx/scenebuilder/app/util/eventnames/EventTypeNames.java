@@ -60,4 +60,8 @@ public class EventTypeNames {
     public static final String ON_ZOOM = "onZoom";
     public static final String ON_ZOOM_STARTED = "onZoomStarted";
     public static final String ON_ZOOM_FINISHED = "onZoomFinished";
+
+    // should be used in a static way
+    private EventTypeNames() {
+    }
 }

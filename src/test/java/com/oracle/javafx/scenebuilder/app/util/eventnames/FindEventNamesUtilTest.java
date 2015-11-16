@@ -46,8 +46,8 @@ public class FindEventNamesUtilTest {
         assertThat(callService(EventTypeNames.ON_ZOOM)).isNotEqualTo(EventNames.SWIPE_EVENT);
         assertThat(callService(EventTypeNames.ON_ROTATE)).isNotEqualTo(EventNames.ACTION_EVENT);
 
-        assertThat(callService(dummyEventTypeName)).isNotEqualTo(EventNames.ACTION_EVENT);
-        assertThat(callService(dummyEventTypeName)).isNull();
+        assertThat(callService(dummyEventTypeName)).isNotNull();
+        assertThat(callService(dummyEventTypeName)).isEqualTo(EventNames.ACTION_EVENT);
         assertThat(callService(EventTypeNames.ON_ROTATION_FINISHED)).isNotEqualTo(dummyEventName);
     }
 }

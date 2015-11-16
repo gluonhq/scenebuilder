@@ -33,4 +33,7 @@ public class EventNames {
     // Zoom
     public static final String ZOOM_EVENT = "ZoomEvent";
 
+    // should be used in a static way
+    private EventNames() {
+    }
 }
