@@ -31,9 +31,11 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueAuxiliary;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
-import java.util.HashSet;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -86,54 +88,44 @@ class FXOMSaver {
         
         
     }
-    
-    
+        
     private void updateImportInstructions(FXOMDocument fxomDocument) {
         assert fxomDocument.getFxomRoot() != null;
-        
-        // Collects all packages already declared by import processing instructions
-        final GlueDocument glue = fxomDocument.getGlue();
-        final List<GlueInstruction> imports = glue.collectInstructions("import");
-        final Set<String> existingPackageNames = new HashSet<>();
-        for (GlueInstruction i : imports) {
-            final String data = i.getData();
-            if (data.endsWith(".*")) {
-                final String packageName = data.substring(0, data.length()-2);
-                existingPackageNames.add(packageName);
-            }
+
+        // gets list of the imports to be added to the FXML document.
+        List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
+
+        // synchronizes the glue with the list of glue instructions
+        synchronizeHeader(fxomDocument.getGlue(), importList);
+    }
+
+    private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
+        // Collects all the classes declared in the fxomdocument,
+        // constructs the set of classes to be imported. No doubles allowed.
+        final Set<String> imports = new TreeSet<>(); // Sorted
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
+            imports.add(dc.getName());
+        });
+
+        // Creates a List of glue instruction for each class that was declared.
+        List<GlueInstruction> importsList = new ArrayList<>();
+        imports.forEach(className -> {
+            final GlueInstruction instruction = new GlueInstruction(fxomDocument.getGlue(), "import", className);
+            importsList.add(instruction);
+        });
+
+        return importsList;
+    }
+
+    private void synchronizeHeader(GlueDocument glue, List<GlueInstruction> importList) {
+        List<GlueAuxiliary> temp = glue.getHeader();
+        synchronized (this) {
+            glue.getHeader().clear();
+            glue.getHeader().addAll(importList);
+
+            if (!glue.getHeader().equals(importList))
+                glue.getHeader().addAll(temp);
         }
-        
-        // Collects all the classes declared in the fxom document,
-        // constructs the set of packages to be imported.
-        final Set<String> newPackageNames = new TreeSet<>(); // Sorted
-        for (Class<?> declaredClass 
-                : fxomDocument.getFxomRoot().collectDeclaredClasses()) {
-            newPackageNames.add(declaredClass.getPackage().getName());
-        }
-        newPackageNames.add("java.lang");
-        
-        // Removes package names already declared
-        newPackageNames.removeAll(existingPackageNames);
-        
-        // Chooses where to insert the new import processing intructions.
-        // If there are some, we insert the new ones afterward.
-        final int firstImportIndex;
-        if (imports.isEmpty()) {
-            firstImportIndex = 0;
-        } else {
-            final GlueInstruction firstImport = imports.get(0);
-            firstImportIndex = glue.getHeader().indexOf(firstImport);
-        }
-        
-        // Creates a glue instruction for each package to be declared.
-        // We insert after the last import instruction.
-        int i = firstImportIndex;
-        for (String packageName : newPackageNames) {
-            final GlueInstruction instruction
-                    = new GlueInstruction(glue, "import", packageName+".*");
-            glue.getHeader().add(i, instruction);
-            i++;
-        }
-        
+
     }
 }
