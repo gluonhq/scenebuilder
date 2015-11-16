@@ -1314,24 +1314,29 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 isRuledByCss = true;
             }
         }
-
+        
+        propertyEditor.setUpdateFromModel(true);
         if (isRuledByCss) {
             propertyEditor.setRuledByCss(true);
             propertyEditor.setCssInfo(cssInfo);
+            propertyEditor.setValue(cssInfo.getFxValue()); //adds CSS values to the ValueEditor
+            propertyEditor.getValueEditor().setDisable(true); // disables the ValueEditor when CSS is present
         } else {
             propertyEditor.setRuledByCss(false);
             propertyEditor.setCssInfo(null);
+            if (propertyEditor.getValueEditor() != null && propertyEditor.getValueEditor().isDisabled()) {
+                // if ValueEditor is present and disabled it will enable it
+                // it happens when another component is clicked and a ValueEditor was disabled
+                propertyEditor.getValueEditor().setDisable(false);
+            }
+            if (isIndeterminate) {
+                propertyEditor.setIndeterminate(true);
+            } else {
+                propertyEditor.setValue(val); //sets the default values or values from FXML tags
+            }
         }
-        if (isIndeterminate) {
-            propertyEditor.setUpdateFromModel(true);
-            propertyEditor.setIndeterminate(true);
-            propertyEditor.setUpdateFromModel(false);
-        } else {
-            propertyEditor.setUpdateFromModel(true);
-            propertyEditor.setValue(val);
-            propertyEditor.setUpdateFromModel(false);
-        }
-
+        propertyEditor.setUpdateFromModel(false);
+        
         if (!(propertyEditor instanceof GenericEditor)) {
             if (!isReadWrite) {
                 propertyEditor.setDisable(true);
