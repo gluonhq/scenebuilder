@@ -30,11 +30,7 @@ public class FindEventNamesUtil {
      * @return event name
      */
     public static String findEventName(String eventType) {
-        Optional<String> eventNameOptional = Optional.ofNullable(events.get(eventType));
-        if(!eventNameOptional.isPresent()) {
-            return EventNames.ACTION_EVENT;
-        }
-        return eventNameOptional.get();
+        return Optional.ofNullable(events.get(eventType)).orElse(EventNames.ACTION_EVENT);
     }
 
     /**
