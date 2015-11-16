@@ -522,7 +522,7 @@ public class ImportWindowController extends AbstractModalDialog {
         try {
             int index = 0;
             for (File file : files) {
-                result[index] = file.toURI().toURL();
+                result[index] = new URL("jar","",file.toURI().toURL()+"!/");
                 index++;
             }
         } catch (MalformedURLException x) {
