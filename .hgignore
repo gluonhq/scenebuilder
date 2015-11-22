@@ -2,6 +2,8 @@ syntax: glob
 .gradle/*
 .nb-gradle/*
 build/*
+.idea/*
+*.iml
 .classpath
 .project
 .settings

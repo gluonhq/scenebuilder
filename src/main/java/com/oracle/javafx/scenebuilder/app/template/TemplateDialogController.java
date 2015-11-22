@@ -38,25 +38,18 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.FileAttribute;
-import java.text.MessageFormat;
-
-import javafx.beans.InvalidationListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.text.MessageFormat;
 
 public class TemplateDialogController extends AbstractModalDialog {
 
@@ -98,14 +91,14 @@ public class TemplateDialogController extends AbstractModalDialog {
     @Override
     protected void controllerDidLoadContentFxml() {
 
-        nameTextField.textProperty().addListener((InvalidationListener) observable -> {
+        nameTextField.textProperty().addListener(observable -> {
             // Update details section
             updateDetails();
             // Update OK button
             updateOkButtonState();
 
         });
-        locationTextField.textProperty().addListener((InvalidationListener) observable -> {
+        locationTextField.textProperty().addListener(observable -> {
             // Update details section
             updateDetails();
             // Update OK button
@@ -156,8 +149,8 @@ public class TemplateDialogController extends AbstractModalDialog {
 
         try {
             // Create template directory
-            Files.createDirectories(newProjectDirectory.toPath(),
-                    new FileAttribute<?>[]{});
+            Files.createDirectories(newProjectDirectory.toPath()
+            );
             // Create FXML and resource files
             if (createTemplateFiles(newProjectDirectory)) {
                 final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
@@ -198,21 +191,28 @@ public class TemplateDialogController extends AbstractModalDialog {
         final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
 
         // Copy FXML file
-        final InputStream fromFxmlFile = TemplateDialogController.class.getResourceAsStream(fxmlFileName);
-        final File toFxmlFile = new File(newProjectDirectory, fxmlFileName);
-        if (!copyFile(fromFxmlFile, toFxmlFile, StandardCopyOption.REPLACE_EXISTING)) {
+        if ( !copyResource(fxmlFileName, newProjectDirectory)) {
             return false;
         }
 
         // Copy resource files
         for (String resourceFileName : FxmlTemplates.getResourceFileNames(template)) {
-            final InputStream fromResourceFile = TemplateDialogController.class.getResourceAsStream(resourceFileName);
-            final File toResourceFile = new File(newProjectDirectory, resourceFileName);
-            if (!copyFile(fromResourceFile, toResourceFile, StandardCopyOption.REPLACE_EXISTING)) {
+            if ( !copyResource(resourceFileName, newProjectDirectory)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean copyResource(String resourceFileName, File destinationDirectory ) {
+        try ( InputStream fromResourceFile = TemplateDialogController.class.getResourceAsStream(resourceFileName)) {
+            final File toResourceFile = new File(destinationDirectory, resourceFileName);
+            return copyFile(fromResourceFile, toResourceFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return false;
     }
 
     /**
