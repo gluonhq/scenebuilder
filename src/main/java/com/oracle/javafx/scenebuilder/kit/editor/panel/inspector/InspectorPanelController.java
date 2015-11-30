@@ -1319,6 +1319,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         if (isRuledByCss) {
             propertyEditor.setRuledByCss(true);
             propertyEditor.setCssInfo(cssInfo);
+            if(propertyEditor.isDisablePropertyBound()){
+                propertyEditor.unbindDisableProperty();
+            }
             propertyEditor.setValue(cssInfo.getFxValue()); //adds CSS values to the ValueEditor
             propertyEditor.getValueEditor().setDisable(true); // disables the ValueEditor when CSS is present
         } else {
