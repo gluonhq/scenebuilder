@@ -78,10 +78,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelCon
 import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMFxIdIndex;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.fxom.*;
 import com.oracle.javafx.scenebuilder.kit.glossary.Glossary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
@@ -133,6 +130,7 @@ import java.util.TreeMap;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -154,6 +152,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -699,8 +698,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 //        System.out.println("\nBuilding section " + sectionId + " - Selection : " + selection.getEntries());
         GridPane gridPane = getSectionContent(sectionId);
         gridPane.getChildren().clear();
-        if (handleSelectionMessage(gridPane)) {
-            return;
+       if (handleSelectionMessage(gridPane)) {
+          return;
         }
 
         // Get Metadata
@@ -926,6 +925,15 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         return hasFxomDocument() && getSelectedInstances().isEmpty();
     }
 
+    private boolean hasSelectedIntrinsicNothingForInspector() {
+        return hasFxomDocument() && getSelectedIntrinsics().isEmpty();
+    }
+
+
+    private Set<FXOMIntrinsic> getSelectedIntrinsics() {
+        return selectionState.selectedIntrinsics;
+    }
+
     private boolean hasMultipleSelection() {
         return getSelectedInstances().size() > 1;
     }
@@ -1006,7 +1014,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             addMessage(gridPane, I18N.getString("inspector.message.no.selected"));
             return true;
         }
-        if (hasSelectedElementNothingForInspector()) {
+        if (hasSelectedElementNothingForInspector() && hasSelectedIntrinsicNothingForInspector()) {
             addMessage(gridPane, I18N.getString("inspector.message.no.thingforinspector"));
             return true;
         }
@@ -1111,13 +1119,76 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 gridPane.add(valueEditor, 0, lineIndex);
             }
         }
-
+        
         // Add cog menu
         gridPane.add(menu, 2, lineIndex);
-
+        
         lineIndex++;
+        
+        //TODO
+        //adds a ToggleButton right below the fx:id editor
+        if (editor instanceof FxIdEditor) {
+            ((FxIdEditor) editor).addValueListener(fxIdlistener);
+            ToggleButton toggleButton = createToggleButtonForFxId();
+            gridPane.add(toggleButton, 1, lineIndex);
+//            Button button = createButtonForFxId();
+//            gridPane.add(button, 1, lineIndex);
+            lineIndex++;
+        }
+   
         return lineIndex;
     }
+    
+    // Selected Property for the ToggleButton
+    private SimpleBooleanProperty cssAndFxIdToggleButtonSelectedProperty = new SimpleBooleanProperty();
+
+    // checks if Css-Id and fx:id are equal
+    private boolean checkIds() {
+        String id = getSelectedInstance().getGlueElement().getAttributes().get("id");
+        String fxId = getSelectedInstance().getFxId();
+        if(id !=null)
+            return(id.equals(fxId));
+        return false;
+    }
+    
+    // creates the ToggleButton under the fx:id editor
+    private ToggleButton createToggleButtonForFxId(){
+        ToggleButton toggleButton = new ToggleButton("fx:id -> css-id");
+        toggleButton.selectedProperty().bindBidirectional(cssAndFxIdToggleButtonSelectedProperty);
+        toggleButton.setOnAction((ActionEvent)->{
+            // if button is selected it will give the fx:id to the CssId
+            if(cssAndFxIdToggleButtonSelectedProperty.get())
+                setSelectedFXOMInstances(getCssIdEditor().getPropertyMeta(), getSelectedInstance().getFxId());
+        });
+        return toggleButton;
+    }
+    
+    // if the ToggleButton is selected and a new fx:id is given, the fx:id will be given to the CssId
+    private ChangeListener<Object> fxIdlistener = (obs, oldValue, newValue) ->{
+        if(cssAndFxIdToggleButtonSelectedProperty.get()){
+            setSelectedFXOMInstances(getCssIdEditor().getPropertyMeta(), newValue);
+        }
+    };
+    
+    // used to get the CssId PropertyEditor to update the value while the SceneBuilder is running
+    private StringEditor getCssIdEditor(){
+        ValuePropertyMetadata metadataForCssIDEditor = new StringPropertyMetadata(new PropertyName("id"), true,
+                null, new InspectorPath("Properties", "JavaFX CSS", 3));
+        StringEditor cssIdEditor = (StringEditor) getPropertyEditor(metadataForCssIDEditor); 
+        handlePropertyEditorChanges(cssIdEditor);
+        return cssIdEditor;
+    }
+
+//    private Button createButtonForFxId(){
+//        Button button = new Button("Also set CSS-Id with fx:id");
+//        button.setOnAction((ActionEvent) -> {
+//            String fxId = getSelectedInstance().getFxId();
+//            if (fxId == null)
+//                return;
+//            setSelectedFXOMInstances(getCssIdEditor().getPropertyMeta(), fxId);
+//        });
+//        return button;
+//    }
 
     private void handleValueChange(PropertyEditor propertyEditor) {
         // Handle the value change
@@ -1152,7 +1223,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 //        System.out.println("Property " + propertyEditor.getPropertyName() + ": Value changed from \"" + oldValue + "\" to \"" + newValue + "\"");
         if (propertyEditor instanceof FxIdEditor) {
             assert (newValue instanceof String) || (newValue == null);
-            setSelectedFXOMInstanceFxId(getSelectedInstance(), (String) newValue);
+            setSelectedFXOMInstanceFxId(getSelectedObject(), (String) newValue);
         } else if (propertyEditor instanceof ToggleGroupEditor) {
             assert (newValue instanceof String) || (newValue == null);
             setSelectionToggleGroup((String) newValue);
@@ -1272,12 +1343,24 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             fxIdEditor.setIndeterminate(true);
             fxIdEditor.setDisable(true);
         } else {
-            String instanceFxId = getSelectedInstance().getFxId();
+            String instanceFxId = getSelectedObject().getFxId();
             fxIdEditor.setDisable(false);
             fxIdEditor.setUpdateFromModel(true);
-            fxIdEditor.reset(getSuggestedFxIds(getControllerClass()), getEditorController());
-            fxIdEditor.setValue(instanceFxId);
+            fxIdEditor.reset(getSuggestedFxIds(getControllerClass()), getEditorController()); 
+            fxIdEditor.removeValueListener(fxIdlistener); //removes listener to avoid ConcurrentModificationExceptions
+            fxIdEditor.setValue(instanceFxId); 
             fxIdEditor.setUpdateFromModel(false);
+            // checks if Css-id and fx:id are the same;
+            // because this method is called everytime the scenebuilder is updated
+            // the selectedProperty will be true if the Css-Id and fx:id are the same
+            // it will also give the ValueListener to the editor
+            if(checkIds()){ //TODO 
+                fxIdEditor.addValueListener(fxIdlistener);
+                cssAndFxIdToggleButtonSelectedProperty.set(true);
+            }else{
+                cssAndFxIdToggleButtonSelectedProperty.set(false); 
+            }   
+            
         }
     }
 
@@ -1310,6 +1393,29 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
 
             cssInfo = CssInternal.getCssInfo(instance.getSceneGraphObject(), propMeta);
+            if (cssInfo != null) {
+                isRuledByCss = true;
+            }
+        }
+
+        for(FXOMIntrinsic intrinsic : getSelectedIntrinsics()) {
+            ValuePropertyMetadata propMeta = Metadata.getMetadata().queryValuePropertyForIntrinsic(intrinsic, propName);
+            assert propMeta != null;
+            FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getSourceSceneGraphObject().getClass());
+            fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
+            fxomInstance.setFxId(intrinsic.getFxId());
+            Object newVal = propMeta.getValueObject(fxomInstance);
+            if (!propMeta.isReadWrite()) {
+                isReadWrite = false;
+            }
+            if (first) {
+                val = newVal;
+                first = false;
+            } else if (!EditorUtils.areEqual(newVal, val)) {
+                isIndeterminate = true;
+            }
+
+            cssInfo = CssInternal.getCssInfo(fxomInstance.getSceneGraphObject(), propMeta);
             if (cssInfo != null) {
                 isRuledByCss = true;
             }
@@ -2073,6 +2179,21 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         return (FXOMInstance) getSelectedInstances().toArray()[0];
     }
 
+    private FXOMIntrinsic getSelectedIntrinsic() {
+        assert getSelectedIntrinsics().size() == 1;
+        return (FXOMIntrinsic) getSelectedIntrinsics().toArray()[0];
+    }
+
+    private FXOMObject getSelectedObject() {
+        if(getSelectedInstances().size() == 1) {
+            return (FXOMInstance) getSelectedInstances().toArray()[0];
+        }
+        else if(getSelectedIntrinsics().size() == 1) {
+            return (FXOMIntrinsic) getSelectedIntrinsics().toArray()[0];
+        }
+        return null;
+    }
+
     private Set<FXOMInstance> getUnresolvedInstances() {
         return selectionState.getUnresolvedInstances();
     }
@@ -2111,6 +2232,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
         private final Selection selection;
         private final Set<FXOMInstance> selectedInstances = new HashSet<>();
+        private final Set<FXOMIntrinsic> selectedIntrinsics = new HashSet<>();
         private final Set<Class<?>> selectedClasses = new HashSet<>();
         private Class<?> commonParentClass;
         private FXOMObject commonParentObject;
@@ -2131,6 +2253,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     if (obj instanceof FXOMInstance) {
                         selectedInstances.add((FXOMInstance) obj);
                     }
+                    else if(obj instanceof  FXOMIntrinsic) {
+                        selectedIntrinsics.add((FXOMIntrinsic) obj);
+                    }
                 }
             } else if (selection.getGroup() instanceof GridSelectionGroup) {
                 GridSelectionGroup gsg = (GridSelectionGroup) selection.getGroup();
@@ -2148,6 +2273,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 if (instance.getDeclaredClass() != null) { // null means unresolved instance
                     selectedClasses.add(instance.getDeclaredClass());
                 }
+            }
+
+            for (FXOMIntrinsic selectedIntrinsic : selectedIntrinsics) {
+                selectedClasses.add(selectedIntrinsic.getSourceSceneGraphObject().getClass());
             }
 
             commonParentClass = null;

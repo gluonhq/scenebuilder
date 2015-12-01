@@ -293,7 +293,7 @@ class FXOMLoader implements LoadListener {
             final TransientIntrinsic currentIntrinsic = (TransientIntrinsic) currentTransientNode;
             final FXOMIntrinsic currentFxomIntrinsic = currentIntrinsic.makeFxomIntrinsic(document);
             final TransientNode currentParent = currentIntrinsic.getParentNode();
-            
+
             if (currentParent instanceof TransientProperty) {
                 final TransientProperty parentProperty = (TransientProperty) currentParent;
                 parentProperty.getValues().add(currentFxomIntrinsic);

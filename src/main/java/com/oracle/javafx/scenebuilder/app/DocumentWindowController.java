@@ -66,8 +66,10 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueElement;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.sun.javafx.scene.control.behavior.KeyBinding;
@@ -89,23 +91,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
@@ -115,6 +113,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.WindowEvent;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -1802,23 +1801,98 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         }
         inspectorPanelController.setExpandedSection(sectionId);
     }
+
+    // rootItem is not visible in TreeView in MainView
+    public TreeItem<String> rootItem;
+    public SimpleStringProperty fileName = new SimpleStringProperty();
+
+    private FXMLNode readFXML(URL location) throws SAXException, IOException {
+        rootItem = new TreeItem<String>("root");
+        rootItem.getChildren().clear();
+        fileName.set(location.getFile());
+
+        // Read FXML file
+        File file = null;
+        try {
+            file = new File(location.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        FXMLNode rootNode = FXMLReader.parseFXML(file);
+
+        // add Items to rootNode
+        return addTreeItemsFromNode(rootNode, rootItem);
+    }
+
+    private FXMLNode addTreeItemsFromNode(FXMLNode node, TreeItem<String> treeItem) {
+        FXMLNode childNode = null;
+        TreeItem<String> item = new TreeItem<String>();
+        for (FXMLNode n : node.getChildren()) {
+            System.out.println(node.getName() + " (Children:" + node.getChildren().size() + ") " + " ; "
+                    + n.getController() + " ; " + n.getPath());
+            item.setValue(n.getName());
+            if (item.isLeaf()) {
+                // adds * if item is a leaf (end of branch)
+                item.setValue("*" + item.getValue());
+                childNode = n;
+            }
+
+
+            treeItem.getChildren().add(item);
+            treeItem.setExpanded(true);
+        }
+        return childNode;
+    }
     
     private ActionStatus performSaveAction() {
         final FXOMDocument fxomDocument = editorController.getFxomDocument();
         assert fxomDocument != null;
         assert fxomDocument.getLocation() != null;
+
+        final String includeType = "fx:include";
+        FXMLNode node = null;
+        GlueElement glueElement = ((ObjectSelectionGroup) editorController.getSelection().getGroup()).getHitItem().getGlueElement();
+        if(includeType.equals(glueElement.getTagName())) {
+            try {
+                node = readFXML(((FXOMDocument) fxomDocument).getLocation());
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         
         ActionStatus result;
         if (editorController.canGetFxmlText()) {
             final Path fxmlPath;
             try {
-                fxmlPath = Paths.get(fxomDocument.getLocation().toURI());
+                if(node != null) {
+                    fxmlPath = Paths.get(node.getPath());
+                    final FXMLLoader loader = new FXMLLoader();
+
+                    loader.setController(this);
+                    try {
+                        loader.setLocation(new File(fxmlPath.toString()).toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    loader.setResources(I18N.getBundle());
+                    try {
+                        Parent root = loader.load();
+                        root.getProperties();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    fxmlPath = Paths.get(fxomDocument.getLocation().toURI());
+                }
             } catch(URISyntaxException x) {
                 // Should not happen
                 throw new RuntimeException("Bug in " + getClass().getSimpleName(), x); //NOI18N
             }
             final String fileName = fxmlPath.getFileName().toString();
-            
+
             try {
                 final boolean saveConfirmed;
                 if (checkLoadFileTime()) {
@@ -1837,7 +1911,9 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 if (saveConfirmed) {
                     try {
                         watchingController.removeDocumentTarget();
-                        final byte[] fxmlBytes = editorController.getFxmlText().getBytes("UTF-8"); //NOI18N
+                        //final byte[] fxmlBytes = editorController.getFxmlText().getBytes("UTF-8"); //NOI18N
+                        String fxmlText = getFxmlTextFromIncludedFile(fxmlPath);
+                        final byte[] fxmlBytes = fxmlText.getBytes("UTF-8");
                         Files.write(fxmlPath, fxmlBytes);
                         updateLoadFileTime();
                         watchingController.update();
@@ -1866,8 +1942,20 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         return result;
     }
-    
-    
+
+    private String getFxmlTextFromIncludedFile(Path fxmlPath) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            Stream<String> lines = Files.lines(fxmlPath);
+            lines.forEach(sb::append);
+            System.out.println("FXML-String: " + sb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+
     private ActionStatus performSaveAsAction() {
         
         final ActionStatus result;

@@ -145,7 +145,7 @@ class TransientObject extends TransientNode {
                                       rootClass, getSceneGraphObject(),
                                       properties);
         }
-        
+
         return result;
     }
     

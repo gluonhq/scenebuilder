@@ -36,6 +36,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
  */
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
@@ -210,6 +211,27 @@ public class Metadata {
             }
         }
         
+        return result;
+    }
+
+    public ValuePropertyMetadata queryValuePropertyForIntrinsic(FXOMIntrinsic fxomIntrinsic, PropertyName targetName) {
+        final ValuePropertyMetadata result;
+        assert fxomIntrinsic != null;
+        assert targetName != null;
+
+        if (fxomIntrinsic.getSourceSceneGraphObject() == null) {
+            // FXOM object is unresolved
+            result = null;
+        } else {
+            final Class<?> componentClass = fxomIntrinsic.getSourceSceneGraphObject().getClass();
+            final PropertyMetadata m = Metadata.getMetadata().queryProperty(componentClass, targetName);
+            if (m instanceof ValuePropertyMetadata) {
+                result = (ValuePropertyMetadata) m;
+            } else {
+                result = null;
+            }
+        }
+
         return result;
     }
     

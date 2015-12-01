@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
@@ -72,6 +73,13 @@ public class ModifySelectionJob extends BatchDocumentJob {
             for (FXOMObject fxomObject : osg.getItems()) {
                 if (fxomObject instanceof FXOMInstance) {
                     candidates.add((FXOMInstance) fxomObject);
+                }
+                else if(fxomObject instanceof FXOMIntrinsic) {
+                    FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
+                    FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getSourceSceneGraphObject().getClass());
+                    fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
+                    fxomInstance.setFxId(intrinsic.getFxId());
+                    candidates.add(fxomInstance);
                 }
             }
         } else if (selection.getGroup() instanceof GridSelectionGroup) {
