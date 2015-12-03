@@ -1330,6 +1330,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             if (propertyEditor.getValueEditor() != null && propertyEditor.getValueEditor().isDisabled()) {
                 // if ValueEditor is present and disabled it will enable it
                 // it happens when another component is clicked and a ValueEditor was disabled
+                if(propertyEditor.isDisablePropertyBound()){
+                    propertyEditor.unbindDisableProperty();
+                }
                 propertyEditor.getValueEditor().setDisable(false);
             }
             if (isIndeterminate) {
