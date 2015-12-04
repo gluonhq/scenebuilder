@@ -219,11 +219,11 @@ public class Metadata {
         assert fxomIntrinsic != null;
         assert targetName != null;
 
-        if (fxomIntrinsic.getSourceSceneGraphObject() == null) {
+        if (fxomIntrinsic.getParentProperty().getParentInstance().getSceneGraphObject() == null) {
             // FXOM object is unresolved
             result = null;
         } else {
-            final Class<?> componentClass = fxomIntrinsic.getSourceSceneGraphObject().getClass();
+            final Class<?> componentClass = fxomIntrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass();
             final PropertyMetadata m = Metadata.getMetadata().queryProperty(componentClass, targetName);
             if (m instanceof ValuePropertyMetadata) {
                 result = (ValuePropertyMetadata) m;

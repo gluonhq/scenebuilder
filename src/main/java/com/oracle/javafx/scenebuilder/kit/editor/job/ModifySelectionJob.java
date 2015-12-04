@@ -76,9 +76,7 @@ public class ModifySelectionJob extends BatchDocumentJob {
                 }
                 else if(fxomObject instanceof FXOMIntrinsic) {
                     FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
-                    FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getSourceSceneGraphObject().getClass());
-                    fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
-                    fxomInstance.setFxId(intrinsic.getFxId());
+                    FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass());
                     candidates.add(fxomInstance);
                 }
             }

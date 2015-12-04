@@ -1401,9 +1401,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         for(FXOMIntrinsic intrinsic : getSelectedIntrinsics()) {
             ValuePropertyMetadata propMeta = Metadata.getMetadata().queryValuePropertyForIntrinsic(intrinsic, propName);
             assert propMeta != null;
-            FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getSourceSceneGraphObject().getClass());
-            fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
-            fxomInstance.setFxId(intrinsic.getFxId());
+            FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass());
             Object newVal = propMeta.getValueObject(fxomInstance);
             if (!propMeta.isReadWrite()) {
                 isReadWrite = false;
@@ -2276,7 +2274,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
 
             for (FXOMIntrinsic selectedIntrinsic : selectedIntrinsics) {
-                selectedClasses.add(selectedIntrinsic.getSourceSceneGraphObject().getClass());
+                selectedClasses.add(selectedIntrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass());
             }
 
             commonParentClass = null;
