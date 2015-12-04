@@ -113,7 +113,7 @@ public class TextAlignmentEditor extends PropertyEditor {
         if (value == null) {
             value = getPropertyMeta().getDefaultValueObject();
         }
-        assert value instanceof String;
+
         if (value.toString().equals(TextAlignment.LEFT.toString())) {
             leftTb.setSelected(true);
         } else if (value.toString().equals(TextAlignment.CENTER.toString())) {
