@@ -1319,6 +1319,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         if (isRuledByCss) {
             propertyEditor.setRuledByCss(true);
             propertyEditor.setCssInfo(cssInfo);
+            if(propertyEditor.isDisablePropertyBound()){
+                propertyEditor.unbindDisableProperty();
+            }
             propertyEditor.setValue(cssInfo.getFxValue()); //adds CSS values to the ValueEditor
             propertyEditor.getValueEditor().setDisable(true); // disables the ValueEditor when CSS is present
         } else {
@@ -1327,7 +1330,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             if (propertyEditor.getValueEditor() != null && propertyEditor.getValueEditor().isDisabled()) {
                 // if ValueEditor is present and disabled it will enable it
                 // it happens when another component is clicked and a ValueEditor was disabled
-                propertyEditor.getValueEditor().setDisable(false);
+                if(!propertyEditor.isDisablePropertyBound()){
+                    propertyEditor.getValueEditor().setDisable(false);
+                }
             }
             if (isIndeterminate) {
                 propertyEditor.setIndeterminate(true);

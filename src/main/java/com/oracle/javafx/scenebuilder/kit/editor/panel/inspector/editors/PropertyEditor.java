@@ -383,6 +383,14 @@ public abstract class PropertyEditor extends Editor {
     public ObservableBooleanValue disableProperty() {
         return disableProperty;
     }
+    
+    public boolean isDisablePropertyBound(){
+        return getValueEditor().disableProperty().isBound();
+    }
+    
+    public void unbindDisableProperty(){
+        getValueEditor().disableProperty().unbind();
+    }
 
     public boolean isBinding() {
         return binding;
