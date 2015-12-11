@@ -143,24 +143,21 @@ public class JarExplorer {
                     // http://blog.osgi.org/2011/05/what-you-should-know-about-class.html
                     // http://blog.bjhargrave.com/2007/09/classforname-caches-defined-class-in.html
                     // http://stackoverflow.com/questions/8100376/class-forname-vs-classloader-loadclass-which-to-use-for-dynamic-loading
-                    try {
-                    	entryClass = classLoader.loadClass(className); // Note: static intializers of entryClass are not run, this doesn't seem to be an issue
-                        
-                        if (Modifier.isAbstract(entryClass.getModifiers())
-                        		|| !Node.class.isAssignableFrom(entryClass)) {
-                            status = JarReportEntry.Status.IGNORED;
-                            entryClass = null;
-                            entryException = null;
-                        }
-                        else {
-                            instantiateWithFXMLLoader(entryClass, classLoader);
-                            status = JarReportEntry.Status.OK;
-                            entryException = null;
-                        }
-                    } catch(RuntimeException|IOException x) {
-                        status = JarReportEntry.Status.CANNOT_INSTANTIATE;
-                        entryException = x;
+                    entryClass = classLoader.loadClass(className); // Note: static intializers of entryClass are not run, this doesn't seem to be an issue
+
+                    if (Modifier.isAbstract(entryClass.getModifiers())
+                            || !Node.class.isAssignableFrom(entryClass)) {
+                        status = JarReportEntry.Status.IGNORED;
+                        entryClass = null;
+                        entryException = null;
+                    } else {
+                        instantiateWithFXMLLoader(entryClass, classLoader);
+                        status = JarReportEntry.Status.OK;
+                        entryException = null;
                     }
+                } catch(RuntimeException|IOException x) {
+                    status = JarReportEntry.Status.CANNOT_INSTANTIATE;
+                    entryException = x;
                 } catch(Error | ClassNotFoundException x) {
                     status = JarReportEntry.Status.CANNOT_LOAD;
                     entryClass = null;
