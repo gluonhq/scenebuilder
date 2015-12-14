@@ -1229,18 +1229,33 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     void onHierarchyShowInfo(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.INFO);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
+        // Update preferences
+        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
     }
     
     @FXML
     void onHierarchyShowFxId(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.FXID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
+        // Update preferences
+        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
     }
     
     @FXML
     void onHierarchyShowNodeId(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.NODEID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
+        // Update preferences
+        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
     }
     
     //
@@ -1259,10 +1274,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.LIST);
         }
 
-        final PreferencesController preferencesController
-                = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
         // Update preferences
         recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
@@ -1275,10 +1288,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.SECTIONS);
         }
 
-        final PreferencesController preferencesController
-                = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
         // Update preferences
         recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
