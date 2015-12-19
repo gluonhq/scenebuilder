@@ -1230,10 +1230,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.INFO);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
 
-        final PreferencesController preferencesController = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
-        // Update preferences
-        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
+        updateHierarchyDisplayOption();
     }
     
     @FXML
@@ -1241,10 +1238,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.FXID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
 
-        final PreferencesController preferencesController = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
-        // Update preferences
-        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
+        updateHierarchyDisplayOption();
     }
     
     @FXML
@@ -1252,12 +1246,16 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.NODEID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
 
+        updateHierarchyDisplayOption();
+    }
+
+    private void updateHierarchyDisplayOption() {
+        // Update preferences
         final PreferencesController preferencesController = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
-        // Update preferences
         recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
     }
-    
+
     //
     // Library menu
     //
@@ -1274,10 +1272,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.LIST);
         }
 
-        final PreferencesController preferencesController = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
-        // Update preferences
-        recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
+        updateLibraryDisplayOption();
     }
     
     @FXML
@@ -1288,9 +1283,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.SECTIONS);
         }
 
+        updateLibraryDisplayOption();
+    }
+
+    private void updateLibraryDisplayOption() {
+        // Update preferences
         final PreferencesController preferencesController = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
-        // Update preferences
         recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
 
