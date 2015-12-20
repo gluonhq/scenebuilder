@@ -220,6 +220,11 @@ public class PreferencesRecordGlobal {
         hierarchyDisplayOption = value;
     }
 
+    public void updateHierarchyDisplayOption(DisplayOption value) {
+        hierarchyDisplayOption = value;
+        writeToJavaPreferences(HIERARCHY_DISPLAY_OPTION);
+    }
+
     public CSSAnalyzerColumnsOrder getDefaultCSSAnalyzerColumnsOrder() {
         if (DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED) {
             return CSSAnalyzerColumnsOrder.DEFAULTS_LAST;
