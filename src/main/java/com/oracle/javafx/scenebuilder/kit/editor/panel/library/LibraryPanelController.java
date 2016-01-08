@@ -878,7 +878,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 "*.fxml", "*.jar")); //NOI18N
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
-        if (!selectedFiles.isEmpty()) {
+        if(selectedFiles != null && !selectedFiles.isEmpty()){
             // Keep track of the user choice for next time
             EditorController.updateNextInitialDirectory(selectedFiles.get(0));
         }
