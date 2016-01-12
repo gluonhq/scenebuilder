@@ -42,7 +42,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -115,7 +117,7 @@ class FXOMRefresher {
         assert currentObject.getClass() == newObject.getClass();
 
         currentObject.setSceneGraphObject(newObject.getSceneGraphObject());
-        
+
         if (currentObject instanceof FXOMInstance) {
             refreshFxomInstance((FXOMInstance) currentObject, (FXOMInstance) newObject);
         } else if (currentObject instanceof FXOMCollection) {
@@ -135,9 +137,9 @@ class FXOMRefresher {
         assert currentInstance != null;
         assert newInstance != null;
         assert currentInstance.getClass() == newInstance.getClass();
-        
+
         currentInstance.setDeclaredClass(newInstance.getDeclaredClass());
-        
+
         final Set<PropertyName> currentNames = currentInstance.getProperties().keySet();
         final Set<PropertyName> newNames = newInstance.getProperties().keySet();
         assert currentNames.equals(newNames);
@@ -188,12 +190,38 @@ class FXOMRefresher {
         assert currentObjects != null;
         assert newObjects != null;
         assert currentObjects.size() == newObjects.size();
-        
+
         for (int i = 0, count = currentObjects.size(); i < count; i++) {
             final FXOMObject currentObject = currentObjects.get(i);
             final FXOMObject newObject = newObjects.get(i);
-            refreshFxomObject(currentObject, newObject);
+
+            if(currentObject instanceof  FXOMIntrinsic || newObject instanceof FXOMIntrinsic) {
+                if (currentObject instanceof FXOMIntrinsic && newObject instanceof FXOMIntrinsic) {
+                    FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) currentObject);
+                    FXOMInstance fxomInstance2 = getFxomInstance((FXOMIntrinsic) newObject);
+                    refreshFxomObject(fxomInstance, fxomInstance2);
+                }
+                else if (newObject instanceof FXOMIntrinsic) {
+                    FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) newObject);
+                    refreshFxomObject(currentObject, fxomInstance);
+                } else if (currentObject instanceof FXOMIntrinsic) {
+                    FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) currentObject);
+                    refreshFxomObject(fxomInstance, newObject);
+                }
+            }
+            else {
+                refreshFxomObject(currentObject, newObject);
+            }
+
         }
+    }
+
+    private FXOMInstance getFxomInstance(FXOMIntrinsic intrinsic) {
+        FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getGlueElement());
+        fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
+        fxomInstance.setDeclaredClass(intrinsic.getClass());
+//        fxomInstance.addToParentProperty(0, intrinsic.getParentProperty());
+        return fxomInstance;
     }
     
     /*

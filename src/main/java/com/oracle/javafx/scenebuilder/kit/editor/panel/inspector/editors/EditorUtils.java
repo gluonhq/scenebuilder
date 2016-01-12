@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.PopupEditor;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
@@ -328,22 +329,22 @@ public class EditorUtils {
         return doubleRounded / roundingFactor;
     }
 
-    public static double computeLeftAnchor(FXOMInstance selectedInstance) {
+    public static double computeLeftAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeLeftAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeRightAnchor(FXOMInstance selectedInstance) {
+    public static double computeRightAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeRightAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeTopAnchor(FXOMInstance selectedInstance) {
+    public static double computeTopAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeTopAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeBottomAnchor(FXOMInstance selectedInstance) {
+    public static double computeBottomAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeBottomAnchor(node, node.getLayoutBounds());
     }
@@ -364,7 +365,7 @@ public class EditorUtils {
         return node.getParent().getLayoutBounds().getMaxY() - node.getLayoutY() - futureLayoutBounds.getMaxY();
     }
 
-    private static Node getFxNode(FXOMInstance selectedInstance) {
+    private static Node getFxNode(FXOMObject selectedInstance) {
         Object selectedObj = selectedInstance.getSceneGraphObject();
         assert selectedObj instanceof Node;
         return (Node) selectedObj;

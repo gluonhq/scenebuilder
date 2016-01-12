@@ -456,7 +456,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.layout.RowConstraints.class, null);
     private final ComponentClassMetadata StackPaneMetadata = 
             new ComponentClassMetadata(javafx.scene.layout.StackPane.class, PaneMetadata);
-    private final ComponentClassMetadata TilePaneMetadata = 
+    private final ComponentClassMetadata TilePaneMetadata =
             new ComponentClassMetadata(javafx.scene.layout.TilePane.class, PaneMetadata);
     private final ComponentClassMetadata VBoxMetadata = 
             new ComponentClassMetadata(javafx.scene.layout.VBox.class, PaneMetadata);
@@ -516,6 +516,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.web.HTMLEditor.class, ControlMetadata);
     private final ComponentClassMetadata WebViewMetadata = 
             new ComponentClassMetadata(javafx.scene.web.WebView.class, ParentMetadata);
+    private final ComponentClassMetadata IncludeElementMetadata =
+            new ComponentClassMetadata(FXOMIntrinsic.class, null);
 
 
     // Property Names
@@ -4769,6 +4771,7 @@ public class Metadata {
         componentClassMap.put(ValueAxisMetadata.getKlass(), ValueAxisMetadata);
         componentClassMap.put(WebViewMetadata.getKlass(), WebViewMetadata);
         componentClassMap.put(XYChartMetadata.getKlass(), XYChartMetadata);
+        componentClassMap.put(IncludeElementMetadata.getKlass(), IncludeElementMetadata);
 
         // ComponentMetadata -> PropertyMetadata
         AccordionMetadata.getProperties().add(panesPropertyMetadata);
@@ -5792,6 +5795,14 @@ public class Metadata {
         XYChartMetadata.getProperties().add(verticalZeroLineVisiblePropertyMetadata);
         XYChartMetadata.getProperties().add(XAxisPropertyMetadata);
         XYChartMetadata.getProperties().add(YAxisPropertyMetadata);
+
+
+        IncludeElementMetadata.getProperties().add(AnchorPane_bottomAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_leftAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_rightAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_topAnchorPropertyMetadata);
+
+        IncludeElementMetadata.getProperties().add(VBox_marginPropertyMetadata);
 
 
         // Populates hiddenProperties

@@ -42,6 +42,9 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -76,7 +79,12 @@ public class ModifySelectionJob extends BatchDocumentJob {
                 }
                 else if(fxomObject instanceof FXOMIntrinsic) {
                     FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
-                    FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass());
+                    Button btn = (Button) ((VBox) intrinsic.getSourceSceneGraphObject()).getChildren().get(0);
+                    FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getGlueElement());
+                    fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
+                    fxomInstance.setDeclaredClass(intrinsic.getClass());
+                    fxomInstance.fillProperties(intrinsic.getProperties());
+//                    fxomInstance.addToParentProperty(0, intrinsic.getParentProperty());
                     candidates.add(fxomInstance);
                 }
             }
