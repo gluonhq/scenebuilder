@@ -115,6 +115,12 @@ public class FXOMIntrinsic extends FXOMObject {
         return properties;
     }
 
+    public void fillProperties(Map<PropertyName, FXOMProperty> properties ) {
+        for (FXOMProperty p : properties.values()) {
+            this.properties.put(p.getName(), p);
+        }
+    }
+
     /*
      * FXOMObject
      */

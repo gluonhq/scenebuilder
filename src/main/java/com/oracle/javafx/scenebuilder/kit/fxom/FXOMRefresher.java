@@ -140,14 +140,16 @@ class FXOMRefresher {
 
         currentInstance.setDeclaredClass(newInstance.getDeclaredClass());
 
-        final Set<PropertyName> currentNames = currentInstance.getProperties().keySet();
-        final Set<PropertyName> newNames = newInstance.getProperties().keySet();
-        assert currentNames.equals(newNames);
-        for (PropertyName name : currentNames) {
-            final FXOMProperty currentProperty = currentInstance.getProperties().get(name);
-            final FXOMProperty newProperty = newInstance.getProperties().get(name);
-            refreshFxomProperty(currentProperty, newProperty);
-        }
+
+            final Set<PropertyName> currentNames = currentInstance.getProperties().keySet();
+            final Set<PropertyName> newNames = newInstance.getProperties().keySet();
+            assert currentNames.equals(newNames);
+            for (PropertyName name : currentNames) {
+                final FXOMProperty currentProperty = currentInstance.getProperties().get(name);
+                final FXOMProperty newProperty = newInstance.getProperties().get(name);
+                refreshFxomProperty(currentProperty, newProperty);
+            }
+
     }
     
     private void refreshFxomCollection(FXOMCollection currentCollection, FXOMCollection newCollection) {
@@ -164,6 +166,9 @@ class FXOMRefresher {
         assert newIntrinsic != null;
         
         currentIntrinsic.setSourceSceneGraphObject(newIntrinsic.getSourceSceneGraphObject());
+        currentIntrinsic.getProperties().clear();
+        currentIntrinsic.fillProperties(newIntrinsic.getProperties());
+
     }
     
     private void refreshFxomProperty(FXOMProperty currentProperty, FXOMProperty newProperty) {
@@ -197,9 +202,9 @@ class FXOMRefresher {
 
             if(currentObject instanceof  FXOMIntrinsic || newObject instanceof FXOMIntrinsic) {
                 if (currentObject instanceof FXOMIntrinsic && newObject instanceof FXOMIntrinsic) {
-                    FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) currentObject);
-                    FXOMInstance fxomInstance2 = getFxomInstance((FXOMIntrinsic) newObject);
-                    refreshFxomObject(fxomInstance, fxomInstance2);
+//                    FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) currentObject);
+//                    FXOMInstance fxomInstance2 = getFxomInstance((FXOMIntrinsic) newObject);
+                    refreshFxomObject(currentObject, newObject);
                 }
                 else if (newObject instanceof FXOMIntrinsic) {
                     FXOMInstance fxomInstance = getFxomInstance((FXOMIntrinsic) newObject);
@@ -220,6 +225,9 @@ class FXOMRefresher {
         FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getGlueElement());
         fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
         fxomInstance.setDeclaredClass(intrinsic.getClass());
+        if(!intrinsic.getProperties().isEmpty()) {
+            fxomInstance.fillProperties(intrinsic.getProperties());
+        }
 //        fxomInstance.addToParentProperty(0, intrinsic.getParentProperty());
         return fxomInstance;
     }
