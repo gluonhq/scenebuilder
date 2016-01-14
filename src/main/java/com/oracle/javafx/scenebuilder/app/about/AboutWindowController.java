@@ -43,6 +43,7 @@ import java.util.Properties;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -53,7 +54,7 @@ import javafx.stage.WindowEvent;
 public final class AboutWindowController extends AbstractFxmlWindowController {
 
     @FXML
-    private VBox vbox;
+    private GridPane vbox;
     @FXML
     private TextArea textArea;
     
