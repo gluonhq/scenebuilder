@@ -5801,9 +5801,55 @@ public class Metadata {
         IncludeElementMetadata.getProperties().add(AnchorPane_leftAnchorPropertyMetadata);
         IncludeElementMetadata.getProperties().add(AnchorPane_rightAnchorPropertyMetadata);
         IncludeElementMetadata.getProperties().add(AnchorPane_topAnchorPropertyMetadata);
-
+        IncludeElementMetadata.getProperties().add(BorderPane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(BorderPane_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(FlowPane_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_columnIndexPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_columnSpanPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_halignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_hgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_rowIndexPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_rowSpanPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_valignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_vgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(HBox_hgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(HBox_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(StackPane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(StackPane_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(TilePane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(TilePane_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(VBox_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(VBox_vgrowPropertyMetadata);
 
+        IncludeElementMetadata.getProperties().add(layoutXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(layoutYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(paddingPropertyMetadata);
+
+        IncludeElementMetadata.getProperties().add(maxHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(maxWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(minHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(minWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(prefHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(prefWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(rotatePropertyMetadata);
+        IncludeElementMetadata.getProperties().add(rotationAxisPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleZPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateZPropertyMetadata);
+
+        IncludeElementMetadata.getProperties().add(layoutBoundsPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(boundsInLocalPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(boundsInParentPropertyMetadata);
+
+        IncludeElementMetadata.getProperties().add(baselineOffsetPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(resizable_Boolean_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(contentBiasPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(snapToPixelPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(effectiveNodeOrientationPropertyMetadata);
 
         // Populates hiddenProperties
         hiddenProperties.add(new PropertyName("activated"));

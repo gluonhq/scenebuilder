@@ -79,7 +79,7 @@ public class ModifySelectionJob extends BatchDocumentJob {
                 }
                 else if(fxomObject instanceof FXOMIntrinsic) {
                     FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
-                    Button btn = (Button) ((VBox) intrinsic.getSourceSceneGraphObject()).getChildren().get(0);
+//                    Button btn = (Button) ((VBox) intrinsic.getSourceSceneGraphObject()).getChildren().get(0);
                     FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getGlueElement());
                     fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
                     fxomInstance.setDeclaredClass(intrinsic.getClass());

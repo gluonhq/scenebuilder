@@ -650,14 +650,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
             propMetaSection.put(valuePropMeta.getInspectorPath(), valuePropMeta);
         }
-        System.out.println("continue 2: " + i);
-        System.out.println("propMetaSection: " + propMetaSection.size());
-        if (propMetaSection.isEmpty()) {
-            displayEmptyMessage(gridPane);
-            return;
-        }
 
-        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
         String currentSubSection = ""; //NOI18N
         int lineIndex = 0;
         if (sectionId == SectionId.CODE) {
@@ -668,6 +661,14 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             currentSubSection = FXID_SUBSECTION_NAME;
             lineIndex = addFxIdEditor(gridPane, lineIndex);
         }
+
+        if (propMetaSection.isEmpty()) {
+            displayEmptyMessage(gridPane);
+            return;
+        }
+
+        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
+
         Set<PropertyName> groupProperties = new HashSet<>();
         while (iter.hasNext()) {
             // Loop on properties
@@ -2117,7 +2118,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     }
                     else if(obj instanceof  FXOMIntrinsic) {
                         FXOMIntrinsic intrinsic = (FXOMIntrinsic) obj;
-                        Button btn = (Button) ((VBox) intrinsic.getSourceSceneGraphObject()).getChildren().get(0);
+//                        Button btn = (Button) ((VBox) intrinsic.getSourceSceneGraphObject()).getChildren().get(0);
                         FXOMInstance fxomInstance = new FXOMInstance(intrinsic.getFxomDocument(), intrinsic.getGlueElement());
                         fxomInstance.setSceneGraphObject(intrinsic.getSourceSceneGraphObject());
                         fxomInstance.setDeclaredClass(intrinsic.getClass());
