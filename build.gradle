@@ -21,7 +21,7 @@ dependencies {
 }
 
 group = 'com.gluonhq.scenebuilder'
-version = tryGetProperty('VERSION', '8.1.0-SNAPSHOT')
+version = tryGetProperty('VERSION', '8.1.0')
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
