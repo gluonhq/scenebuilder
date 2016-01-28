@@ -69,12 +69,12 @@ public class InsetsPropertyMetadata extends ComplexPropertyMetadata<Insets> {
     @Override
     public FXOMInstance makeFxomInstanceFromValue(Insets value, FXOMDocument fxomDocument) {
         final FXOMInstance result = new FXOMInstance(fxomDocument, getValueClass());
-        
+
         topMetadata.setValue(result, value.getTop());
         bottomMetadata.setValue(result, value.getBottom());
         leftMetadata.setValue(result, value.getLeft());
         rightMetadata.setValue(result, value.getRight());
-
+        result.setSceneGraphObject(value);
         return result;
     }
 

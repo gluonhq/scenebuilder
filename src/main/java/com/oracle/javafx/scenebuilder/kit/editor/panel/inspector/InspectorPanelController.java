@@ -182,6 +182,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> rectangle2DPopupEditorPool = new Stack<>();
     private final Stack<Editor> toggleGroupEditorPool = new Stack<>();
     private final Stack<Editor> buttonTypeEditorPool = new Stack<>();
+    private final Stack<Editor> includeFxmlEditorPool = new Stack<>();
     // ...
     //
     // Subsection title pool
@@ -277,6 +278,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(Rectangle2DPopupEditor.class, rectangle2DPopupEditorPool);
         editorPools.put(ToggleGroupEditor.class, toggleGroupEditorPool);
         editorPools.put(ButtonTypeEditor.class, buttonTypeEditorPool);
+        editorPools.put(IncludeFxmlEditor.class, includeFxmlEditorPool);
 
         // ...
     }
@@ -1334,6 +1336,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 case "id": //NOI18N
                     propertyEditor = makePropertyEditor(StringEditor.class, propMeta);
                     break;
+                case "charset":
+                    propertyEditor = makePropertyEditor(StringEditor.class, propMeta);
+                    break;
                 default:
                     propertyEditor = makePropertyEditor(I18nStringEditor.class, propMeta);
                     break;
@@ -1351,6 +1356,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     break;
                 case "dividerPositions": //NOI18N
                     propertyEditor = makePropertyEditor(DividerPositionsEditor.class, propMeta);
+                    break;
+                case "source": //NOI18N
+                    propertyEditor = makePropertyEditor(IncludeFxmlEditor.class, propMeta);
                     break;
                 default:
                     // Generic editor
@@ -1896,7 +1904,11 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 propertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
             }
-        } else {
+        }
+        else if(editorClass == IncludeFxmlEditor.class) {
+            propertyEditor = new IncludeFxmlEditor(propMeta, selectedClasses, getEditorController());
+        }
+        else {
             if (propertyEditor != null) {
                 ((GenericEditor) propertyEditor).reset(propMeta, selectedClasses);
             } else {
@@ -2161,6 +2173,18 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 }
             }
 
+            for (FXOMIntrinsic intrinsic : selectedIntrinsics) {
+                if (commonParentClass == null) {
+                    // first instance
+                    commonParentClass = getParentClass(intrinsic);
+                } else {
+                    if (getParentClass(intrinsic) != commonParentClass) {
+                        commonParentClass = null;
+                        break;
+                    }
+                }
+            }
+
             commonParentObject = null;
             for (FXOMInstance instance : selectedInstances) {
                 if (commonParentObject == null) {
@@ -2168,6 +2192,18 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     commonParentObject = instance.getParentObject();
                 } else {
                     if (instance.getParentObject() != commonParentObject) {
+                        commonParentObject = null;
+                        break;
+                    }
+                }
+            }
+
+            for (FXOMIntrinsic intrinsic : selectedIntrinsics) {
+                if (commonParentObject == null) {
+                    // first instance
+                    commonParentObject = intrinsic.getParentObject();
+                } else {
+                    if (intrinsic.getParentObject() != commonParentObject) {
                         commonParentObject = null;
                         break;
                     }
@@ -2206,7 +2242,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             return unresolvedInstances;
         }
 
-        private Class<?> getParentClass(FXOMInstance instance) {
+        private Class<?> getParentClass(FXOMObject instance) {
             FXOMObject parent = instance.getParentObject();
             if (parent == null) {
                 // root

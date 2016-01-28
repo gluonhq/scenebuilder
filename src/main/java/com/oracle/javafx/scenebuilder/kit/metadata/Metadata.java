@@ -202,7 +202,14 @@ public class Metadata {
             // FXOM object is unresolved
             result = null;
         } else {
-            final Class<?> componentClass = fxomInstance.getSceneGraphObject().getClass();
+            final Class<?> componentClass;
+            if(fxomInstance.getDeclaredClass() == FXOMIntrinsic.class) {
+                componentClass = fxomInstance.getDeclaredClass();
+            }
+            else {
+                componentClass = fxomInstance.getSceneGraphObject().getClass();
+            }
+
             final PropertyMetadata m = Metadata.getMetadata().queryProperty(componentClass, targetName);
             if (m instanceof ValuePropertyMetadata) {
                 result = (ValuePropertyMetadata) m;
@@ -1120,7 +1127,7 @@ public class Metadata {
             new PropertyName("style");
     private final PropertyName styleClassName = 
             new PropertyName("styleClass");
-    private final PropertyName stylesheetsName = 
+    private final PropertyName stylesheetsName =
             new PropertyName("stylesheets");
     private final PropertyName sweepFlagName = 
             new PropertyName("sweepFlag");
@@ -1308,6 +1315,10 @@ public class Metadata {
             new PropertyName("margin", javafx.scene.layout.VBox.class);
     private final PropertyName VBox_vgrowName = 
             new PropertyName("vgrow", javafx.scene.layout.VBox.class);
+    private final PropertyName source =
+            new PropertyName("source");
+    private final PropertyName charset  =
+                    new PropertyName("charset");
 
 
     // Property Metadata
@@ -4641,6 +4652,20 @@ public class Metadata {
                 true, /* readWrite */
                 new InspectorPath("Layout", "VBox Constraints", 0));
 
+    private final ValuePropertyMetadata includeFxmlPropertyMetadata =
+            new StringListPropertyMetadata(
+                    source,
+                    true, /* readWrite */
+                    Collections.emptyList(), /* defaultValue */
+                    new InspectorPath("Properties", "Include FXML file", 2));
+
+    private final ValuePropertyMetadata charsetPropertyMetadata =
+            new StringPropertyMetadata(
+                    charset,
+                    true, /* readWrite */
+                    "", /* defaultValue */
+                    new InspectorPath("Properties", "Charset for included FXML file", 10));
+
 
 
     private Metadata() {
@@ -5802,29 +5827,29 @@ public class Metadata {
         IncludeElementMetadata.getProperties().add(AnchorPane_rightAnchorPropertyMetadata);
         IncludeElementMetadata.getProperties().add(AnchorPane_topAnchorPropertyMetadata);
         IncludeElementMetadata.getProperties().add(BorderPane_alignmentPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(BorderPane_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(BorderPane_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(FlowPane_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_columnIndexPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_columnSpanPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_halignmentPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_hgrowPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(GridPane_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(GridPane_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_rowIndexPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_rowSpanPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_valignmentPropertyMetadata);
         IncludeElementMetadata.getProperties().add(GridPane_vgrowPropertyMetadata);
         IncludeElementMetadata.getProperties().add(HBox_hgrowPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(HBox_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(HBox_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(StackPane_alignmentPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(StackPane_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(StackPane_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(TilePane_alignmentPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(TilePane_marginPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(VBox_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(TilePane_marginPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(VBox_marginPropertyMetadata);
         IncludeElementMetadata.getProperties().add(VBox_vgrowPropertyMetadata);
 
         IncludeElementMetadata.getProperties().add(layoutXPropertyMetadata);
         IncludeElementMetadata.getProperties().add(layoutYPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(paddingPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(paddingPropertyMetadata);
 
         IncludeElementMetadata.getProperties().add(maxHeight_COMPUTED_PropertyMetadata);
         IncludeElementMetadata.getProperties().add(maxWidth_COMPUTED_PropertyMetadata);
@@ -5850,6 +5875,9 @@ public class Metadata {
         IncludeElementMetadata.getProperties().add(contentBiasPropertyMetadata);
         IncludeElementMetadata.getProperties().add(snapToPixelPropertyMetadata);
         IncludeElementMetadata.getProperties().add(effectiveNodeOrientationPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(includeFxmlPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(charsetPropertyMetadata);
+//        IncludeElementMetadata.getProperties().add(textPropertyMetadata);
 
         // Populates hiddenProperties
         hiddenProperties.add(new PropertyName("activated"));
