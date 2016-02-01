@@ -31,14 +31,31 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueAuxiliary;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import javafx.fxml.FXMLLoader;
 
 /**
@@ -66,6 +83,7 @@ class FXOMSaver {
      * Private
      */
     
+    private static final Logger LOG = Logger.getLogger(FXOMSaver.class.getName());
     private static final String NAME_SPACE_FX = "http://javafx.com/javafx/" + FXMLLoader.JAVAFX_VERSION;
     private static final String NAME_SPACE_FXML = "http://javafx.com/fxml/1";
     
@@ -100,32 +118,80 @@ class FXOMSaver {
     }
 
     private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
-        // Collects all the classes declared in the fxomdocument,
         // constructs the set of classes to be imported. No doubles allowed.
-        final Set<String> imports = new TreeSet<>(); // Sorted
-        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
-            imports.add(dc.getName());
-        });
-
-        // Creates a List of glue instruction for each class that was declared.
+        final Set<String> imports = new TreeSet<>(); // Sorted   
+        
+        //gets list of declared classes, declared classes are the ones directly used as a Node. 
+        //Example: <Button/> ; classname = javafx.scene.control.Button
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getName()));
+        
+        //gets the current list of imports in the FXML document
+        List<GlueInstruction> instructions = fxomDocument.getGlue().collectInstructions("import");
+       
+        //filters all not declared imports
+        List<String> importsToValidate = instructions.stream()
+                .map(instruction-> instruction.getData())
+                .filter(data -> !imports.contains(data))
+                .collect(Collectors.toList());
+        
+        //if there are any non delcared imports, then validate them if they are being used. 
+        //It will only look at attributes and not at the tag name, since tag names are already in the imports list.
+        if(!importsToValidate.isEmpty()){
+            imports.addAll(getValidImports(importsToValidate, fxomDocument.getGlue().toString()));
+        }
+        
+        return createGlueInstructionsForImports(fxomDocument, imports);
+    }
+    
+    // Creates a List of glue instruction for all imported classes.
+    private List<GlueInstruction> createGlueInstructionsForImports(FXOMDocument fxomDocument, Set<String> imports) {
         List<GlueInstruction> importsList = new ArrayList<>();
         imports.forEach(className -> {
             final GlueInstruction instruction = new GlueInstruction(fxomDocument.getGlue(), "import", className);
             importsList.add(instruction);
         });
-
         return importsList;
     }
 
     private void synchronizeHeader(GlueDocument glue, List<GlueInstruction> importList) {
-        List<GlueAuxiliary> temp = glue.getHeader();
-        synchronized (this) {
+        synchronized (this) {                 
             glue.getHeader().clear();
             glue.getHeader().addAll(importList);
-
-            if (!glue.getHeader().equals(importList))
-                glue.getHeader().addAll(temp);
         }
 
+    }
+
+    private List<String> getValidImports(List<String> importsToValidate, String fxml) {
+        // looks through the FXML if the import is actually being used as an attribute. Example: <Pane HBox.hgrow="ALWAYS"/>
+        List<String> validImports = new ArrayList<>();
+        try{
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(fxml)));
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        
+        importsToValidate.forEach(i -> {
+            String name = i.substring(i.lastIndexOf('.') + 1); //example: javafx.scene.layout.HBox -> HBox
+            String expression = "//@*[starts-with(name(.), '" + name + ".')]"; // example: looks in the Document for attribute 'HBox.'
+            if(isExpressionPresent(xpath, expression, doc)){
+                validImports.add(i);
+            }else{
+                LOG.log(Level.INFO, "No usage for the import  " + name + " was found, it will be removed");
+            }
+        });
+        
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+        
+        return validImports;
+    }
+    
+    private Boolean isExpressionPresent(XPath xpath, String expression, Document doc){
+        try {
+          //if there are nodes with the attribute it will add the import to the list of imports
+            return(((NodeList) xpath.evaluate(expression, doc, XPathConstants.NODESET)).getLength() > 0);
+        } catch (XPathExpressionException e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return false;     
     }
 }
