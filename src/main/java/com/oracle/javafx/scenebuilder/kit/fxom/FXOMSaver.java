@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -118,13 +119,27 @@ class FXOMSaver {
     }
 
     private void synchronizeHeader(GlueDocument glue, List<GlueInstruction> importList) {
-        List<GlueAuxiliary> temp = glue.getHeader();
         synchronized (this) {
-            glue.getHeader().clear();
-            glue.getHeader().addAll(importList);
+            // find out where the first import instruction is located
+            final int firstImportIndex;
+            List<GlueInstruction> existingImports = glue.collectInstructions("import");
+            if (existingImports.isEmpty()) {
+                firstImportIndex = 0;
+            } else {
+                GlueInstruction firstImport = existingImports.get(0);
+                firstImportIndex = glue.getHeader().indexOf(firstImport);
+            }
 
-            if (!glue.getHeader().equals(importList))
-                glue.getHeader().addAll(temp);
+            // remove previously defined imports and leave all other things (like comments and such) intact
+            for (Iterator<GlueAuxiliary> it = glue.getHeader().iterator(); it.hasNext();) {
+                GlueAuxiliary glueAuxiliary = it.next();
+                if (glueAuxiliary instanceof GlueInstruction && "import".equals(((GlueInstruction) glueAuxiliary).getTarget())) {
+                    it.remove();
+                }
+            }
+
+            // insert the import instructions at the first import index
+            glue.getHeader().addAll(firstImportIndex, importList);
         }
 
     }
