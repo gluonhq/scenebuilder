@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?language javascript?>
+
+<!-- This could be a license header -->
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.*?>
+
+<!-- A comment on top -->
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ComboBox layoutX="68.0" layoutY="61.0" prefWidth="150.0" />
+    </children>
+</AnchorPane>

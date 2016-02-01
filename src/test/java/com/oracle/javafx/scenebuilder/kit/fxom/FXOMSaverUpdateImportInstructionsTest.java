@@ -1,5 +1,6 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,14 +36,14 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @Test
     public void testEmptyFXML() throws IOException {
-        setupTestCase(1);
+        setupTestCase(FxmlTestInfo.EMPTY);
 
         assertTrue("fxml is empty", fxomDocument.getFxmlText().isEmpty());
     }
 
     @Test
     public void testNoWildcard() {
-        setupTestCase(2);
+        setupTestCase(FxmlTestInfo.NO_WILDCARD);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
@@ -59,7 +61,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @Test
     public void testUnusedImports() {
-        setupTestCase(3);
+        setupTestCase(FxmlTestInfo.UNUSED_IMPORTS);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
@@ -76,20 +78,20 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @Test
     public void testWithWildcard() {
-        setupTestCase(4);
+        setupTestCase(FxmlTestInfo.WITH_WILDCARD);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
             imports.add(dc.getName());
         });
 
-        assertFalse("fxml import does not contain  javafx.scene.*", imports.contains("javafx.scene.*"));
+        assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
 
     }
 
     @Test
     public void testWithMoreWildcards() {
-        setupTestCase(5);
+        setupTestCase(FxmlTestInfo.WITH_MORE_WILDCARDS);
 
         Set<String> imports = new TreeSet<>();
         // java.lang.* is not a declared class, therefore not in the imports Set
@@ -98,12 +100,12 @@ public class FXOMSaverUpdateImportInstructionsTest {
         });
 
         assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
-        assertFalse("fxml import does not contain javafx.scene.layout.*", imports.contains("javafx.control.*"));
+        assertFalse("fxml import does not contain javafx.scene.control.*", imports.contains("javafx.scene.control.*"));
     }
 
     @Test
     public void testDuplicates() {
-        setupTestCase(6);
+        setupTestCase(FxmlTestInfo.DUPLICATES);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
@@ -116,7 +118,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @Test
     public void testWildcardsAndDuplicates() {
-        setupTestCase(7);
+        setupTestCase(FxmlTestInfo.WILDCARDS_AND_DUPLICATES);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
@@ -133,7 +135,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @Test
     public void testCustomButton() {
-        setupTestCase(8);
+        setupTestCase(FxmlTestInfo.CUSTOM_BUTTON);
 
         Set<String> imports = new TreeSet<>();
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
@@ -152,42 +154,33 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     }
 
+    @Test
+    public void testImportsWithComments() {
+        setupTestCase(FxmlTestInfo.HEADER_WITH_NOT_ONLY_IMPORTS);
+
+        Set<String> imports = new TreeSet<>();
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
+            imports.add(dc.getName());
+        });
+
+        assertEquals("comment line should not be removed", 5, fxomDocument.getGlue().getHeader().size());
+
+        assertTrue("second glue node should be a comment", fxomDocument.getGlue().getHeader().get(1) instanceof GlueCharacters);
+        assertTrue("fifth glue node should be a comment", fxomDocument.getGlue().getHeader().get(4) instanceof GlueCharacters);
+
+        assertTrue("fxml does not contain javafx.scene.control.ComboBox",
+                imports.contains("javafx.scene.control.ComboBox"));
+        assertTrue("fxml does not contain javafx.scene.layout.AnchorPane",
+                imports.contains("javafx.scene.layout.AnchorPane"));
+
+    }
+
     private String callService() {
         return serviceUnderTest.save(fxomDocument);
     }
 
-    private void setupTestCase(int n) {
-        String fileName = null;
-        switch (n) {
-        case 1:
-            fileName = "Empty";
-            break;
-        case 2:
-            fileName = "NoWildcard";
-            break;
-        case 3:
-            fileName = "UnusedImports";
-            break;
-        case 4:
-            fileName = "WithWildcard";
-            break;
-        case 5:
-            fileName = "WithMoreWildcards";
-            break;
-        case 6:
-            fileName = "Duplicates";
-            break;
-        case 7:
-            fileName = "WildcardsAndDuplicates";
-            break;
-        case 8:
-            fileName = "CustomButton";
-            break;
-        default:
-            fileName = "NoFXMLFound";
-            break;
-        }
-        Path pathToFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/" + fileName + ".fxml");
+    private void setupTestCase(FxmlTestInfo n) {
+        Path pathToFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/" + n.getFilename() + ".fxml");
         Path pathToTestFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/testerFXML.fxml");
         try {
             Files.deleteIfExists(pathToTestFXML);
@@ -223,15 +216,34 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     // reads FXML file and gives it back as a String
     private static String getFxmlAsString(Path path) throws IOException {
-        List<String> fxml = null;
-        fxml = Files.readAllLines(path, StandardCharsets.UTF_8);
+        List<String> fxml = Files.readAllLines(path, StandardCharsets.UTF_8);
 
         StringBuilder sb = new StringBuilder();
         fxml.forEach(line -> {
-            sb.append(line + "\n");
+            sb.append(line).append('\n');
         });
 
         return sb.toString();
     }
 
+    private enum FxmlTestInfo {
+        CUSTOM_BUTTON("CustomButton"),
+        DUPLICATES("Duplicates"),
+        EMPTY("Empty"),
+        HEADER_WITH_NOT_ONLY_IMPORTS("HeaderWithNotOnlyImports"),
+        NO_WILDCARD("NoWildcard"),
+        UNUSED_IMPORTS("UnusedImports"),
+        WILDCARDS_AND_DUPLICATES("WildcardsAndDuplicates"),
+        WITH_MORE_WILDCARDS("WithMoreWildcards"),
+        WITH_WILDCARD("WithWildcard");
+
+        private String filename;
+        FxmlTestInfo(String filename) {
+            this.filename = filename;
+        }
+
+        String getFilename() {
+            return filename;
+        }
+    }
 }
