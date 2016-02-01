@@ -52,6 +52,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -174,16 +175,25 @@ class FXOMSaver {
             if(isExpressionPresent(xpath, expression, doc)){
                 validImports.add(i);
             }else{
-                LOG.log(Level.INFO, "No usage for the import  " + name + " was found, it will be removed");
+                LOG.log(Level.INFO, "No usage for the import  " + i + " was found, it will be removed");
             }
         });
         
+            List<String> wildcardImports = getWildcardImports(importsToValidate);
+            if (!wildcardImports.isEmpty()) {
+                Set<String> staticClasses = getAllStaticProperties(xpath, doc);
+                validImports.addAll(getWildCardClasses(wildcardImports, staticClasses));
+            }
+        
         } catch (SAXException | IOException | ParserConfigurationException e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
+        }  
+        
+        
         
         return validImports;
     }
+    
     
     private Boolean isExpressionPresent(XPath xpath, String expression, Document doc){
         try {
@@ -193,5 +203,59 @@ class FXOMSaver {
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
         return false;     
+    }
+    
+    private Set<String> getAllStaticProperties(XPath xpath, Document doc) {
+        Set<String> classNameList = new TreeSet<>();
+        String expression = "//@*[contains(name(.), '.')]";
+        try {
+            NodeList nodeList = (NodeList) xpath.evaluate(expression, doc, XPathConstants.NODESET);
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                String className = node.getNodeName();
+                className = className.substring(0, className.indexOf("."));
+                classNameList.add(className);
+            }
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+        return classNameList;
+    }
+
+    private List<String> getWildcardImports(List<String> importsToValidate) {
+        List<String> wildcardImports = new ArrayList<>();
+
+        importsToValidate.forEach(i -> {
+            if (i.endsWith(".*")) {
+                String wildcardImport = i.substring(0, i.lastIndexOf(".*"));
+                wildcardImports.add(wildcardImport);
+            }
+        });
+        return wildcardImports;
+    }
+
+    private ArrayList<String> getWildCardClasses(List<String> packages, Set<String> classes) {
+        ArrayList<String> validClasses = new ArrayList<>();
+        classes.forEach(c -> {
+            String theClass = validateClass(packages, c);
+            if (theClass != null) {
+                validClasses.add(theClass);
+            }
+        });
+        return validClasses;
+    }
+
+    private String validateClass(List<String> packages, String className) {
+        for (int i = 0; i < packages.size(); i++) {
+            String p = packages.get(i);
+            try {
+                Class<?> theClass = Class.forName(p + "." + className);
+                return theClass.getName();
+            } catch (ClassNotFoundException e) {
+                continue;
+            }
+        }
+
+        return null;
     }
 }
