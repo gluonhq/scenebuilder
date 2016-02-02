@@ -34,28 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javafx.fxml.FXMLLoader;
 
@@ -84,7 +68,6 @@ class FXOMSaver {
      * Private
      */
     
-    private static final Logger LOG = Logger.getLogger(FXOMSaver.class.getName());
     private static final String NAME_SPACE_FX = "http://javafx.com/javafx/" + FXMLLoader.JAVAFX_VERSION;
     private static final String NAME_SPACE_FXML = "http://javafx.com/fxml/1";
     
@@ -126,20 +109,23 @@ class FXOMSaver {
         //Example: <Button/> ; classname = javafx.scene.control.Button
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getName()));
         
-        //gets the current list of imports in the FXML document
-        List<GlueInstruction> instructions = fxomDocument.getGlue().collectInstructions("import");
-       
-        //filters all not declared imports
-        List<String> importsToValidate = instructions.stream()
-                .map(instruction-> instruction.getData())
-                .filter(data -> !imports.contains(data))
-                .collect(Collectors.toList());
+        FXOMInstance root = (FXOMInstance) fxomDocument.getFxomRoot();
+   
+        Set<String> foundClasses = root.getChildObjects().stream()
+            .map(fxomObject -> fxomObject.collectPropertiesT()) //list of lists containing FXOMProperties
+            .flatMap(list -> list.stream()) // add all to one list of FXOMProperties
+            .map(property -> property.getName()) // list of all PropertyNames
+            .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
+            .map(prop -> prop.getResidenceClass().getName()) // list of classes
+            .collect(Collectors.toSet()); // transform to set to not include doubles
         
-        //if there are any non delcared imports, then validate them if they are being used. 
-        //It will only look at attributes and not at the tag name, since tag names are already in the imports list.
-        if(!importsToValidate.isEmpty()){
-            imports.addAll(getValidImports(importsToValidate, fxomDocument.getGlue().toString()));
-        }
+        foundClasses.addAll(root.collectPropertiesT().stream() //same as above but for the root node
+                .map(p-> p.getName())
+                .filter(prop -> prop.getResidenceClass() != null)
+                .map(prop -> prop.getResidenceClass().getName())
+                .collect(Collectors.toSet()));
+        
+        imports.addAll(foundClasses); //adds all found classes, if nothing is found nothing will be added
         
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
@@ -162,100 +148,4 @@ class FXOMSaver {
 
     }
 
-    private List<String> getValidImports(List<String> importsToValidate, String fxml) {
-        // looks through the FXML if the import is actually being used as an attribute. Example: <Pane HBox.hgrow="ALWAYS"/>
-        List<String> validImports = new ArrayList<>();
-        try{
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(fxml)));
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        
-        importsToValidate.forEach(i -> {
-            String name = i.substring(i.lastIndexOf('.') + 1); //example: javafx.scene.layout.HBox -> HBox
-            String expression = "//@*[starts-with(name(.), '" + name + ".')]"; // example: looks in the Document for attribute 'HBox.'
-            if(isExpressionPresent(xpath, expression, doc)){
-                validImports.add(i);
-            }else{
-                LOG.log(Level.INFO, "No usage for the import  " + i + " was found, it will be removed");
-            }
-        });
-        
-            List<String> wildcardImports = getWildcardImports(importsToValidate);
-            if (!wildcardImports.isEmpty()) {
-                Set<String> staticClasses = getAllStaticProperties(xpath, doc);
-                validImports.addAll(getWildCardClasses(wildcardImports, staticClasses));
-            }
-        
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }  
-        
-        
-        
-        return validImports;
-    }
-    
-    
-    private Boolean isExpressionPresent(XPath xpath, String expression, Document doc){
-        try {
-          //if there are nodes with the attribute it will add the import to the list of imports
-            return(((NodeList) xpath.evaluate(expression, doc, XPathConstants.NODESET)).getLength() > 0);
-        } catch (XPathExpressionException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
-        return false;     
-    }
-    
-    private Set<String> getAllStaticProperties(XPath xpath, Document doc) {
-        Set<String> classNameList = new TreeSet<>();
-        String expression = "//@*[contains(name(.), '.')]";
-        try {
-            NodeList nodeList = (NodeList) xpath.evaluate(expression, doc, XPathConstants.NODESET);
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                String className = node.getNodeName();
-                className = className.substring(0, className.indexOf("."));
-                classNameList.add(className);
-            }
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
-        }
-        return classNameList;
-    }
-
-    private List<String> getWildcardImports(List<String> importsToValidate) {
-        List<String> wildcardImports = new ArrayList<>();
-
-        importsToValidate.forEach(i -> {
-            if (i.endsWith(".*")) {
-                String wildcardImport = i.substring(0, i.lastIndexOf(".*"));
-                wildcardImports.add(wildcardImport);
-            }
-        });
-        return wildcardImports;
-    }
-
-    private ArrayList<String> getWildCardClasses(List<String> packages, Set<String> classes) {
-        ArrayList<String> validClasses = new ArrayList<>();
-        classes.forEach(c -> {
-            String theClass = validateClass(packages, c);
-            if (theClass != null) {
-                validClasses.add(theClass);
-            }
-        });
-        return validClasses;
-    }
-
-    private String validateClass(List<String> packages, String className) {
-        for (int i = 0; i < packages.size(); i++) {
-            String p = packages.get(i);
-            try {
-                Class<?> theClass = Class.forName(p + "." + className);
-                return theClass.getName();
-            } catch (ClassNotFoundException e) {
-                continue;
-            }
-        }
-
-        return null;
-    }
 }
