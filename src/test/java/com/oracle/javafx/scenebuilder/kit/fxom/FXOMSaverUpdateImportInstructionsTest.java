@@ -1,5 +1,6 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -10,12 +11,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -151,6 +155,22 @@ public class FXOMSaverUpdateImportInstructionsTest {
         });
 
     }
+    
+    @Test
+    public void testWildcardsAndStaticProperties(){
+        setupTestCase(9);
+
+        ArrayList<String> imports = new ArrayList<>();
+        fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
+        
+        assertEquals("imports length should be 5", 5, imports.size());
+        assertTrue("HBox import was not found", imports.contains("javafx.scene.layout.HBox"));
+        assertTrue("VBox import was not found", imports.contains("javafx.scene.layout.VBox"));
+        
+        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") && imports.contains("java.scene.control.*"));
+
+    }
+    
 
     private String callService() {
         return serviceUnderTest.save(fxomDocument);
@@ -182,6 +202,9 @@ public class FXOMSaverUpdateImportInstructionsTest {
             break;
         case 8:
             fileName = "CustomButton";
+            break;
+        case 9:
+            fileName = "WildcardsAndStaticProperties";
             break;
         default:
             fileName = "NoFXMLFound";
