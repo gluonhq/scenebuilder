@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -175,6 +176,20 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     }
 
+    @Test
+    public void testWildcardsAndStaticProperties() {
+        setupTestCase(FxmlTestInfo.WILDCARDS_AND_STATIC_PROPERTIES);
+
+        ArrayList<String> imports = new ArrayList<>();
+        fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
+
+        assertEquals("imports length should be 5", 5, imports.size());
+        assertTrue("HBox import was not found", imports.contains("javafx.scene.layout.HBox"));
+        assertTrue("VBox import was not found", imports.contains("javafx.scene.layout.VBox"));
+
+        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") && imports.contains("java.scene.control.*"));
+    }
+
     private String callService() {
         return serviceUnderTest.save(fxomDocument);
     }
@@ -234,6 +249,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         NO_WILDCARD("NoWildcard"),
         UNUSED_IMPORTS("UnusedImports"),
         WILDCARDS_AND_DUPLICATES("WildcardsAndDuplicates"),
+        WILDCARDS_AND_STATIC_PROPERTIES("WildcardsAndStaticProperties"),
         WITH_MORE_WILDCARDS("WithMoreWildcards"),
         WITH_WILDCARD("WithWildcard");
 
