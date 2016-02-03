@@ -31,14 +31,15 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueAuxiliary;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
@@ -103,14 +104,14 @@ class FXOMSaver {
 
     private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
         // constructs the set of classes to be imported. No doubles allowed.
-        final Set<String> imports = new TreeSet<>(); // Sorted   
-        
-        //gets list of declared classes, declared classes are the ones directly used as a Node. 
+        final Set<String> imports = new TreeSet<>(); // Sorted
+
+        //gets list of declared classes, declared classes are the ones directly used as a Node.
         //Example: <Button/> ; classname = javafx.scene.control.Button
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getName()));
-        
+
         FXOMInstance root = (FXOMInstance) fxomDocument.getFxomRoot();
-   
+
         Set<String> foundClasses = root.getChildObjects().stream()
             .map(fxomObject -> fxomObject.collectPropertiesT()) //list of lists containing FXOMProperties
             .flatMap(list -> list.stream()) // add all to one list of FXOMProperties
@@ -118,18 +119,18 @@ class FXOMSaver {
             .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
             .map(prop -> prop.getResidenceClass().getName()) // list of classes
             .collect(Collectors.toSet()); // transform to set to not include doubles
-        
+
         foundClasses.addAll(root.collectPropertiesT().stream() //same as above but for the root node
                 .map(p-> p.getName())
                 .filter(prop -> prop.getResidenceClass() != null)
                 .map(prop -> prop.getResidenceClass().getName())
                 .collect(Collectors.toSet()));
-        
+
         imports.addAll(foundClasses); //adds all found classes, if nothing is found nothing will be added
-        
+
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
-    
+
     // Creates a List of glue instruction for all imported classes.
     private List<GlueInstruction> createGlueInstructionsForImports(FXOMDocument fxomDocument, Set<String> imports) {
         List<GlueInstruction> importsList = new ArrayList<>();
@@ -141,9 +142,27 @@ class FXOMSaver {
     }
 
     private void synchronizeHeader(GlueDocument glue, List<GlueInstruction> importList) {
-        synchronized (this) {                 
-            glue.getHeader().clear();
-            glue.getHeader().addAll(importList);
+        synchronized (this) {
+            // find out where the first import instruction is located
+            final int firstImportIndex;
+            List<GlueInstruction> existingImports = glue.collectInstructions("import");
+            if (existingImports.isEmpty()) {
+                firstImportIndex = 0;
+            } else {
+                GlueInstruction firstImport = existingImports.get(0);
+                firstImportIndex = glue.getHeader().indexOf(firstImport);
+            }
+
+            // remove previously defined imports and leave all other things (like comments and such) intact
+            for (Iterator<GlueAuxiliary> it = glue.getHeader().iterator(); it.hasNext();) {
+                GlueAuxiliary glueAuxiliary = it.next();
+                if (glueAuxiliary instanceof GlueInstruction && "import".equals(((GlueInstruction) glueAuxiliary).getTarget())) {
+                    it.remove();
+                }
+            }
+
+            // insert the import instructions at the first import index
+            glue.getHeader().addAll(firstImportIndex, importList);
         }
 
     }
