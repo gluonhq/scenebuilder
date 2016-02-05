@@ -33,19 +33,16 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueElement;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
 import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
  * 
  */
 public class FXOMIntrinsic extends FXOMObject {
-    
+
     public enum Type {
         FX_INCLUDE,
         FX_REFERENCE,
@@ -68,6 +65,16 @@ public class FXOMIntrinsic extends FXOMObject {
     public FXOMIntrinsic(FXOMDocument document, Type type, String source) {
         super(document, makeTagNameFromType(type));
         getGlueElement().getAttributes().put("source", source);
+    }
+
+    public void addCharsetProperty(FXOMDocument fxomDocument) {
+        final Map<String, String> attributes = this.getGlueElement().getAttributes();
+        if(attributes.containsKey("charset")) {
+            final String valueString = attributes.get("charset");
+            PropertyName charsetPropertyName = new PropertyName("charset");
+            FXOMProperty charsetProperty = new FXOMPropertyT(fxomDocument, charsetPropertyName, valueString);
+            this.getProperties().put(charsetPropertyName, charsetProperty);
+        }
     }
 
     public Type getType() {
@@ -94,7 +101,7 @@ public class FXOMIntrinsic extends FXOMObject {
     public String getSource() {
         return getGlueElement().getAttributes().get("source");
     }
-    
+
     public void setSource(String source) {
         if (source == null) {
             getGlueElement().getAttributes().remove("source");
@@ -102,7 +109,7 @@ public class FXOMIntrinsic extends FXOMObject {
             getGlueElement().getAttributes().put("source", source);
         }
     }
-
+    
     public Object getSourceSceneGraphObject() {
         return sourceSceneGraphObject;
     }
