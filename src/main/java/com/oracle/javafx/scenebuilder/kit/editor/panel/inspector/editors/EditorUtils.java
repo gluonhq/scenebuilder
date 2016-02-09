@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.PopupEditor;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
@@ -83,6 +84,7 @@ import javafx.scene.layout.RowConstraints;
 public class EditorUtils {
 
     static final String[] FXML_RESERVED_KEYWORDS = {"null"}; //NOI18N
+    private static final String FXINCLUDE_JAVADOC_URL = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html#include_elements";
 
     public static void makeWidthStretchable(final Node node) {
         Parent p = node.getParent();
@@ -413,32 +415,38 @@ public class EditorUtils {
 
     protected static void openUrl(Set<Class<?>> selectedClasses, ValuePropertyMetadata propMeta) throws IOException {
         Class<?> clazz = null;
+        String url = "";
         // In case of static property, we don't care of the selectedClasses
         if (selectedClasses != null) {
             for (Class<?> cl : selectedClasses) {
                 clazz = cl;
             }
         }
-        PropertyName propertyName = propMeta.getName();
-        if (propMeta.isStaticProperty()) {
-            clazz = propertyName.getResidenceClass();
-        } else {
-            clazz = getDefiningClass(clazz, propertyName).getKlass();
+        if(clazz == FXOMIntrinsic.class) {
+            url = FXINCLUDE_JAVADOC_URL;
         }
-        String propNameStr = propertyName.getName();
-        // First char in uppercase
-        propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
-        String methodName;
-        if (propMeta.getValueClass() == Boolean.class) {
-            methodName = "is" + propNameStr + "--"; //NOI18N
-        } else if (propMeta.isStaticProperty()) {
-            methodName = "get" + propNameStr + "-" + Node.class.getName() + "-"; //NOI18N
-        } else {
-            methodName = "get" + propNameStr + "--"; //NOI18N
-        }
+        else {
+            PropertyName propertyName = propMeta.getName();
+            if (propMeta.isStaticProperty()) {
+                clazz = propertyName.getResidenceClass();
+            } else {
+                clazz = getDefiningClass(clazz, propertyName).getKlass();
+            }
+            String propNameStr = propertyName.getName();
+            // First char in uppercase
+            propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
+            String methodName;
+            if (propMeta.getValueClass() == Boolean.class) {
+                methodName = "is" + propNameStr + "--"; //NOI18N
+            } else if (propMeta.isStaticProperty()) {
+                methodName = "get" + propNameStr + "-" + Node.class.getName() + "-"; //NOI18N
+            } else {
+                methodName = "get" + propNameStr + "--"; //NOI18N
+            }
 
-        String url = EditorPlatform.JAVADOC_HOME + clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
-        url += "#" + methodName; //NOI18N
+            url = EditorPlatform.JAVADOC_HOME + clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
+            url += "#" + methodName; //NOI18N
+        }
         EditorPlatform.open(url);
     }
 
