@@ -63,7 +63,13 @@ class FXOMRefresher {
                                         document.getResources(),
                                         false /* normalized */);
             final TransientStateBackup backup = new TransientStateBackup(document);
-            refreshDocument(document, newDocument);
+            // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
+            if(newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {
+                removeIntrinsicProperty(document);
+            }
+             else {
+                refreshDocument(document, newDocument);
+            }
             backup.restore();
             synchronizeDividerPositions(document);
         } catch(RuntimeException|IOException x) {
@@ -87,13 +93,21 @@ class FXOMRefresher {
             throw new IllegalStateException(sb.toString(), x);
         }
     }
+
+    private void removeIntrinsicProperty(FXOMDocument document) {
+        FXOMInstance fxomRoot = (FXOMInstance) document.getFxomRoot();
+        FXOMPropertyC propertyC = (FXOMPropertyC) fxomRoot.getProperties().get(new PropertyName("children"));
+        if(propertyC.getValues().get(0) instanceof FXOMIntrinsic) {
+            FXOMIntrinsic fxomIntrinsic = (FXOMIntrinsic) propertyC.getValues().get(0);
+            fxomIntrinsic.removeCharsetProperty();
+        }
+    }
     
     /*
      * Private (stylesheet)
      */
     
     private void refreshDocument(FXOMDocument currentDocument, FXOMDocument newDocument) {
-        
         // Transfers scene graph object from newDocument to currentDocument
         currentDocument.setSceneGraphRoot(newDocument.getSceneGraphRoot());
         

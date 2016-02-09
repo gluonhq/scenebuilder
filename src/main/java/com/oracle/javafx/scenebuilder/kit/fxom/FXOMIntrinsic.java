@@ -43,6 +43,8 @@ import java.util.*;
  */
 public class FXOMIntrinsic extends FXOMObject {
 
+    private static final String CHARSET_PROPERTY = "charset";
+
     public enum Type {
         FX_INCLUDE,
         FX_REFERENCE,
@@ -69,11 +71,20 @@ public class FXOMIntrinsic extends FXOMObject {
 
     public void addCharsetProperty(FXOMDocument fxomDocument) {
         final Map<String, String> attributes = this.getGlueElement().getAttributes();
-        if(attributes.containsKey("charset")) {
-            final String valueString = attributes.get("charset");
-            PropertyName charsetPropertyName = new PropertyName("charset");
+        if(attributes.containsKey(CHARSET_PROPERTY)) {
+            final String valueString = attributes.get(CHARSET_PROPERTY);
+            PropertyName charsetPropertyName = new PropertyName(CHARSET_PROPERTY);
             FXOMProperty charsetProperty = new FXOMPropertyT(fxomDocument, charsetPropertyName, valueString);
             this.getProperties().put(charsetPropertyName, charsetProperty);
+        }
+    }
+
+    public void removeCharsetProperty() {
+        final Map<String, String> attributes = this.getGlueElement().getAttributes();
+        if(attributes.containsKey(CHARSET_PROPERTY)) {
+            attributes.remove(CHARSET_PROPERTY);
+            PropertyName charsetPropertyName = new PropertyName(CHARSET_PROPERTY);
+            this.getProperties().remove(charsetPropertyName);
         }
     }
 

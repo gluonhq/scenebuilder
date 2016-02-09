@@ -31,6 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.sun.javafx.fxml.LoadListener;
@@ -38,6 +40,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+
+import com.sun.org.apache.xalan.internal.xsltc.runtime.ErrorMessages_ja;
 import javafx.fxml.FXMLLoader;
 
 
@@ -80,15 +85,30 @@ class FXOMLoader implements LoadListener {
         Deprecation.setLoadListener(fxmlLoader, this);
 
         final Charset utf8 = Charset.forName("UTF-8");
+        Object sceneGraphRoot = null;
         try (final InputStream is = new ByteArrayInputStream(fxmlText.getBytes(utf8))) {
             glueCursor = new GlueCursor(document.getGlue());
             currentTransientNode = null;
             assert is.markSupported();
             is.reset();
-            document.setSceneGraphRoot(fxmlLoader.load(is));
+            sceneGraphRoot = fxmlLoader.load(is);
         } catch (RuntimeException | IOException x) {
-            throw new IOException(x);
+            if(x.getCause().getClass() == UnsupportedCharsetException.class) {
+                handleUnsupportedCharset(x);
+            }
+            else
+                throw new IOException(x);
         }
+        document.setSceneGraphRoot(sceneGraphRoot);
+    }
+
+    private void handleUnsupportedCharset(Exception x) {
+        final ErrorDialog errorDialog = new ErrorDialog(null);
+        errorDialog.setMessage(I18N.getString("alert.open.failure.charset.not.found"));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.charset.not.found.details"));
+        errorDialog.setDebugInfo(x.getCause().toString());
+        errorDialog.setTitle(I18N.getString("alert.title.open"));
+        errorDialog.showAndWait();
     }
 
     public FXOMDocument getDocument() {
