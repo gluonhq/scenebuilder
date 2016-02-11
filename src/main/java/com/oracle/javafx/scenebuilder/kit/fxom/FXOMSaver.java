@@ -108,7 +108,7 @@ class FXOMSaver {
 
         //gets list of declared classes, declared classes are the ones directly used as a Node.
         //Example: <Button/> ; classname = javafx.scene.control.Button
-        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getName()));
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getCanonicalName()));
 
         FXOMInstance root = (FXOMInstance) fxomDocument.getFxomRoot();
 

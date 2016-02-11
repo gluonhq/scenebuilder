@@ -187,7 +187,21 @@ public class FXOMSaverUpdateImportInstructionsTest {
         assertTrue("HBox import was not found", imports.contains("javafx.scene.layout.HBox"));
         assertTrue("VBox import was not found", imports.contains("javafx.scene.layout.VBox"));
 
-        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") && imports.contains("java.scene.control.*"));
+        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") || imports.contains("java.scene.control.*"));
+    }
+
+    @Test
+    public void testPublicStaticImport() {
+        setupTestCase(FxmlTestInfo.PUBLIC_STATIC_IMPORT);
+
+        ArrayList<String> imports = new ArrayList();
+        fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
+
+        assertEquals("imports length should be 4", 4, imports.size());
+        assertTrue("Lighting import was not found.", imports.contains("javafx.scene.effect.Lighting"));
+        assertTrue("Light.Distant import was not found.", imports.contains("javafx.scene.effect.Light.Distant"));
+
+        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*"));
     }
 
     private String callService() {
@@ -251,7 +265,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
         WILDCARDS_AND_DUPLICATES("WildcardsAndDuplicates"),
         WILDCARDS_AND_STATIC_PROPERTIES("WildcardsAndStaticProperties"),
         WITH_MORE_WILDCARDS("WithMoreWildcards"),
-        WITH_WILDCARD("WithWildcard");
+        WITH_WILDCARD("WithWildcard"),
+        PUBLIC_STATIC_IMPORT("PublicStaticImport");
 
         private String filename;
         FxmlTestInfo(String filename) {
