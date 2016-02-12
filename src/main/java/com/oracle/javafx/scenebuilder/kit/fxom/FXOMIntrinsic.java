@@ -77,6 +77,13 @@ public class FXOMIntrinsic extends FXOMObject {
             FXOMProperty charsetProperty = new FXOMPropertyT(fxomDocument, charsetPropertyName, valueString);
             this.getProperties().put(charsetPropertyName, charsetProperty);
         }
+
+        if(attributes.containsKey("source")) {
+            final String valueString = attributes.get("source");
+            PropertyName sourcePropertyName = new PropertyName("source");
+            FXOMProperty sourceProperty = new FXOMPropertyT(fxomDocument, sourcePropertyName, valueString);
+            this.getProperties().put(sourcePropertyName, sourceProperty);
+        }
     }
 
     public void removeCharsetProperty() {

@@ -3,17 +3,23 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import javafx.event.ActionEvent;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,7 +29,6 @@ public class IncludeFxmlEditor extends InlineListEditor {
 
     private final StackPane root = new StackPane();
     private EditorController editorController;
-    private Parent rootInitialBt;
     @FXML
     private Button includeFxmlButton;
     @FXML
@@ -36,10 +41,26 @@ public class IncludeFxmlEditor extends InlineListEditor {
     }
 
     private void initialize() {
-        rootInitialBt = EditorUtils.loadFxml("IncludeFXMLButton.fxml", this); //NOI18N
+        Parent rootInitialBt = EditorUtils.loadFxml("IncludeFXMLButton.fxml", this);
+        Tooltip tooltip = new Tooltip("Include FXML");
+        includeFxmlButton.setTooltip(tooltip);
         root.getChildren().add(rootInitialBt);
-        if (editorController.getIncludedFile() != null) {
-            includeFxmlField.setText(editorController.getIncludedFile().getAbsolutePath());
+    }
+
+    @Override
+    public Node getValueEditor() {
+        return super.handleGenericModes(root);
+    }
+
+    @Override
+    public void setValue(Object value) {
+        if (value instanceof Collection) {
+            Collection<?> collection = (Collection<?>) value;
+            Iterator<?> it = collection.iterator();
+            while (it.hasNext()) {
+                Object obj = it.next();
+                includeFxmlField.setText(obj.toString());
+            }
         }
     }
 
@@ -49,46 +70,25 @@ public class IncludeFxmlEditor extends InlineListEditor {
     }
 
     @Override
-    public void setValue(Object value) {
-
-    }
-
-    @Override
-    public void requestFocus() {
-
-    }
-
-    @Override
-    public Node getValueEditor() {
-        return super.handleGenericModes(root);
-    }
-
-    private void switchToInitialButton() {
-        // Replace the item list (vbox) by initial button
-        root.getChildren().clear();
-        root.getChildren().add(rootInitialBt);
-    }
+    public void requestFocus() {}
 
     @FXML
-    void chooseFxml(ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
-        final FileChooser.ExtensionFilter f
-                = new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"),
-                "*.fxml"); //NOI18N
-
-        setInitialDirectory(fileChooser);
-        File fxmlFile = fileChooser.showOpenDialog(root.getScene().getWindow());
+    public void addIncludeFile() {
+        File fxmlFile = chooseFxml();
         if (fxmlFile != null) {
-            // See DTL-5948: on Linux we anticipate an extension less path.
-            final String path = fxmlFile.getPath();
-            if (!path.endsWith(".fxml")) { //NOI18N
-                fxmlFile = new File(path + ".fxml"); //NOI18N
-            }
-            // Keep track of the user choice for next time
             EditorController.updateNextInitialDirectory(fxmlFile);
             editorController.performIncludeFxml(fxmlFile);
-            includeFxmlField.setText(fxmlFile.getAbsolutePath());
+            includeFxmlField.setText(getRelativePath(fxmlFile));
         }
+    }
+
+    private File chooseFxml() {
+        final FileChooser fileChooser = new FileChooser();
+        final FileChooser.ExtensionFilter filter
+                = new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"), "*.fxml");
+        fileChooser.getExtensionFilters().add(filter);
+        setInitialDirectory(fileChooser);
+        return fileChooser.showOpenDialog(root.getScene().getWindow());
     }
 
     private void setInitialDirectory(FileChooser fileChooser) {
@@ -101,4 +101,22 @@ public class IncludeFxmlEditor extends InlineListEditor {
         }
     }
 
+    private String getRelativePath(File includedFile) {
+        URL url;
+        try {
+            url = includedFile.toURI().toURL();
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Invalid URL", ex);
+        }
+        String prefixedValue = PrefixedValue.makePrefixedValue(url, editorController.getFxmlLocation()).toString();
+        return removeAtSign(prefixedValue);
+    }
+
+    private String removeAtSign(String prefixedValue) {
+        String prefixedValueWithNoAt = "";
+        if (prefixedValue.contains("@")) {
+            prefixedValueWithNoAt = prefixedValue.replace("@", "");
+        }
+        return prefixedValueWithNoAt;
+    }
 }
