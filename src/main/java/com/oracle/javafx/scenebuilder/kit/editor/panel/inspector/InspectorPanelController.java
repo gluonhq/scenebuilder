@@ -81,6 +81,7 @@ import javafx.scene.layout.*;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -183,6 +184,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> toggleGroupEditorPool = new Stack<>();
     private final Stack<Editor> buttonTypeEditorPool = new Stack<>();
     private final Stack<Editor> includeFxmlEditorPool = new Stack<>();
+    private final Stack<Editor> charsetEditorPool = new Stack<>();
     // ...
     //
     // Subsection title pool
@@ -279,6 +281,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(ToggleGroupEditor.class, toggleGroupEditorPool);
         editorPools.put(ButtonTypeEditor.class, buttonTypeEditorPool);
         editorPools.put(IncludeFxmlEditor.class, includeFxmlEditorPool);
+        editorPools.put(CharsetEditor.class, charsetEditorPool);
 
         // ...
     }
@@ -1337,7 +1340,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(StringEditor.class, propMeta);
                     break;
                 case "charset":
-                    propertyEditor = makePropertyEditor(StringEditor.class, propMeta);
+                    propertyEditor = makePropertyEditor(CharsetEditor.class, propMeta);
                     break;
                 default:
                     propertyEditor = makePropertyEditor(I18nStringEditor.class, propMeta);
@@ -1908,6 +1911,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         else if(editorClass == IncludeFxmlEditor.class) {
             propertyEditor = new IncludeFxmlEditor(propMeta, selectedClasses, getEditorController());
         }
+        else if(editorClass == CharsetEditor.class) {
+            propertyEditor = createOrResetCharsetEditor(propertyEditor, selectedClasses, propMeta);
+        }
         else {
             if (propertyEditor != null) {
                 ((GenericEditor) propertyEditor).reset(propMeta, selectedClasses);
@@ -1915,9 +1921,24 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 propertyEditor = new GenericEditor(propMeta, selectedClasses);
             }
         }
-        propertyEditor.setUpdateFromModel(false);
+        if(propertyEditor != null)
+            propertyEditor.setUpdateFromModel(false);
 
         return propertyEditor;
+    }
+
+    private PropertyEditor createOrResetCharsetEditor(PropertyEditor propertyEditor, Set<Class<?>> selectedClasses, ValuePropertyMetadata propMeta) {
+        PropertyEditor newPropertyEditor = null;
+        if (propMeta instanceof StringPropertyMetadata) {
+            StringPropertyMetadata propertyMetadata = (StringPropertyMetadata) propMeta;
+            if (propertyEditor != null) {
+                newPropertyEditor = propertyEditor;
+                ((CharsetEditor) propertyEditor).reset(propMeta, selectedClasses, CharsetEditor.getAvailableCharsets(propertyMetadata));
+            } else {
+                newPropertyEditor = new CharsetEditor(propMeta, selectedClasses, CharsetEditor.getAvailableCharsets(propertyMetadata));
+            }
+        }
+        return newPropertyEditor;
     }
 
     private PropertiesEditor makePropertiesEditor(Class<? extends Editor> editorClass, ValuePropertyMetadata[] propMetas) {
