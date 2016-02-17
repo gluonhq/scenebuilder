@@ -45,6 +45,7 @@ public class IncludeFxmlEditor extends InlineListEditor {
         Tooltip tooltip = new Tooltip("Include FXML");
         includeFxmlButton.setTooltip(tooltip);
         root.getChildren().add(rootInitialBt);
+        super.disableResetValueMenuItem();
     }
 
     @Override

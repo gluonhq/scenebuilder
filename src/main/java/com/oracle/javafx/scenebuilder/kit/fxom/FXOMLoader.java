@@ -31,11 +31,14 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.sun.javafx.fxml.LoadListener;
 import javafx.fxml.FXMLLoader;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,8 +91,20 @@ class FXOMLoader implements LoadListener {
             is.reset();
             document.setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
-            throw new IOException(x);
+            if (x.getCause().getClass() == XMLStreamException.class) {
+                handleUnsupportedCharset(x);
+            } else
+                throw new IOException(x);
         }
+    }
+
+    private void handleUnsupportedCharset(Exception x) {
+        final ErrorDialog errorDialog = new ErrorDialog(null);
+        errorDialog.setMessage(I18N.getString("alert.open.failure.charset.not.found"));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.charset.not.found.details"));
+        errorDialog.setDebugInfo(x.getCause().toString());
+        errorDialog.setTitle(I18N.getString("alert.title.open"));
+        errorDialog.showAndWait();
     }
 
     public FXOMDocument getDocument() {
