@@ -5,10 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Editor for setting a charset property of an included element.
@@ -79,6 +77,24 @@ public class CharsetEditor extends AutoSuggestEditor {
     public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses,
                       Map<String, Charset> constants) {
         super.reset(propMeta, selectedClasses, new ArrayList<>(constants.keySet()));
+    }
+
+    /**
+     * For the performance, it is much better to use standard charsets, than Charset.availableCharsets().
+     * Need to be static!
+     *
+     * @return Map with the standard charsets.
+     */
+    public static Map<String, Charset> getStandardCharsets() {
+        System.out.println("getStandardCharsets");
+        Map<String, Charset> charsets = new HashMap<>();
+        charsets.put("UTF-8", StandardCharsets.UTF_8);
+        charsets.put("UTF-16", StandardCharsets.UTF_16);
+        charsets.put("UTF-16BE", StandardCharsets.UTF_16BE);
+        charsets.put("UTF-16LE", StandardCharsets.UTF_16LE);
+        charsets.put("US-ASCII", StandardCharsets.US_ASCII);
+        charsets.put("ISO-8859-1", StandardCharsets.ISO_8859_1);
+        return charsets;
     }
 
     private boolean isValidValue(String value) {

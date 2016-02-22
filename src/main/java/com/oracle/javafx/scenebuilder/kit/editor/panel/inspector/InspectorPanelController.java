@@ -223,7 +223,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     public InspectorPanelController(EditorController editorController) {
         super(InspectorPanelController.class.getResource(fxmlFile), I18N.getBundle(), editorController);
         this.editorController = editorController;
-        this.availableCharsets = Charset.availableCharsets();
+        this.availableCharsets = CharsetEditor.getStandardCharsets();
         viewModeProperty.setValue(ViewMode.SECTION);
         viewModeProperty.addListener(new ChangeListener<ViewMode>() {
             @Override
