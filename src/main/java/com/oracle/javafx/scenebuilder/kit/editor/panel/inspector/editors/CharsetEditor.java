@@ -86,7 +86,6 @@ public class CharsetEditor extends AutoSuggestEditor {
      * @return Map with the standard charsets.
      */
     public static Map<String, Charset> getStandardCharsets() {
-        System.out.println("getStandardCharsets");
         Map<String, Charset> charsets = new HashMap<>();
         charsets.put("UTF-8", StandardCharsets.UTF_8);
         charsets.put("UTF-16", StandardCharsets.UTF_16);
