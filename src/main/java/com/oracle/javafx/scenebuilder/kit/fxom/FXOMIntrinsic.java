@@ -38,12 +38,13 @@ import java.net.URL;
 import java.util.*;
 
 /**
- *
+ * FXOM for special elements like includes or references.
  * 
  */
 public class FXOMIntrinsic extends FXOMObject {
 
     private static final String CHARSET_PROPERTY = "charset";
+    private static final String SOURCE_PROPERTY = "source";
 
     public enum Type {
         FX_INCLUDE,
@@ -66,24 +67,24 @@ public class FXOMIntrinsic extends FXOMObject {
     
     public FXOMIntrinsic(FXOMDocument document, Type type, String source) {
         super(document, makeTagNameFromType(type));
-        getGlueElement().getAttributes().put("source", source);
+        getGlueElement().getAttributes().put(SOURCE_PROPERTY, source);
     }
 
     public void addCharsetProperty(FXOMDocument fxomDocument) {
         final Map<String, String> attributes = this.getGlueElement().getAttributes();
         if(attributes.containsKey(CHARSET_PROPERTY)) {
-            final String valueString = attributes.get(CHARSET_PROPERTY);
-            PropertyName charsetPropertyName = new PropertyName(CHARSET_PROPERTY);
-            FXOMProperty charsetProperty = new FXOMPropertyT(fxomDocument, charsetPropertyName, valueString);
-            this.getProperties().put(charsetPropertyName, charsetProperty);
+            createAndInsertProperty(attributes, fxomDocument, CHARSET_PROPERTY);
         }
+        if(attributes.containsKey(SOURCE_PROPERTY)) {
+            createAndInsertProperty(attributes, fxomDocument, SOURCE_PROPERTY);
+        }
+    }
 
-        if(attributes.containsKey("source")) {
-            final String valueString = attributes.get("source");
-            PropertyName sourcePropertyName = new PropertyName("source");
-            FXOMProperty sourceProperty = new FXOMPropertyT(fxomDocument, sourcePropertyName, valueString);
-            this.getProperties().put(sourcePropertyName, sourceProperty);
-        }
+    private void createAndInsertProperty(Map<String, String> attributes, FXOMDocument fxomDocument, String propertyKey) {
+        final String valueString = attributes.get(propertyKey);
+        PropertyName propertyName = new PropertyName(propertyKey);
+        FXOMProperty property = new FXOMPropertyT(fxomDocument, propertyName, valueString);
+        this.getProperties().put(propertyName, property);
     }
 
     public void removeCharsetProperty() {
@@ -117,14 +118,14 @@ public class FXOMIntrinsic extends FXOMObject {
     }
     
     public String getSource() {
-        return getGlueElement().getAttributes().get("source");
+        return getGlueElement().getAttributes().get(SOURCE_PROPERTY);
     }
 
     public void setSource(String source) {
         if (source == null) {
-            getGlueElement().getAttributes().remove("source");
+            getGlueElement().getAttributes().remove(SOURCE_PROPERTY);
         } else {
-            getGlueElement().getAttributes().put("source", source);
+            getGlueElement().getAttributes().put(SOURCE_PROPERTY, source);
         }
     }
     
@@ -144,6 +145,16 @@ public class FXOMIntrinsic extends FXOMObject {
         for (FXOMProperty p : properties.values()) {
             this.properties.put(p.getName(), p);
         }
+    }
+
+    public FXOMInstance createFxomInstanceFromIntrinsic() {
+        FXOMInstance fxomInstance = new FXOMInstance(this.getFxomDocument(), this.getGlueElement());
+        fxomInstance.setSceneGraphObject(this.getSourceSceneGraphObject());
+        fxomInstance.setDeclaredClass(this.getClass());
+        if(!this.getProperties().isEmpty()) {
+            fxomInstance.fillProperties(this.getProperties());
+        }
+        return fxomInstance;
     }
 
     /*

@@ -409,7 +409,7 @@ public class FXOMInstance extends FXOMObject {
         }
     }
 
-    
+
     /*
      * Package
      */
@@ -428,8 +428,14 @@ public class FXOMInstance extends FXOMObject {
         properties.remove(property.getName());
         
     }
-    
-    
+
+    public void fillProperties(Map<PropertyName, FXOMProperty> properties ) {
+        for (FXOMProperty p : properties.values()) {
+            this.properties.put(p.getName(), p);
+            p.setParentInstance(this);
+        }
+    }
+
     /*
      * Private
      */
@@ -437,13 +443,6 @@ public class FXOMInstance extends FXOMObject {
     private void resetRootProperties() {
         if (isFxRoot()) {
             toggleFxRoot();
-        }
-    }
-
-    public void fillProperties(Map<PropertyName, FXOMProperty> properties ) {
-        for (FXOMProperty p : properties.values()) {
-            this.properties.put(p.getName(), p);
-            p.setParentInstance(this);
         }
     }
 }

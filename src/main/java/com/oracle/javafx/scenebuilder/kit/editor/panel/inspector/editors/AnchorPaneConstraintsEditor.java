@@ -129,7 +129,6 @@ public class AnchorPaneConstraintsEditor extends PropertiesEditor {
             ValuePropertyMetadata bottomPropMeta,
             ValuePropertyMetadata leftPropMeta,
             Set<FXOMInstance> selectedInstances) {
-        System.out.println("RESET!!!!");
         contraintEditors.get(0).reset(selectedInstances, topPropMeta);
         contraintEditors.get(1).reset(selectedInstances, rightPropMeta);
         contraintEditors.get(2).reset(selectedInstances, bottomPropMeta);
@@ -294,7 +293,6 @@ public class AnchorPaneConstraintsEditor extends PropertiesEditor {
 
         @Override
         public void setValue(Object value) {
-            System.out.println("Set Value: " + value);
             setValueGeneric(value);
             if (isSetValueDone()) {
                 return;

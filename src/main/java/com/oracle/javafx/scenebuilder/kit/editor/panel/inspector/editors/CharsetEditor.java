@@ -1,7 +1,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
@@ -20,11 +19,11 @@ public class CharsetEditor extends AutoSuggestEditor {
 
     public CharsetEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses, Map<String, Charset> availableCharsets) {
         super(propMeta, selectedClasses, new ArrayList<>(availableCharsets.keySet()), Type.ALPHA);
-        initialize(availableCharsets);
+        this.availableCharsets = availableCharsets;
+        initialize();
     }
 
-    private void initialize(Map<String, Charset> availableCharsets) {
-        this.availableCharsets = availableCharsets;
+    private void initialize() {
         EventHandler<ActionEvent> onActionListener = event -> {
             if (isHandlingError()) {
                 // Event received because of focus lost due to error dialog
@@ -49,7 +48,7 @@ public class CharsetEditor extends AutoSuggestEditor {
             getTextField().setText(val);
             return String.valueOf(val);
         }
-        Object constantValue = availableCharsets.get(val.toUpperCase(Locale.ROOT));
+        Object constantValue = this.availableCharsets.get(val.toUpperCase(Locale.ROOT));
         if (constantValue != null) {
             val = EditorUtils.valAsStr(constantValue);
         }
@@ -58,18 +57,18 @@ public class CharsetEditor extends AutoSuggestEditor {
 
     @Override
     public void setValue(Object value) {
-        setValueGeneric(value);
+        Object changedValue = value;
+        setValueGeneric(changedValue);
         if (isSetValueDone()) {
             return;
         }
-        assert (value instanceof String);
         // Get the corresponding constant if any
-        for (Map.Entry<String, Charset> entry : availableCharsets.entrySet()) {
-            if (value.equals(entry.getValue())) {
-                value = entry.getKey();
+        for (Map.Entry<String, Charset> entry : this.availableCharsets.entrySet()) {
+            if (changedValue.equals(entry.getValue())) {
+                changedValue = entry.getKey();
             }
         }
-        getTextField().setText(EditorUtils.valAsStr(value));
+        getTextField().setText(EditorUtils.valAsStr(changedValue));
     }
 
     @Override
@@ -80,24 +79,13 @@ public class CharsetEditor extends AutoSuggestEditor {
     public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses,
                       Map<String, Charset> constants) {
         super.reset(propMeta, selectedClasses, new ArrayList<>(constants.keySet()));
-        this.availableCharsets = constants;
     }
 
     private boolean isValidValue(String value) {
         boolean valid = false;
-        if (Charset.availableCharsets().containsKey(value)) {
+        if (this.availableCharsets.containsKey(value)) {
             valid = true;
         }
         return valid;
-    }
-
-    /**
-     * Gets the collection of charsets, which are available for the current JVM.
-     *
-     * @param propertyMetadata value property metadata
-     * @return collection of charsets
-     */
-    public static Map<String, Charset> getAvailableCharsets(StringPropertyMetadata propertyMetadata) {
-        return Charset.availableCharsets();
     }
 }

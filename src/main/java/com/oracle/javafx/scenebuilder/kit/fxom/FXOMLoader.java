@@ -266,11 +266,6 @@ class FXOMLoader implements LoadListener {
         } else if(currentTransientNode instanceof  TransientIntrinsic) {
             final TransientIntrinsic transientIntrinsic = (TransientIntrinsic) currentTransientNode;
             transientIntrinsic.getProperties().add(fxomProperty);
-//            if(fxomProperty != null && fxomProperty.getParentInstance() != null)
-//                transientIntrinsic.setSceneGraphObject(fxomProperty.);
-            // TODO(elp): for now, we ignore properties declared in fx:include.
-            // To be implemented later.
-
         }
     }
 

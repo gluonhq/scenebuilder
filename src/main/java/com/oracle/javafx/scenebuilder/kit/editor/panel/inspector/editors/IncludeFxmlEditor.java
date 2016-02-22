@@ -19,11 +19,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * Editor for including FXML files into the main document (through fx:include).
  */
 public class IncludeFxmlEditor extends InlineListEditor {
 
@@ -71,7 +72,9 @@ public class IncludeFxmlEditor extends InlineListEditor {
     }
 
     @Override
-    public void requestFocus() {}
+    public void requestFocus() {
+        throw new UnsupportedOperationException();
+    }
 
     @FXML
     public void addIncludeFile() {
@@ -103,17 +106,17 @@ public class IncludeFxmlEditor extends InlineListEditor {
     }
 
     private String getRelativePath(File includedFile) {
-        URL url;
+        URL url = null;
         try {
             url = includedFile.toURI().toURL();
         } catch (MalformedURLException ex) {
-            throw new RuntimeException("Invalid URL", ex);
+            Logger.getLogger(IncludeFxmlEditor.class.getName()).log(Level.SEVERE, "Path could not be determined.", ex);
         }
         String prefixedValue = PrefixedValue.makePrefixedValue(url, editorController.getFxmlLocation()).toString();
         return removeAtSign(prefixedValue);
     }
 
-    private String removeAtSign(String prefixedValue) {
+    private static String removeAtSign(String prefixedValue) {
         String prefixedValueWithNoAt = "";
         if (prefixedValue.contains("@")) {
             prefixedValueWithNoAt = prefixedValue.replace("@", "");
