@@ -60,7 +60,7 @@ class TransientIntrinsic extends TransientNode {
                 = new FXOMIntrinsic(fxomDocument, glueElement, getSceneGraphObject(), properties);
         assert result.getType() == type;
         // need to deal with a charset property here
-        result.addCharsetProperty(fxomDocument);
+        result.addIntrinsicProperty(fxomDocument);
         return result;
     }
 

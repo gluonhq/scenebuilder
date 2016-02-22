@@ -70,7 +70,7 @@ public class FXOMIntrinsic extends FXOMObject {
         getGlueElement().getAttributes().put(SOURCE_PROPERTY, source);
     }
 
-    public void addCharsetProperty(FXOMDocument fxomDocument) {
+    public void addIntrinsicProperty(FXOMDocument fxomDocument) {
         final Map<String, String> attributes = this.getGlueElement().getAttributes();
         if(attributes.containsKey(CHARSET_PROPERTY)) {
             createAndInsertProperty(attributes, fxomDocument, CHARSET_PROPERTY);
