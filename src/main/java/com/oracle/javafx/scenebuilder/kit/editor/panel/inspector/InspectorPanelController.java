@@ -1726,203 +1726,203 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private PropertyEditor makeOrResetPropertyEditor(
             Class<? extends Editor> editorClass, ValuePropertyMetadata propMeta, PropertyEditor propertyEditor) {
         PropertyEditor createdPropertyEditor = propertyEditor;
-        if (propertyEditor != null) {
-            propertyEditor.setUpdateFromModel(true);
+        if (createdPropertyEditor != null) {
+            createdPropertyEditor.setUpdateFromModel(true);
         }
         Set<Class<?>> selectedClasses = getSelectedClasses();
         if (editorClass == I18nStringEditor.class) {
-            if (propertyEditor != null) {
-                ((I18nStringEditor) propertyEditor).reset(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
+            if (createdPropertyEditor != null) {
+                ((I18nStringEditor) createdPropertyEditor).reset(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
             } else {
                 createdPropertyEditor = new I18nStringEditor(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
             }
         } else if (editorClass == StringEditor.class) {
-            if (propertyEditor != null) {
-                ((StringEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((StringEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new StringEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DoubleEditor.class) {
             assert propMeta instanceof DoublePropertyMetadata;
             DoublePropertyMetadata doublePropMeta = (DoublePropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((DoubleEditor) propertyEditor).reset(propMeta, selectedClasses, getConstants(doublePropMeta));
+            if (createdPropertyEditor != null) {
+                ((DoubleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getConstants(doublePropMeta));
             } else {
                 createdPropertyEditor = new DoubleEditor(propMeta, selectedClasses, getConstants(doublePropMeta));
             }
         } else if (editorClass == IntegerEditor.class) {
             assert propMeta instanceof IntegerPropertyMetadata;
             IntegerPropertyMetadata integerPropMeta = (IntegerPropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((IntegerEditor) propertyEditor).reset(propMeta, selectedClasses,
+            if (createdPropertyEditor != null) {
+                ((IntegerEditor) createdPropertyEditor).reset(propMeta, selectedClasses,
                         getConstants(integerPropMeta), getMin(integerPropMeta), getMax(integerPropMeta));
             } else {
                 createdPropertyEditor = new IntegerEditor(propMeta, selectedClasses,
                         getConstants(integerPropMeta), getMin(integerPropMeta), getMax(integerPropMeta));
             }
         } else if (editorClass == BooleanEditor.class) {
-            if (propertyEditor != null) {
-                ((BooleanEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((BooleanEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new BooleanEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == EnumEditor.class) {
-            if (propertyEditor != null) {
-                ((EnumEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((EnumEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new EnumEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == InsetsEditor.class) {
-            if (propertyEditor != null) {
-                ((InsetsEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((InsetsEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new InsetsEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == BoundedDoubleEditor.class) {
             assert propMeta instanceof DoublePropertyMetadata;
             DoublePropertyMetadata doublePropMeta = (DoublePropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((BoundedDoubleEditor) propertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
+            if (createdPropertyEditor != null) {
+                ((BoundedDoubleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
             } else {
                 createdPropertyEditor = new BoundedDoubleEditor(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
             }
         } else if (editorClass == RotateEditor.class) {
-            if (propertyEditor != null) {
-                ((RotateEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((RotateEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new RotateEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == StyleEditor.class) {
-            if (propertyEditor != null) {
-                ((StyleEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((StyleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
                 createdPropertyEditor = new StyleEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == StyleClassEditor.class) {
-            if (propertyEditor != null) {
-                ((StyleClassEditor) propertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
+            if (createdPropertyEditor != null) {
+                ((StyleClassEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
             } else {
                 createdPropertyEditor = new StyleClassEditor(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
             }
         } else if (editorClass == StylesheetEditor.class) {
-            if (propertyEditor != null) {
-                ((StylesheetEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+            if (createdPropertyEditor != null) {
+                ((StylesheetEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             } else {
                 createdPropertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
         } else if (editorClass == FxIdEditor.class) {
             String controllerClass = getControllerClass();
-            if (propertyEditor != null) {
-                ((FxIdEditor) propertyEditor).reset(getSuggestedFxIds(controllerClass), getEditorController());
+            if (createdPropertyEditor != null) {
+                ((FxIdEditor) createdPropertyEditor).reset(getSuggestedFxIds(controllerClass), getEditorController());
             } else {
                 createdPropertyEditor = new FxIdEditor(getSuggestedFxIds(controllerClass), getEditorController());
             }
         } else if (editorClass == CursorEditor.class) {
-            if (propertyEditor != null) {
-                ((CursorEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((CursorEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new CursorEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == EventHandlerEditor.class) {
-            if (propertyEditor != null) {
-                ((EventHandlerEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            if (createdPropertyEditor != null) {
+                ((EventHandlerEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             } else {
                 createdPropertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == EffectPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((EffectPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((EffectPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new EffectPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == FontPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((FontPopupEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((FontPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
                 createdPropertyEditor = new FontPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == PaintPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((PaintPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((PaintPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new PaintPopupEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new PaintPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == ImageEditor.class) {
-            if (propertyEditor != null) {
-                ((ImageEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+            if (createdPropertyEditor != null) {
+                ((ImageEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             } else {
                 createdPropertyEditor = new ImageEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
         } else if (editorClass == BoundsPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((BoundsPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((BoundsPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new BoundsPopupEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == Point3DEditor.class) {
-            if (propertyEditor != null) {
-                ((Point3DEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((Point3DEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new Point3DEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DividerPositionsEditor.class) {
-            if (propertyEditor != null) {
-                ((DividerPositionsEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((DividerPositionsEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new DividerPositionsEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == TextAlignmentEditor.class) {
-            if (propertyEditor != null) {
-                ((TextAlignmentEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((TextAlignmentEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new TextAlignmentEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == KeyCombinationPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((KeyCombinationPopupEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((KeyCombinationPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
                 createdPropertyEditor = new KeyCombinationPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == ColumnResizePolicyEditor.class) {
-            if (propertyEditor != null) {
-                ((ColumnResizePolicyEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((ColumnResizePolicyEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new ColumnResizePolicyEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == Rectangle2DPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((Rectangle2DPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((Rectangle2DPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new Rectangle2DPopupEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == ToggleGroupEditor.class) {
-            if (propertyEditor != null) {
-                ((ToggleGroupEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedToggleGroups());
+            if (createdPropertyEditor != null) {
+                ((ToggleGroupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSuggestedToggleGroups());
             } else {
-                propertyEditor = new ToggleGroupEditor(propMeta, selectedClasses, getSuggestedToggleGroups());
+                createdPropertyEditor = new ToggleGroupEditor(propMeta, selectedClasses, getSuggestedToggleGroups());
             }
         } else if (editorClass == ButtonTypeEditor.class) {
-            if (propertyEditor != null) {
-                ((ButtonTypeEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((ButtonTypeEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
             }
         }
         else if(editorClass == IncludeFxmlEditor.class) {
-            createdPropertyEditor = createOrResetIncludeFxmlEditor(propertyEditor, selectedClasses, propMeta);
+            createdPropertyEditor = createOrResetIncludeFxmlEditor(createdPropertyEditor, selectedClasses, propMeta);
         }
         else if(editorClass == CharsetEditor.class) {
-            createdPropertyEditor = createOrResetCharsetEditor(propertyEditor, selectedClasses, propMeta);
+            createdPropertyEditor = createOrResetCharsetEditor(createdPropertyEditor, selectedClasses, propMeta);
         }
         else {
-            if (propertyEditor != null) {
-                ((GenericEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((GenericEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new GenericEditor(propMeta, selectedClasses);
             }
         }
-        if(propertyEditor != null)
-            propertyEditor.setUpdateFromModel(false);
+        if(createdPropertyEditor != null)
+            createdPropertyEditor.setUpdateFromModel(false);
 
         return createdPropertyEditor;
     }
