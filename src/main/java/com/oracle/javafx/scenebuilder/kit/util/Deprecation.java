@@ -37,13 +37,6 @@ import com.sun.javafx.css.Style;
 import com.sun.javafx.geom.PickRay;
 import com.sun.javafx.scene.control.skin.MenuBarSkin;
 import com.sun.javafx.scene.input.PickResultChooser;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import javafx.collections.ObservableMap;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
@@ -56,15 +49,18 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.PopupControl;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Deprecation {
@@ -113,10 +109,10 @@ public class Deprecation {
         assert parent != null;
 
         String stylesheetPathWithForwardSlashes = stylesheetPath.replace("\\", "/");
-
+        URL url = retrieveUrlFromStylesheetPath(stylesheetPathWithForwardSlashes);
         final List<String> stylesheets = parent.getStylesheets();
         for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(stylesheetPathWithForwardSlashes)) {
+            if (s.endsWith(url.getPath())) {
                 final int index = stylesheets.indexOf(s);
                 assert index != -1;
                 stylesheets.remove(index);
@@ -134,6 +130,16 @@ public class Deprecation {
                 reapplyCSS(childSubScene.getRoot(), stylesheetPath);
             }
         }
+    }
+
+    private static URL retrieveUrlFromStylesheetPath(String stylesheetPathWithForwardSlashes) {
+        URL url = null;
+        try {
+            url = Paths.get(stylesheetPathWithForwardSlashes).toUri().toURL();
+        } catch (MalformedURLException e) {
+            Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", e);
+        }
+        return url;
     }
 
     // Retrieve the node of the Styleable.
