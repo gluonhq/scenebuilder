@@ -54,11 +54,12 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -105,14 +106,16 @@ public class Deprecation {
         return node.impl_findStyles(null);
     }
 
-    public static void reapplyCSS(Parent parent, String stylesheetPath) {
+    public static void reapplyCSS(Parent parent, URI stylesheetUri) {
         assert parent != null;
+        Optional<URL> urlOptional = Optional.ofNullable(retrieveStylesheetUrl(stylesheetUri));
+        urlOptional.ifPresent(stylesheetUrl -> adjustStylesheets(parent, stylesheetUri, stylesheetUrl));
+    }
 
-        String stylesheetPathWithForwardSlashes = stylesheetPath.replace("\\", "/");
-        URL url = retrieveUrlFromStylesheetPath(stylesheetPathWithForwardSlashes);
+    private static void adjustStylesheets(Parent parent, URI stylesheetUri, URL stylesheetUrl) {
         final List<String> stylesheets = parent.getStylesheets();
         for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(url.getPath())) {
+            if (s.endsWith(stylesheetUrl.getPath())) {
                 final int index = stylesheets.indexOf(s);
                 assert index != -1;
                 stylesheets.remove(index);
@@ -120,26 +123,29 @@ public class Deprecation {
                 break;
             }
         }
-        
+        reapplyCssForChildNodes(parent, stylesheetUri);
+    }
+
+    private static void reapplyCssForChildNodes(Parent parent, URI stylesheetUri) {
         for (Node child : parent.getChildrenUnmodifiable()) {
             if (child instanceof Parent) {
                 final Parent childParent = (Parent) child;
-                reapplyCSS(childParent, stylesheetPath);
+                reapplyCSS(childParent, stylesheetUri);
             } else if (child instanceof SubScene) {
                 final SubScene childSubScene = (SubScene) child;
-                reapplyCSS(childSubScene.getRoot(), stylesheetPath);
+                reapplyCSS(childSubScene.getRoot(), stylesheetUri);
             }
         }
     }
 
-    private static URL retrieveUrlFromStylesheetPath(String stylesheetPathWithForwardSlashes) {
-        URL url = null;
+    private static URL retrieveStylesheetUrl(URI stylesheetUri) {
+        URL stylesheetUrl = null;
         try {
-            url = Paths.get(stylesheetPathWithForwardSlashes).toUri().toURL();
+            stylesheetUrl = stylesheetUri.toURL();
         } catch (MalformedURLException e) {
             Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", e);
         }
-        return url;
+        return stylesheetUrl;
     }
 
     // Retrieve the node of the Styleable.
