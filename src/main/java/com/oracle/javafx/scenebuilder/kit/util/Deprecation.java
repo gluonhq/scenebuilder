@@ -37,13 +37,6 @@ import com.sun.javafx.css.Style;
 import com.sun.javafx.geom.PickRay;
 import com.sun.javafx.scene.control.skin.MenuBarSkin;
 import com.sun.javafx.scene.input.PickResultChooser;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import javafx.collections.ObservableMap;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
@@ -56,15 +49,18 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.PopupControl;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Deprecation {
@@ -109,14 +105,18 @@ public class Deprecation {
         return node.impl_findStyles(null);
     }
 
-    public static void reapplyCSS(Parent parent, String stylesheetPath) {
-        assert parent != null;
+    public static void reapplyCSS(Parent parent, URI stylesheetPath) {
+        try {
+            reapplyCSS(parent, stylesheetPath.toURL());
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", ex);
+        }
+    }
 
-        String stylesheetPathWithForwardSlashes = stylesheetPath.replace("\\", "/");
-
+    private static void reapplyCSS(Parent parent, URL stylesheetPath) {
         final List<String> stylesheets = parent.getStylesheets();
         for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(stylesheetPathWithForwardSlashes)) {
+            if (s.endsWith(stylesheetPath.getPath())) {
                 final int index = stylesheets.indexOf(s);
                 assert index != -1;
                 stylesheets.remove(index);
@@ -124,7 +124,6 @@ public class Deprecation {
                 break;
             }
         }
-        
         for (Node child : parent.getChildrenUnmodifiable()) {
             if (child instanceof Parent) {
                 final Parent childParent = (Parent) child;
@@ -255,18 +254,18 @@ public class Deprecation {
     public static JavaFXBuilderFactory newJavaFXBuilderFactory(ClassLoader classLoader) {
         return new JavaFXBuilderFactory(classLoader, false /* alwaysUseBuilders */);
     }
-    
+
     // Deprecated as of FX 8 u20, and replaced by new method getTreeItemLevel:
     // using it would break ability to compile over JDK 8 GA, not an option for now.
     public static int getNodeLevel(TreeItem<?> item) {
         return TreeView.getNodeLevel(item);
-    } 
-    
+    }
+
     public static Point2D localToLocal(Node source, double sourceX, double sourceY, Node target) {
         final Point2D sceneXY = source.localToScene(sourceX, sourceY, true /* rootScene */);
         return target.sceneToLocal(sceneXY, true /* rootScene */);
     }
-    
+
     public static Bounds localToLocal(Node source, Bounds sourceBounds, Node target) {
         final Bounds sceneBounds = source.localToScene(sourceBounds, true /* rootScene */);
         return target.sceneToLocal(sceneBounds, true /* rootScene */);
