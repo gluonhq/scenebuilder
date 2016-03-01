@@ -59,7 +59,6 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,46 +105,33 @@ public class Deprecation {
         return node.impl_findStyles(null);
     }
 
-    public static void reapplyCSS(Parent parent, URI stylesheetUri) {
+    public static void reapplyCSS(Parent parent, URI stylesheetPath) {
         assert parent != null;
-        Optional<URL> urlOptional = Optional.ofNullable(retrieveStylesheetUrl(stylesheetUri));
-        urlOptional.ifPresent(stylesheetUrl -> adjustStylesheets(parent, stylesheetUri, stylesheetUrl));
-    }
-
-    private static void adjustStylesheets(Parent parent, URI stylesheetUri, URL stylesheetUrl) {
-        final List<String> stylesheets = parent.getStylesheets();
-        for (String s : new LinkedList<>(stylesheets)) {
-            if (s.endsWith(stylesheetUrl.getPath())) {
-                final int index = stylesheets.indexOf(s);
-                assert index != -1;
-                stylesheets.remove(index);
-                stylesheets.add(index, s);
-                break;
-            }
-        }
-        reapplyCssForChildNodes(parent, stylesheetUri);
-    }
-
-    private static void reapplyCssForChildNodes(Parent parent, URI stylesheetUri) {
-        for (Node child : parent.getChildrenUnmodifiable()) {
-            if (child instanceof Parent) {
-                final Parent childParent = (Parent) child;
-                reapplyCSS(childParent, stylesheetUri);
-            } else if (child instanceof SubScene) {
-                final SubScene childSubScene = (SubScene) child;
-                reapplyCSS(childSubScene.getRoot(), stylesheetUri);
-            }
-        }
-    }
-
-    private static URL retrieveStylesheetUrl(URI stylesheetUri) {
-        URL stylesheetUrl = null;
+        URL url;
         try {
-            stylesheetUrl = stylesheetUri.toURL();
+            url = stylesheetPath.toURL();
+            final List<String> stylesheets = parent.getStylesheets();
+            for (String s : new LinkedList<>(stylesheets)) {
+                if (s.endsWith(url.getPath())) {
+                    final int index = stylesheets.indexOf(s);
+                    assert index != -1;
+                    stylesheets.remove(index);
+                    stylesheets.add(index, s);
+                    break;
+                }
+            }
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                if (child instanceof Parent) {
+                    final Parent childParent = (Parent) child;
+                    reapplyCSS(childParent, stylesheetPath);
+                } else if (child instanceof SubScene) {
+                    final SubScene childSubScene = (SubScene) child;
+                    reapplyCSS(childSubScene.getRoot(), stylesheetPath);
+                }
+            }
         } catch (MalformedURLException e) {
             Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", e);
         }
-        return stylesheetUrl;
     }
 
     // Retrieve the node of the Styleable.
@@ -267,18 +253,18 @@ public class Deprecation {
     public static JavaFXBuilderFactory newJavaFXBuilderFactory(ClassLoader classLoader) {
         return new JavaFXBuilderFactory(classLoader, false /* alwaysUseBuilders */);
     }
-    
+
     // Deprecated as of FX 8 u20, and replaced by new method getTreeItemLevel:
     // using it would break ability to compile over JDK 8 GA, not an option for now.
     public static int getNodeLevel(TreeItem<?> item) {
         return TreeView.getNodeLevel(item);
-    } 
-    
+    }
+
     public static Point2D localToLocal(Node source, double sourceX, double sourceY, Node target) {
         final Point2D sceneXY = source.localToScene(sourceX, sourceY, true /* rootScene */);
         return target.sceneToLocal(sceneXY, true /* rootScene */);
     }
-    
+
     public static Bounds localToLocal(Node source, Bounds sourceBounds, Node target) {
         final Bounds sceneBounds = source.localToScene(sourceBounds, true /* rootScene */);
         return target.sceneToLocal(sceneBounds, true /* rootScene */);
