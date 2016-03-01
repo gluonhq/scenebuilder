@@ -106,31 +106,32 @@ public class Deprecation {
     }
 
     public static void reapplyCSS(Parent parent, URI stylesheetPath) {
-        assert parent != null;
-        URL url;
         try {
-            url = stylesheetPath.toURL();
-            final List<String> stylesheets = parent.getStylesheets();
-            for (String s : new LinkedList<>(stylesheets)) {
-                if (s.endsWith(url.getPath())) {
-                    final int index = stylesheets.indexOf(s);
-                    assert index != -1;
-                    stylesheets.remove(index);
-                    stylesheets.add(index, s);
-                    break;
-                }
+            reapplyCSS(parent, stylesheetPath.toURL());
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", ex);
+        }
+    }
+
+    private static void reapplyCSS(Parent parent, URL stylesheetPath) {
+        final List<String> stylesheets = parent.getStylesheets();
+        for (String s : new LinkedList<>(stylesheets)) {
+            if (s.endsWith(stylesheetPath.getPath())) {
+                final int index = stylesheets.indexOf(s);
+                assert index != -1;
+                stylesheets.remove(index);
+                stylesheets.add(index, s);
+                break;
             }
-            for (Node child : parent.getChildrenUnmodifiable()) {
-                if (child instanceof Parent) {
-                    final Parent childParent = (Parent) child;
-                    reapplyCSS(childParent, stylesheetPath);
-                } else if (child instanceof SubScene) {
-                    final SubScene childSubScene = (SubScene) child;
-                    reapplyCSS(childSubScene.getRoot(), stylesheetPath);
-                }
+        }
+        for (Node child : parent.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                final Parent childParent = (Parent) child;
+                reapplyCSS(childParent, stylesheetPath);
+            } else if (child instanceof SubScene) {
+                final SubScene childSubScene = (SubScene) child;
+                reapplyCSS(childSubScene.getRoot(), stylesheetPath);
             }
-        } catch (MalformedURLException e) {
-            Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", e);
         }
     }
 
