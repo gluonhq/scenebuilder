@@ -39,8 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import javafx.fxml.FXMLLoader;
 
 /**
@@ -62,8 +60,8 @@ class FXOMSaver {
 
         return fxomDocument.getGlue().toString();
     }
-    
-    
+
+
     /*
      * Private
      */
@@ -97,16 +95,6 @@ class FXOMSaver {
         // gets list of the imports to be added to the FXML document.
         List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
 
-        List<String> importListAsString = importList.stream().map(GlueInstruction::getData).collect(Collectors.toList());
-        //gets the list of imports that are already in the fxml document
-        final List<GlueInstruction> additionalImports = fxomDocument.getGlue().collectInstructions("import");
-        //here we filter out all imports that are already included in the importList to avoid redundancy between the lists
-        List<GlueInstruction> filteredImportList = additionalImports
-                .stream()
-                .filter(instruction -> !importListAsString.contains(instruction.getData()))
-                .collect(Collectors.toList());
-        //finally the missing imports are added to the importList
-        importList.addAll(filteredImportList);
         // synchronizes the glue with the list of glue instructions
         synchronizeHeader(fxomDocument.getGlue(), importList);
     }
@@ -118,6 +106,10 @@ class FXOMSaver {
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
             imports.add(dc.getName());
         });
+
+        // adds java.lang package to imports;
+        // is it needed?
+        imports.add("java.lang.*");
 
         // Creates a List of glue instruction for each class that was declared.
         List<GlueInstruction> importsList = new ArrayList<>();
@@ -134,6 +126,7 @@ class FXOMSaver {
         synchronized (this) {
             glue.getHeader().clear();
             glue.getHeader().addAll(importList);
+
             if (!glue.getHeader().equals(importList))
                 glue.getHeader().addAll(temp);
         }
