@@ -667,7 +667,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             lineIndex = addFxIdEditor(gridPane, lineIndex);
         }
 
-        if (propMetaSection.isEmpty()) {
+        if (lineIndex == 0 && propMetaSection.isEmpty()) {
             displayEmptyMessage(gridPane);
             return;
         }
