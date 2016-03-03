@@ -8,7 +8,7 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repository/releases/');
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
             def repoUser = getStringProperty('publishRepositoryUser', '');
             def repoPassword = getStringProperty('publishRepositoryPassword', '');
             snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {

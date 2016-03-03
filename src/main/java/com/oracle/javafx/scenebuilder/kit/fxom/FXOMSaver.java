@@ -36,23 +36,26 @@ import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import javafx.fxml.FXMLLoader;
 
 /**
  *
- *
+ * 
  */
 class FXOMSaver {
-
-
+    
+    
     public String save(FXOMDocument fxomDocument) {
-
+        
         assert fxomDocument != null;
         assert fxomDocument.getGlue() != null;
-
+        
         if (fxomDocument.getFxomRoot() != null) {
             updateNameSpace(fxomDocument);
             updateImportInstructions(fxomDocument);
@@ -60,35 +63,35 @@ class FXOMSaver {
 
         return fxomDocument.getGlue().toString();
     }
-
-
+    
+    
     /*
      * Private
      */
-
+    
     private static final String NAME_SPACE_FX = "http://javafx.com/javafx/" + FXMLLoader.JAVAFX_VERSION;
     private static final String NAME_SPACE_FXML = "http://javafx.com/fxml/1";
-
+    
     private void updateNameSpace(FXOMDocument fxomDocument) {
         assert fxomDocument.getFxomRoot() != null;
-
+        
         final FXOMObject fxomRoot = fxomDocument.getFxomRoot();
         final String currentNameSpaceFX = fxomRoot.getNameSpaceFX();
         final String currentNameSpaceFXML = fxomRoot.getNameSpaceFXML();
-
-        if ((currentNameSpaceFX == null)
+        
+        if ((currentNameSpaceFX == null) 
                 || (currentNameSpaceFX.equals(NAME_SPACE_FX) == false)) {
             fxomRoot.setNameSpaceFX(NAME_SPACE_FX);
         }
-
-        if ((currentNameSpaceFXML == null)
+        
+        if ((currentNameSpaceFXML == null) 
                 || (currentNameSpaceFXML.equals(NAME_SPACE_FXML) == false)) {
             fxomRoot.setNameSpaceFXML(NAME_SPACE_FXML);
         }
-
-
+        
+        
     }
-
+        
     private void updateImportInstructions(FXOMDocument fxomDocument) {
         assert fxomDocument.getFxomRoot() != null;
 
@@ -100,36 +103,68 @@ class FXOMSaver {
     }
 
     private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
-        // Collects all the classes declared in the fxomdocument,
         // constructs the set of classes to be imported. No doubles allowed.
         final Set<String> imports = new TreeSet<>(); // Sorted
-        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
-            imports.add(dc.getName());
-        });
 
-        // adds java.lang package to imports;
-        // is it needed?
-        imports.add("java.lang.*");
+        //gets list of declared classes, declared classes are the ones directly used as a Node.
+        //Example: <Button/> ; classname = javafx.scene.control.Button
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getCanonicalName()));
 
-        // Creates a List of glue instruction for each class that was declared.
+        FXOMInstance root = (FXOMInstance) fxomDocument.getFxomRoot();
+
+        Set<String> foundClasses = root.getChildObjects().stream()
+            .map(fxomObject -> fxomObject.collectPropertiesT()) //list of lists containing FXOMProperties
+            .flatMap(list -> list.stream()) // add all to one list of FXOMProperties
+            .map(property -> property.getName()) // list of all PropertyNames
+            .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
+            .map(prop -> prop.getResidenceClass().getName()) // list of classes
+            .collect(Collectors.toSet()); // transform to set to not include doubles
+
+        foundClasses.addAll(root.collectPropertiesT().stream() //same as above but for the root node
+                .map(p-> p.getName())
+                .filter(prop -> prop.getResidenceClass() != null)
+                .map(prop -> prop.getResidenceClass().getName())
+                .collect(Collectors.toSet()));
+
+        imports.addAll(foundClasses); //adds all found classes, if nothing is found nothing will be added
+
+        return createGlueInstructionsForImports(fxomDocument, imports);
+    }
+
+    // Creates a List of glue instruction for all imported classes.
+    private List<GlueInstruction> createGlueInstructionsForImports(FXOMDocument fxomDocument, Set<String> imports) {
         List<GlueInstruction> importsList = new ArrayList<>();
         imports.forEach(className -> {
             final GlueInstruction instruction = new GlueInstruction(fxomDocument.getGlue(), "import", className);
             importsList.add(instruction);
         });
-
         return importsList;
     }
 
     private void synchronizeHeader(GlueDocument glue, List<GlueInstruction> importList) {
-        List<GlueAuxiliary> temp = glue.getHeader();
         synchronized (this) {
-            glue.getHeader().clear();
-            glue.getHeader().addAll(importList);
+            // find out where the first import instruction is located
+            final int firstImportIndex;
+            List<GlueInstruction> existingImports = glue.collectInstructions("import");
+            if (existingImports.isEmpty()) {
+                firstImportIndex = 0;
+            } else {
+                GlueInstruction firstImport = existingImports.get(0);
+                firstImportIndex = glue.getHeader().indexOf(firstImport);
+            }
 
-            if (!glue.getHeader().equals(importList))
-                glue.getHeader().addAll(temp);
+            // remove previously defined imports and leave all other things (like comments and such) intact
+            for (Iterator<GlueAuxiliary> it = glue.getHeader().iterator(); it.hasNext();) {
+                GlueAuxiliary glueAuxiliary = it.next();
+                if (glueAuxiliary instanceof GlueInstruction && "import".equals(((GlueInstruction) glueAuxiliary).getTarget())) {
+                    it.remove();
+                }
+            }
+
+            // insert the import instructions at the first import index
+            glue.getHeader().addAll(firstImportIndex, importList);
         }
 
     }
+
 }

@@ -139,6 +139,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         assert singleton == null;
         singleton = this;
         
+        // set design time flag
+        java.beans.Beans.setDesignTime(true);
+        
         /*
          * We spawn our two threads for handling background startup.
          */

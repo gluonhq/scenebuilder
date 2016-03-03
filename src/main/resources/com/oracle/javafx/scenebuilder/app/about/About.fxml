@@ -38,27 +38,29 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vbox" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="0.0" style="-fx-background-color: white;" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" VBox.vgrow="NEVER">
+    <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" VBox.vgrow="NEVER">
       <image>
         <Image preserveRatio="true" smooth="true" url="@about-header.png" />
       </image>
-      <VBox.margin>
-        <Insets bottom="20.0" />
-      </VBox.margin>
     </ImageView>
-    <TextArea fx:id="textArea" editable="false" focusTraversable="false" prefWidth="200.0" text="" wrapText="true" VBox.vgrow="ALWAYS" />
-    <ImageView pickOnBounds="true" VBox.vgrow="NEVER">
-      <image>
-        <Image preserveRatio="true" smooth="true" url="@about-footer.png" />
-      </image>
-         <VBox.margin>
-            <Insets top="20.0" />
-         </VBox.margin>
-    </ImageView>
+      <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" VBox.vgrow="NEVER">
+          <image>
+              <Image preserveRatio="true" smooth="true" url="@scenebuilder-logo.png" />
+          </image>
+      </ImageView>
+    <TextArea fx:id="textArea" editable="false" focusTraversable="false" text="" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" VBox.vgrow="ALWAYS" />
   </children>
   <padding>
-    <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
-</VBox>
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints minHeight="10.0" prefHeight="450.0" vgrow="ALWAYS" />
+   </rowConstraints>
+</GridPane>

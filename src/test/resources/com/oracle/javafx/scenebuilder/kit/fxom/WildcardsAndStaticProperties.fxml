@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ToolBar  VBox.vgrow="SOMETIMES" prefHeight="40.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <Button text="Apples" />
+   <Button text="Oranges" HBox.hgrow="NEVER" />
+   <Pane HBox.hgrow="ALWAYS"/>
+   <Button text="Help" />
+</ToolBar>

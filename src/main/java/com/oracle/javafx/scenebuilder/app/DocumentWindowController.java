@@ -1215,20 +1215,33 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     void onHierarchyShowInfo(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.INFO);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        updateHierarchyDisplayOption();
     }
     
     @FXML
     void onHierarchyShowFxId(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.FXID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        updateHierarchyDisplayOption();
     }
     
     @FXML
     void onHierarchyShowNodeId(ActionEvent event) {
         hierarchyPanelController.setDisplayOption(AbstractHierarchyPanelController.DisplayOption.NODEID);
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
+
+        updateHierarchyDisplayOption();
     }
-    
+
+    private void updateHierarchyDisplayOption() {
+        // Update preferences
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
+        recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
+    }
+
     //
     // Library menu
     //
@@ -1245,12 +1258,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.LIST);
         }
 
-        final PreferencesController preferencesController
-                = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
-        // Update preferences
-        recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
+        updateLibraryDisplayOption();
     }
     
     @FXML
@@ -1261,11 +1269,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             libraryPanelController.setPreviousDisplayMode(LibraryPanelController.DISPLAY_MODE.SECTIONS);
         }
 
-        final PreferencesController preferencesController
-                = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
+        updateLibraryDisplayOption();
+    }
+
+    private void updateLibraryDisplayOption() {
         // Update preferences
+        final PreferencesController preferencesController = PreferencesController.getSingleton();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
         recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
 

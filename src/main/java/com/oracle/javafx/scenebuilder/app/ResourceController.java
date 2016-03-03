@@ -35,16 +35,12 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
-import javafx.stage.FileChooser;
 
 /**
  *
@@ -135,8 +131,8 @@ class ResourceController {
     
     private static PropertyResourceBundle readPropertyResourceBundle(File f) {
         PropertyResourceBundle result;
-        try {
-            result = new PropertyResourceBundle(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8"))); //NOI18N
+        try( Reader reader = new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")) ) {
+            result = new PropertyResourceBundle(reader); //NOI18N
         } catch (IOException ex) {
             result = null;
         }

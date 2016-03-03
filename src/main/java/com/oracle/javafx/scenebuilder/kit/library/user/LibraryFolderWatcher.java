@@ -339,7 +339,7 @@ class LibraryFolderWatcher implements Runnable {
         int i = 0;
         for (Path p : paths) {
             try {
-                result[i++] = p.toUri().toURL();
+                result[i++] = new URL("jar","",p.toUri().toURL()+"!/");
             } catch(MalformedURLException x) {
                 throw new RuntimeException("Bug in " + getClass().getSimpleName(), x); //NOI18N
             }
