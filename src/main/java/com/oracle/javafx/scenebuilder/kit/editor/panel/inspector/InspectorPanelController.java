@@ -537,8 +537,15 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 // we may have a property changed here.
                 selectionState = newSelectionState;
+                updateClassNamesExtraForIncludes();
                 reset();
             }
+        }
+    }
+
+    private void updateClassNamesExtraForIncludes() {
+        if(!getSelectedIntrinsics().isEmpty()) {
+            updateClassNameInSectionTitles();
         }
     }
 
@@ -2011,11 +2018,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     }
 
     private void updateClassNameInSectionTitles() {
+        final String intrinsicClassName = "FXOMIntrinsic";
         String selClass = ""; //NOI18N
         if (getSelectedClasses().size() > 1) {
             selClass = I18N.getString("inspector.sectiontitle.multiple");
         } else if (getSelectedClasses().size() == 1) {
             selClass = getSelectedClass().getSimpleName();
+            if(intrinsicClassName.equals(selClass)) {
+                selClass =  retrieveNameForIntrinsic();
+            }
+
         }
 
         for (TitledPane titledPane : accordion.getPanes()) {
@@ -2030,6 +2042,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
             ((Label) graphic).setText(selClass);
         }
+    }
+
+    private String retrieveNameForIntrinsic() {
+        final String includeTagBinder = "fx:include - ";
+        String source = "";
+        if(getSelectedIntrinsics().iterator().hasNext()) {
+            FXOMIntrinsic fxomIntrinsic = getSelectedIntrinsics().iterator().next();
+            source = includeTagBinder.concat(fxomIntrinsic.getSource());
+        }
+        return source;
     }
 
     private boolean isPropertyEditor(Editor editor) {
