@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:id="MavenDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="300.0" prefHeight="300.0" prefWidth="600.0" styleClass="theme-presets" stylesheets="@../../css/Theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="MavenDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="300.0" prefHeight="300.0" prefWidth="600.0" styleClass="theme-presets" stylesheets="@../../css/Theme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane hgap="20.0" layoutX="137.0" layoutY="153.0" prefHeight="148.0" prefWidth="520.0" vgap="20.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="40.0">
          <columnConstraints>
