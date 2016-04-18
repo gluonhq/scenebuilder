@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
@@ -53,6 +54,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javafx.application.Platform;
@@ -93,6 +95,7 @@ public class ImportWindowController extends AbstractModalDialog {
     double builtinPrefWidth;
     double builtinPrefHeight;
     private int numOfImportedJar;
+    private boolean copyFilesToUserLibraryDir;
     
     // At first we put in this collection the items which are already excluded,
     // basically all which are listed in the filter file.
@@ -101,6 +104,7 @@ public class ImportWindowController extends AbstractModalDialog {
     // When the user clicks the Import button the collection might contain the
     // items we retain from older import actions.
     private List<String> alreadyExcludedItems = new ArrayList<>();
+    private final List<String> artifactsFilter;
 
     public enum PrefSize {
 
@@ -144,9 +148,16 @@ public class ImportWindowController extends AbstractModalDialog {
     ToggleButton checkAllUncheckAllToggle;
     
     public ImportWindowController(LibraryPanelController lpc, List<File> files, Window owner) {
+        this(lpc, files, owner, true, new ArrayList<>());
+    }
+    
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, Window owner, 
+            boolean copyFilesToUserLibraryDir, List<String> artifactsFilter) {
         super(ImportWindowController.class.getResource("ImportDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         libPanelController = lpc;
         importFiles = new ArrayList<>(files);
+        this.copyFilesToUserLibraryDir = copyFilesToUserLibraryDir;
+        this.artifactsFilter = artifactsFilter;
     }
 
     /*
@@ -212,7 +223,9 @@ public class ImportWindowController extends AbstractModalDialog {
         
         try {
             closeClassLoader();
-            libPanelController.copyFilesToUserLibraryDir(importFiles);
+            if (copyFilesToUserLibraryDir) {
+                libPanelController.copyFilesToUserLibraryDir(importFiles);
+            }
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
             userLib.setFilter(getExcludedItems());
         } catch (IOException ex) {
@@ -330,6 +343,9 @@ public class ImportWindowController extends AbstractModalDialog {
             }
         }
         
+        // add artifacts jars (main and dependencies)
+        res.addAll(PreferencesController.getSingleton().getMavenPreferences().getArtifactsFilesWithDependencies());
+        
         return res;
     }
 
@@ -407,11 +423,15 @@ public class ImportWindowController extends AbstractModalDialog {
                     for (JarReportEntry e : jarReport.getEntries()) {
                         if ((e.getStatus() == JarReportEntry.Status.OK) && e.isNode()) {
                             boolean checked = true;
+                            final String canonicalName = e.getKlass().getCanonicalName();
                             // If the class we import is already listed as an excluded one
                             // then it must appear unchecked in the list.
-                            if (alreadyExcludedItems.contains(e.getKlass().getCanonicalName())) {
+                            if (alreadyExcludedItems.contains(canonicalName) || 
+                                    artifactsFilter.contains(canonicalName)) {
                                 checked = false;
-                                alreadyExcludedItems.remove(e.getKlass().getCanonicalName());
+                                if (alreadyExcludedItems.contains(canonicalName)) {
+                                    alreadyExcludedItems.remove(canonicalName);
+                                }
                             }
                             final ImportRow importRow = new ImportRow(checked, e, null);
                             importList.getItems().add(importRow);
@@ -559,6 +579,14 @@ public class ImportWindowController extends AbstractModalDialog {
         return res;
     }
 
+    public String getNewExcludedItems() {
+        return importList.getItems()
+                .stream()
+                .filter(r -> !r.isImportRequired())
+                .map(ImportRow::getCanonicalClassName)
+                .collect(Collectors.joining(":"));
+    }
+    
     // The title of the button is important in the sense it says to the user
     // what action will be taken.
     // In the most common case one or more component are selected in the list,
