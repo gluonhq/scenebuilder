@@ -92,6 +92,22 @@ public class AppPlatform {
         return userLibraryFolder;
     }
     
+    public static synchronized String getUserM2Repository() {
+        String m2Path = System.getProperty("user.home");
+        
+        // TODO: Allow custom path for .m2
+        
+        if (IS_WINDOWS) {
+            m2Path = m2Path + "\\.m2\\repository"; //NOI18N
+        } else if (IS_MAC || IS_LINUX) {
+            m2Path = m2Path + "/.m2/repository"; //NOI18N
+        }
+        
+        assert m2Path != null;
+        
+        return m2Path;
+    }
+    
     public static boolean requestStart(
             AppNotificationHandler notificationHandler, Application.Parameters parameters)  
     throws IOException {
