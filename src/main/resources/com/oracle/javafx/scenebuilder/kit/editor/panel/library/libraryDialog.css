@@ -1,0 +1,14 @@
+.image-view-button {
+    -fx-background-color: transparent; 
+    -fx-effect: null;
+    -fx-padding: 3;
+}
+
+.image-view-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 2);
+}
+
+.image-view-button:hover:pressed {
+    -fx-padding: 4 2 2 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
+} 

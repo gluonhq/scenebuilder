@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.library;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  *
@@ -90,6 +91,45 @@ public class LibraryItem {
         }
         
         return result;
+    }
+    
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.section);
+        hash = 67 * hash + Objects.hashCode(this.fxmlText);
+        hash = 67 * hash + Objects.hashCode(this.iconURL);
+        hash = 67 * hash + Objects.hashCode(this.library);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LibraryItem other = (LibraryItem) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.section, other.section)) {
+            return false;
+        }
+        if (!Objects.equals(this.fxmlText, other.fxmlText)) {
+            return false;
+        }
+        if (!Objects.equals(this.iconURL, other.iconURL)) {
+            return false;
+        }
+        return Objects.equals(this.library, other.library);
     }
     
     /*
