@@ -54,6 +54,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarc
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
@@ -114,6 +115,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -193,7 +195,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private PreviewWindowController previewWindowController = null;
     private SkeletonWindowController skeletonWindowController = null;
     private JarAnalysisReportController jarAnalysisReportController = null;
-
+    private LibraryDialogController libraryDialogController = null;
+    
     @FXML private StackPane libraryPanelHost;
     @FXML private StackPane librarySearchPanelHost;
     @FXML private StackPane hierarchyPanelHost;
@@ -1260,8 +1263,20 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     // Library menu
     //
     @FXML
-    void onLibraryImportJarFxml(ActionEvent event) {
-        libraryPanelController.performImportJarFxml();
+    public void onManageJarFxml(ActionEvent event) {
+        if(libraryDialogController==null){
+            libraryDialogController = new LibraryDialogController(editorController, this, getStage());
+        }
+
+        libraryDialogController.openWindow();
+    }
+    
+    public void onImportJarFxml(Window owner) {
+        libraryPanelController.performImportJarFxml(owner);
+    }
+    
+    public void onImportJarFxmlFromFolder(List<File> importedFiles) {
+        libraryPanelController.performImportJarFxmlFromFolder(importedFiles);
     }
     
     @FXML

@@ -160,11 +160,16 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     }
 
     /**
+     * @param owner
      * @treatAsPrivate Perform the import jar action.
      */
-    public void performImportJarFxml() {
+    public void performImportJarFxml(Window owner) {
         // Open file chooser and get user selection
-        final List<File> importedFiles = performSelectJarOrFxmlFile();
+        final List<File> importedFiles = performSelectJarOrFxmlFile(owner);
+        processImportJarFxml(importedFiles);
+    }
+    
+    public void performImportJarFxmlFromFolder(List<File> importedFiles) {
         processImportJarFxml(importedFiles);
     }
     
@@ -872,12 +877,12 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
      * Open a file chooser that allows to select one or more FXML and JAR file.
      * @return the list of selected files
      */
-    private List<File> performSelectJarOrFxmlFile() {
+    private List<File> performSelectJarOrFxmlFile(Window owner) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("lib.filechooser.filter.msg"),
                 "*.fxml", "*.jar")); //NOI18N
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
-        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(owner);
         if(selectedFiles != null && !selectedFiles.isEmpty()){
             // Keep track of the user choice for next time
             EditorController.updateNextInitialDirectory(selectedFiles.get(0));

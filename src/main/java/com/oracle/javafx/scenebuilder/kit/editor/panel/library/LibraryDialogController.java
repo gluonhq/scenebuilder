@@ -123,10 +123,21 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void importJar() {
+        documentWindowController.onImportJarFxml(getStage());
+        loadLibraryList();
     }
 
     @FXML
     private void importJarsInFolder() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle(I18N.getString("library.dialog.folder.title"));
+        chooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+        File selectedDirectory = chooser.showDialog(getStage());
+        if (selectedDirectory != null) {
+            final List<File> files = Arrays.asList(selectedDirectory.listFiles());
+            documentWindowController.onImportJarFxmlFromFolder(files);
+            loadLibraryList();
+        }
     }
 
     @FXML
