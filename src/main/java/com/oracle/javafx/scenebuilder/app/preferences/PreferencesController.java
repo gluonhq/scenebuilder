@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -64,6 +65,8 @@ public class PreferencesController {
     static final String RECENT_ITEMS_SIZE = "RECENT_ITEMS_SIZE"; //NOI18N
 
     static final String DOCUMENTS = "DOCUMENTS"; //NOI18N
+    
+    static final String ARTIFACTS = "ARTIFACTS"; //NOI18N
 
     // DOCUMENT SPECIFIC PREFERENCES
     static final String PATH = "path"; //NOI18N
@@ -88,7 +91,9 @@ public class PreferencesController {
 
     private final Preferences applicationRootPreferences;
     private final Preferences documentsRootPreferences;
+    private final Preferences artifactsRootPreferences;
     private final PreferencesRecordGlobal recordGlobal;
+    private final MavenPreferences mavenPreferences;
     private final Map<DocumentWindowController, PreferencesRecordDocument> recordDocuments = new HashMap<>();
 
     private PreferencesController() {
@@ -102,6 +107,10 @@ public class PreferencesController {
         // Create the root node for all documents preferences
         documentsRootPreferences = applicationRootPreferences.node(DOCUMENTS);
 
+        // Preferences specific to the maven artifacts
+        // Create the root node for all artifacts preferences
+        artifactsRootPreferences = applicationRootPreferences.node(ARTIFACTS);
+        
         // Cleanup document preferences at start time : 
         // We keep only document preferences for the documents defined in RECENT_ITEMS
         final String items = applicationRootPreferences.get(RECENT_ITEMS, null); //NOI18N
@@ -125,6 +134,26 @@ public class PreferencesController {
             } catch (BackingStoreException ex) {
                 Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        
+        
+        mavenPreferences = new MavenPreferences();
+        
+        // create initial map of existing artifacts
+        try {
+            final String[] childrenNames = artifactsRootPreferences.childrenNames();
+            for (String child : childrenNames) {
+                Preferences artifactPreferences = artifactsRootPreferences.node(child);
+                MavenArtifact mavenArtifact = new MavenArtifact(child);
+                mavenArtifact.setPath(artifactPreferences.get(PreferencesRecordArtifact.PATH, null));
+                mavenArtifact.setDependencies(artifactPreferences.get(PreferencesRecordArtifact.DEPENDENCIES, null));
+                mavenArtifact.setFilter(artifactPreferences.get(PreferencesRecordArtifact.FILTER, null));
+                final PreferencesRecordArtifact recordArtifact = new PreferencesRecordArtifact(
+                        artifactsRootPreferences, mavenArtifact);
+                mavenPreferences.addRecordArtifact(child, recordArtifact);
+            }
+        } catch (BackingStoreException ex) {
+            Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -169,4 +198,31 @@ public class PreferencesController {
             Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public MavenPreferences getMavenPreferences() {
+        return mavenPreferences;
+    }
+    
+    public PreferencesRecordArtifact getRecordArtifact(MavenArtifact mavenArtifact) {
+        PreferencesRecordArtifact recordArtifact = mavenPreferences.getRecordArtifact(mavenArtifact.getCoordinates());
+        if (recordArtifact == null) {
+            recordArtifact = new PreferencesRecordArtifact(artifactsRootPreferences, mavenArtifact);
+            mavenPreferences.addRecordArtifact(mavenArtifact.getCoordinates(), recordArtifact);
+        }
+        return recordArtifact;
+    }
+    
+    public void removeArtifact(String coordinates) {
+        if (coordinates != null && !coordinates.isEmpty() && 
+                mavenPreferences.getRecordArtifact(coordinates) != null) {
+            Preferences node = artifactsRootPreferences.node(coordinates);
+            try {
+                node.removeNode();
+                mavenPreferences.removeRecordArtifact(coordinates);
+            } catch (BackingStoreException ex) {
+                Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
 }
