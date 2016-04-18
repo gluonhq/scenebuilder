@@ -227,7 +227,9 @@ public class ImportWindowController extends AbstractModalDialog {
                 libPanelController.copyFilesToUserLibraryDir(importFiles);
             }
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
-            userLib.setFilter(getExcludedItems());
+            if (copyFilesToUserLibraryDir) {
+                userLib.setFilter(getExcludedItems());
+            }
         } catch (IOException ex) {
             showErrorDialog(ex);
         } finally {
