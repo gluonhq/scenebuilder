@@ -46,16 +46,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -332,19 +331,17 @@ public class ImportWindowController extends AbstractModalDialog {
     List<File> buildListOfAllFiles(List<File> importFiles) throws IOException {
         final List<File> res = new ArrayList<>(importFiles);
         String userLibraryDir = ((UserLibrary) libPanelController.getEditorController().getLibrary()).getPath();
-        Path userLibraryPath = new File(userLibraryDir).toPath();
-
-        try (Stream<Path> pathStream = Files.list(userLibraryPath)) {
-            Iterator<Path> pathIterator = pathStream.iterator();
-            while (pathIterator.hasNext()) {
-                Path element = pathIterator.next();
-                if (element.toString().endsWith(".jar")) { //NOI18N
-//                    System.out.println("ImportWindowController::buildListOfAllFiles: Adding " + element); //NOI18N
-                    res.add(element.toFile());
+        if (new File(userLibraryDir).exists()) {
+            Path userLibraryPath = new File(userLibraryDir).toPath();
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(userLibraryPath)) {
+                for (Path entry : stream) {
+                    if (entry.toString().endsWith(".jar")) { //NOI18N
+    //                    System.out.println("ImportWindowController::buildListOfAllFiles: Adding " + element); //NOI18N
+                        res.add(entry.toFile());
+                    }
                 }
             }
         }
-        
         // add artifacts jars (main and dependencies)
         res.addAll(PreferencesController.getSingleton().getMavenPreferences().getArtifactsFilesWithDependencies());
         

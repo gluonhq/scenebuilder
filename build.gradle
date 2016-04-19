@@ -67,3 +67,7 @@ task kitJar(type: Jar, dependsOn: classes, description: 'Creates a jar for the S
 }
 
 apply from: 'maven-publish.gradle'
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = mainClassName
+}

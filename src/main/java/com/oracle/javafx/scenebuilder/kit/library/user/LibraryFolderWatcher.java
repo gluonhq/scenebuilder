@@ -105,40 +105,42 @@ class LibraryFolderWatcher implements Runnable {
     
     
     private void runDiscovery() throws InterruptedException {
-        final Path folder = Paths.get(library.getPath());
-       
         // First put the builtin items in the library
         library.setItems(BuiltinLibrary.getLibrary().getItems());
 
         // Attempts to add the maven jars, including dependencies
         List<Path> currentMavenJars = mavenPreferences.getArtifactsPathsWithDependencies();
         
+        final Set<Path> currentJars = new HashSet<>(currentMavenJars);
+        final Set<Path> currentFxmls = new HashSet<>();
+                
         // Now attempts to discover the user library folder
-        boolean retry;
-        do {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
-                final Set<Path> currentJars = new HashSet<>(currentMavenJars);
-                final Set<Path> currentFxmls = new HashSet<>();
-                for (Path entry: stream) {
-                    if (isJarPath(entry)) {
-                        currentJars.add(entry);
-                    } else if (isFxmlPath(entry)) {
-                        currentFxmls.add(entry);
+        final Path folder = Paths.get(library.getPath());
+        if (folder != null && folder.toFile().exists()) {
+            boolean retry;
+            do {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+                    for (Path entry: stream) {
+                        if (isJarPath(entry)) {
+                            currentJars.add(entry);
+                        } else if (isFxmlPath(entry)) {
+                            currentFxmls.add(entry);
+                        }
                     }
+                    retry = false;
+                } catch(IOException x) {
+                    Thread.sleep(2000 /* ms */);
+                    retry = true;
+                } finally {
+                    library.updateExplorationCount(library.getExplorationCount()+1);
                 }
-               
-                updateLibrary(currentFxmls);
-                exploreAndUpdateLibrary(currentJars);
-                retry = false;
-            } catch(IOException x) {
-                Thread.sleep(2000 /* ms */);
-                retry = true;
-            } finally {
-                library.updateExplorationCount(library.getExplorationCount()+1);
             }
+            while (retry && library.getExplorationCount() < 10);
         }
-        while (retry);
-        
+        try {
+            updateLibrary(currentFxmls);
+            exploreAndUpdateLibrary(currentJars);
+        } catch(IOException x) { }
     }
     
     private void runWatching() throws InterruptedException {
