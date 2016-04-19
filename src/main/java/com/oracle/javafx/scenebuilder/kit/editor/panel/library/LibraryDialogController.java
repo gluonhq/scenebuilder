@@ -211,6 +211,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                         logInfoMessage("log.user.maven.updated", item);
                     }
                 } else {
+                    if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
+                        closeWindow();
+                    }
                     SceneBuilderApp.getSingleton().performOpenRecent(documentWindowController, 
                             item.getFilePath().toFile());
                 } 
