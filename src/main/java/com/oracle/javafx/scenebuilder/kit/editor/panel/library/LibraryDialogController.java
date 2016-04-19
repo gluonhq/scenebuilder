@@ -85,23 +85,24 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     }
 
     void loadLibraryList() {
-        final Path folder = Paths.get(this.userLibrary.getPath());
-
         if (listItems == null) {
             listItems = FXCollections.observableArrayList();
         }
         listItems.clear();
         libraryListView.setItems(listItems);
         libraryListView.setCellFactory(param -> new LibraryDialogListCell());
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
-            for (Path entry : stream) {
-                if (isJarPath(entry) || isFxmlPath(entry)) {
-                    listItems.add(new LibraryDialogListItem(this, entry));
+        
+        final Path folder = Paths.get(this.userLibrary.getPath());
+        if (folder != null && folder.toFile().exists()) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+                for (Path entry : stream) {
+                    if (isJarPath(entry) || isFxmlPath(entry)) {
+                        listItems.add(new LibraryDialogListItem(this, entry));
+                    }
                 }
+            } catch (IOException x) {
+                Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, "Error while getting a new directory stream.", x);
             }
-        } catch (IOException x) {
-            Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, "Error while getting a new directory stream.", x);
         }
         
         // main artifacts
