@@ -23,7 +23,11 @@ dependencies {
     compile 'org.eclipse.aether:aether-transport-file:1.1.0'
     compile 'org.eclipse.aether:aether-transport-http:1.1.0'
     compile 'org.apache.maven:maven-aether-provider:3.3.9'
-   
+    // REST API
+    compile 'org.apache.httpcomponents:httpclient:4.5.2'
+    compile 'javax.json:javax.json-api:1.0'
+    runtime 'org.glassfish:javax.json:1.0.4'
+    
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.2.0'
 }
