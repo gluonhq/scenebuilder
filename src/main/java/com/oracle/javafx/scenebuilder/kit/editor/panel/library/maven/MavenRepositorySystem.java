@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -150,7 +151,7 @@ public class MavenRepositorySystem {
     
     private void cleanMetadata(Artifact artifact) {
         final String path = localRepo.getBasedir().getAbsolutePath() + File.separator
-                        + artifact.getGroupId().replaceAll("\\.", File.separator) + File.separator
+                        + artifact.getGroupId().replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator
                         + artifact.getArtifactId() + File.separator;
         final DefaultMetadata metadata = new DefaultMetadata("maven-metadata.xml", Metadata.Nature.RELEASE);
         getRepositories()
