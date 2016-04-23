@@ -37,6 +37,7 @@ import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_LINUX;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_WINDOWS;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -93,15 +94,18 @@ public class AppPlatform {
     }
     
     public static synchronized String getUserM2Repository() {
-        String m2Path = System.getProperty("user.home");
+        String m2Path = System.getProperty("user.home") + File.separator +
+                ".m2" + File.separator + "repository"; //NOI18N
         
         // TODO: Allow custom path for .m2
         
-        if (IS_WINDOWS) {
-            m2Path = m2Path + "\\.m2\\repository"; //NOI18N
-        } else if (IS_MAC || IS_LINUX) {
-            m2Path = m2Path + "/.m2/repository"; //NOI18N
-        }
+        assert m2Path != null;
+        
+        return m2Path;
+    }
+    
+    public static synchronized String getTempM2Repository() {
+        String m2Path = System.getProperty("java.io.tmpdir") + File.separator + "m2Tmp"; //NOI18N
         
         assert m2Path != null;
         
