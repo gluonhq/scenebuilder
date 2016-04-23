@@ -7,6 +7,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchService;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -15,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -26,8 +29,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -52,6 +57,15 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     private ComboBox<Version> versionsCombo;
     
     @FXML
+    private TextField searchTextfield;
+    
+    @FXML
+    private Button searchButton;
+    
+    @FXML
+    private ListView<String> resultsListView;
+
+    @FXML
     private ProgressIndicator progress;
     
     @FXML
@@ -67,6 +81,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     private MavenRepositorySystem maven;
     private RemoteRepository remoteRepository;
     private Service<ObservableList<Version>> versionsService;
+    private final SearchService searchService;
     private final Service<MavenArtifact> installService;
     private final Window owner;
     
@@ -75,10 +90,10 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     };
     
     private final ChangeListener<Boolean> serviceListener = (obs, ov, nv) -> {
-            if (!nv) {
-                callVersionsService();
-            }
-        };
+        if (!nv) {
+            callVersionsService();
+        }
+    };
     
     public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
         super(MavenDialogController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
@@ -120,6 +135,16 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                 versionsCombo.setDisable(false);
             } else if (nv.equals(Worker.State.CANCELLED) || nv.equals(Worker.State.FAILED)) {
                 versionsCombo.setDisable(false);
+            }
+        });
+        
+        searchService = new SearchService();
+        searchService.getResult().addListener((ListChangeListener.Change<? extends String> c) -> {
+            while (c.next()) {
+                resultsListView.getItems().setAll(searchService.getResult()
+                        .stream()
+                        .sorted()
+                        .collect(Collectors.toList()));
             }
         });
         
@@ -194,6 +219,9 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         versionsCombo.getItems().clear();
         versionsCombo.setDisable(true);
         
+        searchTextfield.clear();
+        resultsListView.getItems().clear();
+        
         getStage().close();
     }
 
@@ -204,6 +232,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         installButton.disableProperty().bind(groupIDTextfield.textProperty().isEmpty().or(
                       artifactIDTextfield.textProperty().isEmpty().or(
                       versionsCombo.getSelectionModel().selectedIndexProperty().lessThan(0))));
+        installButton.setTooltip(new Tooltip(I18N.getString("maven.dialog.install.tooltip")));
         // TODO
         manageButton.setDisable(true);
         
@@ -214,7 +243,33 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         artifactIDTextfield.focusedProperty().addListener(serviceListener);
         artifactIDTextfield.setOnAction(e -> callVersionsService());
         
-        progress.visibleProperty().bind(versionsService.runningProperty().or(installService.runningProperty()));
+        searchButton.disableProperty().bind(searchTextfield.textProperty().isEmpty());
+        searchTextfield.setOnAction(e -> searchButton.fire());
+        searchButton.setOnAction(e -> {
+            if (progress.isVisible()) {
+                searchService.cancelSearch();
+            } else {
+                searchService.setQuery(searchTextfield.getText());
+                searchService.restart();
+            }
+        });
+        
+        resultsListView.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            if (nv != null && !nv.isEmpty() && nv.contains(":")) {
+                resolveVersions(nv.split(":")[0], nv.split(":")[1]);
+            }
+        });
+        
+        searchButton.textProperty().bind(Bindings.when(progress.visibleProperty())
+                .then(I18N.getString("maven.dialog.button.cancel"))
+                .otherwise(I18N.getString("maven.dialog.button.search")));
+        searchButton.tooltipProperty().bind(Bindings.when(progress.visibleProperty())
+                .then(new Tooltip(I18N.getString("maven.dialog.button.cancel.tooltip")))
+                .otherwise(new Tooltip(I18N.getString("maven.dialog.button.search.tooltip"))));
+        
+        progress.visibleProperty().bind(versionsService.runningProperty()
+                .or(installService.runningProperty()
+                        .or(searchService.searchingProperty())));
     }
 
     @FXML
@@ -227,11 +282,18 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         // TODO
     }
     
+    private void resolveVersions(String groupId, String artifactId) {
+        groupIDTextfield.setText(groupId);
+        artifactIDTextfield.setText(artifactId);
+        callVersionsService();
+    }
+    
     private void callVersionsService() {
         if (groupIDTextfield.getText().isEmpty() || artifactIDTextfield.getText().isEmpty()) {
             return;
         }
         versionsCombo.getSelectionModel().selectedItemProperty().removeListener(comboBoxListener);
+        versionsCombo.getItems().clear();
         versionsCombo.setDisable(true);
         versionsService.restart();
     }
@@ -287,7 +349,6 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         recordArtifact.writeToJavaPreferences();
 
         userLibrary.startWatching();
-        
     }
-
+    
 }
