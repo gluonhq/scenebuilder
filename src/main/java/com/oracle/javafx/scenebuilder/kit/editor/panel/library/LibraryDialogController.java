@@ -8,6 +8,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenPreSet;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -33,7 +34,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.stage.Modality;
+import javafx.util.StringConverter;
 
 /**
  * Controller for the JAR/FXML Library dialog.
@@ -42,6 +47,15 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private ListView<DialogListItem> libraryListView;
+    
+    @FXML
+    private Button installButton;
+
+    @FXML
+    private Button manageButton;
+
+    @FXML
+    private ComboBox<TYPE> installCombo;
 
     private final DocumentWindowController documentWindowController;
 
@@ -50,6 +64,23 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     private final Window owner;
     
     private ObservableList<DialogListItem> listItems;
+    
+    private enum TYPE {
+        LATEST("library.dialog.install.artifact.latest"),
+        MANUAL("library.dialog.install.artifact.manually"),
+        FILE("library.dialog.install.jarFxml"),
+        FOLDER("library.dialog.install.folder");
+        
+        String i18n;
+        
+        TYPE(String i18n) {
+            this.i18n = i18n;
+        }
+        
+        public String getI18n() {
+            return i18n;
+        }
+    }
 
     public LibraryDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
         super(LibraryDialogController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
@@ -73,8 +104,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @Override
     public void onCloseRequest(WindowEvent event) {
-        libraryListView.getItems().clear();
-        getStage().close();
+        close();
     }
 
     @Override
@@ -82,6 +112,35 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         super.openWindow();
         super.getStage().setTitle(I18N.getString("library.dialog.title"));
         loadLibraryList();
+        
+        // TODO
+        manageButton.setDisable(true);
+        
+        installCombo.getItems().setAll(TYPE.values());
+        installCombo.setConverter(new StringConverter<TYPE>() {
+            @Override
+            public String toString(TYPE object) {
+                return I18N.getString(object.getI18n());
+            }
+
+            @Override
+            public TYPE fromString(String string) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        installCombo.setCellFactory(p -> new ListCell<TYPE>() {
+            @Override
+            protected void updateItem(TYPE item, boolean empty) {
+                super.updateItem(item, empty);
+//                if (item != null && !empty) {
+//                    setText(I18N.getString(item.getI18n()));
+//                } else {
+//                    setText(null);
+//                }
+            }
+            
+        });
+        installButton.disableProperty().bind(installCombo.getSelectionModel().selectedItemProperty().isNull());
     }
 
     void loadLibraryList() {
@@ -110,6 +169,25 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .stream()
                 .map(c -> new ArtifactDialogListItem(this, c))
                 .collect(Collectors.toList()));
+        
+        
+        // preset on top
+        listItems.addAll(0, 
+            MavenPreSet.getPresetArtifacts()
+                .stream()
+                .filter(p -> listItems.stream().noneMatch(i -> {
+                    final String artifactId = p.split(":")[1];
+                    String name;
+                    if (i instanceof LibraryDialogListItem) {
+                        name = ((LibraryDialogListItem) i).getFilePath().getFileName().toString();
+                    } else {
+                        name = ((ArtifactDialogListItem) i).getCoordinates();
+                    }
+                    return (name.contains(artifactId));
+                 }))
+                .map(p -> new PresetDialogListItem(this, p))
+                .collect(Collectors.toList()));
+
     }
 
     private static boolean isJarPath(Path path) {
@@ -123,12 +201,34 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     }
 
     @FXML
+    private void close() {
+        installCombo.getSelectionModel().clearSelection();
+        libraryListView.getItems().clear();
+        closeWindow();
+    }
+
+    @FXML
+    private void installJar() {
+        TYPE type = installCombo.getSelectionModel().getSelectedItem();
+        switch(type) {
+            case FILE: importJar(); break;
+            case FOLDER: importJarsInFolder(); break;
+            case MANUAL: importArtifact(false); break;
+            case LATEST: importArtifact(true); break;
+        }
+
+    }
+    
+    @FXML
+    private void manage() {
+        // TODO
+    }
+    
     private void importJar() {
         documentWindowController.onImportJarFxml(getStage());
         loadLibraryList();
     }
 
-    @FXML
     private void importJarsInFolder() {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(I18N.getString("library.dialog.folder.title"));
@@ -141,10 +241,16 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         }
     }
 
-    @FXML
-    private void importArtifact() {
-        MavenDialogController mavenDialogController = new MavenDialogController(editorController, documentWindowController, getStage());
+    private void importArtifact(boolean latest) {
+        mavenDialog(null, null, latest);
+    }
+    
+    private void mavenDialog(String groupId, String artifactId, boolean latest) {
+        MavenDialogController mavenDialogController = new MavenDialogController(editorController, documentWindowController, getStage(), latest);
         mavenDialogController.openWindow();
+        if (groupId != null && artifactId != null) {
+            mavenDialogController.resolveVersions(groupId, artifactId);
+        }
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -171,8 +277,10 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         } else {
             //1)
             userLibrary.stopWatching();
+            
             //2)
             deleteFile(dialogListItem);
+            
             //3)
             userLibrary.startWatching();
         }
@@ -194,6 +302,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         } catch (IOException x) {
             Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, "Error while deleting the file.", x);
         }
+        loadLibraryList();
     }
     
     public void processJarFXMLEdit(DialogListItem dialogListItem) {
@@ -236,6 +345,13 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 updatePreferences(mavenArtifact);
                 logInfoMessage("log.user.maven.updated", mavenArtifact.getCoordinates());
             }
+        }
+    }
+    
+    public void processJarFXMLInstall(DialogListItem dialogListItem) {
+        if (dialogListItem instanceof PresetDialogListItem) {
+            mavenDialog(((PresetDialogListItem) dialogListItem).getGroupId(), 
+                    ((PresetDialogListItem) dialogListItem).getArtifactId(), true);
         }
     }
     

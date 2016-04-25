@@ -1,10 +1,12 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
+import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -39,8 +41,10 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         String name;
         if (dialogListItem instanceof LibraryDialogListItem) {
             name = ((LibraryDialogListItem) dialogListItem).getFilePath().getFileName().toString();
-        } else {
+        } else if (dialogListItem instanceof ArtifactDialogListItem) {
             name = ((ArtifactDialogListItem) dialogListItem).getCoordinates();
+        } else {
+            name = ((PresetDialogListItem) dialogListItem).getCoordinates();
         }
         Label fileName = new Label(name);
         HBox.setHgrow(fileName, Priority.ALWAYS);
@@ -54,13 +58,23 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         HBox buttonContent = new HBox();
         buttonContent.setAlignment(Pos.CENTER_RIGHT);
         buttonContent.setSpacing(5);
-        Button editButton = new Button("", new ImageView(ImageUtils.getEditIconImage()));
-        editButton.getStyleClass().add("image-view-button");
-        editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLEdit(dialogListItem));
-        Button deleteButton = new Button("", new ImageView(ImageUtils.getDeleteIconImage()));
-        deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLDelete(dialogListItem));
-        deleteButton.getStyleClass().add("image-view-button");
-        buttonContent.getChildren().addAll(editButton, deleteButton);
+        if (!(dialogListItem instanceof PresetDialogListItem)) {
+            Button editButton = new Button("", new ImageView(ImageUtils.getEditIconImage()));
+            editButton.getStyleClass().add("image-view-button");
+            editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLEdit(dialogListItem));
+            editButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.edit.tooltip")));
+            Button deleteButton = new Button("", new ImageView(ImageUtils.getDeleteIconImage()));
+            deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLDelete(dialogListItem));
+            deleteButton.getStyleClass().add("image-view-button");
+            deleteButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.delete.tooltip")));
+            buttonContent.getChildren().addAll(editButton, deleteButton);
+        } else {
+            Button installButton = new Button("", new ImageView(ImageUtils.getInstallIconImage()));
+            installButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLInstall(dialogListItem));
+            installButton.getStyleClass().add("image-view-button");
+            installButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.install.tooltip")));
+            buttonContent.getChildren().addAll(installButton);
+        } 
         return buttonContent;
     }
 }

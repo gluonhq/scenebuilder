@@ -57,11 +57,13 @@ public abstract class ImageUtils {
     static final String CSS_CURSOR = "css-cursor.png"; //NOI18N
     static final String DELETE_ICON = "delete.png"; //NOI18N
     static final String EDIT_ICON = "edit.png"; //NOI18N
+    static final String INSTALL_ICON = "install.png"; //NOI18N
     private static Cursor closed_hand_cursor;
     private static Cursor open_hand_cursor;
     private static Image warning_badge_image;
     private static Image delete_icon_image;
     private static Image edit_icon_image;
+    private static Image install_icon_image;
     private static ImageCursor css_cursor;
     private static final WeakHashMap<String, Reference<Image>> imageCache = new WeakHashMap<>();
 
@@ -137,6 +139,14 @@ public abstract class ImageUtils {
             edit_icon_image = new Image(url.toExternalForm());
         }
         return edit_icon_image;
+    }
+    
+    public static synchronized Image getInstallIconImage() {
+        if (install_icon_image == null) {
+            final URL url = ImageUtils.class.getResource(UI_DIR + "/" + INSTALL_ICON); //NOI18N
+            install_icon_image = new Image(url.toExternalForm());
+        }
+        return install_icon_image;
     }
     
     public static synchronized Image getWarningBadgeImage() {

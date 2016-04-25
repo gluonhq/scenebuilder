@@ -1,31 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:id="LibraryDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="300.0" prefHeight="400.0" prefWidth="600.0" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="LibraryDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300.0" minWidth="300.0" prefHeight="420.0" prefWidth="500.0" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ListView fx:id="libraryListView" layoutX="200.0" layoutY="90.0" prefHeight="340.0" prefWidth="573.0" AnchorPane.bottomAnchor="135.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="45.0">
-         <placeholder>
-            <Label text="%no.items.found" />
-         </placeholder>
-      </ListView>
-      <Label layoutX="15.0" layoutY="14.0" text="Installed JAR/FXML Files" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
-      <Label layoutX="25.0" layoutY="25.0" text="Install new JAR/FXML Files" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="15.0" />
-      <HBox alignment="CENTER_LEFT" layoutX="27.0" layoutY="300.0" prefHeight="54.0" prefWidth="540.0" spacing="20.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0">
+      <GridPane hgap="5.0" prefHeight="380.0" prefWidth="520.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="429.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="ALWAYS" />
+            <RowConstraints minHeight="10.0" vgrow="NEVER" />
+            <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="NEVER" />
+            <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
-            <Button fx:id="importArtifact" mnemonicParsing="false" onAction="#importArtifact" prefHeight="18.0" prefWidth="150.0" text="%library.dialog.importArtifactButton" />
-            <Pane prefHeight="81.0" prefWidth="34.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="importJar" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#importJar" prefHeight="18.0" prefWidth="150.0" text="%library.dialog.importFileButton" />
-            <Pane prefHeight="81.0" prefWidth="34.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="importJarsInFolder" layoutX="110.0" layoutY="10.0" mnemonicParsing="false" onAction="#importJarsInFolder" prefHeight="18.0" prefWidth="150.0" text="%library.dialog.importFolderButton" />
+            <Label prefHeight="17.0" prefWidth="200.0" text="%library.dialog.label.installed" GridPane.columnSpan="2" GridPane.halignment="LEFT" />
+            <Separator prefWidth="200.0" GridPane.columnSpan="2" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
+            <ListView fx:id="libraryListView" prefHeight="134.0" prefWidth="510.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                <placeholder>
+                    <Label text="%no.items.found" />
+                 </placeholder>
+            </ListView>
+            <Label prefHeight="17.0" prefWidth="577.0" text="%library.dialog.label.install" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
+               <children>
+                  <ComboBox fx:id="installCombo" prefHeight="27.0" prefWidth="800.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="installButton" minWidth="50.0" mnemonicParsing="false" onAction="#installJar" prefHeight="27.0" text="%library.dialog.button.install" />
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.vgrow="NEVER" />
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
+               <children>
+                  <Pane prefHeight="15.0" prefWidth="324.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="manageButton" minWidth="150.0" mnemonicParsing="false" onAction="#manage" text="%library.dialog.button.manage" />
+                  <Button fx:id="closeButton" layoutX="317.0" layoutY="17.0" minWidth="50.0" mnemonicParsing="false" onAction="#close" text="%library.dialog.button.close" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </GridPane>
    </children>
    <stylesheets>
       <URL value="@../../css/Theme.css" />
