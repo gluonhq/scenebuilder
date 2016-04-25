@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -68,7 +70,10 @@ public class MavenRepositorySystem {
     
     private VersionRangeResult rangeResult;
     
-    public MavenRepositorySystem() {
+    private final boolean onlyReleases;
+    
+    public MavenRepositorySystem(boolean onlyReleases) {
+        this.onlyReleases = onlyReleases;
         initRepositorySystem();
     }
     
@@ -118,6 +123,8 @@ public class MavenRepositorySystem {
     
     public List<RemoteRepository> getRepositories() {
         return repositories.stream()
+                .filter(r -> !onlyReleases ||
+                        (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
                 .map(this::createRepository)
                 .collect(Collectors.toList());
     }
@@ -250,9 +257,11 @@ public class MavenRepositorySystem {
     }
     
     private RemoteRepository createRepository(Repository repository) {
-        return new RemoteRepository
+        final RemoteRepository repo = new RemoteRepository
                 .Builder(repository.getId() , repository.getType(), repository.getURL())
+                .setSnapshotPolicy(onlyReleases ? new RepositoryPolicy(false, null, null) : new RepositoryPolicy())
                 .build();
+        return repo;
     }
     
 }

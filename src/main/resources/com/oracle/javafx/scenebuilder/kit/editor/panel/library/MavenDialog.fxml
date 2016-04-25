@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="MavenDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="300.0" prefHeight="498.0" prefWidth="553.0" styleClass="theme-presets" stylesheets="@../../css/Theme.css" xmlns="http://javafx.com/javafx/8.0.72" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="MavenDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300.0" minWidth="300.0" prefHeight="500.0" prefWidth="500.0" styleClass="theme-presets" stylesheets="@../../css/Theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane hgap="5.0" prefHeight="380.0" prefWidth="520.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <columnConstraints>
@@ -64,8 +64,8 @@
                <children>
                   <ProgressIndicator fx:id="progress" prefHeight="27.0" prefWidth="50.0" visible="false" />
                   <Pane prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="manageButton" minWidth="150.0" mnemonicParsing="false" onAction="#manage" text="%maven.dialog.manage" />
-                  <Button fx:id="installButton" mnemonicParsing="false" onAction="#installJar" prefHeight="27.0" prefWidth="150.0" text="%maven.dialog.install" />
+                  <Button fx:id="cancelButton" minWidth="50.0" mnemonicParsing="false" onAction="#cancel" text="%maven.dialog.cancel" />
+                  <Button fx:id="installButton" minWidth="50.0" mnemonicParsing="false" onAction="#installJar" prefHeight="27.0" text="%maven.dialog.install" />
                </children>
             </HBox>
             <Separator prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="8" GridPane.vgrow="NEVER" />

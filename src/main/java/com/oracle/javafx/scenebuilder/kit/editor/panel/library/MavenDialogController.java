@@ -14,6 +14,7 @@ import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javafx.beans.binding.Bindings;
@@ -24,7 +25,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -71,9 +71,6 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     @FXML
     private Button installButton;
 
-    @FXML
-    private Button manageButton;
-    
     private final DocumentWindowController documentWindowController;
 
     private final UserLibrary userLibrary;
@@ -95,13 +92,17 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         }
     };
     
-    public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
+    private final boolean latest;
+    
+    public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
+            Window owner, boolean latest) {
         super(MavenDialogController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.documentWindowController = documentWindowController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
+        this.latest = latest;
         
-        maven = new MavenRepositorySystem();
+        maven = new MavenRepositorySystem(latest);
         
         versionsService = new Service<ObservableList<Version>>() {
             @Override
@@ -117,7 +118,10 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         
         versionsService.stateProperty().addListener((obs, ov, nv) -> {
             if (nv.equals(Worker.State.SUCCEEDED)) {
-                versionsCombo.getItems().setAll(versionsService.getValue().sorted((v1, v2) -> v2.compareTo(v1)));
+                versionsCombo.getItems().setAll(versionsService.getValue()
+                        .filtered(v -> !latest ||
+                                (latest && !v.toString().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
+                        .sorted((v1, v2) -> v2.compareTo(v1)));
                 versionsCombo.setCellFactory(p -> new ListCell<Version>() {
                     @Override
                     protected void updateItem(Version item, boolean empty) {
@@ -132,9 +136,15 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                     
                 });
                 versionsCombo.getSelectionModel().selectedItemProperty().addListener(comboBoxListener);
-                versionsCombo.setDisable(false);
+                if (!latest) {
+                    versionsCombo.setDisable(false);
+                } else if (!versionsCombo.getItems().isEmpty()) {
+                    versionsCombo.getSelectionModel().select(0);
+                }
             } else if (nv.equals(Worker.State.CANCELLED) || nv.equals(Worker.State.FAILED)) {
-                versionsCombo.setDisable(false);
+                if (!latest) {
+                    versionsCombo.setDisable(false);
+                }
             }
         });
         
@@ -208,21 +218,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
 
     @Override
     public void onCloseRequest(WindowEvent event) {
-        groupIDTextfield.focusedProperty().removeListener(serviceListener);
-        artifactIDTextfield.focusedProperty().removeListener(serviceListener);
-        installButton.disableProperty().unbind();
-        progress.visibleProperty().unbind();
-        
-        groupIDTextfield.clear();
-        artifactIDTextfield.clear();
-        versionsCombo.getSelectionModel().selectedItemProperty().removeListener(comboBoxListener);
-        versionsCombo.getItems().clear();
-        versionsCombo.setDisable(true);
-        
-        searchTextfield.clear();
-        resultsListView.getItems().clear();
-        
-        getStage().close();
+        cancel();
     }
 
     @Override
@@ -233,15 +229,17 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                       artifactIDTextfield.textProperty().isEmpty().or(
                       versionsCombo.getSelectionModel().selectedIndexProperty().lessThan(0))));
         installButton.setTooltip(new Tooltip(I18N.getString("maven.dialog.install.tooltip")));
-        // TODO
-        manageButton.setDisable(true);
         
         versionsCombo.setDisable(true);
         
-        groupIDTextfield.focusedProperty().addListener(serviceListener);
-        groupIDTextfield.setOnAction(e -> callVersionsService());
-        artifactIDTextfield.focusedProperty().addListener(serviceListener);
-        artifactIDTextfield.setOnAction(e -> callVersionsService());
+        groupIDTextfield.setDisable(latest);
+        artifactIDTextfield.setDisable(latest);
+        if (!latest) {
+            groupIDTextfield.focusedProperty().addListener(serviceListener);
+            groupIDTextfield.setOnAction(e -> callVersionsService());
+            artifactIDTextfield.focusedProperty().addListener(serviceListener);
+            artifactIDTextfield.setOnAction(e -> callVersionsService());
+        }
         
         searchButton.disableProperty().bind(searchTextfield.textProperty().isEmpty());
         searchTextfield.setOnAction(e -> searchButton.fire());
@@ -273,16 +271,30 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     }
 
     @FXML
-    private void installJar(ActionEvent actionEvent) {
+    private void installJar() {
         installService.restart();
     }
     
     @FXML
-    private void manage(ActionEvent actionEvent) {
-        // TODO
+    private void cancel() {
+        groupIDTextfield.focusedProperty().removeListener(serviceListener);
+        artifactIDTextfield.focusedProperty().removeListener(serviceListener);
+        installButton.disableProperty().unbind();
+        progress.visibleProperty().unbind();
+        
+        groupIDTextfield.clear();
+        artifactIDTextfield.clear();
+        versionsCombo.getSelectionModel().selectedItemProperty().removeListener(comboBoxListener);
+        versionsCombo.getItems().clear();
+        versionsCombo.setDisable(true);
+        
+        searchTextfield.clear();
+        resultsListView.getItems().clear();
+        
+        closeWindow();
     }
     
-    private void resolveVersions(String groupId, String artifactId) {
+    public void resolveVersions(String groupId, String artifactId) {
         groupIDTextfield.setText(groupId);
         artifactIDTextfield.setText(artifactId);
         callVersionsService();
