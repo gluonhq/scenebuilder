@@ -45,6 +45,23 @@ import javafx.util.StringConverter;
  */
 public class LibraryDialogController extends AbstractFxmlWindowController {
 
+    private enum TYPE {
+        LATEST("library.dialog.install.artifact.latest"),
+        MANUAL("library.dialog.install.artifact.manually"),
+        FILE("library.dialog.install.jarFxml"),
+        FOLDER("library.dialog.install.folder");
+        
+        String i18n;
+        
+        TYPE(String i18n) {
+            this.i18n = i18n;
+        }
+        
+        public String getI18n() {
+            return i18n;
+        }
+    }
+    
     @FXML
     private ListView<DialogListItem> libraryListView;
     
@@ -65,23 +82,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     private ObservableList<DialogListItem> listItems;
     
-    private enum TYPE {
-        LATEST("library.dialog.install.artifact.latest"),
-        MANUAL("library.dialog.install.artifact.manually"),
-        FILE("library.dialog.install.jarFxml"),
-        FOLDER("library.dialog.install.folder");
-        
-        String i18n;
-        
-        TYPE(String i18n) {
-            this.i18n = i18n;
-        }
-        
-        public String getI18n() {
-            return i18n;
-        }
-    }
-
     public LibraryDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
         super(LibraryDialogController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.documentWindowController = documentWindowController;
@@ -125,18 +125,18 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
             @Override
             public TYPE fromString(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); 
             }
         });
         installCombo.setCellFactory(p -> new ListCell<TYPE>() {
             @Override
             protected void updateItem(TYPE item, boolean empty) {
                 super.updateItem(item, empty);
-//                if (item != null && !empty) {
-//                    setText(I18N.getString(item.getI18n()));
-//                } else {
-//                    setText(null);
-//                }
+                if (item != null && !empty) {
+                    setText(I18N.getString(item.getI18n()));
+                } else {
+                    setText(null);
+                }
             }
             
         });
