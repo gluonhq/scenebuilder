@@ -78,6 +78,8 @@ import javafx.stage.Stage;
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
 
+    public static final String VERSION = "8.1.2";
+    
     public enum ApplicationControlAction {
 
         ABOUT,
@@ -776,6 +778,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             MenuBarController.getSystemMenuBarController();
         }
         EffectPicker.getEffectClasses();
+
+        if (!RegistrationHelper.isRegistered()) {
+            Platform.runLater(() -> {
+                RegistrationHelper.showUserRegistration();
+            });
+        }
     }
     
     private void userLibraryExplorationCountDidChange() {
