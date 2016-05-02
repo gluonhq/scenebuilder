@@ -12,3 +12,7 @@
     -fx-padding: 4 2 2 4;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
 } 
+
+.label-error {
+    -fx-text-fill: red;
+}
