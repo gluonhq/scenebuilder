@@ -1,4 +1,4 @@
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
 import java.nio.file.Path;
 

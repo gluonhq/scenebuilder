@@ -1,4 +1,4 @@
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
@@ -8,7 +8,11 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenPreSet;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenDialogController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.RepositoryManagerController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -83,7 +87,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     private ObservableList<DialogListItem> listItems;
     
     public LibraryDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
-        super(LibraryDialogController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
+        super(LibraryPanelController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.documentWindowController = documentWindowController;
         this.owner = owner;
         this.editorController = editorController;
@@ -112,9 +116,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         super.openWindow();
         super.getStage().setTitle(I18N.getString("library.dialog.title"));
         loadLibraryList();
-        
-        // TODO
-        manageButton.setDisable(true);
         
         installCombo.getItems().setAll(TYPE.values());
         installCombo.setConverter(new StringConverter<TYPE>() {
@@ -173,7 +174,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         
         // preset on top
         listItems.addAll(0, 
-            MavenPreSet.getPresetArtifacts()
+            MavenPresets.getPresetArtifacts()
                 .stream()
                 .filter(p -> listItems.stream().noneMatch(i -> {
                     final String artifactId = p.split(":")[1];
@@ -221,7 +222,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void manage() {
-        // TODO
+        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController, documentWindowController, getStage());
+        repositoryDialogController.openWindow();
     }
     
     private void importJar() {
