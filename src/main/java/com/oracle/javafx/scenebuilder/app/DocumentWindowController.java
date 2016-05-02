@@ -54,7 +54,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarc
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryDialogController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager.LibraryDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
