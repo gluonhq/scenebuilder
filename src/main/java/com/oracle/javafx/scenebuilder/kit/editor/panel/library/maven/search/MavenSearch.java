@@ -20,6 +20,9 @@ public class MavenSearch implements Search {
     private static final String URL_PREFIX = "http://search.maven.org/solrsearch/select?q=";
     private static final String URL_SUFFIX = "&rows=50&wt=json";
     
+    private static final String URL_PREFIX_FULLCLASS = "http://search.maven.org/solrsearch/select?q=fc:%22";
+    private static final String URL_SUFFIX_FULLCLASS = "%22&rows=50&wt=json";
+    
     private final HttpClient client;
             
     public MavenSearch() {
@@ -39,7 +42,7 @@ public class MavenSearch implements Search {
                         JsonArray docResults = jsonResponse.getJsonArray("docs");
                         return docResults.getValuesAs(JsonObject.class)
                                 .stream()
-                                .map(doc -> doc.getString("id", ""))
+                                .map(doc -> doc.getString("id", "")) // "latestVersion"
                                 .distinct()
                                 .collect(Collectors.toList());
                     }
