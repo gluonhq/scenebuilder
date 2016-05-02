@@ -1,7 +1,10 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import com.oracle.javafx.scenebuilder.app.AppPlatform;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +16,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.eclipse.aether.AbstractRepositoryListener;
@@ -20,6 +24,7 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
@@ -29,6 +34,7 @@ import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
 import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.metadata.Metadata;
+import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -48,18 +54,12 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.version.Version;
 
 public class MavenRepositorySystem {
 
     // TODO: Manage List of Repositories
-    private final List<Repository> repositories = Arrays.asList(
-            new Repository("Maven Central", "default", "https://repo1.maven.org/maven2/"),
-            new Repository("Jcenter", "default", "https://jcenter.bintray.com"),
-            new Repository("Sonatype (snapshots)", "default", "https://oss.sonatype.org/content/repositories/snapshots"),
-            new Repository("Sonatype (releases)", "default", "https://oss.sonatype.org/content/repositories/releases"),
-            new Repository("Gluon Nexus", "default", "http://nexus.gluonhq.com/nexus/content/repositories/releases"));
-    
     // TODO: Manage private repositories and credentials
     
     private RepositorySystem system;
@@ -71,6 +71,8 @@ public class MavenRepositorySystem {
     private VersionRangeResult rangeResult;
     
     private final boolean onlyReleases;
+    
+    private BasicRepositoryConnectorFactory basicRepositoryConnectorFactory;
     
     public MavenRepositorySystem(boolean onlyReleases) {
         this.onlyReleases = onlyReleases;
@@ -89,8 +91,11 @@ public class MavenRepositorySystem {
             }
         });
         
-        system = locator.getService(RepositorySystem.class);
+        basicRepositoryConnectorFactory = new BasicRepositoryConnectorFactory();
+        basicRepositoryConnectorFactory.initService(locator);
         
+        system = locator.getService(RepositorySystem.class);
+
         session = MavenRepositorySystemUtils.newSession();
 
         localRepo = new LocalRepository(new File(AppPlatform.getUserM2Repository()));
@@ -122,11 +127,17 @@ public class MavenRepositorySystem {
     }
     
     public List<RemoteRepository> getRepositories() {
-        return repositories.stream()
+        final List<RemoteRepository> list = MavenPresets.getPresetRepositories().stream()
                 .filter(r -> !onlyReleases ||
                         (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
                 .map(this::createRepository)
                 .collect(Collectors.toList());
+        list.addAll(PreferencesController.getSingleton().getRepositoryPreferences().getRepositories().stream()
+                .filter(r -> !onlyReleases ||
+                        (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
+                .map(this::createRepository)
+                .collect(Collectors.toList()));
+        return list;
     }
     
     public RemoteRepository getRemoteRepository(Version version) {
@@ -257,11 +268,39 @@ public class MavenRepositorySystem {
     }
     
     private RemoteRepository createRepository(Repository repository) {
+        Authentication auth = null;
+        if (repository.getUser() != null && !repository.getUser().isEmpty() && 
+            repository.getPassword() != null && !repository.getPassword().isEmpty()) {
+            auth = new AuthenticationBuilder()
+                    .addUsername(repository.getUser())
+                    .addPassword(repository.getPassword())
+                    .build();
+        }
+        
         final RemoteRepository repo = new RemoteRepository
                 .Builder(repository.getId() , repository.getType(), repository.getURL())
                 .setSnapshotPolicy(onlyReleases ? new RepositoryPolicy(false, null, null) : new RepositoryPolicy())
+                .setAuthentication(auth)
                 .build();
         return repo;
+    }
+    
+    public String validateRepository(Repository repository) {
+        RemoteRepository remoteRepository = createRepository(repository);
+        
+        ArtifactRequest artifactRequest = new ArtifactRequest();
+        artifactRequest.setArtifact(new DefaultArtifact("test:test:1.0"));
+        artifactRequest.setRepositories(Arrays.asList(remoteRepository));
+        try {
+            system.resolveArtifact(session, artifactRequest);
+        } catch (ArtifactResolutionException ex) {
+            final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(ex);
+            if (rootCauseMessage != null && !rootCauseMessage.contains("ArtifactNotFoundException")) {
+                return rootCauseMessage;
+            }
+        }
+        
+        return "";
     }
     
 }

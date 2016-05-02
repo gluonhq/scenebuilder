@@ -1,12 +1,12 @@
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchService;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
@@ -96,7 +96,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     
     public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
             Window owner, boolean latest) {
-        super(MavenDialogController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
+        super(LibraryPanelController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.documentWindowController = documentWindowController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
