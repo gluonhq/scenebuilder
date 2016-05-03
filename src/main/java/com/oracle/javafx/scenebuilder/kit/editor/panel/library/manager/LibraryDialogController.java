@@ -11,7 +11,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenDialogController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchMavenDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.RepositoryManagerController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
@@ -150,20 +150,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void addRelease() {
-        mavenDialog(null, null, true);
-    }
-    
-    @FXML
-    private void addManually() {
-        mavenDialog(null, null, false);
-    }
-    
-    private void mavenDialog(String groupId, String artifactId, boolean latest) {
-        MavenDialogController mavenDialogController = new MavenDialogController(editorController, documentWindowController, getStage(), latest);
+        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController, documentWindowController, getStage());
         mavenDialogController.openWindow();
-        if (groupId != null && artifactId != null) {
-            mavenDialogController.resolveVersions(groupId, artifactId);
-        }
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -173,9 +161,23 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 }
             }
         });
-        
     }
     
+    @FXML
+    private void addManually() {
+        MavenDialogController mavenDialogController = new MavenDialogController(editorController, documentWindowController, getStage());
+        mavenDialogController.openWindow();
+        mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if (!mavenDialogController.getStage().isShowing()) {
+                    loadLibraryList();
+                    mavenDialogController.getStage().showingProperty().removeListener(this);
+                }
+            }
+        });
+    }
+     
     /*
     If the file is an fxml, we don't need to stop the library watcher.
     Else we have to stop it first:

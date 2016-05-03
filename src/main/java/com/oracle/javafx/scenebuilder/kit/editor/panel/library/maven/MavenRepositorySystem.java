@@ -195,7 +195,8 @@ public class MavenRepositorySystem {
                 .map(a -> {
                     ArtifactRequest artifactRequest = new ArtifactRequest();
                     artifactRequest.setArtifact(a);
-                    artifactRequest.setRepositories(Arrays.asList(remoteRepository));
+                    artifactRequest.setRepositories(remoteRepository == null ? getRepositories() : 
+                            Arrays.asList(remoteRepository));
                     return artifactRequest;
                 })
                 .map(ar -> {
@@ -252,7 +253,8 @@ public class MavenRepositorySystem {
         DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-        collectRequest.setRepositories(Arrays.asList(remoteRepository));
+        collectRequest.setRepositories(remoteRepository == null ? getRepositories() : 
+                Arrays.asList(remoteRepository));
 
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, classpathFlter);
         try {

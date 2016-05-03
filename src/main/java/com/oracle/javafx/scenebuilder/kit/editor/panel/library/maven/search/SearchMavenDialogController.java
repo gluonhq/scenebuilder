@@ -1,4 +1,4 @@
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
@@ -7,6 +7,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -15,16 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -33,24 +34,22 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.version.Version;
 
 
 /**
  * Controller for the JAR Maven dialog.
  */
-public class MavenDialogController extends AbstractFxmlWindowController {
+public class SearchMavenDialogController extends AbstractFxmlWindowController {
 
     @FXML
-    private TextField groupIDTextfield;
-
-    @FXML
-    private TextField artifactIDTextfield;
-
-    @FXML
-    private ComboBox<Version> versionsCombo;
+    private TextField searchTextfield;
     
+    @FXML
+    private Button searchButton;
+    
+    @FXML
+    private ListView<Artifact> resultsListView;
+
     @FXML
     private ProgressIndicator progress;
     
@@ -62,64 +61,26 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     private final UserLibrary userLibrary;
     
     private MavenRepositorySystem maven;
-    private RemoteRepository remoteRepository;
-    private Service<ObservableList<Version>> versionsService;
+    private final SearchService searchService;
     private final Service<MavenArtifact> installService;
     private final Window owner;
     
-    private final ChangeListener<Version> comboBoxListener = (obs, ov, nv) -> {
-        remoteRepository = maven.getRemoteRepository(nv);
-    };
-    
-    private final ChangeListener<Boolean> serviceListener = (obs, ov, nv) -> {
-        if (!nv) {
-            callVersionsService();
-        }
-    };
-    
-    
-    public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
+    public SearchMavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
             Window owner) {
-        super(LibraryPanelController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
+        super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.documentWindowController = documentWindowController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
         
-        maven = new MavenRepositorySystem(false);
+        maven = new MavenRepositorySystem(true); // only releases
         
-        versionsService = new Service<ObservableList<Version>>() {
-            @Override
-            protected Task<ObservableList<Version>> createTask() {
-                return new Task<ObservableList<Version>>() {
-                    @Override
-                    protected ObservableList<Version> call() throws Exception {
-                        return FXCollections.observableArrayList(getVersions());
-                    }
-                };
-            }
-        };
-        
-        versionsService.stateProperty().addListener((obs, ov, nv) -> {
-            if (nv.equals(Worker.State.SUCCEEDED)) {
-                versionsCombo.getItems().setAll(versionsService.getValue()
-                        .sorted((v1, v2) -> v2.compareTo(v1)));
-                versionsCombo.setCellFactory(p -> new ListCell<Version>() {
-                    @Override
-                    protected void updateItem(Version item, boolean empty) {
-                        super.updateItem(item, empty); 
-                        if (item != null && !empty) {
-                            final RemoteRepository remote = maven.getRemoteRepository(item);
-                            setText(item + " [" + remote.getId() + "]");
-                        } else {
-                            setText(null);
-                        }
-                    }
-                    
-                });
-                versionsCombo.getSelectionModel().selectedItemProperty().addListener(comboBoxListener);
-                versionsCombo.setDisable(false);
-            } else if (nv.equals(Worker.State.CANCELLED) || nv.equals(Worker.State.FAILED)) {
-                versionsCombo.setDisable(false);
+        searchService = new SearchService();
+        searchService.getResult().addListener((ListChangeListener.Change<? extends Artifact> c) -> {
+            while (c.next()) {
+                resultsListView.getItems().setAll(searchService.getResult()
+                        .stream()
+                        .sorted((a1, a2) -> a1.toString().compareTo(a2.toString()))
+                        .collect(Collectors.toList()));
             }
         });
         
@@ -189,21 +150,43 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     @Override
     public void openWindow() {
         super.openWindow();
-        super.getStage().setTitle(I18N.getString("maven.dialog.title"));
-        installButton.disableProperty().bind(groupIDTextfield.textProperty().isEmpty().or(
-                      artifactIDTextfield.textProperty().isEmpty().or(
-                      versionsCombo.getSelectionModel().selectedIndexProperty().lessThan(0))));
-        installButton.setTooltip(new Tooltip(I18N.getString("maven.dialog.install.tooltip")));
+        super.getStage().setTitle(I18N.getString("search.maven.dialog.title"));
+        installButton.disableProperty().bind(resultsListView.getSelectionModel().selectedIndexProperty().lessThan(0));
+        installButton.setTooltip(new Tooltip(I18N.getString("search.maven.dialog.install.tooltip")));
         
-        versionsCombo.setDisable(true);
+        searchButton.disableProperty().bind(searchTextfield.textProperty().isEmpty());
+        searchTextfield.setOnAction(e -> searchButton.fire());
+        searchButton.setOnAction(e -> {
+            if (progress.isVisible()) {
+                searchService.cancelSearch();
+            } else {
+                searchService.setQuery(searchTextfield.getText());
+                searchService.restart();
+            }
+        });
         
-        groupIDTextfield.focusedProperty().addListener(serviceListener);
-        groupIDTextfield.setOnAction(e -> callVersionsService());
-        artifactIDTextfield.focusedProperty().addListener(serviceListener);
-        artifactIDTextfield.setOnAction(e -> callVersionsService());
+        resultsListView.setCellFactory(p -> new ListCell<Artifact>() {
+            @Override
+            protected void updateItem(Artifact item, boolean empty) {
+                super.updateItem(item, empty); 
+                if (item != null && !empty) {
+                    setText(item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion());
+                } else {
+                    setText(null);
+                }
+            }
+            
+        });
         
-        progress.visibleProperty().bind(versionsService.runningProperty()
-                .or(installService.runningProperty()));
+        searchButton.textProperty().bind(Bindings.when(progress.visibleProperty())
+                .then(I18N.getString("search.maven.dialog.button.cancel"))
+                .otherwise(I18N.getString("search.maven.dialog.button.search")));
+        searchButton.tooltipProperty().bind(Bindings.when(progress.visibleProperty())
+                .then(new Tooltip(I18N.getString("search.maven.dialog.button.cancel.tooltip")))
+                .otherwise(new Tooltip(I18N.getString("search.maven.dialog.button.search.tooltip"))));
+        
+        progress.visibleProperty().bind(installService.runningProperty()
+                        .or(searchService.searchingProperty()));
     }
 
     @FXML
@@ -213,42 +196,16 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void cancel() {
-        groupIDTextfield.focusedProperty().removeListener(serviceListener);
-        artifactIDTextfield.focusedProperty().removeListener(serviceListener);
         installButton.disableProperty().unbind();
         progress.visibleProperty().unbind();
         
-        groupIDTextfield.clear();
-        artifactIDTextfield.clear();
-        versionsCombo.getSelectionModel().selectedItemProperty().removeListener(comboBoxListener);
-        versionsCombo.getItems().clear();
-        versionsCombo.setDisable(true);
+        searchTextfield.clear();
+        resultsListView.getItems().clear();
         
         closeWindow();
     }
     
-    private void callVersionsService() {
-        if (groupIDTextfield.getText().isEmpty() || artifactIDTextfield.getText().isEmpty()) {
-            return;
-        }
-        versionsCombo.getSelectionModel().selectedItemProperty().removeListener(comboBoxListener);
-        versionsCombo.getItems().clear();
-        versionsCombo.setDisable(true);
-        versionsService.restart();
-    }
-    
-    private List<Version> getVersions() {
-        Artifact artifact = new DefaultArtifact(groupIDTextfield.getText() + ":" + 
-                artifactIDTextfield.getText() + ":[0,)");
-
-        return maven.findVersions(artifact);
-    }
-    
     private MavenArtifact resolveArtifacts() {
-        if (remoteRepository == null) {
-            return null;
-        }
-        
         String[] coordinates = getArtifactCoordinates().split(":");
         Artifact jarArtifact = new DefaultArtifact(coordinates[0], 
                 coordinates[1], "", "jar", coordinates[2]);
@@ -260,8 +217,8 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                 coordinates[1], "", "pom", coordinates[2]);
 
         MavenArtifact mavenArtifact = new MavenArtifact(getArtifactCoordinates());
-        mavenArtifact.setPath(maven.resolveArtifacts(remoteRepository, jarArtifact, javadocArtifact, pomArtifact));
-        mavenArtifact.setDependencies(maven.resolveDependencies(remoteRepository, jarArtifact));
+        mavenArtifact.setPath(maven.resolveArtifacts(null, jarArtifact, javadocArtifact, pomArtifact));
+        mavenArtifact.setDependencies(maven.resolveDependencies(null, jarArtifact));
         
         return mavenArtifact;
     }
@@ -271,8 +228,8 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     }
     
     private String getArtifactCoordinates() {
-        return groupIDTextfield.getText() + ":" + artifactIDTextfield.getText() + ":" + 
-                versionsCombo.getSelectionModel().getSelectedItem().toString();
+        final Artifact item = resultsListView.getSelectionModel().getSelectedItem();
+        return item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion();
     }
     
     private void updatePreferences(MavenArtifact mavenArtifact) {
