@@ -44,13 +44,13 @@
                   <Button fx:id="closeButton" layoutX="317.0" layoutY="17.0" minWidth="70.0" mnemonicParsing="false" onAction="#close" text="%library.dialog.button.close" />
                </children>
             </HBox>
-            <Hyperlink onAction="#addRelease" prefHeight="25.0" prefWidth="477.0" text="%library.dialog.hyperlink.release" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Hyperlink onAction="#addRelease" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.release" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin></Hyperlink>
-            <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addManually" prefHeight="25.0" prefWidth="477.0" text="%library.dialog.hyperlink.manually" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addJar" prefHeight="25.0" prefWidth="477.0" text="%library.dialog.hyperlink.jar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Hyperlink layoutX="30.0" layoutY="316.0" onAction="#manage" prefHeight="25.0" prefWidth="477.0" text="%library.dialog.hyperlink.repositories" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addManually" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.manually" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addJar" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.jar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Hyperlink layoutX="30.0" layoutY="316.0" onAction="#manage" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.repositories" GridPane.columnIndex="1" GridPane.rowIndex="6" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -16,3 +16,16 @@
 .label-error {
     -fx-text-fill: red;
 }
+
+.dialog-hyperlink:armed,
+.dialog-hyperlink:visited,
+.dialog-hyperlink:hover:armed {
+    -fx-text-fill: -fx-accent;
+}
+
+.dialog-hyperlink:visited {
+    -fx-underline: false;
+}
+.dialog-hyperlink:visited:hover {
+    -fx-underline: true;
+}

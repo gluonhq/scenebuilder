@@ -123,7 +123,7 @@ public class SearchService extends Service<Void> {
         List<Artifact> list = new ArrayList<>();
         mapArtifacts.forEach((s, l) -> {
             Version v = l.stream()
-//                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
                     
