@@ -153,6 +153,16 @@ public class MavenRepositorySystem {
                         .build());
     }
     
+    public RemoteRepository getRemoteRepository(String name) {
+        return getRepositories()
+                .stream()
+                .filter(r -> r.getId().equals(name))
+                .findFirst()
+                .orElse(new RemoteRepository
+                        .Builder("Local", "default", session.getLocalRepository().getBasedir().getAbsolutePath())
+                        .build());
+    }
+    
     public List<Version> findVersions(Artifact artifact) {
         VersionRangeRequest rangeRequest = new VersionRangeRequest();
         rangeRequest.setArtifact(artifact);

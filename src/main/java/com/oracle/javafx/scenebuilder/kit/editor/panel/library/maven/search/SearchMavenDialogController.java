@@ -9,6 +9,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowContr
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -34,6 +35,8 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.version.Version;
 
 
 /**
@@ -61,6 +64,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private final UserLibrary userLibrary;
     
     private MavenRepositorySystem maven;
+    private RemoteRepository remoteRepository;
     private final SearchService searchService;
     private final Service<MavenArtifact> installService;
     private final Window owner;
@@ -171,11 +175,19 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                 super.updateItem(item, empty); 
                 if (item != null && !empty) {
                     setText(item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion());
+                    setTooltip(new Tooltip(item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion() + " [" + item.getProperty("Repository", "")  +"]"));
                 } else {
                     setText(null);
+                    setTooltip(null);
                 }
             }
             
+        });
+        
+        resultsListView.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            if (nv != null) {
+                remoteRepository = maven.getRemoteRepository(nv.getProperty("Repository", "Local"));
+            }
         });
         
         searchButton.textProperty().bind(Bindings.when(progress.visibleProperty())
@@ -206,6 +218,10 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     }
     
     private MavenArtifact resolveArtifacts() {
+        if (remoteRepository == null) {
+            return null;
+        }
+        
         String[] coordinates = getArtifactCoordinates().split(":");
         Artifact jarArtifact = new DefaultArtifact(coordinates[0], 
                 coordinates[1], "", "jar", coordinates[2]);
@@ -217,8 +233,8 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                 coordinates[1], "", "pom", coordinates[2]);
 
         MavenArtifact mavenArtifact = new MavenArtifact(getArtifactCoordinates());
-        mavenArtifact.setPath(maven.resolveArtifacts(null, jarArtifact, javadocArtifact, pomArtifact));
-        mavenArtifact.setDependencies(maven.resolveDependencies(null, jarArtifact));
+        mavenArtifact.setPath(maven.resolveArtifacts(remoteRepository, jarArtifact, javadocArtifact, pomArtifact));
+        mavenArtifact.setDependencies(maven.resolveDependencies(remoteRepository, jarArtifact));
         
         return mavenArtifact;
     }

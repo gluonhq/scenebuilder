@@ -2,6 +2,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class SearchService extends Service<Void> {
     private final BooleanProperty searching;
     
     private List<Task<ObservableList<Artifact>>> tasks;
-
+    
     public SearchService() {
         setExecutor(exec);
         result = FXCollections.observableArrayList();
@@ -72,11 +73,11 @@ public class SearchService extends Service<Void> {
                 }
                 // TODO: Manage other search engines
                 tasks = Arrays.asList(
-                    createSearchTask(new MavenSearch()),
-                    createSearchTask(new SonatypeSearch()),
-                    createSearchTask(new JcenterSearch()),
-                    createSearchTask(new NexusSearch()),
-                    createSearchTask(new LocalSearch()));
+                    createSearchTask("Maven Central", new MavenSearch()),
+                    createSearchTask("Sonatype (releases)", new SonatypeSearch()),
+                    createSearchTask("Jcenter", new JcenterSearch()),
+                    createSearchTask("Gluon Nexus", new NexusSearch()),
+                    createSearchTask("Local", new LocalSearch()));
                 
                 AtomicInteger count = new AtomicInteger();
                 tasks.forEach(task -> 
@@ -89,7 +90,11 @@ public class SearchService extends Service<Void> {
                             if (newState == Worker.State.SUCCEEDED && task.getValue() != null) {
                                 result.addAll(task.getValue()
                                         .stream()
-                                        .filter(a -> !result.contains(a))
+                                        .filter(a -> result
+                                                .stream()
+                                                .noneMatch(ar -> ar.getGroupId().equals(a.getGroupId()) &&
+                                                        ar.getArtifactId().equals(a.getArtifactId()) &&
+                                                        ar.getVersion().equals(a.getVersion())))
                                         .collect(Collectors.toList()));
                             }
                         }
@@ -105,20 +110,20 @@ public class SearchService extends Service<Void> {
         };
     }
     
-    private Task<ObservableList<Artifact>> createSearchTask(Search search) {
+    private Task<ObservableList<Artifact>> createSearchTask(String name, Search search) {
         return new Task<ObservableList<Artifact>>() {
             @Override
             protected ObservableList<Artifact> call() throws Exception {
-                return FXCollections.observableArrayList(reduceMap(search.getCoordinates(query)));
+                return FXCollections.observableArrayList(reduceMap(name, search.getCoordinates(query)));
             }
         };
     }
     
-    private List<Artifact> reduceMap(Map<String, List<DefaultArtifact>> mapArtifacts) {
+    private List<Artifact> reduceMap(String name, Map<String, List<DefaultArtifact>> mapArtifacts) {
         List<Artifact> list = new ArrayList<>();
-        mapArtifacts.forEach((s, k) -> {
-            Version v = k.stream()
-                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
+        mapArtifacts.forEach((s, l) -> {
+            Version v = l.stream()
+//                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
                     
@@ -138,7 +143,9 @@ public class SearchService extends Service<Void> {
                     }
                 })
                 .get();
-            list.add(new DefaultArtifact(s + ":" + v.toString()));
+            Map<String, String> map = new HashMap<>();
+            map.put("Repository", name);
+            list.add(new DefaultArtifact(s + ":" + v.toString(), map));
         });
         return list;
     }
