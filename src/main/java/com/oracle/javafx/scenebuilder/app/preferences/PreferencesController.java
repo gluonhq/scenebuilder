@@ -65,6 +65,10 @@ public class PreferencesController {
 
     static final String DOCUMENTS = "DOCUMENTS"; //NOI18N
 
+    static final String REGISTRATION_HASH = "REGISTRATION_HASH"; //NOI18N
+    static final String REGISTRATION_EMAIL = "REGISTRATION_EMAIL"; //NOI18N
+    static final String REGISTRATION_OPT_IN = "REGISTRATION_OPT_IN"; //NOI18N
+
     // DOCUMENT SPECIFIC PREFERENCES
     static final String PATH = "path"; //NOI18N
     static final String X_POS = "X"; //NOI18N
