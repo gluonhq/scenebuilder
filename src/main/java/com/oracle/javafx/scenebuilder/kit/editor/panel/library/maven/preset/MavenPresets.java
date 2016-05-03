@@ -6,18 +6,6 @@ import java.util.List;
 
 public class MavenPresets {
     
-    private static final List<String> ARTIFACTS = Arrays.asList(
-            "org.controlsfx:controlsfx",
-            "org.jfxtras:jfxtras-all",
-            "eu.hansolo:Medusa",
-            "de.jensd:fontawesomefx",
-            "com.gluonhq:charm",
-            "com.gluonhq:particle");
-    
-    public static List<String> getPresetArtifacts() { 
-        return ARTIFACTS;
-    }
-    
     private static final List<Repository> REPOSITORIES = Arrays.asList(
             new Repository("Maven Central", "default", "https://repo1.maven.org/maven2/"),
             new Repository("Jcenter", "default", "https://jcenter.bintray.com"),

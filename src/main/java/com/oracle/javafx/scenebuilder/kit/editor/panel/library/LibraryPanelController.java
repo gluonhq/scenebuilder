@@ -169,10 +169,6 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         processImportJarFxml(importedFiles);
     }
     
-    public void performImportJarFxmlFromFolder(List<File> importedFiles) {
-        processImportJarFxml(importedFiles);
-    }
-    
     /**
      * @treatAsPrivate Perform the import of the selection
      * @param objects the FXOM objects to import to customize the Library content.

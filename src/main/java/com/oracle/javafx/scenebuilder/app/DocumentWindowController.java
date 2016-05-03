@@ -1275,10 +1275,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         libraryPanelController.performImportJarFxml(owner);
     }
     
-    public void onImportJarFxmlFromFolder(List<File> importedFiles) {
-        libraryPanelController.performImportJarFxmlFromFolder(importedFiles);
-    }
-    
     @FXML
     void onLibraryViewAsList(ActionEvent event) {
         if (libraryPanelController.getDisplayMode() != LibraryPanelController.DISPLAY_MODE.SEARCH) {
