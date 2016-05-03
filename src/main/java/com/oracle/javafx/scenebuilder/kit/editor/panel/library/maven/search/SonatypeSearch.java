@@ -2,6 +2,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
 public class SonatypeSearch implements Search {
 
@@ -27,7 +29,7 @@ public class SonatypeSearch implements Search {
     }
     
     @Override
-    public List<String> getCoordinates(String query) {
+    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
             request.setHeader("Accept", "application/json");
@@ -38,9 +40,10 @@ public class SonatypeSearch implements Search {
                     JsonArray docResults = obj.getJsonArray("data");
                     return docResults.getValuesAs(JsonObject.class)
                             .stream()
-                            .map(doc -> doc.getString("groupId", "") + ":" + doc.getString("artifactId", ""))
+                            .map(doc -> doc.getString("groupId", "") + ":" + doc.getString("artifactId", "") + ":" + doc.getString("version", ""))
                             .distinct()
-                            .collect(Collectors.toList());
+                            .map(DefaultArtifact::new)
+                            .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                 }
                     
             }

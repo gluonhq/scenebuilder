@@ -2,6 +2,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
 public class JcenterSearch implements Search {
 
@@ -35,7 +37,7 @@ public class JcenterSearch implements Search {
     }
     
     @Override
-    public List<String> getCoordinates(String query) {
+    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
         if (username.isEmpty() || password.isEmpty()) {
             return null;
         } 
@@ -54,13 +56,14 @@ public class JcenterSearch implements Search {
                             .map(o -> {
                                 JsonArray ids = o.getJsonArray("system_ids");
                                 if (ids != null && !ids.isEmpty()) {
-                                    return ids.getJsonString(0).getString();
+                                    return ids.getJsonString(0).getString() + ":" + o.getString("latest_version","");
                                 }   
                                 return null;
                             })
                             .filter(Objects::nonNull)
                             .distinct()
-                            .collect(Collectors.toList());
+                            .map(DefaultArtifact::new)
+                            .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                 }
             }
         } catch (IOException ex) {

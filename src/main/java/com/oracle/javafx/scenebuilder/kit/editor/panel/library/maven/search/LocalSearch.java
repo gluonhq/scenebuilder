@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
 public class LocalSearch implements Search {
             
@@ -18,7 +21,7 @@ public class LocalSearch implements Search {
     }
     
     @Override
-    public List<String> getCoordinates(String query) {
+    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
         try {
             return Files
                     .find(Paths.get(m2), 999, (p, bfa) -> bfa.isRegularFile())
@@ -28,17 +31,19 @@ public class LocalSearch implements Search {
                         String d[] = s.substring(m2.length()).split("\\" + File.separator);
                         int length = d.length;
                         if (length > 3) {
+                            String v = d[length - 2];
                             String a = d[length - 3];
                             String g = Stream.of(d)
                                     .limit(length - 3)
                                     .collect(Collectors.joining("."));
-                            return g + ":" + a;
+                            return g + ":" + a + ":" + v ;
                         }
                         return null;
                     })
-                    .filter(ga -> ga != null && ga.contains(query))
+                    .filter(gav -> gav != null && gav.contains(query))
                     .distinct()
-                    .collect(Collectors.toList());
+                    .map(DefaultArtifact::new)
+                    .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
         } catch (IOException ex) { }
         return null;
     }

@@ -1,7 +1,11 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,6 +18,11 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.Version;
 
 public class SearchService extends Service<Void> {
 
@@ -25,10 +34,10 @@ public class SearchService extends Service<Void> {
     
     private String query;
     
-    private final ObservableList<String> result;
+    private final ObservableList<Artifact> result;
     private final BooleanProperty searching;
     
-    private List<Task<ObservableList<String>>> tasks;
+    private List<Task<ObservableList<Artifact>>> tasks;
 
     public SearchService() {
         setExecutor(exec);
@@ -40,7 +49,7 @@ public class SearchService extends Service<Void> {
         this.query = query;
     }
     
-    public ObservableList<String> getResult() {
+    public ObservableList<Artifact> getResult() {
         return result;
     }
     
@@ -96,12 +105,41 @@ public class SearchService extends Service<Void> {
         };
     }
     
-    private Task<ObservableList<String>> createSearchTask(Search search) {
-        return new Task<ObservableList<String>>() {
+    private Task<ObservableList<Artifact>> createSearchTask(Search search) {
+        return new Task<ObservableList<Artifact>>() {
             @Override
-            protected ObservableList<String> call() throws Exception {
-                return FXCollections.observableArrayList(search.getCoordinates(query));
+            protected ObservableList<Artifact> call() throws Exception {
+                return FXCollections.observableArrayList(reduceMap(search.getCoordinates(query)));
             }
         };
+    }
+    
+    private List<Artifact> reduceMap(Map<String, List<DefaultArtifact>> mapArtifacts) {
+        List<Artifact> list = new ArrayList<>();
+        mapArtifacts.forEach((s, k) -> {
+            Version v = k.stream()
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
+                    
+                .map(a -> {
+                    try { 
+                        return new GenericVersionScheme().parseVersion(a.getVersion()); 
+                    } catch (InvalidVersionSpecificationException ivse) { 
+                        return null; 
+                    }
+                })
+                .filter(Objects::nonNull)
+                .reduce((v1, v2) -> {
+                    if (v1.compareTo(v2) > 0) {
+                        return v1;
+                    } else {
+                        return v2;
+                    }
+                })
+                .get();
+            list.add(new DefaultArtifact(s + ":" + v.toString()));
+        });
+        return list;
     }
 }
