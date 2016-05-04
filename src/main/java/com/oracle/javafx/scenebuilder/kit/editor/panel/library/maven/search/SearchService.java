@@ -59,7 +59,9 @@ public class SearchService extends Service<Void> {
     }
 
     public void cancelSearch() {
-        tasks.forEach(Task::cancel);
+        if (tasks != null) {
+            tasks.forEach(Task::cancel);
+        }
         searching.set(false);
     }
     
