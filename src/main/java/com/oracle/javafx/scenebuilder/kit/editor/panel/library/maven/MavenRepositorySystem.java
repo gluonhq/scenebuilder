@@ -149,7 +149,7 @@ public class MavenRepositorySystem {
                 .filter(r -> r.getId().equals(rangeResult.getRepository(version).getId()))
                 .findFirst()
                 .orElse(new RemoteRepository
-                        .Builder("Local", "default", session.getLocalRepository().getBasedir().getAbsolutePath())
+                        .Builder(MavenPresets.LOCAL, "default", session.getLocalRepository().getBasedir().getAbsolutePath())
                         .build());
     }
     
@@ -159,7 +159,7 @@ public class MavenRepositorySystem {
                 .filter(r -> r.getId().equals(name))
                 .findFirst()
                 .orElse(new RemoteRepository
-                        .Builder("Local", "default", session.getLocalRepository().getBasedir().getAbsolutePath())
+                        .Builder(MavenPresets.LOCAL, "default", session.getLocalRepository().getBasedir().getAbsolutePath())
                         .build());
     }
     

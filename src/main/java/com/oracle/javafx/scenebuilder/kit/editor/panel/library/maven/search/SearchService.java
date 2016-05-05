@@ -1,5 +1,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,12 +75,14 @@ public class SearchService extends Service<Void> {
                     return null;
                 }
                 // TODO: Manage other search engines
+                // TODO: Retrieve user/password from Preferences
+        
                 tasks = Arrays.asList(
-                    createSearchTask("Maven Central", new MavenSearch()),
-                    createSearchTask("Sonatype (releases)", new SonatypeSearch()),
-                    createSearchTask("Jcenter", new JcenterSearch()),
-                    createSearchTask("Gluon Nexus", new NexusSearch()),
-                    createSearchTask("Local", new LocalSearch()));
+                    createSearchTask(new MavenSearch()),
+                    createSearchTask(new NexusSearch(MavenPresets.SONATYPE, "http://oss.sonatype.org", "", "")),
+                    createSearchTask(new JcenterSearch("", "")),
+                    createSearchTask(new NexusSearch(MavenPresets.GLUON_NEXUS, "http://nexus.gluonhq.com/nexus", "", "")),
+                    createSearchTask(new LocalSearch()));
                 
                 AtomicInteger count = new AtomicInteger();
                 tasks.forEach(task -> 
@@ -112,42 +115,53 @@ public class SearchService extends Service<Void> {
         };
     }
     
-    private Task<ObservableList<Artifact>> createSearchTask(String name, Search search) {
+    private Task<ObservableList<Artifact>> createSearchTask(Search search) {
         return new Task<ObservableList<Artifact>>() {
             @Override
             protected ObservableList<Artifact> call() throws Exception {
-                return FXCollections.observableArrayList(reduceMap(name, search.getCoordinates(query)));
+                return FXCollections.observableArrayList(
+                        getLatestVersions(search.getCoordinates(query)));
             }
         };
     }
     
-    private List<Artifact> reduceMap(String name, Map<String, List<DefaultArtifact>> mapArtifacts) {
+    private List<Artifact> getLatestVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
         List<Artifact> list = new ArrayList<>();
         mapArtifacts.forEach((s, l) -> {
-            Version v = l.stream()
-                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
+            DefaultArtifact da = l.stream()
+                    // TODO: Include snapshots
+                    .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("snapshot"))
+                    .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
+                    .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
+                    .reduce((a1, a2) -> {
+                        Version v1 = null;
+                        try {
+                            v1 = new GenericVersionScheme().parseVersion(a1.getVersion());
+                        } catch (InvalidVersionSpecificationException ivse) { }
+                        Version v2 = null;
+                        try {
+                            v2 = new GenericVersionScheme().parseVersion(a2.getVersion());
+                        } catch (InvalidVersionSpecificationException ivse) { }
+                        if (v1 != null && v2 != null && v1.compareTo(v2) > 0) {
+                            return a1;
+                        } else {
+                            return a2;
+                        }
+                    })
+                    .get();
+            list.add(da);
+        });
+        return list;
+    }
+    
+    // TODO: Return all versions, including snapshots
+    private List<Artifact> getAllVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
+        List<Artifact> list = new ArrayList<>();
+        mapArtifacts.forEach((s, l) -> {
+            l.stream()
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
-                    
-                .map(a -> {
-                    try { 
-                        return new GenericVersionScheme().parseVersion(a.getVersion()); 
-                    } catch (InvalidVersionSpecificationException ivse) { 
-                        return null; 
-                    }
-                })
-                .filter(Objects::nonNull)
-                .reduce((v1, v2) -> {
-                    if (v1.compareTo(v2) > 0) {
-                        return v1;
-                    } else {
-                        return v2;
-                    }
-                })
-                .get();
-            Map<String, String> map = new HashMap<>();
-            map.put("Repository", name);
-            list.add(new DefaultArtifact(s + ":" + v.toString(), map));
+                .forEach(list::add);
         });
         return list;
     }

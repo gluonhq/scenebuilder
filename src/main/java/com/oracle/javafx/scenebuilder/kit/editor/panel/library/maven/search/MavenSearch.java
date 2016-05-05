@@ -1,6 +1,8 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -33,6 +35,10 @@ public class MavenSearch implements Search {
     
     @Override
     public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
+        
+        final Map<String, String> map = new HashMap<>();
+        map.put("Repository", MavenPresets.MAVEN);
+    
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
             HttpResponse response = client.execute(request);
@@ -46,7 +52,7 @@ public class MavenSearch implements Search {
                                 .stream()
                                 .map(doc -> doc.getString("id", "") + ":" + doc.getString("latestVersion", ""))
                                 .distinct()
-                                .map(DefaultArtifact::new)
+                                .map(gav -> new DefaultArtifact(gav, map))
                                 .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                     }
                 }

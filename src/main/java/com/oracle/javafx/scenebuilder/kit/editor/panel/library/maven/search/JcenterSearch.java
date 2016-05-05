@@ -1,6 +1,8 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,12 +30,10 @@ public class JcenterSearch implements Search {
     private final String username;
     private final String password;
             
-    public JcenterSearch() {
+    public JcenterSearch(String username, String password) {
         client = HttpClients.createDefault();
-        // TODO: Retrieve user/password from Preferences
-        username = "";
-        password = "";
-            
+        this.username = username;
+        this.password = password;
     }
     
     @Override
@@ -42,6 +42,9 @@ public class JcenterSearch implements Search {
             return null;
         } 
         
+        final Map<String, String> map = new HashMap<>();
+        map.put("Repository", MavenPresets.JCENTER);
+                        
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
             String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
@@ -56,13 +59,16 @@ public class JcenterSearch implements Search {
                             .map(o -> {
                                 JsonArray ids = o.getJsonArray("system_ids");
                                 if (ids != null && !ids.isEmpty()) {
-                                    return ids.getJsonString(0).getString() + ":" + o.getString("latest_version","");
+                                    return ids.stream()
+                                            .map(ga -> new DefaultArtifact(ga.toString()
+                                                    .replaceAll("\"","") + ":" + o.getString("latest_version",""), map))
+                                            .collect(Collectors.toList());
                                 }   
                                 return null;
                             })
                             .filter(Objects::nonNull)
+                            .flatMap(l -> l.stream())
                             .distinct()
-                            .map(DefaultArtifact::new)
                             .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                 }
             }
