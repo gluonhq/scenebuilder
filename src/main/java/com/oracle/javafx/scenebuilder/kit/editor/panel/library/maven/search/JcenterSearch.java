@@ -27,8 +27,8 @@ public class JcenterSearch implements Search {
     
     // This requires authentication:
 //    private static final String URL_PREFIX = "https://api.bintray.com/search/packages?name=";
-    // This doesn't require authentication, but it is very limited in terms of number of results:
-    private static final String URL_PREFIX = "https://api.bintray.com/search/file?name=*";
+    // This doesn't require authentication, limited to 50 results:
+    private static final String URL_PREFIX = "https://api.bintray.com/search/packages/maven?q=*";
     private static final String URL_SUFFIX = "*";
     
     private final HttpClient client;
@@ -58,27 +58,21 @@ public class JcenterSearch implements Search {
                 JsonArray obj = rdr.readArray();
                 if (obj != null && !obj.isEmpty()) {
                     return obj.getValuesAs(JsonObject.class)
-                            .stream()
-                            .map(o -> o.getString("path"))
-                            .filter(Objects::nonNull)
-                            .filter(s -> s.endsWith(".jar"))
-                            .map(s -> {
-                                String d[] = s.split("\\/");
-                                int length = d.length;
-                                if (length > 3) {
-                                    String v = d[length - 2];
-                                    String a = d[length - 3];
-                                    String g = Stream.of(d)
-                                            .limit(length - 3)
-                                            .collect(Collectors.joining("."));
-                                    return g + ":" + a + ":" + v;
-                                }
-                                return null;
-                            })
-                            .filter(Objects::nonNull)
-                            .distinct()
-                            .map(gav -> new DefaultArtifact(gav, map))
-                            .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                        .stream()
+                        .map(o -> {
+                            JsonArray ids = o.getJsonArray("system_ids");
+                            if (ids != null && !ids.isEmpty()) {
+                                return ids.stream()
+                                        .map(ga -> new DefaultArtifact(ga.toString()
+                                                .replaceAll("\"","") + ":" + o.getString("latest_version",""), map))
+                                        .collect(Collectors.toList());
+                            }   
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .flatMap(l -> l.stream())
+                        .distinct()
+                        .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                 }
             }
         } catch (IOException ex) {
