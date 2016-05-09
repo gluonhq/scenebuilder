@@ -1,14 +1,17 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -23,13 +26,17 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 public class JcenterSearch implements Search {
 
     // bintray
-    private static final String URL_PREFIX = "https://api.bintray.com/search/packages?name=";
-    private static final String URL_SUFFIX = "";
+    
+    // This requires authentication:
+//    private static final String URL_PREFIX = "https://api.bintray.com/search/packages?name=";
+    // This doesn't require authentication, but it is very limited in terms of number of results:
+    private static final String URL_PREFIX = "https://api.bintray.com/search/file?name=*";
+    private static final String URL_SUFFIX = "*";
     
     private final HttpClient client;
     private final String username;
     private final String password;
-            
+    
     public JcenterSearch(String username, String password) {
         client = HttpClients.createDefault();
         this.username = username;
@@ -38,17 +45,15 @@ public class JcenterSearch implements Search {
     
     @Override
     public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
-        if (username.isEmpty() || password.isEmpty()) {
-            return null;
-        } 
-        
         final Map<String, String> map = new HashMap<>();
         map.put("Repository", MavenPresets.JCENTER);
                         
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
-            String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
-            request.addHeader("Authorization", "Basic " + authStringEnc);
+            if (!username.isEmpty() && !password.isEmpty()) {
+                String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
+                request.addHeader("Authorization", "Basic " + authStringEnc);
+            }
             request.setHeader("Accept", "application/json");
             HttpResponse response = client.execute(request);
             try (JsonReader rdr = Json.createReader(response.getEntity().getContent())) {
@@ -56,19 +61,25 @@ public class JcenterSearch implements Search {
                 if (obj != null && !obj.isEmpty()) {
                     return obj.getValuesAs(JsonObject.class)
                             .stream()
-                            .map(o -> {
-                                JsonArray ids = o.getJsonArray("system_ids");
-                                if (ids != null && !ids.isEmpty()) {
-                                    return ids.stream()
-                                            .map(ga -> new DefaultArtifact(ga.toString()
-                                                    .replaceAll("\"","") + ":" + o.getString("latest_version",""), map))
-                                            .collect(Collectors.toList());
-                                }   
+                            .map(o -> o.getString("path"))
+                            .filter(Objects::nonNull)
+                            .filter(s -> s.endsWith(".jar"))
+                            .map(s -> {
+                                String d[] = s.split("\\/");
+                                int length = d.length;
+                                if (length > 3) {
+                                    String v = d[length - 2];
+                                    String a = d[length - 3];
+                                    String g = Stream.of(d)
+                                            .limit(length - 3)
+                                            .collect(Collectors.joining("."));
+                                    return g + ":" + a + ":" + v;
+                                }
                                 return null;
                             })
                             .filter(Objects::nonNull)
-                            .flatMap(l -> l.stream())
                             .distinct()
+                            .map(gav -> new DefaultArtifact(gav, map))
                             .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
                 }
             }

@@ -49,7 +49,6 @@ public class NexusSearch implements Search {
         first = true;
     }
     
-    // TODO: Allow retrieving all results 
     @Override
     public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
         try {
