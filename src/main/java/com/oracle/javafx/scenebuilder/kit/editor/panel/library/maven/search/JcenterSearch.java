@@ -1,11 +1,9 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
