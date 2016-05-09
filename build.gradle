@@ -1,7 +1,15 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
+buildscript {
+  repositories { jcenter() }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+  }
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 def tryGetProperty = {String name, String defaultValue ->
     if (!project.hasProperty(name)) {
