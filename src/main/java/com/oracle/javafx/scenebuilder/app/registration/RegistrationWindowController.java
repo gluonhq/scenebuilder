@@ -155,12 +155,14 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
 
     private String getUniqueId(){
         String uniqueId = "";
-
         try {
             InetAddress address = InetAddress.getLocalHost();
             NetworkInterface ni = NetworkInterface.getByInetAddress(address);
             if (ni != null) {
-                uniqueId = computeHash(ni.getHardwareAddress());
+                byte[] macAddress = ni.getHardwareAddress();
+                if (macAddress != null) {
+                    uniqueId = computeHash(macAddress);
+                }
             }
         } catch (UnknownHostException | SocketException e) {
         }
