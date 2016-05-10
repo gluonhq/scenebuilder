@@ -103,14 +103,14 @@ class FXOMSaver {
     }
 
     private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
-        // constructs the set of classes to be imported. No doubles allowed.
+        // constructs the set of classes to be imported. No duplicates allowed.
         final Set<String> imports = new TreeSet<>(); // Sorted
 
         //gets list of declared classes, declared classes are the ones directly used as a Node.
         //Example: <Button/> ; classname = javafx.scene.control.Button
         fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getCanonicalName()));
 
-        FXOMInstance root = (FXOMInstance) fxomDocument.getFxomRoot();
+        FXOMObject root = fxomDocument.getFxomRoot();
 
         Set<String> foundClasses = root.getChildObjects().stream()
             .map(fxomObject -> fxomObject.collectPropertiesT()) //list of lists containing FXOMProperties
@@ -118,7 +118,7 @@ class FXOMSaver {
             .map(property -> property.getName()) // list of all PropertyNames
             .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
             .map(prop -> prop.getResidenceClass().getName()) // list of classes
-            .collect(Collectors.toSet()); // transform to set to not include doubles
+            .collect(Collectors.toSet()); // transform to set to not include duplicates
 
         foundClasses.addAll(root.collectPropertiesT().stream() //same as above but for the root node
                 .map(p-> p.getName())

@@ -1,7 +1,15 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
+buildscript {
+  repositories { jcenter() }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+  }
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 def tryGetProperty = {String name, String defaultValue ->
     if (!project.hasProperty(name)) {
@@ -16,12 +24,24 @@ repositories {
 }
 
 dependencies {
+    // maven dependencies
+    compile 'org.eclipse.aether:aether-api:1.1.0'
+    compile 'org.eclipse.aether:aether-impl:1.1.0'
+    compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
+    compile 'org.eclipse.aether:aether-transport-file:1.1.0'
+    compile 'org.eclipse.aether:aether-transport-http:1.1.0'
+    compile 'org.apache.maven:maven-aether-provider:3.3.9'
+    // REST API
+    compile 'org.apache.httpcomponents:httpclient:4.5.2'
+    compile 'javax.json:javax.json-api:1.0'
+    runtime 'org.glassfish:javax.json:1.0.4'
+    
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.2.0'
 }
 
 group = 'com.gluonhq.scenebuilder'
-version = tryGetProperty('VERSION', '8.1.2-SNAPSHOT')
+version = tryGetProperty('VERSION', '8.2.0-SNAPSHOT')
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
@@ -51,6 +71,10 @@ jar {
     }
 }
 
+shadowJar {
+    baseName = 'scenebuilder-all'
+}
+
 task kitJar(type: Jar, dependsOn: classes, description: 'Creates a jar for the SceneBuilder kit.') {
     baseName = 'scenebuilder-kit'
     from (sourceSets.main.output) {
@@ -59,3 +83,7 @@ task kitJar(type: Jar, dependsOn: classes, description: 'Creates a jar for the S
 }
 
 apply from: 'maven-publish.gradle'
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = mainClassName
+}

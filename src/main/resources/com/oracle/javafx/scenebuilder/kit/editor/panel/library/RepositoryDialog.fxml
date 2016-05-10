@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="MavenDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="296.0" minWidth="300.0" prefHeight="328.0" prefWidth="500.0" styleClass="theme-presets" stylesheets="@../../css/Theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane hgap="5.0" prefHeight="380.0" prefWidth="520.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="253.0" minWidth="89.0" prefWidth="89.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="429.0" minWidth="200.0" prefWidth="429.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="200.0" text="%repository.dialog.nameId" GridPane.halignment="RIGHT" />
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="200.0" text="%repository.dialog.type" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="200.0" text="%repository.dialog.url" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+            <TextField fx:id="nameIDTextfield" GridPane.columnIndex="1" />
+            <TextField fx:id="typeTextfield" text="default" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="urlTextfield" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="privateCheckBox" mnemonicParsing="false" text="%repository.dialog.private" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <Label fx:id="userLabel" alignment="CENTER_RIGHT" layoutX="15.0" layoutY="17.0" prefHeight="17.0" prefWidth="200.0" text="%repository.dialog.user" GridPane.rowIndex="4" />
+            <TextField fx:id="userTextfield" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label fx:id="passwordLabel" alignment="CENTER_RIGHT" layoutX="15.0" layoutY="17.0" prefHeight="17.0" prefWidth="200.0" text="%repository.dialog.password" GridPane.rowIndex="5" />
+            <PasswordField fx:id="passwordTextfield" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
+               <children>
+                  <Button fx:id="testButton" mnemonicParsing="false" onAction="#test" text="%repository.dialog.test" />
+                  <Label fx:id="resultLabel" prefHeight="17.0" prefWidth="377.0" text="%repository.dialog.result" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
+               <children>
+                  <ProgressIndicator fx:id="progress" prefHeight="27.0" prefWidth="50.0" visible="false" />
+                  <Pane prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="cancelButton" minWidth="50.0" mnemonicParsing="false" onAction="#cancel" text="%repository.dialog.cancel" />
+                  <Button fx:id="addButton" minWidth="50.0" mnemonicParsing="false" onAction="#addRepository" prefHeight="27.0" text="%repository.dialog.add" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </GridPane>
+   </children>
+   <stylesheets>
+      <URL value="@../../css/Theme.css" />
+      <URL value="@libraryDialog.css" />
+   </stylesheets>
+</AnchorPane>

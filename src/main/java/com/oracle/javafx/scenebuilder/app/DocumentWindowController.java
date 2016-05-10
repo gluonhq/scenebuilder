@@ -54,6 +54,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarc
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager.LibraryDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
@@ -71,23 +72,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.sun.javafx.scene.control.behavior.KeyBinding;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,7 +84,39 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -179,7 +195,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private PreviewWindowController previewWindowController = null;
     private SkeletonWindowController skeletonWindowController = null;
     private JarAnalysisReportController jarAnalysisReportController = null;
-
+    private LibraryDialogController libraryDialogController = null;
+    
     @FXML private StackPane libraryPanelHost;
     @FXML private StackPane librarySearchPanelHost;
     @FXML private StackPane hierarchyPanelHost;
@@ -1246,8 +1263,16 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     // Library menu
     //
     @FXML
-    void onLibraryImportJarFxml(ActionEvent event) {
-        libraryPanelController.performImportJarFxml();
+    public void onManageJarFxml(ActionEvent event) {
+        if(libraryDialogController==null){
+            libraryDialogController = new LibraryDialogController(editorController, this, getStage());
+        }
+
+        libraryDialogController.openWindow();
+    }
+    
+    public void onImportJarFxml(Window owner) {
+        libraryPanelController.performImportJarFxml(owner);
     }
     
     @FXML
@@ -1798,12 +1823,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         }
         inspectorPanelController.setExpandedSection(sectionId);
     }
-
+    
     private ActionStatus performSaveAction() {
         final FXOMDocument fxomDocument = editorController.getFxomDocument();
         assert fxomDocument != null;
         assert fxomDocument.getLocation() != null;
-
+        
         ActionStatus result;
         if (editorController.canGetFxmlText()) {
             final Path fxmlPath;
@@ -1814,6 +1839,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 throw new RuntimeException("Bug in " + getClass().getSimpleName(), x); //NOI18N
             }
             final String fileName = fxmlPath.getFileName().toString();
+            
             try {
                 final boolean saveConfirmed;
                 if (checkLoadFileTime()) {
@@ -1861,8 +1887,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         return result;
     }
-
-
+    
+    
     private ActionStatus performSaveAsAction() {
         
         final ActionStatus result;

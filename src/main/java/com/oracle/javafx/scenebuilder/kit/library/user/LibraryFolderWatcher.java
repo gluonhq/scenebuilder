@@ -31,6 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
+import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
@@ -61,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -69,10 +72,13 @@ import java.util.logging.Logger;
 class LibraryFolderWatcher implements Runnable {
     
     private final UserLibrary library;
+    private final MavenPreferences mavenPreferences;
+    
     private enum FILE_TYPE {FXML, JAR};
     
     public LibraryFolderWatcher(UserLibrary library) {
         this.library = library;
+        mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
     }
 
     /*
@@ -99,37 +105,42 @@ class LibraryFolderWatcher implements Runnable {
     
     
     private void runDiscovery() throws InterruptedException {
-        final Path folder = Paths.get(library.getPath());
-       
         // First put the builtin items in the library
         library.setItems(BuiltinLibrary.getLibrary().getItems());
 
-        // Now attempts to discover the user library folder
-        boolean retry;
-        do {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
-                final Set<Path> currentJars = new HashSet<>();
-                final Set<Path> currentFxmls = new HashSet<>();
-                for (Path entry: stream) {
-                    if (isJarPath(entry)) {
-                        currentJars.add(entry);
-                    } else if (isFxmlPath(entry)) {
-                        currentFxmls.add(entry);
-                    }
-                }
-               
-                updateLibrary(currentFxmls);
-                exploreAndUpdateLibrary(currentJars);
-                retry = false;
-            } catch(IOException x) {
-                Thread.sleep(2000 /* ms */);
-                retry = true;
-            } finally {
-                library.updateExplorationCount(library.getExplorationCount()+1);
-            }
-        }
-        while (retry);
+        // Attempts to add the maven jars, including dependencies
+        List<Path> currentMavenJars = mavenPreferences.getArtifactsPathsWithDependencies();
         
+        final Set<Path> currentJars = new HashSet<>(currentMavenJars);
+        final Set<Path> currentFxmls = new HashSet<>();
+                
+        // Now attempts to discover the user library folder
+        final Path folder = Paths.get(library.getPath());
+        if (folder != null && folder.toFile().exists()) {
+            boolean retry;
+            do {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+                    for (Path entry: stream) {
+                        if (isJarPath(entry)) {
+                            currentJars.add(entry);
+                        } else if (isFxmlPath(entry)) {
+                            currentFxmls.add(entry);
+                        }
+                    }
+                    retry = false;
+                } catch(IOException x) {
+                    Thread.sleep(2000 /* ms */);
+                    retry = true;
+                } finally {
+                    library.updateExplorationCount(library.getExplorationCount()+1);
+                }
+            }
+            while (retry && library.getExplorationCount() < 10);
+        }
+        try {
+            updateLibrary(currentFxmls);
+            exploreAndUpdateLibrary(currentJars);
+        } catch(IOException x) { }
     }
     
     private void runWatching() throws InterruptedException {
@@ -183,11 +194,14 @@ class LibraryFolderWatcher implements Runnable {
                             // First put the builtin items in the library
                             library.setItems(BuiltinLibrary.getLibrary().getItems());
                             
+                            // Now attempts to add the maven jars
+                            List<Path> currentMavenJars = mavenPreferences.getArtifactsPaths();
+                            
                             final Set<Path> fxmls = new HashSet<>();
                             fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
                             updateLibrary(fxmls);
 
-                            final Set<Path> jars = new HashSet<>();
+                            final Set<Path> jars = new HashSet<>(currentMavenJars);
                             jars.addAll(getAllFiles(FILE_TYPE.JAR));
                             exploreAndUpdateLibrary(jars);
                             
@@ -307,7 +321,11 @@ class LibraryFolderWatcher implements Runnable {
 
         // 4)
         library.updateClassLoader(classLoader);
-        library.addItems(newItems);
+        // Remove duplicated items
+        library.addItems(newItems
+                .stream()
+                .distinct()
+                .collect(Collectors.toList()));
         library.updateJarReports(new ArrayList<>(jarReports));
         library.updateExplorationDate(new Date());
     }
@@ -317,12 +335,14 @@ class LibraryFolderWatcher implements Runnable {
         final List<LibraryItem> result = new ArrayList<>();
         final URL iconURL = ImageUtils.getNodeIconURL(null);
         final List<String> excludedItems = library.getFilter();
+        final List<String> artifactsFilter = mavenPreferences.getArtifactsFilter();
                 
         for (JarReportEntry e : jarReport.getEntries()) {
             if ((e.getStatus() == JarReportEntry.Status.OK) && e.isNode()) {
                 // We filter out items listed in the excluded list, based on canonical name of the class.
                 final String canonicalName = e.getKlass().getCanonicalName();
-                if (! excludedItems.contains(canonicalName)) {
+                if (!excludedItems.contains(canonicalName) && 
+                    !artifactsFilter.contains(canonicalName)) {
                     final String name = e.getKlass().getSimpleName();
                     final String fxmlText = JarExplorer.makeFxmlText(e.getKlass());
                     result.add(new LibraryItem(name, UserLibrary.TAG_USER_DEFINED, fxmlText, iconURL, library));
