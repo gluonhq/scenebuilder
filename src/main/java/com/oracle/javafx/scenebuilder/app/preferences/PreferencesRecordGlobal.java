@@ -36,17 +36,6 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlAction;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALIGNMENT_GUIDES_COLOR;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BACKGROUND_IMAGE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_HEIGHT;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_WIDTH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.HIERARCHY_DISPLAY_OPTION;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LIBRARY_DISPLAY_OPTION;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PARENT_RING_COLOR;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
@@ -63,6 +52,8 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.*;
 
 /**
  * Defines preferences global to the application.
@@ -99,6 +90,10 @@ public class PreferencesRecordGlobal {
     private boolean cssTableColumnsOrderingReversed = DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED;
     private int recentItemsSize = DEFAULT_RECENT_ITEMS_SIZE;
     private final List<String> recentItems = new ArrayList<>();
+
+    private String registrationHash = null;
+    private String registrationEmail = null;
+    private boolean registrationOptIn = false;
 
     private final Preferences applicationRootPreferences;
 
@@ -339,6 +334,45 @@ public class PreferencesRecordGlobal {
         writeToJavaPreferences(RECENT_ITEMS);
     }
 
+    public void updateRegistrationFields(String hash, String email, Boolean optIn) {
+        registrationHash = hash;
+        writeToJavaPreferences(REGISTRATION_HASH);
+
+        if (email != null) {
+            registrationEmail = email;
+            writeToJavaPreferences(REGISTRATION_EMAIL);
+        }
+
+        if (optIn != null) {
+            registrationOptIn = optIn;
+            writeToJavaPreferences(REGISTRATION_OPT_IN);
+        }
+    }
+
+    public String getRegistrationHash() {
+        return registrationHash;
+    }
+
+    public void setRegistrationHash(String registrationHash) {
+        this.registrationHash = registrationHash;
+    }
+
+    public String getRegistrationEmail() {
+        return registrationEmail;
+    }
+
+    public void setRegistrationEmail(String registrationEmail) {
+        this.registrationEmail = registrationEmail;
+    }
+
+    public boolean isRegistrationOptIn() {
+        return registrationOptIn;
+    }
+
+    public void setRegistrationOptIn(boolean registrationOptIn) {
+        this.registrationOptIn = registrationOptIn;
+    }
+
     public void refreshAlignmentGuidesColor(DocumentWindowController dwc) {
         final ContentPanelController cpc = dwc.getContentPanelController();
         cpc.setGuidesColor(alignmentGuidesColor);
@@ -531,6 +565,14 @@ public class PreferencesRecordGlobal {
             assert itemsArray.length <= recentItemsSize;
             recentItems.addAll(Arrays.asList(itemsArray));
         }
+
+        // Registration information
+        final String registrationHash = applicationRootPreferences.get(REGISTRATION_HASH, null);
+        setRegistrationHash(registrationHash);
+        final String registrationEmail = applicationRootPreferences.get(REGISTRATION_EMAIL, null);
+        setRegistrationEmail(registrationEmail);
+        final boolean registrationOptIn = applicationRootPreferences.getBoolean(REGISTRATION_OPT_IN, false);
+        setRegistrationOptIn(registrationOptIn);
     }
 
     public void writeToJavaPreferences(String key) {
@@ -575,6 +617,15 @@ public class PreferencesRecordGlobal {
                     sb.append(File.pathSeparator);
                 }
                 applicationRootPreferences.put(RECENT_ITEMS, sb.toString());
+                break;
+            case REGISTRATION_HASH:
+                applicationRootPreferences.put(REGISTRATION_HASH, getRegistrationHash());
+                break;
+            case REGISTRATION_EMAIL:
+                applicationRootPreferences.put(REGISTRATION_EMAIL, getRegistrationEmail());
+                break;
+            case REGISTRATION_OPT_IN:
+                applicationRootPreferences.putBoolean(REGISTRATION_OPT_IN, isRegistrationOptIn());
                 break;
             default:
                 assert false;

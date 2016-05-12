@@ -38,11 +38,11 @@ import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
+import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.app.template.FxmlTemplates;
 import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
@@ -78,9 +78,12 @@ import javafx.stage.Stage;
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
 
+    public static final String VERSION = "8.2.0";
+    
     public enum ApplicationControlAction {
 
         ABOUT,
+        REGISTER,
         NEW_FILE,
         NEW_ALERT_DIALOG,
         NEW_ALERT_DIALOG_CSS,
@@ -171,6 +174,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 aboutWindowController.openWindow();
                 break;
 
+            case REGISTER:
+                final RegistrationWindowController registrationWindowController = new RegistrationWindowController();
+                registrationWindowController.openWindow();
+                break;
+
             case NEW_FILE:
                 final DocumentWindowController newWindow = makeNewWindow();
                 newWindow.loadWithDefaultContent();
@@ -223,6 +231,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         final boolean result;
         switch (a) {
             case ABOUT:
+            case REGISTER:
             case NEW_FILE:
             case NEW_ALERT_DIALOG:
             case NEW_BASIC_APPLICATION:
@@ -369,7 +378,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             errorDialog.showAndWait();
             Platform.exit();
         }
-        
+
+        verifyRegistration();
+
         logTimestamp(ACTION.START);
     }
 
@@ -835,7 +846,21 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
         }
     }
-    
+
+    private void verifyRegistration() {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        String registrationHash = recordGlobal.getRegistrationHash();
+        if (registrationHash == null) {
+            performControlAction(ApplicationControlAction.REGISTER, null);
+        } else {
+            String registrationEmail = recordGlobal.getRegistrationEmail();
+            if (registrationEmail == null && Math.random() > 0.8) {
+                performControlAction(ApplicationControlAction.REGISTER, null);                    
+            }
+        }
+    }
+
     private void logInfoMessage(String key) {
         for (DocumentWindowController dwc : windowList) {
             dwc.getEditorController().getMessageLog().logInfoMessage(key, I18N.getBundle());
