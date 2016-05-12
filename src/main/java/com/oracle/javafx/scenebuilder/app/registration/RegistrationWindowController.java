@@ -74,7 +74,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
     @Override
     public void onCloseRequest(WindowEvent event) {
         cancelUserRegistration();
-        closeWindow();
+
         event.consume();
     }
 
@@ -112,7 +112,9 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
             String hash = getUniqueId();
             recordGlobal.updateRegistrationFields(hash, null, null);
             sendTrackingInfo(hash, "", false, false);
-        }        
+        }
+
+        closeWindow();
     }
     
     @FXML
