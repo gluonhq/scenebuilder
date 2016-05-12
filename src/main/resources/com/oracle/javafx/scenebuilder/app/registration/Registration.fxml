@@ -33,23 +33,29 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.Button?>
-<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8.0.71" xmlns:fx="http://javafx.com/fxml/1">
   <children>
       <Text text="%registration.info" wrappingWidth="450.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" />
-      <Label fx:id="lbAlert" visible="false" style="-fx-text-fill: red;" text="%registration.alert.invalid_email_address" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+      <Label fx:id="lbAlert" style="-fx-text-fill: red;" text="%registration.alert.invalid_email_address" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
       <Label text="%registration.email_address" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-      <TextField onAction="#trackUserRegistration" fx:id="tfEmail" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS" />
+      <TextField fx:id="tfEmail" onAction="#trackUserRegistration" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS" />
       <CheckBox fx:id="cbOptIn" selected="true" text="%registration.opt_in" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-      <Button onAction="#trackUserRegistration" text="%registration.register" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.halignment="RIGHT"/>
+      <HBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <children>
+            <Button onAction="#cancelUserRegistration" text="%registration.cancel" />
+            <Button onAction="#trackUserRegistration" text="%registration.register" />
+         </children>
+      </HBox>
   </children>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -61,6 +67,8 @@
    <rowConstraints>
       <RowConstraints />
       <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+      <RowConstraints />
+      <RowConstraints />
       <RowConstraints />
    </rowConstraints>
 </GridPane>

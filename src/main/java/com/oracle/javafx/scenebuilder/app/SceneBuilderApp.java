@@ -853,6 +853,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         String registrationHash = recordGlobal.getRegistrationHash();
         if (registrationHash == null) {
             performControlAction(ApplicationControlAction.REGISTER, null);
+        } else {
+            String registrationEmail = recordGlobal.getRegistrationEmail();
+            if (registrationEmail == null && Math.random() > 0.8) {
+                performControlAction(ApplicationControlAction.REGISTER, null);                    
+            }
         }
     }
 
