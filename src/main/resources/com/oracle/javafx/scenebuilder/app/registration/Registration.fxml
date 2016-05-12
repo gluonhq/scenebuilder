@@ -34,28 +34,28 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8.0.71" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
   <children>
       <Text text="%registration.info" wrappingWidth="450.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" />
       <Label fx:id="lbAlert" style="-fx-text-fill: red;" text="%registration.alert.invalid_email_address" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
       <Label text="%registration.email_address" GridPane.columnIndex="0" GridPane.rowIndex="2" />
       <TextField fx:id="tfEmail" onAction="#trackUserRegistration" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS" />
       <CheckBox fx:id="cbOptIn" selected="true" text="%registration.opt_in" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-      <HBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-         <children>
-            <Button onAction="#cancelUserRegistration" text="%registration.cancel" />
-            <Button onAction="#trackUserRegistration" text="%registration.register" />
-         </children>
-      </HBox>
+      <ButtonBar GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <buttons>
+            <Button onAction="#cancelUserRegistration" text="%registration.cancel" ButtonBar.buttonData="CANCEL_CLOSE" />
+            <Button onAction="#trackUserRegistration" text="%registration.register" ButtonBar.buttonData="OK_DONE" />
+         </buttons>
+      </ButtonBar>
   </children>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
