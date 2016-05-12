@@ -1,13 +1,13 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -50,7 +50,7 @@ public class NexusSearch implements Search {
     }
     
     @Override
-    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
+    public List<DefaultArtifact> getCoordinates(String query) {
         try {
             HttpGet request = new HttpGet(domain + URL_PREFIX + query + (first ? "" : URL_SUFFIX + iteration * ITEMS_ITERATION));
             if (!username.isEmpty() && !password.isEmpty()) {
@@ -65,20 +65,15 @@ public class NexusSearch implements Search {
                     first = false;
                     totalCount = Math.min(obj.getInt("totalCount", 0), MAX_RESULTS);
                     if (totalCount > ITEMS_ITERATION) {
-                        Map<String, List<DefaultArtifact>> coordinates = new HashMap<>(processRequest(obj));
+                        List<DefaultArtifact> coordinates = new ArrayList<>(processRequest(obj));
                         while (totalCount > ITEMS_ITERATION) {
                             iteration += 1;
-                            getCoordinates(query).forEach((s, l) -> {
-                                if (coordinates.get(s) != null) {
-                                    List<DefaultArtifact> get = coordinates.get(s);
-                                    coordinates.put(s, 
-                                            Stream.concat(l.stream(), get.stream())
-                                                    .distinct()
-                                                    .collect(Collectors.toList()));
-                                } else {
-                                    coordinates.put(s, l);
-                                }
-                            });
+                            coordinates.addAll(getCoordinates(query)
+                                    .stream()
+                                    .filter(ga -> coordinates.stream()
+                                            .noneMatch(ar -> ar.getGroupId().equals(ga.getGroupId()) &&
+                                                             ar.getArtifactId().equals(ga.getArtifactId())))
+                                    .collect(Collectors.toList()));
                             
                             totalCount -= ITEMS_ITERATION;
                         }
@@ -93,7 +88,7 @@ public class NexusSearch implements Search {
         return null;
     }
     
-    private Map<String, List<DefaultArtifact>> processRequest(JsonObject obj) {
+    private List<DefaultArtifact> processRequest(JsonObject obj) {
         if (obj != null && !obj.isEmpty() && obj.containsKey("data")) {
             JsonArray docResults = obj.getJsonArray("data");
             return docResults.getValuesAs(JsonObject.class)
@@ -102,10 +97,10 @@ public class NexusSearch implements Search {
                         final Map<String, String> map = new HashMap<>();
                         map.put("Repository", name + " (" + doc.getString("repoId", "") + ")");
                         return new DefaultArtifact(doc.getString("groupId", "") + ":" + 
-                                doc.getString("artifactId", "") + ":" + doc.getString("version", ""), map);
+                                doc.getString("artifactId", "") + ":" + MIN_VERSION, map);
                     })
                     .distinct()
-                    .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                    .collect(Collectors.toList());
         }
         return null;
     }

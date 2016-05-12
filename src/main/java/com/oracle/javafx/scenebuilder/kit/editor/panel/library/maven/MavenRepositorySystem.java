@@ -141,7 +141,7 @@ public class MavenRepositorySystem {
     }
     
     public RemoteRepository getRemoteRepository(Version version) {
-        if (rangeResult == null) {
+        if (rangeResult == null || version == null) {
             return null;
         }
         return getRepositories()
@@ -169,12 +169,28 @@ public class MavenRepositorySystem {
         rangeRequest.setRepositories(getRepositories());
         try {
             rangeResult = system.resolveVersionRange(session, rangeRequest);
-            
             cleanMetadata(artifact);
             
             return rangeResult.getVersions();
         } catch (VersionRangeResolutionException ex) { } 
         return new ArrayList<>();
+    }
+    
+    public Version findLatestVersion(Artifact artifact) {
+        VersionRangeRequest rangeRequest = new VersionRangeRequest();
+        rangeRequest.setArtifact(artifact);
+        rangeRequest.setRepositories(getRepositories());
+        try {
+            rangeResult = system.resolveVersionRange(session, rangeRequest);
+            cleanMetadata(artifact);
+            return rangeResult.getVersions()
+                    .stream()
+                    .filter(v -> !v.toString().toLowerCase(Locale.ROOT).contains("snapshot"))
+                    .sorted((v1, v2) -> v2.compareTo(v1))
+                    .findFirst()
+                    .orElse(null);
+        } catch (VersionRangeResolutionException ex) { } 
+        return null;
     }
     
     private void cleanMetadata(Artifact artifact) {

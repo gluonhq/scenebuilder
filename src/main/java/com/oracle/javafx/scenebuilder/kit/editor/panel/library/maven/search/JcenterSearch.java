@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -42,10 +41,10 @@ public class JcenterSearch implements Search {
     }
     
     @Override
-    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
+    public List<DefaultArtifact> getCoordinates(String query) {
         final Map<String, String> map = new HashMap<>();
         map.put("Repository", MavenPresets.JCENTER);
-                        
+        
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
             if (!username.isEmpty() && !password.isEmpty()) {
@@ -58,21 +57,21 @@ public class JcenterSearch implements Search {
                 JsonArray obj = rdr.readArray();
                 if (obj != null && !obj.isEmpty()) {
                     return obj.getValuesAs(JsonObject.class)
-                        .stream()
-                        .map(o -> {
-                            JsonArray ids = o.getJsonArray("system_ids");
-                            if (ids != null && !ids.isEmpty()) {
-                                return ids.stream()
-                                        .map(ga -> new DefaultArtifact(ga.toString()
-                                                .replaceAll("\"","") + ":" + o.getString("latest_version",""), map))
-                                        .collect(Collectors.toList());
-                            }   
-                            return null;
-                        })
-                        .filter(Objects::nonNull)
-                        .flatMap(l -> l.stream())
-                        .distinct()
-                        .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                            .stream()
+                            .map(o -> {
+                                JsonArray ids = o.getJsonArray("system_ids");
+                                if (ids != null && !ids.isEmpty()) {
+                                    return ids.stream()
+                                            .map(j -> j.toString().replaceAll("\"", "") + ":" + MIN_VERSION)
+                                            .collect(Collectors.toList());
+                                }
+                                return null;
+                            })
+                            .filter(Objects::nonNull)
+                            .flatMap(l -> l.stream())
+                            .distinct()
+                            .map(gav -> new DefaultArtifact(gav, map))
+                            .collect(Collectors.toList());
                 }
             }
         } catch (IOException ex) {
