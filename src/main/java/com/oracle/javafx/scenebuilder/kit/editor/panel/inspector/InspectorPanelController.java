@@ -82,6 +82,8 @@ import javafx.scene.layout.*;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -2049,7 +2051,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         String source = "";
         if(getSelectedIntrinsics().iterator().hasNext()) {
             FXOMIntrinsic fxomIntrinsic = getSelectedIntrinsics().iterator().next();
-            source = includeTagBinder.concat(fxomIntrinsic.getSource());
+            Path p = Paths.get(fxomIntrinsic.getSource());
+            source = includeTagBinder.concat(p.getFileName().toString());
         }
         return source;
     }
