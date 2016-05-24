@@ -22,7 +22,7 @@ public class LocalSearch implements Search {
     }
     
     @Override
-    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
+    public List<DefaultArtifact> getCoordinates(String query) {
         
         final Map<String, String> map = new HashMap<>();
         map.put("Repository", MavenPresets.LOCAL);
@@ -36,19 +36,18 @@ public class LocalSearch implements Search {
                         String d[] = s.substring(m2.length()).split("\\" + File.separator);
                         int length = d.length;
                         if (length > 3) {
-                            String v = d[length - 2];
                             String a = d[length - 3];
                             String g = Stream.of(d)
                                     .limit(length - 3)
                                     .collect(Collectors.joining("."));
-                            return g + ":" + a + ":" + v;
+                            return g + ":" + a + ":" + MIN_VERSION;
                         }
                         return null;
                     })
                     .filter(gav -> gav != null && gav.contains(query))
                     .distinct()
                     .map(gav -> new DefaultArtifact(gav, map))
-                    .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                    .collect(Collectors.toList());
         } catch (IOException ex) { }
         return null;
     }

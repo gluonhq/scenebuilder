@@ -140,28 +140,33 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                 final MavenArtifact mavenArtifact = installService.getValue();
                 final PreferencesController pc = PreferencesController.getSingleton();
     
-                List<File> files = new ArrayList<>();
-                files.add(new File(mavenArtifact.getPath()));
-                if (!mavenArtifact.getDependencies().isEmpty()) {
-                    files.addAll(Stream
-                            .of(mavenArtifact.getDependencies().split(":"))
-                            .map(File::new)
-                            .collect(Collectors.toList()));
+                if (mavenArtifact == null || mavenArtifact.getPath().isEmpty() || 
+                        !new File(mavenArtifact.getPath()).exists()) {
+                    logInfoMessage("log.user.maven.failed", getArtifactCoordinates());
+                } else {
+                    List<File> files = new ArrayList<>();
+                    files.add(new File(mavenArtifact.getPath()));
+                    if (!mavenArtifact.getDependencies().isEmpty()) {
+                        files.addAll(Stream
+                                .of(mavenArtifact.getDependencies().split(":"))
+                                .map(File::new)
+                                .collect(Collectors.toList()));
+                    }
+
+                    final ImportWindowController iwc
+                            = new ImportWindowController(
+                                new LibraryPanelController(editorController), 
+                                files, installButton.getScene().getWindow(), false,
+                                pc.getMavenPreferences().getArtifactsFilter());
+                    iwc.setToolStylesheet(editorController.getToolStylesheet());
+                    ButtonID userChoice = iwc.showAndWait();
+                    if (userChoice == ButtonID.OK) {
+                        mavenArtifact.setFilter(iwc.getNewExcludedItems());
+                        updatePreferences(mavenArtifact);
+                        logInfoMessage("log.user.maven.installed", getArtifactCoordinates());
+                    }
+                    this.onCloseRequest(null);
                 }
-                
-                final ImportWindowController iwc
-                        = new ImportWindowController(
-                            new LibraryPanelController(editorController), 
-                            files, installButton.getScene().getWindow(), false,
-                            pc.getMavenPreferences().getArtifactsFilter());
-                iwc.setToolStylesheet(editorController.getToolStylesheet());
-                ButtonID userChoice = iwc.showAndWait();
-                if (userChoice == ButtonID.OK) {
-                    mavenArtifact.setFilter(iwc.getNewExcludedItems());
-                    updatePreferences(mavenArtifact);
-                    logInfoMessage("log.user.maven.installed", getArtifactCoordinates());
-                }
-                this.onCloseRequest(null);
             } else if (nv.equals(Worker.State.CANCELLED) || nv.equals(Worker.State.FAILED)) {
                 logInfoMessage("log.user.maven.failed", getArtifactCoordinates());
             }

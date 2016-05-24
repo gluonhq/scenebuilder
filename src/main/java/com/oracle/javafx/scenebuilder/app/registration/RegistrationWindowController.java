@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -72,9 +73,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
 
     @Override
     public void onCloseRequest(WindowEvent event) {
-        if (isEmailAddressValid()) {
-            closeWindow();
-        }
+        cancelUserRegistration();
 
         event.consume();
     }
@@ -106,21 +105,42 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
     }
 
     @FXML
+    public void cancelUserRegistration() {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        if (recordGlobal.getRegistrationHash() == null) {
+            String hash = getUniqueId();
+            recordGlobal.updateRegistrationFields(hash, null, null);
+            sendTrackingInfo(hash, "", false, false);
+        }
+
+        closeWindow();
+    }
+    
+    @FXML
     public void trackUserRegistration() {
         if (!isEmailAddressValid()) {
             lbAlert.setVisible(true);
             return;
         }
 
-        String hash = getUniqueId();
-        String email = tfEmail.getText();
-        boolean optIn = cbOptIn.isSelected();
-
-        // Update preferences
         PreferencesController pc = PreferencesController.getSingleton();
         PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        
+        boolean update = recordGlobal.getRegistrationHash() != null;
+        String hash = update ? recordGlobal.getRegistrationHash() : getUniqueId();
+        String email = tfEmail.getText();
+        boolean optIn = cbOptIn.isSelected();
+                
+        // Update preferences
         recordGlobal.updateRegistrationFields(hash, email, optIn);
 
+        sendTrackingInfo(hash, email, optIn, update);
+
+        closeWindow();
+    }
+
+    private void sendTrackingInfo(String hash, String email, boolean optIn, boolean update) {
         new Thread(() -> {
             try {
                 String java = System.getProperty("java.version");
@@ -131,8 +151,9 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
                         + "&java=" + URLEncoder.encode(java, "UTF-8")
                         + "&type=scenebuilder"
                         + "&id=" + hash
-                        + "&version=" + SceneBuilderApp.VERSION;
-
+                        + "&version=" + SceneBuilderApp.VERSION
+                        + (update ? "&update=true" : "");
+                
                 URL url = new URL("http://usage.gluonhq.com/ul/log?" + urlParameters);
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -148,11 +169,9 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
             } catch (MalformedURLException ex) {
             } catch (IOException ex) {
             }
-        }, "UserRegistrationThread").start();
-
-        closeWindow();
+        }, "UserRegistrationThread").start();        
     }
-
+    
     private String getUniqueId(){
         String uniqueId = "";
         try {

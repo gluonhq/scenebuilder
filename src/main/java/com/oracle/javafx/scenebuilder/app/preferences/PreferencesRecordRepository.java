@@ -81,8 +81,12 @@ public class PreferencesRecordRepository {
         repositoryPreferences.put(REPO_ID, repository.getId());
         repositoryPreferences.put(REPO_TYPE, repository.getType());
         repositoryPreferences.put(REPO_URL, repository.getURL());
-        repositoryPreferences.put(REPO_USER, repository.getUser());
-        repositoryPreferences.put(REPO_PASS, repository.getPassword());
+        if (repository.getUser() != null) {
+            repositoryPreferences.put(REPO_USER, repository.getUser());
+        }
+        if (repository.getPassword() != null) {
+            repositoryPreferences.put(REPO_PASS, repository.getPassword());
+        }
         
     }
 }

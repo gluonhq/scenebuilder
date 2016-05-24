@@ -334,15 +334,19 @@ public class PreferencesRecordGlobal {
         writeToJavaPreferences(RECENT_ITEMS);
     }
 
-    public void updateRegistrationFields(String hash, String email, boolean optIn) {
+    public void updateRegistrationFields(String hash, String email, Boolean optIn) {
         registrationHash = hash;
         writeToJavaPreferences(REGISTRATION_HASH);
 
-        registrationEmail = email;
-        writeToJavaPreferences(REGISTRATION_EMAIL);
+        if (email != null) {
+            registrationEmail = email;
+            writeToJavaPreferences(REGISTRATION_EMAIL);
+        }
 
-        registrationOptIn = optIn;
-        writeToJavaPreferences(REGISTRATION_OPT_IN);
+        if (optIn != null) {
+            registrationOptIn = optIn;
+            writeToJavaPreferences(REGISTRATION_OPT_IN);
+        }
     }
 
     public String getRegistrationHash() {

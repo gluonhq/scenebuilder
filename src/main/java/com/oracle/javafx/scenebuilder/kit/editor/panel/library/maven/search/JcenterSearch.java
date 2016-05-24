@@ -23,13 +23,17 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 public class JcenterSearch implements Search {
 
     // bintray
-    private static final String URL_PREFIX = "https://api.bintray.com/search/packages?name=";
-    private static final String URL_SUFFIX = "";
+    
+    // This requires authentication:
+//    private static final String URL_PREFIX = "https://api.bintray.com/search/packages?name=";
+    // This doesn't require authentication, limited to 50 results:
+    private static final String URL_PREFIX = "https://api.bintray.com/search/packages/maven?q=*";
+    private static final String URL_SUFFIX = "*";
     
     private final HttpClient client;
     private final String username;
     private final String password;
-            
+    
     public JcenterSearch(String username, String password) {
         client = HttpClients.createDefault();
         this.username = username;
@@ -37,18 +41,16 @@ public class JcenterSearch implements Search {
     }
     
     @Override
-    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
-        if (username.isEmpty() || password.isEmpty()) {
-            return null;
-        } 
-        
+    public List<DefaultArtifact> getCoordinates(String query) {
         final Map<String, String> map = new HashMap<>();
         map.put("Repository", MavenPresets.JCENTER);
-                        
+        
         try {
             HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
-            String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
-            request.addHeader("Authorization", "Basic " + authStringEnc);
+            if (!username.isEmpty() && !password.isEmpty()) {
+                String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
+                request.addHeader("Authorization", "Basic " + authStringEnc);
+            }
             request.setHeader("Accept", "application/json");
             HttpResponse response = client.execute(request);
             try (JsonReader rdr = Json.createReader(response.getEntity().getContent())) {
@@ -60,16 +62,16 @@ public class JcenterSearch implements Search {
                                 JsonArray ids = o.getJsonArray("system_ids");
                                 if (ids != null && !ids.isEmpty()) {
                                     return ids.stream()
-                                            .map(ga -> new DefaultArtifact(ga.toString()
-                                                    .replaceAll("\"","") + ":" + o.getString("latest_version",""), map))
+                                            .map(j -> j.toString().replaceAll("\"", "") + ":" + MIN_VERSION)
                                             .collect(Collectors.toList());
-                                }   
+                                }
                                 return null;
                             })
                             .filter(Objects::nonNull)
                             .flatMap(l -> l.stream())
                             .distinct()
-                            .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                            .map(gav -> new DefaultArtifact(gav, map))
+                            .collect(Collectors.toList());
                 }
             }
         } catch (IOException ex) {

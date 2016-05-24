@@ -3,11 +3,9 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +18,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
@@ -36,10 +33,10 @@ public class SearchService extends Service<Void> {
     
     private String query;
     
-    private final ObservableList<Artifact> result;
+    private final ObservableList<DefaultArtifact> result;
     private final BooleanProperty searching;
     
-    private List<Task<ObservableList<Artifact>>> tasks;
+    private List<Task<ObservableList<DefaultArtifact>>> tasks;
     
     public SearchService() {
         setExecutor(exec);
@@ -51,7 +48,7 @@ public class SearchService extends Service<Void> {
         this.query = query;
     }
     
-    public ObservableList<Artifact> getResult() {
+    public ObservableList<DefaultArtifact> getResult() {
         return result;
     }
     
@@ -93,14 +90,13 @@ public class SearchService extends Service<Void> {
                                 searching.set(false);
                             }
                             if (newState == Worker.State.SUCCEEDED && task.getValue() != null) {
-                                result.addAll(task.getValue()
-                                        .stream()
-                                        .filter(a -> result
-                                                .stream()
-                                                .noneMatch(ar -> ar.getGroupId().equals(a.getGroupId()) &&
-                                                        ar.getArtifactId().equals(a.getArtifactId()) &&
-                                                        ar.getVersion().equals(a.getVersion())))
-                                        .collect(Collectors.toList()));
+                                List<DefaultArtifact> list = new ArrayList<>(result);
+                                list.addAll(task.getValue());
+                                
+                                result.setAll(getLatestVersions(
+                                            list.stream()
+                                                .distinct()
+                                                .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()))));
                             }
                         }
                     }));
@@ -115,18 +111,17 @@ public class SearchService extends Service<Void> {
         };
     }
     
-    private Task<ObservableList<Artifact>> createSearchTask(Search search) {
-        return new Task<ObservableList<Artifact>>() {
+    private Task<ObservableList<DefaultArtifact>> createSearchTask(Search search) {
+        return new Task<ObservableList<DefaultArtifact>>() {
             @Override
-            protected ObservableList<Artifact> call() throws Exception {
-                return FXCollections.observableArrayList(
-                        getLatestVersions(search.getCoordinates(query)));
+            protected ObservableList<DefaultArtifact> call() throws Exception {
+                return FXCollections.observableArrayList(search.getCoordinates(query));
             }
         };
     }
     
-    private List<Artifact> getLatestVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
-        List<Artifact> list = new ArrayList<>();
+    private List<DefaultArtifact> getLatestVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
+        List<DefaultArtifact> list = new ArrayList<>();
         mapArtifacts.forEach((s, l) -> {
             DefaultArtifact da = l.stream()
                     // TODO: Include snapshots
@@ -134,14 +129,8 @@ public class SearchService extends Service<Void> {
                     .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
                     .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
                     .reduce((a1, a2) -> {
-                        Version v1 = null;
-                        try {
-                            v1 = new GenericVersionScheme().parseVersion(a1.getVersion());
-                        } catch (InvalidVersionSpecificationException ivse) { }
-                        Version v2 = null;
-                        try {
-                            v2 = new GenericVersionScheme().parseVersion(a2.getVersion());
-                        } catch (InvalidVersionSpecificationException ivse) { }
+                        Version v1 = getVersion(a1.getVersion());
+                        Version v2 = getVersion(a2.getVersion());
                         if (v1 != null && v2 != null && v1.compareTo(v2) > 0) {
                             return a1;
                         } else {
@@ -155,8 +144,8 @@ public class SearchService extends Service<Void> {
     }
     
     // TODO: Return all versions, including snapshots
-    private List<Artifact> getAllVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
-        List<Artifact> list = new ArrayList<>();
+    private List<DefaultArtifact> getAllVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
+        List<DefaultArtifact> list = new ArrayList<>();
         mapArtifacts.forEach((s, l) -> {
             l.stream()
                 .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
@@ -165,4 +154,13 @@ public class SearchService extends Service<Void> {
         });
         return list;
     }
+    
+    private Version getVersion(String version) {
+        Version v1 = null;
+        try {
+            v1 = new GenericVersionScheme().parseVersion(version);
+        } catch (InvalidVersionSpecificationException ivse) { }
+        return v1;
+    }
+    
 }

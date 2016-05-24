@@ -34,7 +34,7 @@ public class MavenSearch implements Search {
     }
     
     @Override
-    public Map<String, List<DefaultArtifact>> getCoordinates(String query) {
+    public List<DefaultArtifact> getCoordinates(String query) {
         
         final Map<String, String> map = new HashMap<>();
         map.put("Repository", MavenPresets.MAVEN);
@@ -50,10 +50,10 @@ public class MavenSearch implements Search {
                         JsonArray docResults = jsonResponse.getJsonArray("docs");
                         return docResults.getValuesAs(JsonObject.class)
                                 .stream()
-                                .map(doc -> doc.getString("id", "") + ":" + doc.getString("latestVersion", ""))
+                                .map(doc -> doc.getString("id", "") + ":" + MIN_VERSION)
                                 .distinct()
                                 .map(gav -> new DefaultArtifact(gav, map))
-                                .collect(Collectors.groupingBy(a -> a.getGroupId() + ":" + a.getArtifactId()));
+                                .collect(Collectors.toList());
                     }
                 }
             }

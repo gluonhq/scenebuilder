@@ -14,9 +14,12 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModal
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Service;
@@ -24,6 +27,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
@@ -35,6 +39,7 @@ import javafx.stage.WindowEvent;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.version.Version;
 
 
 /**
@@ -49,10 +54,13 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private Button searchButton;
     
     @FXML
-    private ListView<Artifact> resultsListView;
+    private ListView<DefaultArtifact> resultsListView;
 
     @FXML
     private ProgressIndicator progress;
+    
+    @FXML
+    private Label installLabel;
     
     @FXML
     private Button installButton;
@@ -65,6 +73,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private RemoteRepository remoteRepository;
     private final SearchService searchService;
     private final Service<MavenArtifact> installService;
+    private DefaultArtifact artifact;
     private final Window owner;
     
     public SearchMavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
@@ -104,28 +113,33 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                     final MavenArtifact mavenArtifact = installService.getValue();
                     final PreferencesController pc = PreferencesController.getSingleton();
 
-                    List<File> files = new ArrayList<>();
-                    files.add(new File(mavenArtifact.getPath()));
-                    if (!mavenArtifact.getDependencies().isEmpty()) {
-                        files.addAll(Stream
-                                .of(mavenArtifact.getDependencies().split(":"))
-                                .map(File::new)
-                                .collect(Collectors.toList()));
+                    if (mavenArtifact == null || mavenArtifact.getPath().isEmpty() || 
+                            !new File(mavenArtifact.getPath()).exists()) {
+                        logInfoMessage("log.user.maven.failed", getArtifactCoordinates());
+                    } else {
+                        List<File> files = new ArrayList<>();
+                        files.add(new File(mavenArtifact.getPath()));
+                        if (!mavenArtifact.getDependencies().isEmpty()) {
+                            files.addAll(Stream
+                                    .of(mavenArtifact.getDependencies().split(":"))
+                                    .map(File::new)
+                                    .collect(Collectors.toList()));
+                        }
+                        
+                        final ImportWindowController iwc
+                                = new ImportWindowController(
+                                    new LibraryPanelController(editorController), 
+                                    files, installButton.getScene().getWindow(), false,
+                                    pc.getMavenPreferences().getArtifactsFilter());
+                        iwc.setToolStylesheet(editorController.getToolStylesheet());
+                        ButtonID userChoice = iwc.showAndWait();
+                        if (userChoice == ButtonID.OK) {
+                            mavenArtifact.setFilter(iwc.getNewExcludedItems());
+                            updatePreferences(mavenArtifact);
+                            logInfoMessage("log.user.maven.installed", getArtifactCoordinates());
+                        }
+                        this.onCloseRequest(null);
                     }
-
-                    final ImportWindowController iwc
-                            = new ImportWindowController(
-                                new LibraryPanelController(editorController), 
-                                files, installButton.getScene().getWindow(), false,
-                                pc.getMavenPreferences().getArtifactsFilter());
-                    iwc.setToolStylesheet(editorController.getToolStylesheet());
-                    ButtonID userChoice = iwc.showAndWait();
-                    if (userChoice == ButtonID.OK) {
-                        mavenArtifact.setFilter(iwc.getNewExcludedItems());
-                        updatePreferences(mavenArtifact);
-                        logInfoMessage("log.user.maven.installed", getArtifactCoordinates());
-                    }
-                    this.onCloseRequest(null);
                 } else if (nv.equals(Worker.State.CANCELLED) || nv.equals(Worker.State.FAILED)) {
                     logInfoMessage("log.user.maven.failed", getArtifactCoordinates());
                 }
@@ -133,6 +147,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                 searchButton.setDisable(false);
                 resultsListView.setDisable(false);
                 searchTextfield.setDisable(false);
+                installLabel.setVisible(false);
             }
         });
         
@@ -174,25 +189,22 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
             }
         });
         
-        resultsListView.setCellFactory(p -> new ListCell<Artifact>() {
+        resultsListView.setCellFactory(p -> new ListCell<DefaultArtifact>() {
             @Override
-            protected void updateItem(Artifact item, boolean empty) {
+            protected void updateItem(DefaultArtifact item, boolean empty) {
                 super.updateItem(item, empty); 
                 if (item != null && !empty) {
-                    setText(item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion());
-                    setTooltip(new Tooltip(item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion() + " [" + item.getProperty("Repository", "")  +"]"));
+                    setText(item.getGroupId() + ":" + item.getArtifactId());
                 } else {
                     setText(null);
-                    setTooltip(null);
                 }
             }
-            
         });
         
         resultsListView.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
                 installButton.setDisable(resultsListView.getSelectionModel().getSelectedIndex() < 0);
-                remoteRepository = maven.getRemoteRepository(nv.getProperty("Repository", "Local"));
+                artifact = resultsListView.getSelectionModel().getSelectedItem();
             }
         });
         
@@ -213,6 +225,8 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         installButton.setDisable(true);
         searchButton.setDisable(true);
         resultsListView.setDisable(true);
+        installLabel.setText("");
+        installLabel.setVisible(true);
         installService.restart();
     }
     
@@ -230,6 +244,17 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     }
     
     private MavenArtifact resolveArtifacts() {
+        if (artifact == null) {
+            return null;
+        }
+        
+        if (artifact.getVersion().equals(Search.MIN_VERSION)) {
+            addVersion();
+            Platform.runLater(() ->
+                installLabel.setText(I18N.getString("search.maven.dialog.installing", 
+                        getArtifactCoordinates())));
+        }
+        
         if (remoteRepository == null) {
             return null;
         }
@@ -247,7 +272,6 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         MavenArtifact mavenArtifact = new MavenArtifact(getArtifactCoordinates());
         mavenArtifact.setPath(maven.resolveArtifacts(remoteRepository, jarArtifact, javadocArtifact, pomArtifact));
         mavenArtifact.setDependencies(maven.resolveDependencies(remoteRepository, jarArtifact));
-        
         return mavenArtifact;
     }
 
@@ -256,8 +280,11 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     }
     
     private String getArtifactCoordinates() {
-        final Artifact item = resultsListView.getSelectionModel().getSelectedItem();
-        return item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getVersion();
+        if (artifact == null) {
+            return "";
+        }
+        
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
     }
     
     private void updatePreferences(MavenArtifact mavenArtifact) {
@@ -275,4 +302,15 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         userLibrary.startWatching();
     }
     
+    private void addVersion() {
+        Version version = maven.findLatestVersion(artifact);
+        if (version == null) {
+            return;
+        }
+        
+        final Map<String, String> map = new HashMap<>();
+        map.put("Repository", maven.getRemoteRepository(version).getId());
+        artifact = new DefaultArtifact(artifact.getGroupId()+ ":" + artifact.getArtifactId() + ":" +version.toString(), map);
+        remoteRepository = maven.getRemoteRepository(version);
+    }
 }
