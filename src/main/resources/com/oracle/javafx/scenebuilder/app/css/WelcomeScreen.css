@@ -1,0 +1,52 @@
+.welcome-dialog {
+    -fx-min-height: 300px;
+    -fx-background-color: white;
+}
+
+.welcome-dialog .header {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.25em;
+}
+.welcome-dialog .actions-options {
+    -fx-padding: 5 0 0 0;
+}
+.welcome-dialog .actions-options .hyperlink, .welcome-dialog .recent-items-options .hyperlink {
+    -fx-padding: 0 0 0 0;
+}
+
+.welcome-dialog .actions-options > .action-option-container {
+    -fx-spacing: 3;
+}
+
+.welcome-dialog .recent-items-options, .welcome-dialog .scroll-pane-container {
+    -fx-padding: 5 0 0 0;
+}
+
+.welcome-dialog .scroll-pane .recent-items-options {
+    -fx-padding: 0 0 0 0;
+}
+
+.welcome-dialog .scroll-pane {
+    -fx-max-height: 150px;
+    -fx-min-width: 250px;
+    -fx-pref-width: 250px;
+    -fx-max-width: 250px;
+}
+
+.welcome-dialog .scroll-pane > .viewport {
+    -fx-background-color: white;
+}
+
+.welcome-dialog .recent-items-container{
+    -fx-pref-width: 350px;
+}
+
+.welcome-dialog .actions-container{
+    -fx-pref-width: 350px;
+}
+
+.welcome-dialog .separator {
+    -fx-padding: 0 5 0 0;
+}
+
+
