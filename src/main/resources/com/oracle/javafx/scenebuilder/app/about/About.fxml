@@ -42,7 +42,7 @@
   <children>
     <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" VBox.vgrow="NEVER">
       <image>
-        <Image preserveRatio="true" smooth="true" url="@about-header.png" />
+        <Image preserveRatio="true" smooth="true" url="@../gluon_scene_builder.png" />
       </image>
     </ImageView>
       <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" VBox.vgrow="NEVER">
