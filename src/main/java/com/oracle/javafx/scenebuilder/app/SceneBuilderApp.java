@@ -70,6 +70,8 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -77,6 +79,8 @@ import javafx.stage.Stage;
  *
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
+    private static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
+    private static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
     public static final String VERSION = "8.2.0";
     
@@ -354,7 +358,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * Application
      */
     @Override
-    public void start(Stage stage) throws Exception {  
+    public void start(Stage stage) throws Exception {
+
         launchLatch.countDown();
         setApplicationUncaughtExceptionHandler();
 
@@ -482,6 +487,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     public DocumentWindowController makeNewWindow() {
         final DocumentWindowController result = new DocumentWindowController();
+
+        Image icon16 = new Image(APP_ICON_16);
+        Image icon32 = new Image(APP_ICON_32);
+        result.getStage().getIcons().addAll(icon16, icon32);
+
         windowList.add(result);
         return result;
     }
