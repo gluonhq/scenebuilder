@@ -25,6 +25,8 @@ public class WelcomeDialog extends Dialog {
     private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("417750 - check list device.png").toString();
     private static final String OPEN_PROJECT_ICON = WelcomeDialog.class.getResource("open_document.png").toString();
 
+    private static final int NUMBER_OF_ITEMS_WITHOUT_SCROLLPANE = 8;
+
     SceneBuilderApp sceneBuilderApp;
 
     public WelcomeDialog() {
@@ -102,7 +104,7 @@ public class WelcomeDialog extends Dialog {
             titleLabel.setOnAction(event -> fireOpenRecentProject(event, recentItem));
             titleLabel.setTooltip(new Tooltip(recentItem));
         }
-        if (recentItems.size() > 8) {
+        if (recentItems.size() > NUMBER_OF_ITEMS_WITHOUT_SCROLLPANE) {
             ScrollPane scrollPane = new ScrollPane(recentItemsOptions);
             VBox scrollPaneContainer = new VBox(scrollPane);
             scrollPaneContainer.getStyleClass().add("scroll-pane-container");
