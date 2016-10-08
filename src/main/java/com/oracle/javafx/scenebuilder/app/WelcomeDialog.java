@@ -98,6 +98,9 @@ public class WelcomeDialog extends Dialog {
 
             String recentItem = recentItems.get(row);
             String[] recentItemPath = recentItem.split("\\\\");
+            if (recentItemPath.length == 1) {
+                recentItemPath = recentItem.split("/");
+            }
             String recentItemTitle = recentItemPath[recentItemPath.length - 1].split("\\.")[0];
             Hyperlink titleLabel = new Hyperlink(recentItemTitle);
             recentItemsOptions.getChildren().add(titleLabel);
