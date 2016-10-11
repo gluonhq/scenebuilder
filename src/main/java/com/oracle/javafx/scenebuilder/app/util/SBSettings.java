@@ -1,5 +1,6 @@
-package com.oracle.javafx.scenebuilder.app;
+package com.oracle.javafx.scenebuilder.app.util;
 
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
