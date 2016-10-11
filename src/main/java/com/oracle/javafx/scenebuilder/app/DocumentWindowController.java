@@ -775,6 +775,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     skeletonWindowController = new SkeletonWindowController(editorController, getStage());
                     skeletonWindowController.setToolStylesheet(getToolStylesheet());
                 }
+                SBSettings.setWindowIcon(skeletonWindowController.getStage());
                 skeletonWindowController.openWindow();
                 break;
                 
@@ -2058,6 +2059,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             d.setOKButtonTitle(I18N.getString("label.save"));
             d.setActionButtonTitle(I18N.getString("label.do.not.save"));
             d.setActionButtonVisible(true);
+            SBSettings.setWindowIcon(d.getStage());
             
             switch(d.showAndWait()) {
                 default:

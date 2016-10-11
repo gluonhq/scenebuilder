@@ -59,7 +59,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -71,27 +70,8 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -99,9 +79,6 @@ import javafx.stage.Stage;
  *
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
-    private static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
-    private static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
-
     public static final String VERSION = "8.2.0";
     
     public enum ApplicationControlAction {
@@ -196,6 +173,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
                 aboutWindowController.openWindow();
+                SBSettings.setWindowIcon(aboutWindowController.getStage());
                 break;
 
             case REGISTER:
@@ -241,6 +219,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case SHOW_PREFERENCES:
+                SBSettings.setWindowIcon(preferencesWindowController.getStage());
                 preferencesWindowController.openWindow();
                 break;
 
@@ -448,6 +427,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         WelcomeDialog welcomeDialog = new WelcomeDialog();
+        SBSettings.setWindowIcon((Stage)welcomeDialog.getDialogPane().getScene().getWindow());
+
         welcomeDialog.showAndWait();
     }
 
@@ -514,9 +495,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public DocumentWindowController makeNewWindow() {
         final DocumentWindowController result = new DocumentWindowController();
 
-        Image icon16 = new Image(APP_ICON_16);
-        Image icon32 = new Image(APP_ICON_32);
-        result.getStage().getIcons().addAll(icon16, icon32);
+        SBSettings.setWindowIcon(result.getStage());
 
         windowList.add(result);
         return result;
