@@ -1269,6 +1269,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         if(libraryDialogController==null){
             libraryDialogController = new LibraryDialogController(editorController, this, getStage());
         }
+        SBSettings.setWindowIcon(libraryDialogController.getStage());
 
         libraryDialogController.openWindow();
     }
@@ -1340,7 +1341,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             jarAnalysisReportController = new JarAnalysisReportController(getEditorController(), getStage());
             jarAnalysisReportController.setToolStylesheet(getToolStylesheet());
         }
-        
+        SBSettings.setWindowIcon(jarAnalysisReportController.getStage());
         jarAnalysisReportController.openWindow();
     }
     

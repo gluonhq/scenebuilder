@@ -519,7 +519,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"),
                 "*.fxml")); //NOI18N
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
-        final List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(null);
+        Stage stage = new Stage();
+        SBSettings.setWindowIcon(stage);
+        final List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(getDocumentWindowControllers().get(0).getStage());
         if (fxmlFiles != null) {
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
