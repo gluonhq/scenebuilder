@@ -41,6 +41,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowControlle
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.app.template.FxmlTemplates;
 import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
+import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
@@ -77,7 +78,6 @@ import javafx.stage.Stage;
  *
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
-
     public static final String VERSION = "8.2.0";
     
     public enum ApplicationControlAction {
@@ -172,6 +172,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
                 aboutWindowController.openWindow();
+                SBSettings.setWindowIcon(aboutWindowController.getStage());
                 break;
 
             case REGISTER:
@@ -217,6 +218,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case SHOW_PREFERENCES:
+                SBSettings.setWindowIcon(preferencesWindowController.getStage());
                 preferencesWindowController.openWindow();
                 break;
 
@@ -491,6 +493,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     public DocumentWindowController makeNewWindow() {
         final DocumentWindowController result = new DocumentWindowController();
+
+        SBSettings.setWindowIcon(result.getStage());
+
         windowList.add(result);
         return result;
     }
