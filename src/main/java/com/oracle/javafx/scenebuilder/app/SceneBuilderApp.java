@@ -71,6 +71,9 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -381,8 +384,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             Platform.exit();
         }
 
-        verifyRegistration();
-
         logTimestamp(ACTION.START);
 
 
@@ -413,6 +414,15 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             if (System.getProperty("scenic") != null) { //NOI18N
                 Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
             }
+
+            WelcomeDialog.instance().setOnHidden(event -> {
+                verifyRegistration();
+            });
+
+            // Unless we're on a Mac we're starting SB directly (fresh start)
+            // so we're not opening any file and as such we should show the Welcome Dialog
+            WelcomeDialog.instance().show();
+
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
@@ -424,11 +434,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             Deprecation.setDefaultSystemMenuBar(MenuBarController.getSystemMenuBarController().getMenuBar());
         }
 
-        if (files.isEmpty()) {
-            // We're starting SB directly (fresh start) so not opening any file
-            WelcomeDialog welcomeDialog = new WelcomeDialog();
-            welcomeDialog.showAndWait();
-        }
+
+
     }
 
 

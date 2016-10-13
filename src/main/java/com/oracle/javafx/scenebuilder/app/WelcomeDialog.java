@@ -35,6 +35,7 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -49,6 +50,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.Arrays;
@@ -63,9 +65,11 @@ public class WelcomeDialog extends Dialog {
 
     private static final int NUMBER_OF_ITEMS_WITHOUT_SCROLLPANE = 8;
 
+    private static WelcomeDialog instance;
+
     SceneBuilderApp sceneBuilderApp;
 
-    public WelcomeDialog() {
+    private WelcomeDialog() {
         sceneBuilderApp = SceneBuilderApp.getSingleton();
 
         setTitle(I18N.getString("welcome.title"));
@@ -176,5 +180,13 @@ public class WelcomeDialog extends Dialog {
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
         sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
         close();
+    }
+
+    public static WelcomeDialog instance() {
+        if (instance == null){
+            instance = new WelcomeDialog();
+            SBSettings.setWindowIcon((Stage)instance.getDialogPane().getScene().getWindow());
+        }
+        return instance;
     }
 }

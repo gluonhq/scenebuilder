@@ -9,3 +9,4 @@ build/*
 .settings
 *.class
 bin
+.DS_Store
