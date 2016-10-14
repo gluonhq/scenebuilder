@@ -48,9 +48,6 @@ import java.util.Collections;
 import java.util.List;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 
 /**
  *
@@ -292,7 +289,7 @@ public class AppPlatform {
             if (openRejected == false) {
                 // We're starting Scene Builder by opening a file so
                 // we shouldn't show the Welcome Dialog
-                WelcomeDialog.instance().hide();
+                WelcomeDialog.getInstance().hide();
                 notificationHandler.handleOpenFilesAction(Arrays.asList(files));
             }
         }

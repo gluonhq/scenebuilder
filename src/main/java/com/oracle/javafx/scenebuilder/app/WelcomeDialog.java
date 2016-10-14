@@ -182,7 +182,7 @@ public class WelcomeDialog extends Dialog {
         close();
     }
 
-    public static WelcomeDialog instance() {
+    public static WelcomeDialog getInstance() {
         if (instance == null){
             instance = new WelcomeDialog();
             SBSettings.setWindowIcon((Stage)instance.getDialogPane().getScene().getWindow());

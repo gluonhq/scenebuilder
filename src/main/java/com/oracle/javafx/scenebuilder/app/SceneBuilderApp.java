@@ -71,9 +71,6 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -415,13 +412,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
             }
 
-            WelcomeDialog.instance().setOnHidden(event -> {
+            WelcomeDialog.getInstance().setOnHidden(event -> {
                 verifyRegistration();
             });
 
             // Unless we're on a Mac we're starting SB directly (fresh start)
             // so we're not opening any file and as such we should show the Welcome Dialog
-            WelcomeDialog.instance().show();
+            WelcomeDialog.getInstance().show();
 
         } else {
             // Open files passed as arguments by the platform
