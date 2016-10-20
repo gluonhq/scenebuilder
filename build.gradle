@@ -20,6 +20,28 @@ def tryGetProperty = {String name, String defaultValue ->
 }
 
 repositories {
+    mavenLocal()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/releases/"
+    }
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
+        credentials {
+            username gluonNexusUsername
+            password gluonNexusPassword
+        }
+    }
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/gluon-private-releases'
+        credentials {
+            username gluonNexusUsername
+            password gluonNexusPassword
+        }
+    }
+    jcenter()
     mavenCentral()
 }
 
@@ -31,6 +53,9 @@ dependencies {
     compile 'org.eclipse.aether:aether-transport-file:1.1.0'
     compile 'org.eclipse.aether:aether-transport-http:1.1.0'
     compile 'org.apache.maven:maven-aether-provider:3.3.9'
+
+    compile 'com.gluonhq:charm-glisten:3.0.1-SNAPSHOT'
+
     // REST API
     compile 'org.apache.httpcomponents:httpclient:4.5.2'
     compile 'javax.json:javax.json-api:1.0'

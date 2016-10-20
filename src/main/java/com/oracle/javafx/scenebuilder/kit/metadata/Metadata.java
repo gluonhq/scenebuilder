@@ -167,7 +167,6 @@ public class Metadata {
     
     public Set<ValuePropertyMetadata> queryValueProperties(Set<Class<?>> componentClasses) {
         final Set<ValuePropertyMetadata> result = new HashSet<>();
-        
         for (PropertyMetadata propertyMetadata : queryProperties(componentClasses)) {
             if (propertyMetadata instanceof ValuePropertyMetadata) {
                 result.add((ValuePropertyMetadata) propertyMetadata);

@@ -44,6 +44,7 @@ public class BuiltinSectionComparator implements Comparator<String> {
     private static final List<String> orderedSections = new ArrayList<>();
     
     static {
+        orderedSections.add(BuiltinLibrary.TAG_GLUON);
         orderedSections.add(BuiltinLibrary.TAG_CONTAINERS);
         orderedSections.add(BuiltinLibrary.TAG_CONTROLS);
         orderedSections.add(BuiltinLibrary.TAG_MENU);

@@ -473,7 +473,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         String sectionName = paneName;
         
         if (sectionName == null) {
-            sectionName = BuiltinLibrary.TAG_CONTAINERS;
+            sectionName = BuiltinLibrary.TAG_GLUON;
         }
         
         for (TitledPane tp : libAccordion.getPanes()) {
