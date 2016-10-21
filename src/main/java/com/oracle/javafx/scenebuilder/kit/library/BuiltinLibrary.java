@@ -143,6 +143,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(com.gluonhq.charm.glisten.control.ProgressIndicator.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.SettingsPane.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.SidePopupView.class, TAG_GLUON);
+        addCustomizedItem(com.gluonhq.charm.glisten.mvc.SplashView.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.TextField.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.mvc.View.class, TAG_GLUON);
@@ -364,6 +365,9 @@ public class BuiltinLibrary extends Library {
     
     
     private void addItem(String name, String fxmlText, String section, String iconName) {
+        if (name.equals("TextField")) {
+            System.out.println("Textfield turn");
+        }
         final URL iconURL = ImageUtils.getNodeIconURL(iconName + ".png"); //NOI18N
         final LibraryItem item = new LibraryItem(name, section, fxmlText, iconURL, this);
         itemsProperty.add(item);
