@@ -365,9 +365,6 @@ public class BuiltinLibrary extends Library {
     
     
     private void addItem(String name, String fxmlText, String section, String iconName) {
-        if (name.equals("TextField")) {
-            System.out.println("Textfield turn");
-        }
         final URL iconURL = ImageUtils.getNodeIconURL(iconName + ".png"); //NOI18N
         final LibraryItem item = new LibraryItem(name, section, fxmlText, iconURL, this);
         itemsProperty.add(item);

@@ -35,6 +35,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
@@ -58,6 +59,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -222,7 +224,13 @@ class MetadataIntrospector {
                 result = new PaintPropertyMetadata(
                         name,
                         readWrite,
-                        (Paint)getDefaultValue(sample, d.getReadMethod(), null),
+                        (Paint) getDefaultValue(sample, d.getReadMethod(), null),
+                        inspectorPath);
+            } else if (propertyType == javafx.scene.image.Image.class) {
+                result = new ImagePropertyMetadata(
+                        name,
+                        readWrite,
+                        null,
                         inspectorPath);
             } else {
                 result = null;
