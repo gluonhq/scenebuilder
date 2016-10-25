@@ -11,3 +11,7 @@
     -fx-padding: 10;
 }
 
+.download_scenebuilder-dialog .content-container {
+    -fx-padding: 0 60 0 0;
+}
+

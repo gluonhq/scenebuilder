@@ -45,20 +45,15 @@ public class UpdateSceneBuilderDialog extends Dialog {
 
         getDialogPane().setContent(mainContainer);
 
+        mainContainer.getStyleClass().add("main-container");
         contentContainer.getStyleClass().add("content-container");
         getDialogPane().getStyleClass().add("download_scenebuilder-dialog");
         header.getStyleClass().add("header");
 
-        ButtonType downloadButton = new ButtonType(I18N.getString("download_scene_builder.download.label"), ButtonBar.ButtonData.LEFT);
+        ButtonType downloadButton = new ButtonType(I18N.getString("download_scene_builder.download.label"), ButtonBar.ButtonData.OK_DONE);
         ButtonType ignoreThisUpdate = new ButtonType(I18N.getString("download_scene_builder.ignore.label"));
-        ButtonType remindLater = new ButtonType(I18N.getString("download_scene_builder.remind_later.label"), ButtonBar.ButtonData.RIGHT);
+        ButtonType remindLater = new ButtonType(I18N.getString("download_scene_builder.remind_later.label"), ButtonBar.ButtonData.CANCEL_CLOSE);
         getDialogPane().getButtonTypes().addAll(downloadButton, ignoreThisUpdate, remindLater);
-
-        // Need a close button because javafx dialogs cross top right button won't work if we don't have it
-        getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        Node closeButton = getDialogPane().lookupButton(ButtonType.CLOSE);
-        closeButton.managedProperty().bind(closeButton.visibleProperty());
-        closeButton.setVisible(false);
 
         getDialogPane().getStylesheets().add(SceneBuilderApp.class.getResource("css/UpdateSceneBuilderDialog.css").toString());
 
