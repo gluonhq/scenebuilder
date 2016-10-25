@@ -34,16 +34,79 @@
 package com.oracle.javafx.scenebuilder.app.util;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
+import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
 
 public class SBSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
+    private static String sceneBuilderVersion;
+
+    static {
+        try (InputStream in = AboutWindowController.class.getResourceAsStream("about.properties")) {
+            if (in != null) {
+                Properties sbProps = new Properties();
+                sbProps.load(in);
+                sceneBuilderVersion = sbProps.getProperty("build.version", "UNSET");
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void setWindowIcon(Stage stage) {
         Image icon16 = new Image(SBSettings.APP_ICON_16);
         Image icon32 = new Image(SBSettings.APP_ICON_32);
         stage.getIcons().addAll(icon16, icon32);
+    }
+
+    public static String getSceneBuilderVersion() {
+        return sceneBuilderVersion;
+    }
+
+    public static boolean isCurrentVersionLowerThan(String version) {
+        String[] versionNumbers = version.split("\\.");
+        String[] currentVersionNumbers = sceneBuilderVersion.split("\\.");
+        for (int i = 0; i < versionNumbers.length; ++i) {
+            int number = Integer.parseInt(versionNumbers[i]);
+            int currentVersionNumber = Integer.parseInt(currentVersionNumbers[i]);
+            if (number > currentVersionNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getLatestVersion() {
+        Properties prop = new Properties();
+        String onlineVersionNumber = null;
+
+        URL url = null;
+        try {
+            url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try (InputStream inputStream = url.openStream()){
+            prop.load(inputStream);
+            onlineVersionNumber = prop.getProperty("latestversion");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return onlineVersionNumber;
+    }
+
+    public static boolean isVersionLatest() {
+        return !isCurrentVersionLowerThan(getLatestVersion());
     }
 }

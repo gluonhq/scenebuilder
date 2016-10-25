@@ -1,0 +1,13 @@
+.download_scenebuilder-dialog .content-container {
+    -fx-spacing: 15;
+}
+
+.download_scenebuilder-dialog .header {
+    -fx-font-weight: bold;
+}
+
+.download_scenebuilder-dialog {
+    -fx-background-color: white;
+    -fx-padding: 10;
+}
+

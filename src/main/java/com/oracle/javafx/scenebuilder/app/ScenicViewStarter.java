@@ -46,6 +46,5 @@ public class ScenicViewStarter implements Runnable {
         
         @Override
         public void run() {
-            org.scenicview.ScenicView.show(targetScene);
         }
 }

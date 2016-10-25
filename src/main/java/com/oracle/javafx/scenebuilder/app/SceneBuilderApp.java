@@ -59,6 +59,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -413,6 +414,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialog.getInstance().setOnHidden(event -> {
+                verifyLatestVersion();
                 verifyRegistration();
             });
 
@@ -434,6 +436,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
 
     }
+
+
 
 
     @Override
@@ -862,6 +866,38 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         break;
                 }
                 break;
+        }
+    }
+
+    private void verifyLatestVersion() {
+        if (!SBSettings.isVersionLatest()) {
+            PreferencesController pc = PreferencesController.getSingleton();
+            PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+
+            if (isVersionToBeIgnored(recordGlobal))
+                return;
+
+            if (!isDialogDateReached(recordGlobal))
+                return;
+
+            UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog();
+            dialog.showAndWait();
+        }
+    }
+
+    private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal) {
+        String ignoreVersion = recordGlobal.getIgnoreVersion();
+        return SBSettings.getLatestVersion().equals(ignoreVersion);
+    }
+
+    private boolean isDialogDateReached(PreferencesRecordGlobal recordGlobal) {
+        LocalDate dialogDate = recordGlobal.getShowUpdateDialogDate();
+        if (dialogDate == null) {
+            return true;
+        } else if (dialogDate.isBefore(LocalDate.now())) {
+            return true;
+        } else {
+            return false;
         }
     }
 
