@@ -49,8 +49,13 @@ public class SBSettings {
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
     private static String sceneBuilderVersion;
+    private static String latestVersion;
 
     static {
+        initSceneBuiderVersion();
+    }
+
+    private static void initSceneBuiderVersion() {
         try (InputStream in = AboutWindowController.class.getResourceAsStream("about.properties")) {
             if (in != null) {
                 Properties sbProps = new Properties();
@@ -86,27 +91,31 @@ public class SBSettings {
     }
 
     public static String getLatestVersion() {
-        Properties prop = new Properties();
-        String onlineVersionNumber = null;
+        if (latestVersion == null) {
+            Properties prop = new Properties();
+            String onlineVersionNumber = null;
 
-        URL url = null;
-        try {
-            url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            URL url = null;
+            try {
+                url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            try (InputStream inputStream = url.openStream()){
+                prop.load(inputStream);
+                onlineVersionNumber = prop.getProperty("latestversion");
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            latestVersion = onlineVersionNumber;
         }
-
-        try (InputStream inputStream = url.openStream()){
-            prop.load(inputStream);
-            onlineVersionNumber = prop.getProperty("latestversion");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return onlineVersionNumber;
+        return latestVersion;
     }
 
     public static boolean isVersionLatest() {
-        return !isCurrentVersionLowerThan(getLatestVersion());
+        String latestVersion = getLatestVersion();
+        return !isCurrentVersionLowerThan(latestVersion);
     }
 }

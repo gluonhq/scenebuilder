@@ -57,6 +57,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -433,12 +434,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             Deprecation.setDefaultSystemMenuBar(MenuBarController.getSystemMenuBarController().getMenuBar());
         }
 
-
-
     }
-
-
-
 
     @Override
     public void handleOpenFilesAction(List<String> files) {
@@ -870,6 +866,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void verifyLatestVersion() {
+        String latestVersion = SBSettings.getLatestVersion();
+        if (latestVersion == null) {
+            // This can be because the url was not reachable so we don't show the update dialog
+            return;
+        }
         if (!SBSettings.isVersionLatest()) {
             PreferencesController pc = PreferencesController.getSingleton();
             PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
@@ -887,7 +888,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal) {
         String ignoreVersion = recordGlobal.getIgnoreVersion();
-        return SBSettings.getLatestVersion().equals(ignoreVersion);
+        String latestVersion = SBSettings.getLatestVersion();
+        return latestVersion.equals(ignoreVersion);
     }
 
     private boolean isDialogDateReached(PreferencesRecordGlobal recordGlobal) {
