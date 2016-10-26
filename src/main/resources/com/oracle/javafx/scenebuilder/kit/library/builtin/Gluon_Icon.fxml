@@ -32,4 +32,4 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.Icon?>
-<Icon />
+<Icon content="HELP_OUTLINE"/>
