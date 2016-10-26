@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import com.gluonhq.impl.charm.glisten.util.StylesheetTools;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -41,6 +42,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowControlle
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.app.template.FxmlTemplates;
 import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
+import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -57,7 +59,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -395,12 +396,17 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public void handleLaunch(List<String> files) {
         setApplicationUncaughtExceptionHandler();
 
+        // Init Gluon Mobile stylesheet handling
+        StylesheetTools.init(null);
+
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder());
         
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
         
         userLibrary.startWatching();
+
+//        sendTrackingStartupInfo();
         
         if (files.isEmpty()) {
             // Creates an empty document
@@ -435,6 +441,38 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
     }
+
+//    private void sendTrackingStartupInfo() {
+//        PreferencesController pc = PreferencesController.getSingleton();
+//        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+//
+//        boolean sendTrackingInfo = shouldSendTrackingInfo(recordGlobal);
+//
+//        if (sendTrackingInfo) {
+//            boolean update = false;
+//            String hash = recordGlobal.getRegistrationHash();
+//            String email = recordGlobal.getRegistrationEmail();
+//            boolean optIn = recordGlobal.isRegistrationOptIn();
+//
+//            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_USAGE_TYPE, hash, email, optIn, update);
+//        }
+//    }
+//
+//    private boolean shouldSendTrackingInfo(PreferencesRecordGlobal recordGlobal) {
+//        LocalDate date = recordGlobal.getLastSentTrackingInfoDate();
+//        boolean sendTrackingInfo = true;
+//        LocalDate now = LocalDate.now();
+//
+//        if (date != null) {
+//            sendTrackingInfo = date.plusWeeks(1).isBefore(now);
+//            if (sendTrackingInfo) {
+//                recordGlobal.setLastSentTrackingInfoDate(now);
+//            }
+//        } else {
+//            recordGlobal.setLastSentTrackingInfoDate(now);
+//        }
+//        return sendTrackingInfo;
+//    }
 
     @Override
     public void handleOpenFilesAction(List<String> files) {
@@ -878,7 +916,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             if (isVersionToBeIgnored(recordGlobal))
                 return;
 
-            if (!isDialogDateReached(recordGlobal))
+            if (!isUpdateDialogDateReached(recordGlobal))
                 return;
 
             UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog();
@@ -892,7 +930,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return latestVersion.equals(ignoreVersion);
     }
 
-    private boolean isDialogDateReached(PreferencesRecordGlobal recordGlobal) {
+    private boolean isUpdateDialogDateReached(PreferencesRecordGlobal recordGlobal) {
         LocalDate dialogDate = recordGlobal.getShowUpdateDialogDate();
         if (dialogDate == null) {
             return true;

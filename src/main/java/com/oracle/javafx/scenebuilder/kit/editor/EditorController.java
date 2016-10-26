@@ -259,7 +259,7 @@ public class EditorController {
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<>(Theme.MODENA);
+            = new SimpleObjectProperty<>(Theme.GLUON_MOBILE);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty

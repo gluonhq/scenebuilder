@@ -78,6 +78,8 @@ public class PreferencesController {
     static final String UPDATE_DIALOG_DATE = "UPDATE_DIALOG_DATE";
     static final String IGNORE_VERSION = "IGNORE_VERSION";
 
+    static final String LAST_SENT_TRACKING_INFO_DATE = "LAST_SENT_TRACKING_INFO_DATE";
+
     // DOCUMENT SPECIFIC PREFERENCES
     static final String PATH = "path"; //NOI18N
     static final String X_POS = "X"; //NOI18N

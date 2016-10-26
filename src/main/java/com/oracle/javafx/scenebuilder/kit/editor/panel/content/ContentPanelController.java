@@ -152,7 +152,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
             = new WorkspaceController();
     private final HudWindowController hudWindowController
             = new HudWindowController();
-    
+
     private final EditModeController editModeController;
     private final PickModeController pickModeController;
     private AbstractModeController currentModeController;
@@ -1025,7 +1025,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         if (contentGroup != null) {
             final EditorPlatform.Theme theme = getEditorController().getTheme();
             final String themeStyleSheet = EditorPlatform.getThemeStylesheetURL(theme);
-            workspaceController.setThemeStyleSheet(themeStyleSheet);
+            workspaceController.setThemeStyleSheet(themeStyleSheet, theme);
         }
     }
     

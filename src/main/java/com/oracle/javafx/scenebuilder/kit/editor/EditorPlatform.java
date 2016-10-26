@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.gluonhq.impl.charm.glisten.util.StylesheetTools;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme {
-
+        GLUON_MOBILE,
         MODENA,
         MODENA_TOUCH,
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
@@ -108,6 +109,9 @@ public class EditorPlatform {
         switch (theme) {
             default:
                 result = null;
+                break;
+            case GLUON_MOBILE:
+                result = StylesheetTools.asResource("glisten.gls");
                 break;
             case MODENA:
                 result = Deprecation.MODENA_STYLESHEET;
@@ -202,6 +206,10 @@ public class EditorPlatform {
     
     public static boolean isCaspian(Theme theme) {
         return theme.toString().startsWith("CASPIAN");
+    }
+
+    public static boolean isGluonMobile(Theme theme) {
+        return theme.toString().startsWith("GLUON_MOBILE");
     }
 
     /**

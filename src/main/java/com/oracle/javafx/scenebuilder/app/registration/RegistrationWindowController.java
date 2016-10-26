@@ -35,6 +35,7 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -111,7 +112,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
         if (recordGlobal.getRegistrationHash() == null) {
             String hash = getUniqueId();
             recordGlobal.updateRegistrationFields(hash, null, null);
-            sendTrackingInfo(hash, "", false, false);
+            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_TYPE, hash, "", false, false);
         }
 
         closeWindow();
@@ -135,43 +136,11 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
         // Update preferences
         recordGlobal.updateRegistrationFields(hash, email, optIn);
 
-        sendTrackingInfo(hash, email, optIn, update);
+        Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_TYPE, hash, email, optIn, update);
 
         closeWindow();
     }
 
-    private void sendTrackingInfo(String hash, String email, boolean optIn, boolean update) {
-        new Thread(() -> {
-            try {
-                String java = System.getProperty("java.version");
-                String os = System.getProperty("os.arch") + " " + System.getProperty("os.name") + " " + System.getProperty("os.version");
-                String urlParameters = "email=" + URLEncoder.encode(email, "UTF-8")
-                        + "&subscribe=" + optIn
-                        + "&os=" + URLEncoder.encode(os, "UTF-8")
-                        + "&java=" + URLEncoder.encode(java, "UTF-8")
-                        + "&type=scenebuilder"
-                        + "&id=" + hash
-                        + "&version=" + SceneBuilderApp.VERSION
-                        + (update ? "&update=true" : "");
-                
-                URL url = new URL("http://usage.gluonhq.com/ul/log?" + urlParameters);
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-                conn.setRequestMethod("GET");
-                conn.setUseCaches(false);
-                conn.connect();
-                try (DataInputStream in = new DataInputStream(conn.getInputStream())) {
-                    while (in.read() > -1) {
-                    }
-                }
-            } catch (MalformedURLException ex) {
-            } catch (IOException ex) {
-            }
-        }, "UserRegistrationThread").start();        
-    }
-    
     private String getUniqueId(){
         String uniqueId = "";
         try {

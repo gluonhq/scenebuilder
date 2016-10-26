@@ -53,6 +53,7 @@ import java.util.TimerTask;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -131,8 +132,8 @@ public final class PreviewWindowController extends AbstractWindowController {
         this.editorControllerTheme = editorController.getTheme();
         this.editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> {
             if (t1 != null) {
-        editorControllerTheme = t1;
-        requestUpdate(DELAYED);
+                editorControllerTheme = t1;
+                requestUpdate(DELAYED);
             }
          });
         
@@ -324,7 +325,17 @@ public final class PreviewWindowController extends AbstractWindowController {
 
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
-                        getScene().setUserAgentStylesheet(themeStyleSheetString);
+                        if (editorControllerTheme == Theme.GLUON_MOBILE) {
+                            ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
+                            newStylesheets.add(themeStyleSheetString);
+                            getScene().getStylesheets().clear();
+                            getScene().setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(Theme.MODENA));
+                            getScene().getStylesheets().addAll(newStylesheets);
+                        } else {
+                            String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE);
+                            getScene().setUserAgentStylesheet(themeStyleSheetString);
+                            getScene().getStylesheets().remove(gluonStylesheet);
+                        }
                     }
                     updateWindowSize();
                     updateWindowTitle();

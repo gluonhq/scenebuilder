@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 
@@ -40,6 +41,8 @@ import javafx.animation.FadeTransition;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
@@ -70,7 +73,7 @@ class WorkspaceController {
     private boolean autoResize3DContent = true;
     private double scaling = 1.0;
     private RuntimeException layoutException;
-    
+
     private FXOMDocument fxomDocument;
 
     public void panelControllerDidLoadFxml(ScrollPane scrollPane, 
@@ -149,14 +152,40 @@ class WorkspaceController {
         return result;
     }
     
-    public void setThemeStyleSheet(String themeStyleSheet) {
+    public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme) {
         assert themeStyleSheet != null;
-        contentSubScene.setUserAgentStylesheet(themeStyleSheet);
+        assert theme != null;
+        if (theme == EditorPlatform.Theme.GLUON_MOBILE) {
+            contentSubScene.setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.MODENA));
+            ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
+            if (!currentStyleSheets.contains(themeStyleSheet)) {
+                currentStyleSheets.add(themeStyleSheet);
+            }
+            contentGroup.getStylesheets().clear();
+            contentGroup.getStylesheets().setAll(currentStyleSheets);
+            contentGroup.applyCss();
+//            setPreviewStyleSheets(Arrays.asList(themeStyleSheet));
+
+        } else {
+            contentSubScene.setUserAgentStylesheet(themeStyleSheet);
+
+            String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
+            contentGroup.getStylesheets().remove(gluonMobileStyleSheet);
+        }
     }
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
+        boolean shouldAddGluonMobile = false;
+        String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
+        ObservableList<String> currentStyleSheets = contentGroup.getStylesheets();
+        if (currentStyleSheets.contains(gluonMobileStyleSheet)) {
+            shouldAddGluonMobile = true;
+        }
         contentGroup.getStylesheets().clear();
         contentGroup.getStylesheets().addAll(previewStyleSheets);
+        if (shouldAddGluonMobile) {
+            contentGroup.getStylesheets().add(gluonMobileStyleSheet);
+        }
         contentGroup.applyCss();
     }
     
