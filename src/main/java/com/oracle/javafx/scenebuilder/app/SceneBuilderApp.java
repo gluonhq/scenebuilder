@@ -406,7 +406,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         
         userLibrary.startWatching();
 
-//        sendTrackingStartupInfo();
+        sendTrackingStartupInfo();
         
         if (files.isEmpty()) {
             // Creates an empty document
@@ -442,37 +442,37 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     }
 
-//    private void sendTrackingStartupInfo() {
-//        PreferencesController pc = PreferencesController.getSingleton();
-//        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-//
-//        boolean sendTrackingInfo = shouldSendTrackingInfo(recordGlobal);
-//
-//        if (sendTrackingInfo) {
-//            boolean update = false;
-//            String hash = recordGlobal.getRegistrationHash();
-//            String email = recordGlobal.getRegistrationEmail();
-//            boolean optIn = recordGlobal.isRegistrationOptIn();
-//
-//            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_USAGE_TYPE, hash, email, optIn, update);
-//        }
-//    }
-//
-//    private boolean shouldSendTrackingInfo(PreferencesRecordGlobal recordGlobal) {
-//        LocalDate date = recordGlobal.getLastSentTrackingInfoDate();
-//        boolean sendTrackingInfo = true;
-//        LocalDate now = LocalDate.now();
-//
-//        if (date != null) {
-//            sendTrackingInfo = date.plusWeeks(1).isBefore(now);
-//            if (sendTrackingInfo) {
-//                recordGlobal.setLastSentTrackingInfoDate(now);
-//            }
-//        } else {
-//            recordGlobal.setLastSentTrackingInfoDate(now);
-//        }
-//        return sendTrackingInfo;
-//    }
+    private void sendTrackingStartupInfo() {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+
+        boolean sendTrackingInfo = shouldSendTrackingInfo(recordGlobal);
+
+        if (sendTrackingInfo) {
+            boolean update = false;
+            String hash = recordGlobal.getRegistrationHash();
+            String email = recordGlobal.getRegistrationEmail();
+            boolean optIn = recordGlobal.isRegistrationOptIn();
+
+            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_USAGE_TYPE, hash, email, optIn, update);
+        }
+    }
+
+    private boolean shouldSendTrackingInfo(PreferencesRecordGlobal recordGlobal) {
+        LocalDate date = recordGlobal.getLastSentTrackingInfoDate();
+        boolean sendTrackingInfo = true;
+        LocalDate now = LocalDate.now();
+
+        if (date != null) {
+            sendTrackingInfo = date.plusWeeks(1).isBefore(now);
+            if (sendTrackingInfo) {
+                recordGlobal.setLastSentTrackingInfoDate(now);
+            }
+        } else {
+            recordGlobal.setLastSentTrackingInfoDate(now);
+        }
+        return sendTrackingInfo;
+    }
 
     @Override
     public void handleOpenFilesAction(List<String> files) {
