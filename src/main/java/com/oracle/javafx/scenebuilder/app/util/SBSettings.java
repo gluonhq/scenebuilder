@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
- * Copyright (c) 2015, 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -43,6 +42,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 public class SBSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
@@ -90,32 +90,32 @@ public class SBSettings {
         return false;
     }
 
-    public static String getLatestVersion() {
-        if (latestVersion == null) {
-            Properties prop = new Properties();
-            String onlineVersionNumber = null;
+    public static void getLatestVersion(Consumer<String> consumer) {
 
-            URL url = null;
-            try {
-                url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            if (latestVersion == null) {
+                new Thread (() -> {
+                    Properties prop = new Properties();
+                    String onlineVersionNumber = null;
+
+                    URL url = null;
+                    try {
+                        url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+
+                    try (InputStream inputStream = url.openStream()) {
+                        prop.load(inputStream);
+                        onlineVersionNumber = prop.getProperty("latestversion");
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    latestVersion = onlineVersionNumber;
+                    consumer.accept(latestVersion);
+                }, "GetLatestVersion").start();
             }
-
-            try (InputStream inputStream = url.openStream()){
-                prop.load(inputStream);
-                onlineVersionNumber = prop.getProperty("latestversion");
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            latestVersion = onlineVersionNumber;
-        }
-        return latestVersion;
+            consumer.accept(latestVersion);
     }
 
-    public static boolean isVersionLatest() {
-        String latestVersion = getLatestVersion();
-        return !isCurrentVersionLowerThan(latestVersion);
-    }
 }

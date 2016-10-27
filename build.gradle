@@ -27,20 +27,7 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/releases/"
     }
-    maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
-        credentials {
-            username gluonNexusUsername
-            password gluonNexusPassword
-        }
-    }
-    maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/gluon-private-releases'
-        credentials {
-            username gluonNexusUsername
-            password gluonNexusPassword
-        }
-    }
+
     jcenter()
     mavenCentral()
 }
