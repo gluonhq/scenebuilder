@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -155,11 +156,15 @@ class WorkspaceController {
     public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme) {
         assert themeStyleSheet != null;
         assert theme != null;
+        String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
         if (theme == EditorPlatform.Theme.GLUON_MOBILE) {
             contentSubScene.setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.MODENA));
             ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
             if (!currentStyleSheets.contains(themeStyleSheet)) {
                 currentStyleSheets.add(themeStyleSheet);
+            }
+            if (!currentStyleSheets.contains(gluonDocumentStylesheet)) {
+                currentStyleSheets.add(gluonDocumentStylesheet);
             }
             contentGroup.getStylesheets().clear();
             contentGroup.getStylesheets().setAll(currentStyleSheets);
@@ -171,6 +176,7 @@ class WorkspaceController {
 
             String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
             contentGroup.getStylesheets().remove(gluonMobileStyleSheet);
+            contentGroup.getStylesheets().remove(gluonDocumentStylesheet);
         }
     }
     

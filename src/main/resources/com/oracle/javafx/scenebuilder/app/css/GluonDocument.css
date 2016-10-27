@@ -30,20 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.download_scenebuilder-dialog .content-container {
-    -fx-spacing: 15;
+.progress-indicator {
+    -fx-color: #3C87EE;
 }
 
-.download_scenebuilder-dialog .header {
-    -fx-font-weight: bold;
+.progress-bar {
+    -fx-color: #3C87EE;
 }
-
-.download_scenebuilder-dialog {
-    -fx-background-color: white;
-    -fx-padding: 10;
-}
-
-.download_scenebuilder-dialog .content-container {
-    -fx-padding: 0 60 0 0;
-}
-

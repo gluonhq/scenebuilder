@@ -43,6 +43,9 @@ repositories {
     }
     jcenter()
     mavenCentral()
+//    flatDir {
+//        dirs 'lib'
+//    }
 }
 
 dependencies {
@@ -55,6 +58,8 @@ dependencies {
     compile 'org.apache.maven:maven-aether-provider:3.3.9'
 
     compile 'com.gluonhq:charm-glisten:3.0.1-SNAPSHOT'
+
+//    compile name: 'ScenicView'
 
     // REST API
     compile 'org.apache.httpcomponents:httpclient:4.5.2'
