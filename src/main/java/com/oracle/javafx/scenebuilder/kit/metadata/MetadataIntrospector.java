@@ -35,6 +35,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
@@ -228,6 +229,12 @@ class MetadataIntrospector {
                         inspectorPath);
             } else if (propertyType == javafx.scene.image.Image.class) {
                 result = new ImagePropertyMetadata(
+                        name,
+                        readWrite,
+                        null,
+                        inspectorPath);
+            } else if (propertyType == javafx.event.EventHandler.class) {
+                result = new EventHandlerPropertyMetadata(
                         name,
                         readWrite,
                         null,
