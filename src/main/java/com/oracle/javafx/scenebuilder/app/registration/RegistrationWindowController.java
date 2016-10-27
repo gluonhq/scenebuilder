@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.app.registration;
 
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
@@ -44,12 +43,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Pattern;
 

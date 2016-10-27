@@ -59,7 +59,6 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 

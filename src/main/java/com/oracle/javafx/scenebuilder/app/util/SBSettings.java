@@ -114,8 +114,9 @@ public class SBSettings {
                     latestVersion = onlineVersionNumber;
                     consumer.accept(latestVersion);
                 }, "GetLatestVersion").start();
+            } else {
+                consumer.accept(latestVersion);
             }
-            consumer.accept(latestVersion);
     }
 
 }

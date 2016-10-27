@@ -36,7 +36,6 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
-import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -55,13 +54,13 @@ import java.time.LocalDate;
 
 public class UpdateSceneBuilderDialog extends Dialog {
 
-    public UpdateSceneBuilderDialog() {
+    public UpdateSceneBuilderDialog(String latestVersion) {
         setTitle(I18N.getString("download_scene_builder.title"));
         Label header = new Label(I18N.getString("download_scene_builder.header.label"));
         Label currentVersionTextLabel = new Label(I18N.getString("download_scene_builder.current_version.label"));
         Label latestVersionTextLabel = new Label(I18N.getString("download_scene_builder.last_version_number.label"));
         Label currentVersionLabel = new Label(SBSettings.getSceneBuilderVersion());
-        Label latestVersionLabel = new Label(SBSettings.getLatestVersion());
+        Label latestVersionLabel = new Label(latestVersion);
         GridPane gridPane = new GridPane();
         gridPane.add(currentVersionTextLabel, 0, 0);
         gridPane.add(currentVersionLabel, 1, 0);
@@ -107,7 +106,6 @@ public class UpdateSceneBuilderDialog extends Dialog {
                 PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setShowUpdateDialogAfter(futureDate);
             } else if (newValue == ignoreThisUpdate) {
-                String latestVersion = SBSettings.getLatestVersion();
                 PreferencesController pc = PreferencesController.getSingleton();
                 PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setIgnoreVersion(latestVersion);

@@ -911,7 +911,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 // This can be because the url was not reachable so we don't show the update dialog
                 return;
             }
-            if (!SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+            if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
                 PreferencesController pc = PreferencesController.getSingleton();
                 PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
@@ -923,7 +923,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     return;
                 }
                 Platform.runLater(() -> {
-                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog();
+                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
                     dialog.showAndWait();
                 });
             }
