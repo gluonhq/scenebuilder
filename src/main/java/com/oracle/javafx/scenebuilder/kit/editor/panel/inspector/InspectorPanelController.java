@@ -51,6 +51,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EnumEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EventHandlerEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FunctionalInterfaceEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FxIdEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.GenericEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.I18nStringEditor;
@@ -93,6 +94,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleProperty
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FontPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropertyMetadata;
@@ -1428,6 +1430,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         } else if (propMeta instanceof EventHandlerPropertyMetadata) {
             // EventHandler editor
             propertyEditor = makePropertyEditor(EventHandlerEditor.class, propMeta);
+        } else if (propMeta instanceof FunctionalInterfacePropertyMetadata) {
+          // Functional Interface editor
+            propertyEditor = makePropertyEditor(FunctionalInterfaceEditor.class, propMeta);
         } else if (propMeta instanceof EffectPropertyMetadata) {
             // Effect editor
             propertyEditor = makePropertyEditor(EffectPopupEditor.class, propMeta);
@@ -1845,6 +1850,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 ((EventHandlerEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             } else {
                 propertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            }
+        } else if (editorClass == FunctionalInterfaceEditor.class) {
+            if (propertyEditor != null) {
+                // "getSuggestedEventHandlers" (a method that already existed in SB code) isn't working right. It simply
+                // returns all the methods in the Controller class regardless of if they are good candidates for
+                // EventHandlers. We use if because at least this way we'll present all the methods available as
+                // auto-suggestions.
+                ((FunctionalInterfaceEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            } else {
+                propertyEditor = new FunctionalInterfaceEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == EffectPopupEditor.class) {
             if (propertyEditor != null) {
