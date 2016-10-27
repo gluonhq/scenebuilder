@@ -30,20 +30,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.download_scenebuilder-dialog .content-container {
-    -fx-spacing: 15;
-}
+package com.oracle.javafx.scenebuilder.kit.metadata.property.value;
 
-.download_scenebuilder-dialog .header {
-    -fx-font-weight: bold;
-}
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 
-.download_scenebuilder-dialog {
-    -fx-background-color: white;
-    -fx-padding: 10;
-}
+public class FunctionalInterfacePropertyMetadata extends TextEncodablePropertyMetadata<String> {
+    private FunctionalInterface functionalInterface;
 
-.download_scenebuilder-dialog .content-container {
-    -fx-padding: 0 60 0 0;
+    public enum FunctionalInterface {
+        FUNCTION
+    }
+
+    public FunctionalInterfacePropertyMetadata(PropertyName name, boolean readWrite,
+                                        String defaultValue, InspectorPath inspectorPath, FunctionalInterface functionalInterface) {
+        super(name, String.class, readWrite, defaultValue, inspectorPath);
+        this.functionalInterface = functionalInterface;
+    }
+
+    /*
+     * TextEncodablePropertyMetadata
+     */
+
+    @Override
+    public String makeValueFromString(String string) {
+        return string;
+    }
+
+    @Override
+    public String getValue(FXOMInstance fxomInstance) {
+        // We override just to add a sanity check
+        assert isReadWrite();
+        return super.getValue(fxomInstance);
+    }
+
+    public FunctionalInterface getFunctionalInterface() {
+        return functionalInterface;
+    }
+
 }
 

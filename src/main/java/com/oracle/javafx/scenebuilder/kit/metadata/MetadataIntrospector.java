@@ -35,6 +35,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
@@ -44,6 +46,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropert
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
+
+import static com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata.FunctionalInterface.FUNCTION;
 import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SECTION;
 import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SUB_SECTION;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -231,6 +235,18 @@ class MetadataIntrospector {
                         readWrite,
                         null,
                         inspectorPath);
+            } else if (propertyType == javafx.event.EventHandler.class) {
+                result = new EventHandlerPropertyMetadata(
+                        name,
+                        readWrite,
+                        null,
+                        inspectorPath);
+            } else if (propertyType == java.util.function.Function.class) {
+                result = new FunctionalInterfacePropertyMetadata(
+                        name,
+                        readWrite,
+                        null,
+                        inspectorPath, FUNCTION);
             } else {
                 result = null;
             }
