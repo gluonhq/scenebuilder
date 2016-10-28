@@ -249,6 +249,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> stylesheetEditorPool = new Stack<>();
     private final Stack<Editor> fxIdEditorPool = new Stack<>();
     private final Stack<Editor> eventHandlerEditorPool = new Stack<>();
+    private final Stack<Editor> functionalInterfaceEditorPool = new Stack<>();
     private final Stack<Editor> cursorEditorPool = new Stack<>();
     private final Stack<Editor> paintPopupEditorPool = new Stack<>();
     private final Stack<Editor> imageEditorPool = new Stack<>();
@@ -344,6 +345,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(StylesheetEditor.class, stylesheetEditorPool);
         editorPools.put(FxIdEditor.class, fxIdEditorPool);
         editorPools.put(EventHandlerEditor.class, eventHandlerEditorPool);
+        editorPools.put(FunctionalInterfaceEditor.class, functionalInterfaceEditorPool);
         editorPools.put(CursorEditor.class, cursorEditorPool);
         editorPools.put(PaintPopupEditor.class, paintPopupEditorPool);
         editorPools.put(ImageEditor.class, imageEditorPool);

@@ -241,12 +241,12 @@ class MetadataIntrospector {
                         readWrite,
                         null,
                         inspectorPath);
-            } else if (propertyType == java.util.function.Function.class) {
-                result = new FunctionalInterfacePropertyMetadata(
-                        name,
-                        readWrite,
-                        null,
-                        inspectorPath, FUNCTION);
+//            } else if (propertyType == java.util.function.Function.class) {
+//                result = new FunctionalInterfacePropertyMetadata(
+//                        name,
+//                        readWrite,
+//                        null,
+//                        inspectorPath, FUNCTION);
             } else {
                 result = null;
             }
