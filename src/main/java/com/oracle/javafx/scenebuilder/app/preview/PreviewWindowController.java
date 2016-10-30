@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.app.preview;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
@@ -324,16 +325,23 @@ public final class PreviewWindowController extends AbstractWindowController {
 
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
+                        String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
                         if (editorControllerTheme == Theme.GLUON_MOBILE) {
                             ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
-                            newStylesheets.add(themeStyleSheetString);
-                            getScene().getStylesheets().clear();
+                            if (!newStylesheets.contains(themeStyleSheetString)) {
+                                newStylesheets.add(themeStyleSheetString);
+                            }
+                            if (!newStylesheets.contains(gluonDocumentStylesheet)) {
+                                newStylesheets.add(gluonDocumentStylesheet);
+                            }
                             getScene().setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(Theme.MODENA));
+                            getScene().getStylesheets().clear();
                             getScene().getStylesheets().addAll(newStylesheets);
                         } else {
                             String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE);
                             getScene().setUserAgentStylesheet(themeStyleSheetString);
                             getScene().getStylesheets().remove(gluonStylesheet);
+                            getScene().getStylesheets().remove(gluonDocumentStylesheet);
                         }
                     }
                     updateWindowSize();
