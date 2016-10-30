@@ -71,7 +71,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
         contentContainer.getChildren().addAll(header, gridPane);
         BorderPane mainContainer = new BorderPane();
         mainContainer.setCenter(contentContainer);
-        ImageView imageView = new ImageView(UpdateSceneBuilderDialog.class.getResource("417792 - computer download.png").toExternalForm());
+        ImageView imageView = new ImageView(UpdateSceneBuilderDialog.class.getResource("computerDownload.png").toExternalForm());
         mainContainer.setRight(imageView);
 
         getDialogPane().setContent(mainContainer);

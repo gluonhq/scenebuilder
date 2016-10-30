@@ -58,8 +58,8 @@ import java.util.List;
 public class WelcomeDialog extends Dialog {
     private static final String HEADER_IMAGE = WelcomeDialog.class.getResource("gluon_scene_builder.png").toString();
 
-    private static final String NEW_DESKTOP_PROJECT_ICON = WelcomeDialog.class.getResource("363991 - earth global solu.png").toString();
-    private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("417750 - check list device.png").toString();
+    private static final String NEW_DESKTOP_PROJECT_ICON = WelcomeDialog.class.getResource("earthGlobalSolu.png").toString();
+    private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("checkListDevice.png").toString();
     private static final String OPEN_PROJECT_ICON = WelcomeDialog.class.getResource("open_document.png").toString();
 
     private static final int NUMBER_OF_ITEMS_WITHOUT_SCROLLPANE = 8;
