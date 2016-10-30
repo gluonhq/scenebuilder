@@ -36,8 +36,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMet
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
@@ -47,7 +47,6 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPro
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 
-import static com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata.FunctionalInterface.FUNCTION;
 import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SECTION;
 import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SUB_SECTION;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -59,9 +58,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -170,7 +173,7 @@ class MetadataIntrospector {
     
     private PropertyMetadata makePropertyMetadata(PropertyName name, 
             PropertyDescriptor d, Object sample) {
-        final PropertyMetadata result;
+        PropertyMetadata result;
         
         if (d.getPropertyType() == null) {
             result = null;
@@ -247,6 +250,29 @@ class MetadataIntrospector {
 //                        readWrite,
 //                        null,
 //                        inspectorPath, FUNCTION);
+            } else if (propertyType == javafx.collections.ObservableList.class) {
+                String propertyName = name.getName();
+                String methodName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+                result = null;
+                try {
+                    Method method = sample.getClass().getDeclaredMethod(methodName);
+                    Type type = method.getGenericReturnType();
+                    if (type instanceof ParameterizedType) {
+                        ParameterizedType parameterizedType = (ParameterizedType) type;
+                        Class genericClass = (Class) parameterizedType.getActualTypeArguments()[0];
+                        if (genericClass.equals(java.lang.String.class))
+                        {
+                            result = new StringListPropertyMetadata(
+                                    name,
+                                    readWrite,
+                                    Collections.emptyList(),
+                                    inspectorPath
+                            );
+                        }
+                    }
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
             } else {
                 result = null;
             }

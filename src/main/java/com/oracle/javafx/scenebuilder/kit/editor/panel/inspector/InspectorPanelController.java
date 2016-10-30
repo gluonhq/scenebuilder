@@ -64,6 +64,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Propert
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.RotateEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringListEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleClassEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StylesheetEditor;
@@ -107,6 +108,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TreeTableViewR
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.EffectPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ListValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -247,6 +249,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> styleEditorPool = new Stack<>();
     private final Stack<Editor> styleClassEditorPool = new Stack<>();
     private final Stack<Editor> stylesheetEditorPool = new Stack<>();
+    private final Stack<Editor> observableListStringEditorPool = new Stack<>();
     private final Stack<Editor> fxIdEditorPool = new Stack<>();
     private final Stack<Editor> eventHandlerEditorPool = new Stack<>();
     private final Stack<Editor> functionalInterfaceEditorPool = new Stack<>();
@@ -343,6 +346,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(StyleEditor.class, styleEditorPool);
         editorPools.put(StyleClassEditor.class, styleClassEditorPool);
         editorPools.put(StylesheetEditor.class, stylesheetEditorPool);
+        editorPools.put(StringListEditor.class, observableListStringEditorPool);
         editorPools.put(FxIdEditor.class, fxIdEditorPool);
         editorPools.put(EventHandlerEditor.class, eventHandlerEditorPool);
         editorPools.put(FunctionalInterfaceEditor.class, functionalInterfaceEditorPool);
@@ -1385,8 +1389,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(DividerPositionsEditor.class, propMeta);
                     break;
                 default:
-                    // Generic editor
-                    propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
+                    if (propMeta instanceof StringListPropertyMetadata) {
+                        propertyEditor = makePropertyEditor(StringListEditor.class, propMeta);
+                    } else {
+                        // Generic editor
+                        propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
+                    }
                     break;
             }
         } else if (propMeta instanceof DoublePropertyMetadata) {
@@ -1833,6 +1841,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 ((StylesheetEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             } else {
                 propertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+            }
+        } else if (editorClass == StringListEditor.class) {
+            if (propertyEditor != null) {
+                ((StringListEditor) propertyEditor).reset(propMeta, selectedClasses);
+            } else {
+                propertyEditor = new StringListEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == FxIdEditor.class) {
             String controllerClass = getControllerClass();
