@@ -1389,12 +1389,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(DividerPositionsEditor.class, propMeta);
                     break;
                 default:
-                    if (propMeta instanceof StringListPropertyMetadata) {
-                        propertyEditor = makePropertyEditor(StringListEditor.class, propMeta);
-                    } else {
-                        // Generic editor
-                        propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
-                    }
+                    propertyEditor = makePropertyEditor(propMeta instanceof StringListPropertyMetadata? StringListEditor.class : GenericEditor.class, propMeta);
                     break;
             }
         } else if (propMeta instanceof DoublePropertyMetadata) {
