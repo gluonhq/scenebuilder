@@ -31,10 +31,12 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.util.SBDuration;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
@@ -65,6 +67,7 @@ import java.util.Set;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 /**
  *
@@ -234,6 +237,12 @@ class MetadataIntrospector {
                         name,
                         readWrite,
                         null,
+                        inspectorPath);
+            } else if (propertyType == javafx.util.Duration.class) {
+                result = new DurationPropertyMetadata(
+                        name,
+                        readWrite,
+                        new SBDuration((Duration)getDefaultValue(sample, d.getReadMethod(), null)),
                         inspectorPath);
             } else if (propertyType == javafx.event.EventHandler.class) {
                 result = new EventHandlerPropertyMetadata(
