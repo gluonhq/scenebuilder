@@ -250,12 +250,16 @@ class MetadataIntrospector {
                         readWrite,
                         null,
                         inspectorPath);
-            } else if (propertyType == java.util.function.Function.class) {
-                result = new FunctionalInterfacePropertyMetadata(
-                        name,
-                        readWrite,
-                        null,
-                        inspectorPath, FUNCTION);
+//
+//            The following doesn't work because FXMLLoader is only prepared to load 'function' types
+//            of type EventHandler
+//
+//            } else if (propertyType == java.util.function.Function.class) {
+//                result = new FunctionalInterfacePropertyMetadata(
+//                        name,
+//                        readWrite,
+//                        null,
+//                        inspectorPath, FUNCTION);
             } else {
                 result = null;
             }
