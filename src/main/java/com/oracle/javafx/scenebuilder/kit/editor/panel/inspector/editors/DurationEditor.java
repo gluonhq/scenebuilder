@@ -184,6 +184,10 @@ public class DurationEditor extends AutoSuggestEditor{
         if (isSetValueDone()) {
             return;
         }
+        if (value == null){
+            getTextField().setText("");
+            return;
+        }
 
         assert (value instanceof SBDuration);
         SBDuration durationValue = (SBDuration) value;

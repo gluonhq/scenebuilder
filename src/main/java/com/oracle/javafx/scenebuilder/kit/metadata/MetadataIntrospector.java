@@ -175,16 +175,16 @@ class MetadataIntrospector {
     }
     
     private PropertyMetadata makePropertyMetadata(PropertyName name, 
-            PropertyDescriptor d, Object sample) {
+            PropertyDescriptor propertyDescriptor, Object sample) {
         PropertyMetadata result;
         
-        if (d.getPropertyType() == null) {
+        if (propertyDescriptor.getPropertyType() == null) {
             result = null;
-        } else if (d.getReadMethod() == null) {
+        } else if (propertyDescriptor.getReadMethod() == null) {
             result = null;
         } else {
-            final Class<?> propertyType = canonizeClass(d.getPropertyType());
-            final boolean readWrite = d.getWriteMethod() != null;
+            final Class<?> propertyType = canonizeClass(propertyDescriptor.getPropertyType());
+            final boolean readWrite = propertyDescriptor.getWriteMethod() != null;
             final InspectorPath inspectorPath 
                     = new InspectorPath(CUSTOM_SECTION, CUSTOM_SUB_SECTION, counter++);
             
@@ -196,44 +196,44 @@ class MetadataIntrospector {
                         name,
                         propertyType,
                         readWrite,
-                        (Enum<?>)getDefaultValue(sample, d.getReadMethod(), fallback),
+                        (Enum<?>)getDefaultValue(sample, propertyDescriptor.getReadMethod(), fallback),
                         inspectorPath);
             } else if (propertyType == Boolean.class) {
                 result = new BooleanPropertyMetadata(
                         name,
                         readWrite,
-                        (Boolean)getDefaultValue(sample, d.getReadMethod(), false),
+                        (Boolean)getDefaultValue(sample, propertyDescriptor.getReadMethod(), false),
                         inspectorPath);
             } else if (propertyType == Integer.class) {
                 result = new IntegerPropertyMetadata(
                         name,
                         readWrite,
-                        (Integer)getDefaultValue(sample, d.getReadMethod(), 0),
+                        (Integer)getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0),
                         inspectorPath);
             } else if (propertyType == Double.class) {
                 result = new DoublePropertyMetadata(
                         name,
                         DoubleKind.COORDINATE,
                         readWrite,
-                        (Double)getDefaultValue(sample, d.getReadMethod(), 0.0),
+                        (Double)getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0.0),
                         inspectorPath);
             } else if (propertyType == String.class) {
                 result = new StringPropertyMetadata(
                         name,
                         readWrite,
-                        (String)getDefaultValue(sample, d.getReadMethod(), null),
+                        (String)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.paint.Color.class) {
                 result = new ColorPropertyMetadata(
                         name,
                         readWrite,
-                        (Color)getDefaultValue(sample, d.getReadMethod(), null),
+                        (Color)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.paint.Paint.class) {
                 result = new PaintPropertyMetadata(
                         name,
                         readWrite,
-                        (Paint) getDefaultValue(sample, d.getReadMethod(), null),
+                        (Paint) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.image.Image.class) {
                 result = new ImagePropertyMetadata(
@@ -242,10 +242,11 @@ class MetadataIntrospector {
                         null,
                         inspectorPath);
             } else if (propertyType == javafx.util.Duration.class) {
+                Duration defaultValue = (Duration)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null);
                 result = new DurationPropertyMetadata(
                         name,
                         readWrite,
-                        new SBDuration((Duration)getDefaultValue(sample, d.getReadMethod(), null)),
+                        defaultValue == null? null : new SBDuration(defaultValue),
                         inspectorPath);
 
             } else if (propertyType == javafx.event.EventHandler.class) {
