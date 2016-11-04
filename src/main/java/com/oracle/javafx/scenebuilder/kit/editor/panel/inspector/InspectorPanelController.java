@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.job.ModifyCacheHintJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyFxIdJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.togglegroup.ModifySelectionToggleGroupJob;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.AnchorPaneConstraintsEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.BigEnumEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.BooleanEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.BoundedDoubleEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ButtonTypeEditor;
@@ -50,7 +51,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DoubleE
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DurationEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EnumEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.SmallEnumEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EventHandlerEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FunctionalInterfaceEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FxIdEditor;
@@ -166,7 +167,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 /**
  *
@@ -241,7 +241,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> doubleEditorPool = new Stack<>();
     private final Stack<Editor> integerEditorPool = new Stack<>();
     private final Stack<Editor> booleanEditorPool = new Stack<>();
-    private final Stack<Editor> enumEditorPool = new Stack<>();
+    private final Stack<Editor> smallEnumEditorPool = new Stack<>();
+    private final Stack<Editor> bigEnumEditorPool = new Stack<>();
     private final Stack<Editor> durationEditorPool = new Stack<>();
     private final Stack<Editor> effectPopupEditorPool = new Stack<>();
     private final Stack<Editor> fontPopupEditorPool = new Stack<>();
@@ -339,7 +340,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(DoubleEditor.class, doubleEditorPool);
         editorPools.put(IntegerEditor.class, integerEditorPool);
         editorPools.put(BooleanEditor.class, booleanEditorPool);
-        editorPools.put(EnumEditor.class, enumEditorPool);
+        editorPools.put(SmallEnumEditor.class, smallEnumEditorPool);
+        editorPools.put(BigEnumEditor.class, bigEnumEditorPool);
         editorPools.put(DurationEditor.class, durationEditorPool);
         editorPools.put(EffectPopupEditor.class, effectPopupEditorPool);
         editorPools.put(FontPopupEditor.class, fontPopupEditorPool);
@@ -1427,8 +1429,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(TextAlignmentEditor.class, propMeta);
                     break;
                 default:
-                    // Enum editor
-                    propertyEditor = makePropertyEditor(EnumEditor.class, propMeta);
+                    EnumerationPropertyMetadata enumerationPropertyMetadata = (EnumerationPropertyMetadata) propMeta;
+                    if (enumerationPropertyMetadata.getValidValuesNumber() <= 20) {
+                        propertyEditor = makePropertyEditor(SmallEnumEditor.class, propMeta);
+                    } else {
+                        propertyEditor = makePropertyEditor(BigEnumEditor.class, propMeta);
+                    }
                     break;
             }
         } else if (propMeta instanceof InsetsPropertyMetadata) {
@@ -1800,11 +1806,17 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 propertyEditor = new BooleanEditor(propMeta, selectedClasses);
             }
-        } else if (editorClass == EnumEditor.class) {
+        } else if (editorClass == SmallEnumEditor.class) {
             if (propertyEditor != null) {
-                ((EnumEditor) propertyEditor).reset(propMeta, selectedClasses);
+                ((SmallEnumEditor) propertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new EnumEditor(propMeta, selectedClasses);
+                propertyEditor = new SmallEnumEditor(propMeta, selectedClasses);
+            }
+        } else if (editorClass == BigEnumEditor.class) {
+            if (propertyEditor != null) {
+                ((BigEnumEditor) propertyEditor).reset(propMeta, selectedClasses);
+            } else {
+                propertyEditor = new BigEnumEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == InsetsEditor.class) {
             if (propertyEditor != null) {

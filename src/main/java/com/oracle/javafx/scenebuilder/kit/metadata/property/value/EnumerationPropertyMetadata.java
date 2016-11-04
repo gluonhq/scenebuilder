@@ -54,6 +54,7 @@ public class EnumerationPropertyMetadata extends ValuePropertyMetadata {
     private final Class<?> enumClass;
     private final Enum<?> defaultValue;
     private final String nullEquivalent;
+    private List<String> validValues;
 
     public EnumerationPropertyMetadata(PropertyName name, Class<?> enumClass,
             boolean readWrite, Enum<?> defaultValue, InspectorPath inspectorPath) {
@@ -145,19 +146,24 @@ public class EnumerationPropertyMetadata extends ValuePropertyMetadata {
     }
     
     public List<String> getValidValues() {
-        final List<String> result = new ArrayList<>();
-        
-        for (Object e : enumClass.getEnumConstants()) {
-            result.add(e.toString());
-        }
-        if (nullEquivalent != null) {
-            assert defaultValue == null;
-            if (result.contains(nullEquivalent) == false) {
-                result.add(0, nullEquivalent);
+        if (validValues == null) {
+            validValues = new ArrayList<>();
+
+            for (Object e : enumClass.getEnumConstants()) {
+                validValues.add(e.toString());
+            }
+            if (nullEquivalent != null) {
+                assert defaultValue == null;
+                if (validValues.contains(nullEquivalent) == false) {
+                    validValues.add(0, nullEquivalent);
+                }
             }
         }
-        
-        return result;
+        return validValues;
+    }
+
+    public int getValidValuesNumber() {
+        return getValidValues().size();
     }
     
     /*

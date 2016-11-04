@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,55 +32,66 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TableViewResizePolicyPropertyMetadata;
 
 import java.util.Set;
 
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeTableView;
+import javafx.beans.InvalidationListener;
+import javafx.scene.control.ChoiceBox;
 
 /**
- * Editor for TableView columnResizePolicy property.
+ * Editor for Enum properties.
+ *
+ *
  */
-public class ColumnResizePolicyEditor extends SmallEnumEditor {
+public class SmallEnumEditor extends EnumEditor {
+    private ChoiceBox<String> choiceBox;
 
-    boolean isTableView;
-
-    public ColumnResizePolicyEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
-        super(propMeta, selectedClasses);
-        isTableView = propMeta instanceof TableViewResizePolicyPropertyMetadata;
+    public SmallEnumEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
+        super(propMeta, selectedClasses, new ChoiceBox<String>());
+        choiceBox = (ChoiceBox<String>) getChoiceControl();
+        choiceBox.getSelectionModel().selectedItemProperty().addListener((InvalidationListener) o -> {
+            if (!isUpdateFromModel()) {
+                userUpdateValueProperty(getValue());
+            }
+        });
+        initialize();
+    }
+    
+    private void initialize() {
+        updateItems();
     }
 
     @Override
     public Object getValue() {
-        String policy = getChoiceBox().getSelectionModel().getSelectedItem();
-        if (isTableView) {
-            if (policy.equals(TableView.UNCONSTRAINED_RESIZE_POLICY.toString())) {
-                return TableView.UNCONSTRAINED_RESIZE_POLICY;
-            } else {
-                return TableView.CONSTRAINED_RESIZE_POLICY;
-            }
-        } else {
-            if (policy.equals(TreeTableView.UNCONSTRAINED_RESIZE_POLICY.toString())) {
-                return TreeTableView.UNCONSTRAINED_RESIZE_POLICY;
-            } else {
-                return TreeTableView.CONSTRAINED_RESIZE_POLICY;
-            }
-        }
-    }
-
-
-   @Override
-    public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
-        super.reset(propMeta, selectedClasses);
-        isTableView = propMeta instanceof TableViewResizePolicyPropertyMetadata;
+        return choiceBox.getSelectionModel().getSelectedItem();
     }
 
     @Override
-    protected void updateItems() {
-        getChoiceBox().getItems().clear();
-        getChoiceBox().getItems().add(TableView.UNCONSTRAINED_RESIZE_POLICY.toString());
-        getChoiceBox().getItems().add(TableView.CONSTRAINED_RESIZE_POLICY.toString());
+    public void setValue(Object value) {
+        setValueGeneric(value);
+        if (isSetValueDone()) {
+            return;
+        }
+
+        if (value != null) {
+            choiceBox.getSelectionModel().select(value.toString());
+        } else {
+            choiceBox.getSelectionModel().clearSelection();
+        }
     }
 
+    @Override
+    public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
+        super.reset(propMeta, selectedClasses);
+        // ChoiceBox items have to be updated, since this editor may have been used by a different Enum...
+        updateItems();
+    }
+
+    protected ChoiceBox<String> getChoiceBox() {
+        return choiceBox;
+    }
+
+    protected void updateItems() {
+        updateItems(choiceBox.getItems());
+    }
 }
