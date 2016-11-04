@@ -268,18 +268,20 @@ class MetadataIntrospector {
                 String methodName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
                 result = null;
                 try {
-                    Method method = sample.getClass().getDeclaredMethod(methodName);
+                    Method method = sample.getClass().getMethod(methodName);
                     Type type = method.getGenericReturnType();
                     if (type instanceof ParameterizedType) {
                         ParameterizedType parameterizedType = (ParameterizedType) type;
-                        Class genericClass = (Class) parameterizedType.getActualTypeArguments()[0];
-                        if (genericClass.equals(java.lang.String.class))
-                        {
-                            result = new StringListPropertyMetadata(
-                                    name,
-                                    readWrite,
-                                    Collections.emptyList(),
-                                    inspectorPath);
+                        Type genericType = parameterizedType.getActualTypeArguments()[0];
+                        if (genericType instanceof Class) {
+                            Class genericClass = (Class) parameterizedType.getActualTypeArguments()[0];
+                            if (genericClass.equals(java.lang.String.class)) {
+                                result = new StringListPropertyMetadata(
+                                        name,
+                                        readWrite,
+                                        Collections.emptyList(),
+                                        inspectorPath);
+                            }
                         }
                     }
                 } catch (NoSuchMethodException e) {
