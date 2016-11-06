@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -88,6 +89,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Window;
+import sun.reflect.generics.tree.Tree;
 
 /**
  * This class creates and controls the <b>Hierarchy Panel</b> of Scene Builder
@@ -648,6 +650,24 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         return treeItem;
     }
 
+    private TreeItem<HierarchyItem> makeTreeItemExpansionPanel(
+            final DesignHierarchyMask owner,
+            final FXOMObject fxomObject,
+            final Accessory accessory) {
+        final HierarchyItemExpansionPanel item = new HierarchyItemExpansionPanel(owner, fxomObject, accessory);
+        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
+        // Set back the TreeItem expanded property if any
+        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
+        if (expanded != null) {
+            treeItem.setExpanded(expanded);
+        }
+        // Mask may be null for empty place holder
+        if (item.getMask() != null) {
+            updateTreeItem(treeItem);
+        }
+        return treeItem;
+    }
+
     private TreeItem<HierarchyItem> makeTreeItemBorderPane(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
@@ -833,6 +853,17 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
             final FXOMObject value = mask.getAccessory(Accessory.YAXIS);
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
+            }
+        }
+
+        // Gluon ExpansionPanel
+        for (Accessory accessory: new Accessory[]{
+                Accessory.EXPANDED_CONTENT,
+                Accessory.COLLAPSED_CONTENT
+        }) {
+            if (mask.isAcceptingAccessory(accessory)) {
+                final FXOMObject value = mask.getAccessory(accessory);
+                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
             }
         }
         

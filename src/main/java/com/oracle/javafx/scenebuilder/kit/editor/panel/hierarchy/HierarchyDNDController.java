@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -283,6 +284,8 @@ public class HierarchyDNDController {
                         accessory = ((HierarchyItemBorderPane) item).getPosition();
                     } else if (item instanceof HierarchyItemDialogPane) {
                         accessory = ((HierarchyItemDialogPane) item).getAccessory();
+                    } else if (item instanceof HierarchyItemExpansionPanel) {
+                        accessory = ((HierarchyItemExpansionPanel) item).getAccessory();
                     } else {
                         accessory = Accessory.GRAPHIC;
                     }

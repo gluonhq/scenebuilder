@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -457,6 +458,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.shape.Cylinder.class, Shape3DMetadata);
     private final ComponentClassMetadata EllipseMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.Ellipse.class, ShapeMetadata);
+    private final ComponentClassMetadata ExpansionPanelMetadata =
+            new ComponentClassMetadata( com.gluonhq.charm.glisten.control.ExpansionPanel.class, ControlMetadata);
     private final ComponentClassMetadata HLineToMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.HLineTo.class, PathElementMetadata);
     private final ComponentClassMetadata LineMetadata = 
@@ -595,6 +598,8 @@ public class Metadata {
             new PropertyName("clockwise");
     private final PropertyName closableName = 
             new PropertyName("closable");
+    private final PropertyName collapsedContentName =
+            new PropertyName("collapsedContent");
     private final PropertyName collapsibleName = 
             new PropertyName("collapsible");
     private final PropertyName colorName = 
@@ -673,10 +678,14 @@ public class Metadata {
             new PropertyName("endY");
     private final PropertyName expandableContentName = 
             new PropertyName("expandableContent");
+    private final PropertyName expandedContentName =
+            new PropertyName("expandedContent");
     private final PropertyName expandedName = 
             new PropertyName("expanded");
     private final PropertyName expandedItemCountName = 
             new PropertyName("expandedItemCount");
+    private final PropertyName expandedPropertyName =
+            new PropertyName("expanded");
     private final PropertyName farClipName = 
             new PropertyName("farClip");
     private final PropertyName fieldOfViewName = 
@@ -1823,6 +1832,12 @@ public class Metadata {
                 true, /* readWrite */
                 true, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 6));
+    private final ComponentPropertyMetadata collapsedContentPropertyMetadata =
+            new ComponentPropertyMetadata(
+                collapsedContentName,
+                NodeMetadata,
+                false /* collection */
+            );
     private final ValuePropertyMetadata collapsiblePropertyMetadata =
             new BooleanPropertyMetadata(
                 collapsibleName,
@@ -2114,12 +2129,25 @@ public class Metadata {
                 true, /* readWrite */
                 true, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 17));
+    private final ComponentPropertyMetadata expandedContentPropertyMetadata =
+            new ComponentPropertyMetadata(
+                expandedContentName,
+                NodeMetadata,
+                false /* collection */
+            );
     private final ValuePropertyMetadata expandedItemCountPropertyMetadata =
             new IntegerPropertyMetadata(
                 expandedItemCountName,
                 false, /* readWrite */
                 null, /* No defaultValue for R/O property */
                 new InspectorPath("Properties", "Specific", 19));
+    private final BooleanPropertyMetadata expandedPropertyMetadata =
+            new BooleanPropertyMetadata(
+                expandedName,
+                true, /* readWrite */
+                false, /* defaultValue */
+                new InspectorPath("Properties", "Specific", 0)
+            );
     private final ValuePropertyMetadata farClipPropertyMetadata =
             new DoublePropertyMetadata(
                 farClipName,
@@ -4657,6 +4685,7 @@ public class Metadata {
         componentClassMap.put(DatePickerMetadata.getKlass(), DatePickerMetadata);
         componentClassMap.put(DialogPaneMetadata.getKlass(), DialogPaneMetadata);
         componentClassMap.put(EllipseMetadata.getKlass(), EllipseMetadata);
+        componentClassMap.put(ExpansionPanelMetadata.getKlass(), ExpansionPanelMetadata);
         componentClassMap.put(FlowPaneMetadata.getKlass(), FlowPaneMetadata);
         componentClassMap.put(GridPaneMetadata.getKlass(), GridPaneMetadata);
         componentClassMap.put(GroupMetadata.getKlass(), GroupMetadata);
@@ -4977,6 +5006,10 @@ public class Metadata {
         EllipseMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         EllipseMetadata.getProperties().add(radiusXPropertyMetadata);
         EllipseMetadata.getProperties().add(radiusYPropertyMetadata);
+
+        ExpansionPanelMetadata.getProperties().add(expandedContentPropertyMetadata);
+        ExpansionPanelMetadata.getProperties().add(collapsedContentPropertyMetadata);
+        ExpansionPanelMetadata.getProperties().add(expandedPropertyMetadata);
 
         FlowPaneMetadata.getProperties().add(alignment_TOP_LEFT_PropertyMetadata);
         FlowPaneMetadata.getProperties().add(columnHalignmentPropertyMetadata);
