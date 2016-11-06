@@ -89,7 +89,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Window;
-import sun.reflect.generics.tree.Tree;
 
 /**
  * This class creates and controls the <b>Hierarchy Panel</b> of Scene Builder
