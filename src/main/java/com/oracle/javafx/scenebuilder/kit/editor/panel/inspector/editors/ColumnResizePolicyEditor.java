@@ -43,7 +43,7 @@ import javafx.scene.control.TreeTableView;
 /**
  * Editor for TableView columnResizePolicy property.
  */
-public class ColumnResizePolicyEditor extends SmallEnumEditor {
+public class ColumnResizePolicyEditor extends EnumEditor {
 
     boolean isTableView;
 
@@ -54,7 +54,7 @@ public class ColumnResizePolicyEditor extends SmallEnumEditor {
 
     @Override
     public Object getValue() {
-        String policy = getChoiceBox().getSelectionModel().getSelectedItem();
+        String policy = getComboBox().getSelectionModel().getSelectedItem();
         if (isTableView) {
             if (policy.equals(TableView.UNCONSTRAINED_RESIZE_POLICY.toString())) {
                 return TableView.UNCONSTRAINED_RESIZE_POLICY;
@@ -79,9 +79,9 @@ public class ColumnResizePolicyEditor extends SmallEnumEditor {
 
     @Override
     protected void updateItems() {
-        getChoiceBox().getItems().clear();
-        getChoiceBox().getItems().add(TableView.UNCONSTRAINED_RESIZE_POLICY.toString());
-        getChoiceBox().getItems().add(TableView.CONSTRAINED_RESIZE_POLICY.toString());
+        getComboBox().getItems().clear();
+        getComboBox().getItems().add(TableView.UNCONSTRAINED_RESIZE_POLICY.toString());
+        getComboBox().getItems().add(TableView.CONSTRAINED_RESIZE_POLICY.toString());
     }
 
 }

@@ -34,34 +34,75 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
+import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
+import javafx.scene.control.ComboBox;
 
 import java.util.Set;
 
-public abstract class EnumEditor extends PropertyEditor {
-    private final Control choiceControl;
+public class EnumEditor extends PropertyEditor {
+    private ComboBox<String> comboBox;
 
-    public EnumEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses, Control choiceControl) {
+    public EnumEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
         super(propMeta, selectedClasses);
-        this.choiceControl = choiceControl;
-        choiceControl.disableProperty().bind(disableProperty());
-        EditorUtils.makeWidthStretchable(choiceControl);
+        comboBox = new ComboBox<String>();
+        comboBox.disableProperty().bind(disableProperty());
+        EditorUtils.makeWidthStretchable(comboBox);
+        comboBox.getSelectionModel().selectedItemProperty().addListener((InvalidationListener) o -> {
+            if (!isUpdateFromModel()) {
+                userUpdateValueProperty(getValue());
+            }
+        });
+        initialize();
+    }
+
+    private void initialize() {
+        updateItems();
+    }
+
+    @Override
+    public Object getValue() {
+        return comboBox.getSelectionModel().getSelectedItem();
+    }
+
+    @Override
+    public void setValue(Object value) {
+        setValueGeneric(value);
+        if (isSetValueDone()) {
+            return;
+        }
+
+        if (value != null) {
+            comboBox.getSelectionModel().select(value.toString());
+        } else {
+            comboBox.getSelectionModel().clearSelection();
+        }
+    }
+
+    @Override
+    public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses) {
+        super.reset(propMeta, selectedClasses);
+        // ComboBox items have to be updated, since this editor may have been used by a different Enum...
+        updateItems();
     }
 
     @Override
     public Node getValueEditor() {
-        return super.handleGenericModes(choiceControl);
+        return super.handleGenericModes(comboBox);
     }
 
     @Override
     protected void valueIsIndeterminate() {
-        handleIndeterminate(choiceControl);
+        handleIndeterminate(comboBox);
     }
 
-    protected Control getChoiceControl() {
-        return choiceControl;
+    protected ComboBox<String> getComboBox() {
+        return comboBox;
+    }
+
+    protected void updateItems() {
+        updateItems(comboBox.getItems());
     }
 
     protected void updateItems(ObservableList<String> itemsList) {
@@ -76,7 +117,7 @@ public abstract class EnumEditor extends PropertyEditor {
 
     @Override
     public void requestFocus() {
-        EditorUtils.doNextFrame(() -> choiceControl.requestFocus());
+        EditorUtils.doNextFrame(() -> comboBox.requestFocus());
     }
 
 }
