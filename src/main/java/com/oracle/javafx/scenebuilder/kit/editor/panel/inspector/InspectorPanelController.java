@@ -241,7 +241,6 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> doubleEditorPool = new Stack<>();
     private final Stack<Editor> integerEditorPool = new Stack<>();
     private final Stack<Editor> booleanEditorPool = new Stack<>();
-    private final Stack<Editor> smallEnumEditorPool = new Stack<>();
     private final Stack<Editor> enumEditorPool = new Stack<>();
     private final Stack<Editor> durationEditorPool = new Stack<>();
     private final Stack<Editor> effectPopupEditorPool = new Stack<>();
