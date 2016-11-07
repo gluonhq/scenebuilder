@@ -114,7 +114,10 @@ public class DesignHierarchyMask {
                     public String toString() {
                         return "GRAPHIC"; // NOI18N
                     }
-                }
+                },
+        // ExpansionPanel
+        EXPANDED_CONTENT,
+        COLLAPSED_CONTENT
     }
     private static final PropertyName graphicName = new PropertyName("graphic");
     private static final PropertyName contentName = new PropertyName("content");
@@ -132,6 +135,10 @@ public class DesignHierarchyMask {
     private static final PropertyName contextMenuName = new PropertyName("contextMenu");
     private static final PropertyName clipName = new PropertyName("clip");
     private static final PropertyName treeColumnName = new PropertyName("treeColumn");
+    // ExpansionPanel
+    private static final PropertyName expandedContentName = new PropertyName("expandedContent");
+    private static final PropertyName collapsedContentName = new PropertyName("collapsedContent");
+
     private final FXOMObject fxomObject;
     private Map<PropertyName, ComponentPropertyMetadata> propertyMetadataMap; // Initialized lazily
 
@@ -470,6 +477,10 @@ public class DesignHierarchyMask {
             case HEADER:
                 result = javafx.scene.Node.class;
                 break;
+            case EXPANDED_CONTENT:
+            case COLLAPSED_CONTENT:
+                result = javafx.scene.Node.class;
+                break;
             default: // Bug
                 throw new IllegalStateException("Unexpected accessory " + accessory);
         }
@@ -696,6 +707,12 @@ public class DesignHierarchyMask {
                 break;
             case TREE_COLUMN:
                 result = treeColumnName;
+                break;
+            case EXPANDED_CONTENT:
+                result = expandedContentName;
+                break;
+            case COLLAPSED_CONTENT:
+                result = collapsedContentName;
                 break;
             default: // Bug
                 throw new IllegalStateException("Unexpected accessory " + accessory);
