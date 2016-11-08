@@ -70,6 +70,8 @@ import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -447,8 +449,22 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
+        
         // Fix for #45
-        Platform.runLater(() -> performOpenFiles(fileObjs, null));
+        if (userLibrary.isFirstExplorationCompleted()) {
+            performOpenFiles(fileObjs, null);
+        } else {
+            // open files only after the first exploration has finished
+            userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
+                @Override
+                public void invalidated(Observable observable) {
+                    if (userLibrary.isFirstExplorationCompleted()) {
+                        performOpenFiles(fileObjs, null);
+                        userLibrary.firstExplorationCompletedProperty().removeListener(this);
+                    }
+                }
+            });
+        }
     }
 
     @Override
