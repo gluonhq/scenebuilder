@@ -132,24 +132,31 @@ public class ComponentClassMetadata extends ClassMetadata {
          * Component Class -> Sub Component Property
          * =========================================
          * 
-         * Accordion        panes
-         * ButtonBar        buttons
-         * ContextMenu      items
-         * Menu             items
-         * MenuBar          menus
-         * MenuButton       items
-         * Path             elements
-         * SplitPane        items
-         * SplitMenuButton  items
-         * TableColumn      columns
-         * TableView        columns
-         * TabPane          tabs
-         * ToolBar          items
-         * TreeTableColumn  columns
-         * TreeTableView    columns
+         * Accordion            panes
+         * ButtonBar            buttons
+         * ContextMenu          items
+         * Menu                 items
+         * MenuBar              menus
+         * MenuButton           items
+         * Path                 elements
+         * SplitPane            items
+         * SplitMenuButton      items
+         * TableColumn          columns
+         * TableView            columns
+         * TabPane              tabs
+         * ToolBar              items
+         * TreeTableColumn      columns
+         * TreeTableView        columns
          * 
-         * Group            children
-         * Panes            children
+         * Group                children
+         * Panes                children
+         *
+         * ------------ Gluon ------------------
+         *
+         * BottomNavigation     actionItems
+         *
+         * ----------------------------------
+         *
          * Other            null
          */
       
@@ -187,6 +194,8 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = childrenName;
         } else if (componentClass == javafx.scene.layout.Pane.class) {
             result = childrenName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
+            result = actionItemsName;
         } else {
             result = null;
         }
@@ -202,5 +211,7 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName panesName = new PropertyName("panes");
     private static final PropertyName tabsName = new PropertyName("tabs");
     private static final PropertyName childrenName = new PropertyName("children");
+    // Gluon
+    private static final PropertyName actionItemsName = new PropertyName("actionItems");
 
 }

@@ -36,6 +36,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
  * THIS CODE IS AUTOMATICALLY GENERATED !
  */
 
+import com.gluonhq.charm.glisten.control.BottomNavigation;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
@@ -251,7 +252,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.Control.class, RegionMetadata);
     private final ComponentClassMetadata LabeledMetadata = 
             new ComponentClassMetadata(javafx.scene.control.Labeled.class, ControlMetadata);
-    private final ComponentClassMetadata ButtonBaseMetadata = 
+    private final ComponentClassMetadata ButtonBaseMetadata =
             new ComponentClassMetadata(javafx.scene.control.ButtonBase.class, LabeledMetadata);
     private final ComponentClassMetadata ComboBoxBaseMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ComboBoxBase.class, ControlMetadata);
@@ -314,6 +315,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.AreaChart.class, XYChartMetadata);
     private final ComponentClassMetadata BarChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.BarChart.class, XYChartMetadata);
+    private final ComponentClassMetadata BottomNavigationMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.BottomNavigation.class, ControlMetadata);
     private final ComponentClassMetadata BubbleChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.BubbleChart.class, XYChartMetadata);
     private final ComponentClassMetadata CategoryAxisMetadata = 
@@ -366,7 +369,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.MenuBar.class, ControlMetadata);
     private final ComponentClassMetadata MenuButtonMetadata = 
             new ComponentClassMetadata(javafx.scene.control.MenuButton.class, ButtonBaseMetadata);
-    private final ComponentClassMetadata PaginationMetadata = 
+    private final ComponentClassMetadata PaginationMetadata =
             new ComponentClassMetadata(javafx.scene.control.Pagination.class, ControlMetadata);
     private final ComponentClassMetadata PasswordFieldMetadata = 
             new ComponentClassMetadata(javafx.scene.control.PasswordField.class, TextFieldMetadata);
@@ -512,6 +515,8 @@ public class Metadata {
             new PropertyName("accessibleRoleDescription");
     private final PropertyName accessibleTextName = 
             new PropertyName("accessibleText");
+    private final PropertyName actionItemsName =
+            new PropertyName("actionItems");
     private final PropertyName alignmentName = 
             new PropertyName("alignment");
     private final PropertyName allowIndeterminateName = 
@@ -552,6 +557,8 @@ public class Metadata {
             new PropertyName("blockIncrement");
     private final PropertyName bottomName = 
             new PropertyName("bottom");
+    private final PropertyName bottomNavigationTypeName =
+            new PropertyName("type");
     private final PropertyName boundsInLocalName = 
             new PropertyName("boundsInLocal");
     private final PropertyName boundsInParentName = 
@@ -1536,6 +1543,11 @@ public class Metadata {
                 true, /* readWrite */
                 "", /* defaultValue */
                 new InspectorPath("Properties", "Accessibility", 0));
+    private final ComponentPropertyMetadata actionItemsPropertyMetadata =
+            new ComponentPropertyMetadata(
+                actionItemsName,
+                NodeMetadata,
+                true); /* collection */
     private final ValuePropertyMetadata alignment_TOP_LEFT_PropertyMetadata =
             new EnumerationPropertyMetadata(
                 alignmentName,
@@ -1681,6 +1693,13 @@ public class Metadata {
                 true, /* readWrite */
                 10.0, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 73));
+    private final EnumerationPropertyMetadata bottomNavigationTypePropertyMetadata =
+            new EnumerationPropertyMetadata(
+                bottomNavigationTypeName,
+                BottomNavigation.Type.class,
+                true, /* readWrite */
+                BottomNavigation.Type.FIXED, /* defaultValue */
+                new InspectorPath("Properties", "Specific", 0));
     private final ComponentPropertyMetadata bottomPropertyMetadata =
             new ComponentPropertyMetadata(
                 bottomName,
@@ -4658,6 +4677,7 @@ public class Metadata {
         componentClassMap.put(AxisMetadata.getKlass(), AxisMetadata);
         componentClassMap.put(BarChartMetadata.getKlass(), BarChartMetadata);
         componentClassMap.put(BorderPaneMetadata.getKlass(), BorderPaneMetadata);
+        componentClassMap.put(BottomNavigationMetadata.getKlass(), BottomNavigationMetadata);
         componentClassMap.put(BoxMetadata.getKlass(), BoxMetadata);
         componentClassMap.put(BubbleChartMetadata.getKlass(), BubbleChartMetadata);
         componentClassMap.put(ButtonMetadata.getKlass(), ButtonMetadata);
@@ -4829,6 +4849,9 @@ public class Metadata {
         BorderPaneMetadata.getProperties().add(leftPropertyMetadata);
         BorderPaneMetadata.getProperties().add(rightPropertyMetadata);
         BorderPaneMetadata.getProperties().add(topPropertyMetadata);
+
+        BottomNavigationMetadata.getProperties().add(bottomNavigationTypePropertyMetadata);
+        BottomNavigationMetadata.getProperties().add(actionItemsPropertyMetadata);
 
         BoxMetadata.getProperties().add(accessibleRole_NODE_PropertyMetadata);
         BoxMetadata.getProperties().add(depthPropertyMetadata);
