@@ -301,6 +301,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.embed.swing.SwingNode.class, NodeMetadata);
     private final ComponentClassMetadata AmbientLightMetadata = 
             new ComponentClassMetadata(javafx.scene.AmbientLight.class, LightBaseMetadata);
+    private final ComponentClassMetadata CardPaneMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.CardPane.class, ControlMetadata);
     private final ComponentClassMetadata GroupMetadata = 
             new ComponentClassMetadata(javafx.scene.Group.class, ParentMetadata);
     private final ComponentClassMetadata ParallelCameraMetadata = 
@@ -591,6 +593,8 @@ public class Metadata {
             new PropertyName("cacheShape");
     private final PropertyName cancelButtonName = 
             new PropertyName("cancelButton");
+    private final PropertyName cardsName =
+            new PropertyName("cards");
     private final PropertyName categoriesName = 
             new PropertyName("categories");
     private final PropertyName categoryGapName = 
@@ -1791,6 +1795,11 @@ public class Metadata {
                 true, /* readWrite */
                 false, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 46));
+    private final ComponentPropertyMetadata cards_Node_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                cardsName,
+                NodeMetadata,
+                true); /* collection */
     private final ValuePropertyMetadata categoriesPropertyMetadata =
             new StringListPropertyMetadata(
                 categoriesName,
@@ -4715,6 +4724,7 @@ public class Metadata {
         componentClassMap.put(ButtonBaseMetadata.getKlass(), ButtonBaseMetadata);
         componentClassMap.put(CameraMetadata.getKlass(), CameraMetadata);
         componentClassMap.put(CanvasMetadata.getKlass(), CanvasMetadata);
+        componentClassMap.put(CardPaneMetadata.getKlass(), CardPaneMetadata);
         componentClassMap.put(CategoryAxisMetadata.getKlass(), CategoryAxisMetadata);
         componentClassMap.put(ChartMetadata.getKlass(), ChartMetadata);
         componentClassMap.put(CheckBoxMetadata.getKlass(), CheckBoxMetadata);
@@ -4921,6 +4931,8 @@ public class Metadata {
         CanvasMetadata.getProperties().add(nodeOrientation_LEFT_TO_RIGHT_PropertyMetadata);
         CanvasMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         CanvasMetadata.getProperties().add(width_Double_0_PropertyMetadata);
+
+        CardPaneMetadata.getProperties().add(cards_Node_PropertyMetadata);
 
         CategoryAxisMetadata.getProperties().add(categoriesPropertyMetadata);
         CategoryAxisMetadata.getProperties().add(categorySpacingPropertyMetadata);
