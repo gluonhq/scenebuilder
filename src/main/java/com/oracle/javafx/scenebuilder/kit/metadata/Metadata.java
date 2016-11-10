@@ -37,6 +37,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
  */
 
 import com.gluonhq.charm.glisten.control.BottomNavigation;
+import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
@@ -465,6 +466,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.shape.Ellipse.class, ShapeMetadata);
     private final ComponentClassMetadata ExpansionPanelMetadata =
             new ComponentClassMetadata( com.gluonhq.charm.glisten.control.ExpansionPanel.class, ControlMetadata);
+    private final ComponentClassMetadata ExpansionPanelContainerMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class, ControlMetadata);
     private final ComponentClassMetadata HLineToMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.HLineTo.class, PathElementMetadata);
     private final ComponentClassMetadata LineMetadata = 
@@ -2476,6 +2479,11 @@ public class Metadata {
                 false, /* readWrite */
                 null, /* No defaultValue for R/O property */
                 new InspectorPath("Properties", "Extras", 5));
+    private final ComponentPropertyMetadata items_ExpansionPanel_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                itemsName,
+                ExpansionPanelMetadata,
+                true); /* collection */
     private final ComponentPropertyMetadata items_MenuItem_PropertyMetadata =
             new ComponentPropertyMetadata(
                 itemsName,
@@ -4709,6 +4717,7 @@ public class Metadata {
         componentClassMap.put(DropdownButtonMetadata.getKlass(), DropdownButtonMetadata);
         componentClassMap.put(EllipseMetadata.getKlass(), EllipseMetadata);
         componentClassMap.put(ExpansionPanelMetadata.getKlass(), ExpansionPanelMetadata);
+        componentClassMap.put(ExpansionPanelContainerMetadata.getKlass(), ExpansionPanelContainerMetadata);
         componentClassMap.put(FlowPaneMetadata.getKlass(), FlowPaneMetadata);
         componentClassMap.put(GridPaneMetadata.getKlass(), GridPaneMetadata);
         componentClassMap.put(GroupMetadata.getKlass(), GroupMetadata);
@@ -5038,6 +5047,8 @@ public class Metadata {
         ExpansionPanelMetadata.getProperties().add(expandedContentPropertyMetadata);
         ExpansionPanelMetadata.getProperties().add(collapsedContentPropertyMetadata);
         ExpansionPanelMetadata.getProperties().add(expandedPropertyMetadata);
+
+        ExpansionPanelContainerMetadata.getProperties().add(items_ExpansionPanel_PropertyMetadata);
 
         FlowPaneMetadata.getProperties().add(alignment_TOP_LEFT_PropertyMetadata);
         FlowPaneMetadata.getProperties().add(columnHalignmentPropertyMetadata);

@@ -132,29 +132,30 @@ public class ComponentClassMetadata extends ClassMetadata {
          * Component Class -> Sub Component Property
          * =========================================
          * 
-         * Accordion            panes
-         * ButtonBar            buttons
-         * ContextMenu          items
-         * Menu                 items
-         * MenuBar              menus
-         * MenuButton           items
-         * Path                 elements
-         * SplitPane            items
-         * SplitMenuButton      items
-         * TableColumn          columns
-         * TableView            columns
-         * TabPane              tabs
-         * ToolBar              items
-         * TreeTableColumn      columns
-         * TreeTableView        columns
+         * Accordion                    panes
+         * ButtonBar                    buttons
+         * ContextMenu                  items
+         * Menu                         items
+         * MenuBar                      menus
+         * MenuButton                   items
+         * Path                         elements
+         * SplitPane                    items
+         * SplitMenuButton              items
+         * TableColumn                  columns
+         * TableView                    columns
+         * TabPane                      tabs
+         * ToolBar                      items
+         * TreeTableColumn              columns
+         * TreeTableView                columns
          * 
-         * Group                children
-         * Panes                children
+         * Group                        children
+         * Panes                        children
          *
          * ------------ Gluon ------------------
          *
-         * BottomNavigation     actionItems
-         * DropdownButton       items
+         * BottomNavigation             actionItems
+         * DropdownButton               items
+         * ExpansionPanelContainer      items
          *
          * ----------------------------------
          *
@@ -198,6 +199,8 @@ public class ComponentClassMetadata extends ClassMetadata {
         } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
             result = actionItemsName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class) {
+            result = itemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class) {
             result = itemsName;
         } else {
             result = null;
