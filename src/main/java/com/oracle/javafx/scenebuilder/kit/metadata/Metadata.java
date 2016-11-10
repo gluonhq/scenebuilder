@@ -37,7 +37,6 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
  */
 
 import com.gluonhq.charm.glisten.control.BottomNavigation;
-import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
@@ -52,6 +51,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.*;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPathComparator;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import javafx.scene.control.SelectionMode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -336,6 +337,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.StackedAreaChart.class, XYChartMetadata);
     private final ComponentClassMetadata StackedBarChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.StackedBarChart.class, XYChartMetadata);
+    private final ComponentClassMetadata ToggleButtonGroupMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, ControlMetadata);
     private final ComponentClassMetadata AccordionMetadata = 
             new ComponentClassMetadata(javafx.scene.control.Accordion.class, ControlMetadata);
     private final ComponentClassMetadata ButtonMetadata = 
@@ -1058,6 +1061,8 @@ public class Metadata {
             new PropertyName("scrollTop");
     private final PropertyName selectedName = 
             new PropertyName("selected");
+    private final PropertyName selectionTypeName =
+            new PropertyName("selectionType");
     private final PropertyName shapeName = 
             new PropertyName("shape");
     private final PropertyName showRootName = 
@@ -1178,6 +1183,8 @@ public class Metadata {
             new PropertyName("titleSide");
     private final PropertyName toggleGroupName = 
             new PropertyName("toggleGroup");
+    private final PropertyName togglesName =
+            new PropertyName("toggles");
     private final PropertyName tooltipName = 
             new PropertyName("tooltip");
     private final PropertyName topName = 
@@ -3483,6 +3490,13 @@ public class Metadata {
                 true, /* readWrite */
                 0.0, /* defaultValue */
                 new InspectorPath("Properties", "Text", 17));
+    private final ValuePropertyMetadata selectionTypePropertyMetadata =
+            new EnumerationPropertyMetadata(
+                selectionTypeName,
+                javafx.scene.control.SelectionMode.class,
+                true, /* readWrite */
+                SelectionMode.SINGLE,
+                new InspectorPath("Properties", "Specific", 0));
     private final ValuePropertyMetadata selected_Boolean_PropertyMetadata =
             new BooleanPropertyMetadata(
                 selectedName,
@@ -4205,6 +4219,12 @@ public class Metadata {
                 true, /* readWrite */
                 javafx.geometry.Side.TOP, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 60));
+    private final ComponentPropertyMetadata toggles_ToggleButton_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                togglesName,
+                ToggleButtonMetadata,
+                true /* collection */
+            );
     private final ValuePropertyMetadata toggleGroupPropertyMetadata =
             new ToggleGroupPropertyMetadata(
                 toggleGroupName,
@@ -4796,6 +4816,7 @@ public class Metadata {
         componentClassMap.put(TextInputControlMetadata.getKlass(), TextInputControlMetadata);
         componentClassMap.put(TilePaneMetadata.getKlass(), TilePaneMetadata);
         componentClassMap.put(TitledPaneMetadata.getKlass(), TitledPaneMetadata);
+        componentClassMap.put(ToggleButtonGroupMetadata.getKlass(), ToggleButtonGroupMetadata);
         componentClassMap.put(ToggleButtonMetadata.getKlass(), ToggleButtonMetadata);
         componentClassMap.put(ToolBarMetadata.getKlass(), ToolBarMetadata);
         componentClassMap.put(TooltipMetadata.getKlass(), TooltipMetadata);
@@ -5728,6 +5749,9 @@ public class Metadata {
         TitledPaneMetadata.getProperties().add(focusTraversable_true_PropertyMetadata);
         TitledPaneMetadata.getProperties().add(mnemonicParsing_false_PropertyMetadata);
         TitledPaneMetadata.getProperties().add(styleClass_c26_PropertyMetadata);
+
+        ToggleButtonGroupMetadata.getProperties().add(toggles_ToggleButton_PropertyMetadata);
+        ToggleButtonGroupMetadata.getProperties().add(selectionTypePropertyMetadata);
 
         ToggleButtonMetadata.getProperties().add(accessibleRole_TOGGLE_BUTTON_PropertyMetadata);
         ToggleButtonMetadata.getProperties().add(alignment_CENTER_PropertyMetadata);
