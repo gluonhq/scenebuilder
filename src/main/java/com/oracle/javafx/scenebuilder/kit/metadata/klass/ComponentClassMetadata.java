@@ -154,6 +154,7 @@ public class ComponentClassMetadata extends ClassMetadata {
          * ------------ Gluon ------------------
          *
          * BottomNavigation     actionItems
+         * DropdownButton       items
          *
          * ----------------------------------
          *
@@ -196,6 +197,8 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = childrenName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
             result = actionItemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class) {
+            result = itemsName;
         } else {
             result = null;
         }

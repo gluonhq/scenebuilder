@@ -321,6 +321,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.BubbleChart.class, XYChartMetadata);
     private final ComponentClassMetadata CategoryAxisMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.CategoryAxis.class, AxisMetadata);
+    private final ComponentClassMetadata DropdownButtonMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.DropdownButton.class, ControlMetadata);
     private final ComponentClassMetadata LineChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.LineChart.class, XYChartMetadata);
     private final ComponentClassMetadata NumberAxisMetadata = 
@@ -4704,6 +4706,7 @@ public class Metadata {
         componentClassMap.put(CylinderMetadata.getKlass(), CylinderMetadata);
         componentClassMap.put(DatePickerMetadata.getKlass(), DatePickerMetadata);
         componentClassMap.put(DialogPaneMetadata.getKlass(), DialogPaneMetadata);
+        componentClassMap.put(DropdownButtonMetadata.getKlass(), DropdownButtonMetadata);
         componentClassMap.put(EllipseMetadata.getKlass(), EllipseMetadata);
         componentClassMap.put(ExpansionPanelMetadata.getKlass(), ExpansionPanelMetadata);
         componentClassMap.put(FlowPaneMetadata.getKlass(), FlowPaneMetadata);
@@ -5022,6 +5025,8 @@ public class Metadata {
         DialogPaneMetadata.getProperties().add(headerPropertyMetadata);
         DialogPaneMetadata.getProperties().add(headerTextPropertyMetadata);
         DialogPaneMetadata.getProperties().add(styleClass_c30_PropertyMetadata);
+
+        DropdownButtonMetadata.getProperties().add(items_MenuItem_PropertyMetadata);
 
         EllipseMetadata.getProperties().add(accessibleRole_NODE_PropertyMetadata);
         EllipseMetadata.getProperties().add(centerXPropertyMetadata);
