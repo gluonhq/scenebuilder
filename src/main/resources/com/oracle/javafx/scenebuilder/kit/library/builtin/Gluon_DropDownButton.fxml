@@ -31,4 +31,13 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.DropdownButton?>
-<DropdownButton />
+<?import javafx.scene.control.MenuItem?>
+
+<DropdownButton xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.101">
+    <items>
+        <MenuItem text="Choice 1" />
+        <MenuItem text="Choice 2" />
+        <MenuItem text="Choice 3" />
+    </items>
+</DropdownButton>
+
