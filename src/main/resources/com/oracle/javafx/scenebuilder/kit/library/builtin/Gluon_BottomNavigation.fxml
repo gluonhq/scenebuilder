@@ -31,4 +31,37 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.BottomNavigation?>
-<BottomNavigation />
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToggleButton?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<BottomNavigation xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.101">
+    <fx:define>
+        <ToggleGroup fx:id="toggleGroup" />
+    </fx:define>
+    <actionItems>
+        <ToggleButton contentDisplay="TOP" styleClass="bottom-nav-button" text="Recent" selected="true">
+            <graphic>
+                <Icon content="RECENT_ACTORS" />
+            </graphic>
+            <toggleGroup>
+                <fx:reference source="toggleGroup" />
+            </toggleGroup>
+        </ToggleButton>
+        <ToggleButton contentDisplay="TOP" styleClass="bottom-nav-button" text="Favourite">
+            <graphic>
+                <Icon content="FAVORITE" />
+            </graphic>
+            <toggleGroup>
+                <fx:reference source="toggleGroup" />
+            </toggleGroup>
+        </ToggleButton>
+        <ToggleButton contentDisplay="TOP" styleClass="bottom-nav-button" text="Nearby">
+            <graphic>
+                <Icon content="NEAR_ME" />
+            </graphic>
+            <toggleGroup>
+                <fx:reference source="toggleGroup" />
+            </toggleGroup>
+        </ToggleButton>
+    </actionItems>
+</BottomNavigation>
