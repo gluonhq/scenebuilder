@@ -31,4 +31,24 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.ToggleButtonGroup?>
-<ToggleButtonGroup />
+<?import javafx.scene.control.ToggleButton?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<ToggleButtonGroup selectionType="SINGLE">
+    <toggles>
+        <ToggleButton>
+            <graphic>
+                <Icon content="FORMAT_ALIGN_LEFT"></Icon>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton selected="true">
+            <graphic>
+                <Icon content="FORMAT_ALIGN_CENTER"></Icon>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton>
+            <graphic>
+                <Icon content="FORMAT_ALIGN_RIGHT"></Icon>
+            </graphic>
+        </ToggleButton>
+    </toggles>
+</ToggleButtonGroup>
