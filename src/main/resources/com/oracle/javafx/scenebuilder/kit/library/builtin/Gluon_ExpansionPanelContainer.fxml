@@ -31,4 +31,30 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.ExpansionPanelContainer?>
-<ExpansionPanelContainer />
+<?import com.gluonhq.charm.glisten.control.ExpansionPanel?>
+<?import com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel?>
+<?import javafx.scene.control.Label?>
+<ExpansionPanelContainer>
+    <items>
+        <ExpansionPanel>
+            <collapsedContent>
+                <CollapsedPanel>
+                    <titleNodes>
+                        <Label text="TripName" />
+                        <Label text="Caribbean cruise" />
+                    </titleNodes>
+                </CollapsedPanel>
+            </collapsedContent>
+        </ExpansionPanel>
+        <ExpansionPanel>
+            <collapsedContent>
+                <CollapsedPanel>
+                    <titleNodes>
+                        <Label text="Location" />
+                        <Label text="Barbados" />
+                    </titleNodes>
+                </CollapsedPanel>
+            </collapsedContent>
+        </ExpansionPanel>
+    </items>
+</ExpansionPanelContainer>
