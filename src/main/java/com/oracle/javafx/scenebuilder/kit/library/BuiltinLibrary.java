@@ -138,6 +138,7 @@ public class BuiltinLibrary extends Library {
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridRow.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridSpan.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Icon.class, TAG_GLUON);
+        addCustomizedItem(com.gluonhq.charm.glisten.layout.Layer.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.ListTile.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.MenuPopupView.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.MenuSidePopupView.class, TAG_GLUON);
