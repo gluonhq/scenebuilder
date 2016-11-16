@@ -54,10 +54,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -82,7 +82,7 @@ public class UserLibrary extends Library {
     private final ObservableList<Path> previousFxmlFileReports = FXCollections.observableArrayList();
     private final SimpleIntegerProperty explorationCountProperty = new SimpleIntegerProperty();
     private final SimpleObjectProperty<Date> explorationDateProperty = new SimpleObjectProperty<>();
-    private final SimpleBooleanProperty firstExplorationCompleted = new SimpleBooleanProperty();
+    private final ReadOnlyBooleanWrapper firstExplorationCompleted = new ReadOnlyBooleanWrapper(false);
     
     private State state = State.READY;
     private Exception exception;
@@ -327,8 +327,8 @@ public class UserLibrary extends Library {
         }
     }
     
-    public final BooleanProperty firstExplorationCompletedProperty() {
-        return firstExplorationCompleted;
+    public final ReadOnlyBooleanProperty firstExplorationCompletedProperty() {
+        return firstExplorationCompleted.getReadOnlyProperty();
     }
     
     public final boolean isFirstExplorationCompleted() {
