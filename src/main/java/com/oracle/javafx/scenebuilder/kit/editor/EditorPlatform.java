@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import javafx.scene.input.MouseEvent;
@@ -161,6 +162,19 @@ public class EditorPlatform {
             assert result != null : "Missing logic for " + theme;
         }
 
+        return result;
+    }
+
+    public static List<String> getAdditionalStylesheetsURL(Theme theme) {
+        List<String> result;
+        switch(theme) {
+            case GLUON_MOBILE:
+                result = Arrays.asList(StylesheetTools.asResource("swatch_blue.gls"), StylesheetTools.asResource("theme_light.gls"));
+                break;
+            default:
+                result = null;
+                break;
+        }
         return result;
     }
     

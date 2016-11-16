@@ -326,13 +326,18 @@ public final class PreviewWindowController extends AbstractWindowController {
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
                         String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
+                        List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(Theme.GLUON_MOBILE);
                         if (editorControllerTheme == Theme.GLUON_MOBILE) {
                             ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
+
                             if (!newStylesheets.contains(themeStyleSheetString)) {
                                 newStylesheets.add(themeStyleSheetString);
                             }
                             if (!newStylesheets.contains(gluonDocumentStylesheet)) {
                                 newStylesheets.add(gluonDocumentStylesheet);
+                            }
+                            if (!newStylesheets.contains(additionalGluonStylesheets)) {
+                                newStylesheets.addAll(additionalGluonStylesheets);
                             }
                             getScene().setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(Theme.MODENA));
                             getScene().getStylesheets().clear();
@@ -342,6 +347,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                             getScene().setUserAgentStylesheet(themeStyleSheetString);
                             getScene().getStylesheets().remove(gluonStylesheet);
                             getScene().getStylesheets().remove(gluonDocumentStylesheet);
+                            getScene().getStylesheets().remove(additionalGluonStylesheets);
                         }
                     }
                     updateWindowSize();
