@@ -59,7 +59,7 @@ public class WelcomeDialog extends Dialog {
     private static final String HEADER_IMAGE = WelcomeDialog.class.getResource("gluon_scene_builder.png").toString();
 
     private static final String NEW_DESKTOP_PROJECT_ICON = WelcomeDialog.class.getResource("earthGlobalSolu.png").toString();
-    private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("checkListDevice.png").toString();
+//    private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("checkListDevice.png").toString();
     private static final String OPEN_PROJECT_ICON = WelcomeDialog.class.getResource("open_document.png").toString();
 
     private static final int NUMBER_OF_ITEMS_WITHOUT_SCROLLPANE = 8;
@@ -92,7 +92,7 @@ public class WelcomeDialog extends Dialog {
         Label newProjectTitle = new Label(I18N.getString("welcome.actions.header"));
         actionsContainer.getChildren().add(newProjectTitle);
         Hyperlink desktopProject = new Hyperlink(I18N.getString("welcome.desktopproject.label"));
-        Hyperlink desktopAndMobileProj = new Hyperlink(I18N.getString("welcome.desktopandmobile.label"));
+//        Hyperlink desktopAndMobileProj = new Hyperlink(I18N.getString("welcome.desktopandmobile.label"));
         Hyperlink openExistingProj = new Hyperlink(I18N.getString("welcome.openproject.label"));
 
         desktopProject.setOnAction(this::fireNewDesktopProject);
@@ -108,10 +108,10 @@ public class WelcomeDialog extends Dialog {
         HBox imageViewHBox = new HBox(imageView);
         imageViewHBox.setAlignment(Pos.CENTER_LEFT);
         desktopProjectContainer.getChildren().addAll(imageViewHBox, desktopProject);
-        imageView = new ImageView(NEW_DESKTOP_AND_MOBILE_PROJ_ICON);
+        /*imageView = new ImageView(NEW_DESKTOP_AND_MOBILE_PROJ_ICON);
         imageViewHBox = new HBox(imageView);
         imageViewHBox.setAlignment(Pos.CENTER_LEFT);
-        desktopAndMobileProjContainer.getChildren().addAll(imageViewHBox, desktopAndMobileProj);
+        desktopAndMobileProjContainer.getChildren().addAll(imageViewHBox, desktopAndMobileProj);*/
         imageView = new ImageView(OPEN_PROJECT_ICON);
         imageViewHBox = new HBox(imageView);
         imageViewHBox.setAlignment(Pos.CENTER_LEFT);
