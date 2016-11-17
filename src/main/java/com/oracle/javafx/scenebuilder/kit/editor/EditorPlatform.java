@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -112,7 +113,7 @@ public class EditorPlatform {
                 result = null;
                 break;
             case GLUON_MOBILE:
-                result = StylesheetTools.asResource("glisten.gls");
+                result = StylesheetTools.asResource(Deprecation.GLUON_STYLESHEET);
                 break;
             case MODENA:
                 result = Deprecation.MODENA_STYLESHEET;
@@ -169,7 +170,7 @@ public class EditorPlatform {
         List<String> result;
         switch(theme) {
             case GLUON_MOBILE:
-                result = Arrays.asList(StylesheetTools.asResource("swatch_blue.gls"), StylesheetTools.asResource("theme_light.gls"));
+                result = Arrays.asList(StylesheetTools.asResource(Deprecation.GLUON_BLUE_SWATCH), StylesheetTools.asResource(Deprecation.GLUON_LIGHT_THEME));
                 break;
             default:
                 result = null;
