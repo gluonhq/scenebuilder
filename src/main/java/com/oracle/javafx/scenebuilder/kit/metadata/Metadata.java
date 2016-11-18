@@ -353,6 +353,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.CheckMenuItem.class, MenuItemMetadata);
     private final ComponentClassMetadata ChoiceBoxMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ChoiceBox.class, ControlMetadata);
+    private final ComponentClassMetadata CollapsedPanelMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, RegionMetadata);
     private final ComponentClassMetadata ColorPickerMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ColorPicker.class, ComboBoxBaseMetadata);
     private final ComponentClassMetadata ComboBoxMetadata = 
@@ -1183,6 +1185,8 @@ public class Metadata {
             new PropertyName("tileWidth");
     private final PropertyName titleName = 
             new PropertyName("title");
+    private final PropertyName titleNodesName =
+            new PropertyName("titleNodes");
     private final PropertyName titleSideName = 
             new PropertyName("titleSide");
     private final PropertyName toggleGroupName = 
@@ -1559,7 +1563,7 @@ public class Metadata {
                 true, /* readWrite */
                 "", /* defaultValue */
                 new InspectorPath("Properties", "Accessibility", 0));
-    private final ComponentPropertyMetadata actionItemsPropertyMetadata =
+    private final ComponentPropertyMetadata actionItems_Node_PropertyMetadata =
             new ComponentPropertyMetadata(
                 actionItemsName,
                 NodeMetadata,
@@ -4215,6 +4219,11 @@ public class Metadata {
                 false, /* readWrite */
                 null, /* No defaultValue for R/O property */
                 new InspectorPath("Layout", "Specific", 20));
+    private final ComponentPropertyMetadata titleNodes_Node_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                titleNodesName,
+                NodeMetadata,
+                true); /* collection */
     private final ValuePropertyMetadata titlePropertyMetadata =
             new StringPropertyMetadata(
                 titleName,
@@ -4732,6 +4741,7 @@ public class Metadata {
         componentClassMap.put(ChoiceBoxMetadata.getKlass(), ChoiceBoxMetadata);
         componentClassMap.put(CircleMetadata.getKlass(), CircleMetadata);
         componentClassMap.put(ClosePathMetadata.getKlass(), ClosePathMetadata);
+        componentClassMap.put(CollapsedPanelMetadata.getKlass(), CollapsedPanelMetadata);
         componentClassMap.put(ColorPickerMetadata.getKlass(), ColorPickerMetadata);
         componentClassMap.put(ColumnConstraintsMetadata.getKlass(), ColumnConstraintsMetadata);
         componentClassMap.put(ComboBoxMetadata.getKlass(), ComboBoxMetadata);
@@ -4894,7 +4904,7 @@ public class Metadata {
         BorderPaneMetadata.getProperties().add(topPropertyMetadata);
 
         BottomNavigationMetadata.getProperties().add(bottomNavigationTypePropertyMetadata);
-        BottomNavigationMetadata.getProperties().add(actionItemsPropertyMetadata);
+        BottomNavigationMetadata.getProperties().add(actionItems_Node_PropertyMetadata);
 
         BoxMetadata.getProperties().add(accessibleRole_NODE_PropertyMetadata);
         BoxMetadata.getProperties().add(depthPropertyMetadata);
@@ -4969,6 +4979,8 @@ public class Metadata {
         CircleMetadata.getProperties().add(centerYPropertyMetadata);
         CircleMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         CircleMetadata.getProperties().add(radius_0_PropertyMetadata);
+
+        CollapsedPanelMetadata.getProperties().add(titleNodes_Node_PropertyMetadata);
 
         ColorPickerMetadata.getProperties().add(focusTraversable_true_PropertyMetadata);
         ColorPickerMetadata.getProperties().add(styleClass_c5_PropertyMetadata);
