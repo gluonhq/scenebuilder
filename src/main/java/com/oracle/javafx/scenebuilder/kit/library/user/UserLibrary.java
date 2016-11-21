@@ -318,12 +318,10 @@ public class UserLibrary extends Library {
     }
     
     void updateFirstExplorationCompleted() {
-        if (!firstExplorationCompleted.get()) {
-            if (Platform.isFxApplicationThread()) {
-                firstExplorationCompleted.set(true);
-            } else {
-                Platform.runLater(() -> firstExplorationCompleted.set(true));
-            }
+        if (Platform.isFxApplicationThread()) {
+            firstExplorationCompleted.set(true);
+        } else {
+            Platform.runLater(() -> firstExplorationCompleted.set(true));
         }
     }
     
