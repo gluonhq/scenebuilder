@@ -46,7 +46,7 @@ import javafx.scene.layout.Region;
 public class BuiltinLibrary extends Library {
 
     public static final String GLUON_PACKAGE      = "com.gluonhq.charm.glisten";
-    public static final String GLUON_FXML_PREFIX  = "Gluon_";
+    public static final String GLUON_FILE_PREFIX = "Gluon_";
     // In SB 1.1 the section names of the Library have been localized. We assume
     // for now we stick to this approach, but fact is the support of custom
     // sections could change the rules of the game.
@@ -364,6 +364,10 @@ public class BuiltinLibrary extends Library {
         if (qualifier != null) {
             nameWithQualifier += qualifier;
         }
+        if (componentClass.getName().startsWith(GLUON_PACKAGE)) {
+            fxmlBaseName = GLUON_FILE_PREFIX + fxmlBaseName;
+            iconName = GLUON_FILE_PREFIX + iconName;
+        }
         final String fxmlText = readCustomizedFxmlText(fxmlBaseName, componentClass);
         assert fxmlText != null;
         addItem(nameWithQualifier, fxmlText, section, iconName);
@@ -439,9 +443,6 @@ public class BuiltinLibrary extends Library {
         
         final StringBuilder fxmlPath = new StringBuilder();
         fxmlPath.append("builtin/"); //NOI18N
-        if (componentClass.getName().startsWith(GLUON_PACKAGE)) {
-            fxmlPath.append(GLUON_FXML_PREFIX);
-        }
         fxmlPath.append(fxmlBaseName);
         fxmlPath.append(".fxml"); //NOI18N
         
