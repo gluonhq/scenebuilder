@@ -32,7 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.gluonhq.impl.charm.glisten.util.StylesheetTools;
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +113,7 @@ public class EditorPlatform {
                 result = null;
                 break;
             case GLUON_MOBILE:
-                result = StylesheetTools.asResource(Deprecation.GLUON_STYLESHEET);
+                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_STYLESHEET);
                 break;
             case MODENA:
                 result = Deprecation.MODENA_STYLESHEET;
@@ -170,7 +170,7 @@ public class EditorPlatform {
         List<String> result;
         switch(theme) {
             case GLUON_MOBILE:
-                result = Arrays.asList(StylesheetTools.asResource(Deprecation.GLUON_BLUE_SWATCH), StylesheetTools.asResource(Deprecation.GLUON_LIGHT_THEME));
+                result = Arrays.asList(GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BLUE_SWATCH), GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_THEME));
                 break;
             default:
                 result = null;

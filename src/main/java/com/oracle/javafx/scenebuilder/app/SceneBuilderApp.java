@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import com.gluonhq.impl.charm.glisten.util.StylesheetTools;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -395,9 +394,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     @Override
     public void handleLaunch(List<String> files) {
         setApplicationUncaughtExceptionHandler();
-
-        // Init Gluon Mobile stylesheet handling
-        StylesheetTools.init(null);
 
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder());
