@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -129,9 +130,11 @@ public class BuiltinLibrary extends Library {
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.CardPane.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.CharmListView.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Chip.class, TAG_GLUON);
+//        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.Dialog.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.DropdownButton.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.class, TAG_GLUON);
+//        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.ExpandedPanel.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.FloatingActionButton.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridLayout.class, TAG_GLUON);

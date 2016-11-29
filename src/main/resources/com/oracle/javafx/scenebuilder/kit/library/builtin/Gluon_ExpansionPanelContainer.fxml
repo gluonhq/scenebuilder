@@ -38,22 +38,22 @@
     <items>
         <ExpansionPanel>
             <collapsedContent>
-                <CollapsedPanel>
+                <ExpansionPanel.CollapsedPanel>
                     <titleNodes>
                         <Label text="TripName" />
                         <Label text="Caribbean cruise" />
                     </titleNodes>
-                </CollapsedPanel>
+                </ExpansionPanel.CollapsedPanel>
             </collapsedContent>
         </ExpansionPanel>
         <ExpansionPanel>
             <collapsedContent>
-                <CollapsedPanel>
+                <ExpansionPanel.CollapsedPanel>
                     <titleNodes>
                         <Label text="Location" />
                         <Label text="Barbados" />
                     </titleNodes>
-                </CollapsedPanel>
+                </ExpansionPanel.CollapsedPanel>
             </collapsedContent>
         </ExpansionPanel>
     </items>

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -158,6 +159,7 @@ public class ComponentClassMetadata extends ClassMetadata {
          * DropdownButton               items
          * ExpansionPanelContainer      items
          * ToggleButtonGroup            toggles
+         * CollapsedPanel               titleNodes
          *
          * ------------------------------------
          *
@@ -208,6 +210,8 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = itemsName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.ToggleButtonGroup.class) {
             result = togglesName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class) {
+            result = titleNodesName;
         } else {
             result = null;
         }
@@ -227,5 +231,6 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName actionItemsName = new PropertyName("actionItems");
     private static final PropertyName cardsName = new PropertyName("cards");
     private static final PropertyName togglesName = new PropertyName("toggles");
+    private static final PropertyName titleNodesName = new PropertyName("titleNodes");
 
 }

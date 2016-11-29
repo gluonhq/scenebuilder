@@ -30,16 +30,5 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import com.gluonhq.charm.glisten.control.DropdownButton?>
-<?import javafx.scene.control.MenuItem?>
-
-<DropdownButton xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.101">
-    <items>
-        <MenuItem fx:id="choice1" text="Choice 1" />
-        <MenuItem text="Choice 2" />
-        <MenuItem text="Choice 3" />
-    </items>
-    <selectedItem>
-        <fx:reference source="choice1"/>
-    </selectedItem>
-</DropdownButton>
+<?import com.gluonhq.charm.glisten.control.ExpansionPanel.ExpandedPanel?>
+<ExpandedPanel />
