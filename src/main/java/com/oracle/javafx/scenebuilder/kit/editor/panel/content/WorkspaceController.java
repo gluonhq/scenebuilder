@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,6 +35,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 
 import java.util.List;
@@ -157,6 +159,7 @@ class WorkspaceController {
         assert themeStyleSheet != null;
         assert theme != null;
         String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
+        List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(EditorPlatform.Theme.GLUON_MOBILE);
         if (theme == EditorPlatform.Theme.GLUON_MOBILE) {
             contentSubScene.setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.MODENA));
             ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
@@ -165,6 +168,9 @@ class WorkspaceController {
             }
             if (!currentStyleSheets.contains(gluonDocumentStylesheet)) {
                 currentStyleSheets.add(gluonDocumentStylesheet);
+            }
+            if (!currentStyleSheets.contains(additionalGluonStylesheets)) {
+                currentStyleSheets.addAll(additionalGluonStylesheets);
             }
             contentGroup.getStylesheets().clear();
             contentGroup.getStylesheets().setAll(currentStyleSheets);
@@ -177,6 +183,7 @@ class WorkspaceController {
             String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
             contentGroup.getStylesheets().remove(gluonMobileStyleSheet);
             contentGroup.getStylesheets().remove(gluonDocumentStylesheet);
+            contentGroup.getStylesheets().remove(additionalGluonStylesheets);
         }
     }
     
@@ -191,6 +198,8 @@ class WorkspaceController {
         contentGroup.getStylesheets().addAll(previewStyleSheets);
         if (shouldAddGluonMobile) {
             contentGroup.getStylesheets().add(gluonMobileStyleSheet);
+            List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(EditorPlatform.Theme.GLUON_MOBILE);
+            contentGroup.getStylesheets().addAll(additionalGluonStylesheets);
         }
         contentGroup.applyCss();
     }

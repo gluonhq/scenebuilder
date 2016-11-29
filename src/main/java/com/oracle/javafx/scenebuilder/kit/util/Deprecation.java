@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -83,6 +84,11 @@ public class Deprecation {
     public static final String MODENA_TOUCH_HIGHCONTRAST_BLACKONWHITE_STYLESHEET = "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css"; //NOI18N
     public static final String MODENA_TOUCH_HIGHCONTRAST_WHITEONBLACK_STYLESHEET = "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css"; //NOI18N
     public static final String MODENA_TOUCH_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET = "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css"; //NOI18N
+
+    // Gluon
+    public static final String GLUON_STYLESHEET = "glisten.gls";
+    public static final String GLUON_BLUE_SWATCH = "swatch_blue.gls";
+    public static final String GLUON_LIGHT_THEME = "theme_light.gls";
 
     // Deprecated stuff in Node
 //    // RT-21247 : Promote impl_getAllParentStylesheets to public API
