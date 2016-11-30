@@ -20,12 +20,14 @@ def tryGetProperty = {String name, String defaultValue ->
 }
 
 repositories {
-    mavenLocal()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     maven {
         url "https://oss.sonatype.org/content/repositories/releases/"
+    }
+    maven {
+        url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
     }
 
     jcenter()
@@ -44,7 +46,7 @@ dependencies {
     compile 'org.eclipse.aether:aether-transport-http:1.1.0'
     compile 'org.apache.maven:maven-aether-provider:3.3.9'
 
-    compile 'com.gluonhq:charm-glisten:4.2.0-SNAPSHOT'
+    compile 'com.gluonhq:charm-glisten:4.2.0'
 
 //    compile name: 'ScenicView'
 
