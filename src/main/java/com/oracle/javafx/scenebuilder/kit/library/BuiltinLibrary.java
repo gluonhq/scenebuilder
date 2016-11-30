@@ -122,7 +122,6 @@ public class BuiltinLibrary extends Library {
     
     private BuiltinLibrary() {
         // Gluon
-
         addCustomizedItem(com.gluonhq.charm.glisten.control.AppBar.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.AutoCompleteTextField.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Avatar.class, TAG_GLUON);
@@ -156,8 +155,6 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(com.gluonhq.charm.glisten.control.TextField.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.mvc.View.class, TAG_GLUON);
-
-
 
         // Containers
         addCustomizedItem(javafx.scene.control.Accordion.class, TAG_CONTAINERS);
