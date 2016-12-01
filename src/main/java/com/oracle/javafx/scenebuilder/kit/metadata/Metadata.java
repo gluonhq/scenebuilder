@@ -595,8 +595,6 @@ public class Metadata {
             new PropertyName("cacheShape");
     private final PropertyName cancelButtonName = 
             new PropertyName("cancelButton");
-    private final PropertyName cardsName =
-            new PropertyName("cards");
     private final PropertyName categoriesName = 
             new PropertyName("categories");
     private final PropertyName categoryGapName = 
@@ -1799,11 +1797,6 @@ public class Metadata {
                 true, /* readWrite */
                 false, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 46));
-    private final ComponentPropertyMetadata cards_Node_PropertyMetadata =
-            new ComponentPropertyMetadata(
-                cardsName,
-                NodeMetadata,
-                true); /* collection */
     private final ValuePropertyMetadata categoriesPropertyMetadata =
             new StringListPropertyMetadata(
                 categoriesName,
@@ -4942,7 +4935,7 @@ public class Metadata {
         CanvasMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         CanvasMetadata.getProperties().add(width_Double_0_PropertyMetadata);
 
-        CardPaneMetadata.getProperties().add(cards_Node_PropertyMetadata);
+        CardPaneMetadata.getProperties().add(items_Node_PropertyMetadata);
 
         CategoryAxisMetadata.getProperties().add(categoriesPropertyMetadata);
         CategoryAxisMetadata.getProperties().add(categorySpacingPropertyMetadata);

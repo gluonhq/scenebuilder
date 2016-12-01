@@ -155,7 +155,7 @@ public class ComponentClassMetadata extends ClassMetadata {
          * ------------ Gluon ------------------
          *
          * BottomNavigation             actionItems
-         * CardPane                     cards
+         * CardPane                     items
          * DropdownButton               items
          * ExpansionPanelContainer      items
          * ToggleButtonGroup            toggles
@@ -203,7 +203,7 @@ public class ComponentClassMetadata extends ClassMetadata {
         } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
             result = actionItemsName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.CardPane.class) {
-            result = cardsName;
+            result = itemsName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class) {
             result = itemsName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class) {
@@ -229,7 +229,6 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName childrenName = new PropertyName("children");
     // Gluon
     private static final PropertyName actionItemsName = new PropertyName("actionItems");
-    private static final PropertyName cardsName = new PropertyName("cards");
     private static final PropertyName togglesName = new PropertyName("toggles");
     private static final PropertyName titleNodesName = new PropertyName("titleNodes");
 
