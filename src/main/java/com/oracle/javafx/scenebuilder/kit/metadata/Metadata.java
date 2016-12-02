@@ -37,6 +37,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
  */
 
 import com.gluonhq.charm.glisten.control.BottomNavigation;
+import com.gluonhq.charm.glisten.control.SettingsPane;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
@@ -335,6 +336,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.PieChart.class, ChartMetadata);
     private final ComponentClassMetadata ScatterChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.ScatterChart.class, XYChartMetadata);
+    private final ComponentClassMetadata SettingsPaneMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.SettingsPane.class, ControlMetadata);
     private final ComponentClassMetadata StackedAreaChartMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.StackedAreaChart.class, XYChartMetadata);
     private final ComponentClassMetadata StackedBarChartMetadata = 
@@ -485,6 +488,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.shape.MeshView.class, Shape3DMetadata);
     private final ComponentClassMetadata MoveToMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.MoveTo.class, PathElementMetadata);
+    private final ComponentClassMetadata OptionMetadata =
+            new ComponentClassMetadata(com.gluonhq.charm.glisten.control.settings.Option.class, null);
     private final ComponentClassMetadata PathMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.Path.class, ShapeMetadata);
     private final ComponentClassMetadata PolygonMetadata = 
@@ -979,6 +984,8 @@ public class Metadata {
             new PropertyName("opacity");
     private final PropertyName opaqueInsetsName = 
             new PropertyName("opaqueInsets");
+    private final PropertyName optionsName =
+            new PropertyName("options");
     private final PropertyName orientationName = 
             new PropertyName("orientation");
     private final PropertyName paddingName = 
@@ -1065,6 +1072,8 @@ public class Metadata {
             new PropertyName("scrollLeft");
     private final PropertyName scrollTopName = 
             new PropertyName("scrollTop");
+    private final PropertyName searchBoxVisibleName =
+            new PropertyName("searchBoxVisible");
     private final PropertyName selectedName = 
             new PropertyName("selected");
     private final PropertyName selectionTypeName =
@@ -1183,6 +1192,8 @@ public class Metadata {
             new PropertyName("tileHeight");
     private final PropertyName tileWidthName = 
             new PropertyName("tileWidth");
+    private final PropertyName titleFilterName =
+            new PropertyName("titleFilter");
     private final PropertyName titleName = 
             new PropertyName("title");
     private final PropertyName titleNodesName =
@@ -3168,6 +3179,11 @@ public class Metadata {
                 true, /* readWrite */
                 null, /* defaultValue */
                 new InspectorPath("Properties", "Node", 12));
+    private final ComponentPropertyMetadata options_Option_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                optionsName,
+                OptionMetadata,
+                true); /* collection */
     private final ValuePropertyMetadata orientation_HORIZONTAL_PropertyMetadata =
             new EnumerationPropertyMetadata(
                 orientationName,
@@ -3503,6 +3519,12 @@ public class Metadata {
                 true, /* readWrite */
                 0.0, /* defaultValue */
                 new InspectorPath("Properties", "Text", 17));
+    private final ValuePropertyMetadata searchBoxVisiblePropertyMetadata =
+            new BooleanPropertyMetadata(
+                searchBoxVisibleName,
+                true, /* readWrite */
+                true, /* defaultValue */
+                new InspectorPath("Properties", "Specific", 0));
     private final ValuePropertyMetadata selectionTypePropertyMetadata =
             new EnumerationPropertyMetadata(
                 selectionTypeName,
@@ -4219,6 +4241,12 @@ public class Metadata {
                 false, /* readWrite */
                 null, /* No defaultValue for R/O property */
                 new InspectorPath("Layout", "Specific", 20));
+    private final ValuePropertyMetadata titleFilterPropertyMetadata =
+            new StringPropertyMetadata(
+                titleFilterName,
+                true, /* readWrite */
+                "",
+                new InspectorPath("Properties", "Specific", 1));
     private final ComponentPropertyMetadata titleNodes_Node_PropertyMetadata =
             new ComponentPropertyMetadata(
                 titleNodesName,
@@ -5565,6 +5593,10 @@ public class Metadata {
         SeparatorMenuItemMetadata.getProperties().add(content_Node_SEPARATOR_PropertyMetadata);
         SeparatorMenuItemMetadata.getProperties().add(hideOnClick_false_PropertyMetadata);
         SeparatorMenuItemMetadata.getProperties().add(styleClass_c23_PropertyMetadata);
+
+        SettingsPaneMetadata.getProperties().add(searchBoxVisiblePropertyMetadata);
+        SettingsPaneMetadata.getProperties().add(titleFilterPropertyMetadata);
+        SettingsPaneMetadata.getProperties().add(options_Option_PropertyMetadata);
 
         ShapeMetadata.getProperties().add(accessibleRole_NODE_PropertyMetadata);
         ShapeMetadata.getProperties().add(fill_BLACK_PropertyMetadata);
