@@ -1100,7 +1100,9 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         }
         
         super.openWindow();
-        
+        if (!EditorPlatform.IS_MAC) {
+            getStage().setMaximized(true);
+        }
         // Give focus to the library search TextField
         assert librarySearchController != null;
         librarySearchController.requestFocus();
