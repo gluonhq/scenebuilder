@@ -56,7 +56,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class WelcomeDialog extends Dialog {
-    private static final String HEADER_IMAGE = WelcomeDialog.class.getResource("gluon_scene_builder.png").toString();
+    private static final String HEADER_IMAGE = WelcomeDialog.class.getResource("SB_Logo.png").toString();
 
     private static final String NEW_DESKTOP_PROJECT_ICON = WelcomeDialog.class.getResource("earthGlobalSolu.png").toString();
 //    private static final String NEW_DESKTOP_AND_MOBILE_PROJ_ICON = WelcomeDialog.class.getResource("checkListDevice.png").toString();
