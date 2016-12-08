@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -122,6 +123,14 @@ public abstract class AutoSuggestEditor extends PropertyEditor {
         if (type == Type.ALPHA) {
             root = EditorUtils.loadFxml("StringAutoSuggestEditor.fxml", this); //NOI18N
             assert textField != null;
+            // Select all text when selected
+            textField.setOnMousePressed(event -> textField.selectAll());
+            textField.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    textField.selectAll();
+                }
+            }));
+
             entryField = textField;
         } else if (type == Type.DOUBLE) {
             root = EditorUtils.loadFxml("DoubleAutoSuggestEditor.fxml", this); //NOI18N
@@ -151,6 +160,7 @@ public abstract class AutoSuggestEditor extends PropertyEditor {
 //        suggestedLv.prefWidthProperty().bind(entryField.widthProperty());
 
         updateMenuButtonIfNeeded();
+
     }
 
     @Override
@@ -381,5 +391,4 @@ public abstract class AutoSuggestEditor extends PropertyEditor {
             menuButton.getItems().add(menuItem);
         }
     }
-
 }

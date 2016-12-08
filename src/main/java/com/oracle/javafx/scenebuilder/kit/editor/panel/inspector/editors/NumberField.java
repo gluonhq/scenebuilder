@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,6 +35,8 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 
 /**
@@ -45,6 +48,13 @@ public abstract class NumberField extends TextField {
     List<String> constants = new ArrayList<>();
     
     public NumberField() {
+        // Select all text when this editor is selected
+        setOnMousePressed(event -> selectAll());
+        focusedProperty().addListener((ChangeListener<Boolean>) (ov, prevVal, newVal) -> {
+            if (newVal) {
+                selectAll();
+            }
+        });
     }
 
     public void setConstants(List<String> constants) {

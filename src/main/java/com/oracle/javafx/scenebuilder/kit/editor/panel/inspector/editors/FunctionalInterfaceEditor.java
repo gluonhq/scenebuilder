@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class FunctionalInterfaceEditor extends  AutoSuggestEditor {
+public class FunctionalInterfaceEditor extends AutoSuggestEditor {
     private static final String HASH_STR = "#"; //NOI18N
     private final MenuItem controllerMethodMenuItem = new MenuItem(I18N.getString("inspector.event.menu.methodmode"));
     private final MenuItem scriptMenuItem = new MenuItem(I18N.getString("inspector.event.menu.scriptmode"));
