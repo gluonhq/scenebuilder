@@ -45,6 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.IOException;
@@ -111,5 +112,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
                 recordGlobal.setIgnoreVersion(latestVersion);
             }
         });
+
+        SBSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
     }
 }
