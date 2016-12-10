@@ -436,7 +436,13 @@ public class EditorUtils {
             methodName = "get" + propNameStr + "--"; //NOI18N
         }
 
-        String url = EditorPlatform.JAVADOC_HOME + clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
+        String url;
+        if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
+            url = EditorPlatform.GLUON_JAVADOC_HOME;
+        } else {
+            url = EditorPlatform.JAVADOC_HOME;
+        }
+        url += clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
         url += "#" + methodName; //NOI18N
         EditorPlatform.open(url);
     }

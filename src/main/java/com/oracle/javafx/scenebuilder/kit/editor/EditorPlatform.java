@@ -65,7 +65,17 @@ public class EditorPlatform {
      * True if current platform is running Windows.
      */
     public static final boolean IS_WINDOWS = osName.contains("windows"); //NOI18N
-    
+
+    /**
+     * Charm Glisten version
+     */
+    public static final String GLUON_CHARM_GLISTEN_VERSION = "4.2.0";
+
+    /**
+     * Gluon Glisten package
+     */
+    public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
+
     /**
      * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
      */
@@ -75,7 +85,11 @@ public class EditorPlatform {
      * Javadoc home (for Inspector and CSS Analyzer properties)
      */
     public final static String JAVADOC_HOME = "https://docs.oracle.com/javase/8/javafx/api/"; //NOI18N
-    
+
+    /**
+     * Gluon javadoc home (for Inspector and CSS Analyzer properties)
+     */
+    public final static String GLUON_JAVADOC_HOME = "http://docs.gluonhq.com/charm/javadoc/" + GLUON_CHARM_GLISTEN_VERSION +"/"; //NOI18N
 
     /**
      * Themes supported by Scene Builder Kit.

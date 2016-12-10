@@ -46,6 +46,7 @@ dependencies {
     compile 'org.eclipse.aether:aether-transport-http:1.1.0'
     compile 'org.apache.maven:maven-aether-provider:3.3.9'
 
+    // When changing the version below, EditorPlatform.GLUON_CHARM_GLISTEN_VERSION should also be changed
     compile 'com.gluonhq:charm-glisten:4.2.0'
 
 //    compile name: 'ScenicView'

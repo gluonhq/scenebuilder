@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -46,7 +47,6 @@ import javafx.scene.layout.Region;
  */
 public class BuiltinLibrary extends Library {
 
-    public static final String GLUON_PACKAGE      = "com.gluonhq.charm.glisten";
     public static final String GLUON_FILE_PREFIX = "Gluon_";
     // In SB 1.1 the section names of the Library have been localized. We assume
     // for now we stick to this approach, but fact is the support of custom
@@ -364,7 +364,7 @@ public class BuiltinLibrary extends Library {
         if (qualifier != null) {
             nameWithQualifier += qualifier;
         }
-        if (componentClass.getName().startsWith(GLUON_PACKAGE)) {
+        if (componentClass.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
             fxmlBaseName = GLUON_FILE_PREFIX + fxmlBaseName;
             iconName = GLUON_FILE_PREFIX + iconName;
         }
