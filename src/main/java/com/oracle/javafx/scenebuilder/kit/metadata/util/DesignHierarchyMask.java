@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,6 +39,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMProperty;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyC;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ComponentPropertyMetadata;
@@ -220,8 +222,12 @@ public class DesignHierarchyMask {
             }
         } else {
             // Default
-            final String className = sceneGraphObject.getClass().getSimpleName();
-            url = ImageUtils.getNodeIconURL(className + ".png"); //NOI18N
+            Class componentClass = sceneGraphObject.getClass();
+            String fileName = componentClass.getSimpleName();
+            if (componentClass.getName().startsWith(BuiltinLibrary.GLUON_PACKAGE)) {
+                fileName = BuiltinLibrary.GLUON_FILE_PREFIX + fileName;
+            }
+            url = ImageUtils.getNodeIconURL(fileName + ".png"); //NOI18N
         }
         return url;
     }
