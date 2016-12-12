@@ -296,6 +296,7 @@ class LibraryFolderWatcher implements Runnable {
         //  2) we explore all the jars
         //  3) we construct a list of library items
         //  4) we update the user library with the class loader and items
+        //  5) on startup only, we allow opening files that may/may not rely on the user library
 
         // 1)
         final ClassLoader classLoader;
@@ -328,6 +329,11 @@ class LibraryFolderWatcher implements Runnable {
                 .collect(Collectors.toList()));
         library.updateJarReports(new ArrayList<>(jarReports));
         library.updateExplorationDate(new Date());
+        
+        // 5
+        // Fix for #45: mark end of first exploration
+        library.updateFirstExplorationCompleted();
+                
     }
     
     
