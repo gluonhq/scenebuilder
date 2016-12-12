@@ -82,7 +82,7 @@ import javafx.stage.Stage;
  *
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
-    public static final String VERSION = "8.2.0";
+    public static final String VERSION = "8.3.0";
 
     public enum ApplicationControlAction {
 
