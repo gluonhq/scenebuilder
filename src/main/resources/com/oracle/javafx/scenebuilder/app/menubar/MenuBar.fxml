@@ -291,6 +291,8 @@
               <items>
                   <RadioMenuItem fx:id="preferredPreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.preferred" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="phonePreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.phone" />
+                  <RadioMenuItem fx:id="tabletPreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.tablet" />
                   <RadioMenuItem fx:id="qvgaPreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.qvga" />
                   <RadioMenuItem fx:id="vgaPreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.vga" />
                   <RadioMenuItem fx:id="touchPreviewSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.touch" />

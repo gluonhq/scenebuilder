@@ -356,6 +356,10 @@ public class MenuBarController {
     @FXML
     private MenuItem revealResourceMenuItem;
     @FXML
+    private RadioMenuItem phonePreviewSizeMenuItem;
+    @FXML
+    private RadioMenuItem tabletPreviewSizeMenuItem;
+    @FXML
     private RadioMenuItem qvgaPreviewSizeMenuItem;
     @FXML
     private RadioMenuItem vgaPreviewSizeMenuItem;
@@ -619,6 +623,8 @@ public class MenuBarController {
         assert setResourceMenuItem != null;
         assert removeResourceMenuItem != null;
         assert revealResourceMenuItem != null;
+        assert phonePreviewSizeMenuItem != null;
+        assert tabletPreviewSizeMenuItem != null;
         assert qvgaPreviewSizeMenuItem != null;
         assert vgaPreviewSizeMenuItem != null;
         assert touchPreviewSizeMenuItem != null;
@@ -1090,11 +1096,13 @@ public class MenuBarController {
                 return title;
             }
         });
-        qvgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_320x240));
-        vgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_640x480));
-        touchPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_1280x800));
-        hdPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_1920x1080));
-        preferredPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_PREFERRED));
+        phonePreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_335x600));
+        tabletPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_900x600));
+        qvgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_320x240));
+        vgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_640x480));
+        touchPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_1280x800));
+        hdPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_1920x1080));
+        preferredPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_PREFERRED));
 
         /*
          * Window menu : it is setup after the other menus
