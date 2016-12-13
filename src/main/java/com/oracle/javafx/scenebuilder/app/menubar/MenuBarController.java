@@ -258,6 +258,10 @@ public class MenuBarController {
     @FXML
     private MenuItem decreaseColumnSpanMenuItem;
     @FXML
+    private MenuItem phoneSetSizeMenuItem;
+    @FXML
+    private MenuItem tabletSetSizeMenuItem;
+    @FXML
     private RadioMenuItem qvgaSetSizeMenuItem;
     @FXML
     private RadioMenuItem vgaSetSizeMenuItem;
@@ -566,6 +570,8 @@ public class MenuBarController {
         assert decreaseRowSpanMenuItem != null;
         assert increaseColumnSpanMenuItem != null;
         assert decreaseColumnSpanMenuItem != null;
+        assert phoneSetSizeMenuItem != null;
+        assert tabletSetSizeMenuItem != null;
         assert qvgaSetSizeMenuItem != null;
         assert vgaSetSizeMenuItem != null;
         assert touchSetSizeMenuItem != null;
@@ -919,6 +925,21 @@ public class MenuBarController {
         decreaseRowSpanMenuItem.setUserData(new EditActionController(EditAction.DECREASE_ROW_SPAN));
         increaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.INCREASE_COLUMN_SPAN));
         decreaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.DECREASE_COLUMN_SPAN));
+
+        phoneSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_335x600) {
+            @Override
+            public void perform() {
+                super.perform();
+                updatePreviewWindowSize(Size.SIZE_335x600);
+            }
+        });
+        tabletSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_900x600) {
+            @Override
+            public void perform() {
+                super.perform();
+                updatePreviewWindowSize(Size.SIZE_900x600);
+            }
+        });
         qvgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_320x240) {
             @Override
             public void perform() {

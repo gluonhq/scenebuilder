@@ -535,6 +535,12 @@ public final class PreviewWindowController extends AbstractWindowController {
         double res = WIDTH_WHEN_EMPTY;
         
         switch (size) {
+            case SIZE_335x600:
+                res = 335.0;
+                break;
+            case SIZE_900x600:
+                res = 900.0;
+                break;
             case SIZE_1280x800:
                 res = 1280.0;
                 break;
@@ -561,6 +567,12 @@ public final class PreviewWindowController extends AbstractWindowController {
         double res = HEIGHT_WHEN_EMPTY;
         
         switch (size) {
+            case SIZE_335x600:
+                res = 600.0;
+                break;
+            case SIZE_900x600:
+                res = 600.0;
+                break;
             case SIZE_1280x800:
                 res = 800.0;
                 break;

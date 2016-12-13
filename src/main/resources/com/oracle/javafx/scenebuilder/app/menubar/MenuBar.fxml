@@ -176,6 +176,8 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <Menu fx:id="sizeMenu" mnemonicParsing="true" text="%menu.title.size">
               <items>
+                  <RadioMenuItem fx:id="phoneSetSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.phone" />
+                  <RadioMenuItem fx:id="tabletSetSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.tablet" />
                   <RadioMenuItem fx:id="qvgaSetSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.qvga" />
                   <RadioMenuItem fx:id="vgaSetSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.vga" />
                   <RadioMenuItem fx:id="touchSetSizeMenuItem" mnemonicParsing="false" text="%menu.title.size.touch" />

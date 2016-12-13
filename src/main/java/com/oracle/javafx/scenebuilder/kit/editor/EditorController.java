@@ -158,6 +158,8 @@ public class EditorController {
         USE_COMPUTED_SIZES,
         ADD_CONTEXT_MENU,
         ADD_TOOLTIP,
+        SET_SIZE_335x600,
+        SET_SIZE_900x600,
         SET_SIZE_320x240,
         SET_SIZE_640x480,
         SET_SIZE_1280x800,
@@ -227,6 +229,8 @@ public class EditorController {
      * under user control.
      */
     public enum Size {
+        SIZE_335x600,
+        SIZE_900x600,
         SIZE_320x240,
         SIZE_640x480,
         SIZE_1280x800,
@@ -1083,6 +1087,16 @@ public class EditorController {
                 jobManager.push(job);
                 break;
             }
+            case SET_SIZE_335x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_335x600);
+                jobManager.push(job);
+                break;
+            }
+            case SET_SIZE_900x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_900x600);
+                jobManager.push(job);
+                break;
+            }
             case SET_SIZE_320x240: {
                 final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_320x240);
                 jobManager.push(job);
@@ -1322,6 +1336,16 @@ public class EditorController {
             }
             case SEND_TO_BACK: {
                 final SendToBackJob job = new SendToBackJob(this);
+                result = job.isExecutable();
+                break;
+            }
+            case SET_SIZE_335x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_335x600);
+                result = job.isExecutable();
+                break;
+            }
+            case SET_SIZE_900x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_900x600);
                 result = job.isExecutable();
                 break;
             }
