@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -360,6 +361,50 @@ public class MenuBarController {
     private RadioMenuItem hdPreviewSizeMenuItem;
     @FXML
     private RadioMenuItem preferredPreviewSizeMenuItem;
+
+    @FXML
+    private RadioMenuItem blueSwatch;
+    @FXML
+    private RadioMenuItem cyanSwatch;
+    @FXML
+    private RadioMenuItem deepOrangeSwatch;
+    @FXML
+    private RadioMenuItem deepPurpleSwatch;
+    @FXML
+    private RadioMenuItem greenSwatch;
+    @FXML
+    private RadioMenuItem indigoSwatch;
+    @FXML
+    private RadioMenuItem lightBlueSwatch;
+    @FXML
+    private RadioMenuItem pinkSwatch;
+    @FXML
+    private RadioMenuItem purpleSwatch;
+    @FXML
+    private RadioMenuItem redSwatch;
+    @FXML
+    private RadioMenuItem tealSwatch;
+    @FXML
+    private RadioMenuItem lightGreenSwatch;
+    @FXML
+    private RadioMenuItem limeSwatch;
+    @FXML
+    private RadioMenuItem yellowSwatch;
+    @FXML
+    private RadioMenuItem amberSwatch;
+    @FXML
+    private RadioMenuItem orangeSwatch;
+    @FXML
+    private RadioMenuItem brownSwatch;
+    @FXML
+    private RadioMenuItem greySwatch;
+    @FXML
+    private RadioMenuItem blueGreySwatch;
+
+    @FXML
+    private RadioMenuItem lightTheme;
+    @FXML
+    private RadioMenuItem darkTheme;
 
     // Window
     // Help
@@ -961,6 +1006,28 @@ public class MenuBarController {
         modenaHighContrastBlackonwhiteThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE));
         modenaHighContrastWhiteonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK));
         modenaHighContrastYellowonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK));
+
+        blueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE));
+        cyanSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.CYAN));
+        deepOrangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_ORANGE));
+        deepPurpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_PURPLE));
+        greenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREEN));
+        indigoSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.INDIGO));
+        lightBlueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_BLUE));
+        pinkSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PINK));
+        purpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PURPLE));
+        redSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.RED));
+        tealSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.TEAL));
+        lightGreenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_GREEN));
+        limeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIME));
+        yellowSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.YELLOW));
+        amberSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.AMBER));
+        orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
+        brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
+        greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
+
+        lightTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.LIGHT));
+        darkTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.DARK));
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
@@ -2185,6 +2252,55 @@ public class MenuBarController {
                 }
             }
 
+            return res;
+        }
+    }
+
+    class GluonActionController extends MenuItemController {
+
+        private EditorPlatform.GluonSwatch gluonSwatch;
+        private EditorPlatform.GluonTheme gluonTheme;
+
+        public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
+            this.gluonSwatch = gluonSwatch;
+            this.gluonTheme = null;
+        }
+
+        public GluonActionController(EditorPlatform.GluonTheme gluonTheme) {
+            this.gluonTheme = gluonTheme;
+            this.gluonSwatch = null;
+
+        }
+
+        @Override
+        public boolean canPerform() {
+            EditorPlatform.Theme currentTheme
+                    = documentWindowController.getEditorController().getTheme();
+            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE);
+        }
+
+        @Override
+        public void perform() {
+            if (gluonTheme != null) {
+                documentWindowController.getEditorController().setGluonTheme(gluonTheme);
+            }
+            if (gluonSwatch != null) {
+                documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
+            }
+        }
+
+        @Override
+        public boolean isSelected() {
+            boolean res = false;
+            if (documentWindowController == null) {
+                res = false;
+            } else {
+                if (gluonTheme != null) {
+                    res = gluonTheme == documentWindowController.getEditorController().getGluonTheme();
+                } else if (gluonSwatch != null) {
+                    res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
+                }
+            }
             return res;
         }
     }

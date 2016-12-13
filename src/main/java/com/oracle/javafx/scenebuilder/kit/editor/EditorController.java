@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -260,6 +261,10 @@ public class EditorController {
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Theme> themeProperty
             = new SimpleObjectProperty<>(Theme.GLUON_MOBILE);
+    private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
+            = new SimpleObjectProperty<>(EditorPlatform.GluonTheme.LIGHT);
+    private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
+            = new SimpleObjectProperty<>(EditorPlatform.GluonSwatch.BLUE);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty
@@ -555,7 +560,65 @@ public class EditorController {
     public ObservableValue<Theme> themeProperty() {
         return themeProperty;
     }
-    
+
+    /**
+     * Returns the gluon theme used by this editor
+     *
+     * @return the gluon theme used by this editor
+     */
+    public EditorPlatform.GluonTheme getGluonTheme() {
+        return gluonThemeProperty.get();
+    }
+
+    /**
+     * Sets the gluon theme used by this editor.
+     * Content and Preview panels sharing this editor will update
+     * their content to use this new theme.
+     *
+     * @param theme the theme to be used in this editor
+     */
+    public void setGluonTheme(EditorPlatform.GluonTheme theme) {
+        gluonThemeProperty.set(theme);
+    }
+
+    /**
+     * The property holding the gluon theme used by this editor
+     *
+     * @return the property holding the gluon theme used by this editor.
+     */
+    public ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty() {
+        return gluonThemeProperty;
+    }
+
+    /**
+     * Sets the gluon swatch used by this editor.
+     * Content and Preview panels sharing this editor will update
+     * their content to use this new swatch.
+     *
+     * @param swatch the swatch to be used in this editor
+     */
+    public void setGluonSwatch(EditorPlatform.GluonSwatch swatch) {
+        gluonSwatchProperty.set(swatch);
+    }
+
+    /**
+     * Returns the gluon swatch used by this editor
+     *
+     * @return the gluon swatch used by this editor
+     */
+    public EditorPlatform.GluonSwatch getGluonSwatch() {
+        return gluonSwatchProperty.get();
+    }
+
+    /**
+     * The property holding the gluon swatch used by this editor
+     *
+     * @return the property holding the gluon swatch used by this editor.
+     */
+    public ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty() {
+        return gluonSwatchProperty;
+    }
+
     /**
      * 
      * @return the list of scene style sheet used by this editor

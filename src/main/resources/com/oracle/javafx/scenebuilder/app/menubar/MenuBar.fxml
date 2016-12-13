@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2016, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -234,6 +235,32 @@
                 <RadioMenuItem fx:id="caspianEmbeddedQVGAThemeMenuItem" mnemonicParsing="false" text="%menu.title.theme.caspian.embedded.qvga" />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <CheckMenuItem fx:id="caspianHighContrastThemeMenuItem" mnemonicParsing="false" text="%menu.title.theme.caspian.high.contrast" />
+              </items>
+            </Menu>
+            <Menu fx:id="gluonThemeMenu" mnemonicParsing="true" text="%menu.title.gluon" >
+              <items>
+                <RadioMenuItem fx:id="blueSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.blue" />
+                <RadioMenuItem fx:id="cyanSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.cyan" />
+                <RadioMenuItem fx:id="deepOrangeSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.deep_orange" />
+                <RadioMenuItem fx:id="deepPurpleSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.deep_purple" />
+                <RadioMenuItem fx:id="greenSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.green" />
+                <RadioMenuItem fx:id="indigoSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.indigo" />
+                <RadioMenuItem fx:id="lightBlueSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.light_blue" />
+                <RadioMenuItem fx:id="pinkSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.pink" />
+                <RadioMenuItem fx:id="purpleSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.purple" />
+                <RadioMenuItem fx:id="redSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.red" />
+                <RadioMenuItem fx:id="tealSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.teal" />
+                <RadioMenuItem fx:id="lightGreenSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.lightGreen" />
+                <RadioMenuItem fx:id="limeSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.lime" />
+                <RadioMenuItem fx:id="yellowSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.yellow" />
+                <RadioMenuItem fx:id="amberSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.amber" />
+                <RadioMenuItem fx:id="orangeSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.orange" />
+                <RadioMenuItem fx:id="brownSwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.brown" />
+                <RadioMenuItem fx:id="greySwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.grey" />
+                <RadioMenuItem fx:id="blueGreySwatch" mnemonicParsing="false" text="%menu.title.gluon.swatch.blue_grey" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <RadioMenuItem fx:id="lightTheme" mnemonicParsing="false" text="%menu.title.gluon.theme.light" />
+                <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" text="%menu.title.gluon.theme.dark" />
               </items>
             </Menu>
             <Menu fx:id="styleSheetMenu" mnemonicParsing="true" text="%menu.title.scene.stylesheets">

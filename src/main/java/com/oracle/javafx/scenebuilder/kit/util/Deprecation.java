@@ -87,8 +87,31 @@ public class Deprecation {
 
     // Gluon
     public static final String GLUON_STYLESHEET = "glisten.gls";
+    // -- swatches
     public static final String GLUON_BLUE_SWATCH = "swatch_blue.gls";
+    public static final String GLUON_CYAN_SWATCH = "swatch_cyan.gls";
+    public static final String GLUON_DEEP_ORANGE_SWATCH = "swatch_deep_orange.gls";
+    public static final String GLUON_DEEP_PURPLE_SWATCH = "swatch_deep_purple.gls";
+    public static final String GLUON_GREEN_SWATCH = "swatch_green.gls";
+    public static final String GLUON_INDIGO_SWATCH = "swatch_indigo.gls";
+    public static final String GLUON_LIGHT_BLUE_SWATCH = "swatch_light_blue.gls";
+    public static final String GLUON_PINK_SWATCH = "swatch_pink.gls";
+    public static final String GLUON_PURPLE_SWATCH = "swatch_purple.gls";
+    public static final String GLUON_RED_SWATCH = "swatch_red.gls";
+    public static final String GLUON_TEAL_SWATCH = "swatch_teal.gls";
+    public static final String GLUON_LIGHT_GREEN_SWATCH = "swatch_light_green.gls";
+    public static final String GLUON_LIME_SWATCH = "swatch_lime.gls";
+    public static final String GLUON_YELLOW_SWATCH = "swatch_yellow.gls";
+    public static final String GLUON_AMBER_SWATCH = "swatch_amber.gls";
+    public static final String GLUON_ORANGE_SWATCH = "swatch_orange.gls";
+    public static final String GLUON_BROWN_SWATCH = "swatch_brown.gls";
+    public static final String GLUON_GREY_SWATCH = "swatch_grey.gls";
+    public static final String GLUON_BLUE_GREY_SWATCH = "swatch_blue_grey.gls";
+    // -- themes
     public static final String GLUON_LIGHT_THEME = "theme_light.gls";
+    public static final String GLUON_DARK_THEME = "theme_dark.gls";
+    // -- scene builder specific tweaks to Gluon theme
+    public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
 
     // Deprecated stuff in Node
 //    // RT-21247 : Promote impl_getAllParentStylesheets to public API

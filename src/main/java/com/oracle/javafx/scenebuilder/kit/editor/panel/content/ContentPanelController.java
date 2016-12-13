@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -148,8 +149,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
     private Paint pringColor = Color.rgb(238, 168, 47);
     private Paint guidesColor = Color.RED;
     
-    private final WorkspaceController workspaceController
-            = new WorkspaceController();
+    private WorkspaceController workspaceController;
     private final HudWindowController hudWindowController
             = new HudWindowController();
 
@@ -175,6 +175,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         super(ContentPanelController.class.getResource("ContentPanel.fxml"), I18N.getBundle(), editorController); //NOI18N
         this.editModeController = new EditModeController(this);
         this.pickModeController = new PickModeController(this);
+        this.workspaceController = new WorkspaceController(editorController);
         
         editorController.getDragController().dragSourceProperty().addListener((ChangeListener<AbstractDragSource>) (ov, t, t1) -> dragSourceDidChange()
         );
@@ -184,6 +185,10 @@ public class ContentPanelController extends AbstractFxmlPanelController
         
         editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> themeDidChange()
         );
+
+        editorController.gluonSwatchProperty().addListener(((observable, oldValue, newValue) -> themeDidChange()));
+
+        editorController.gluonThemeProperty().addListener(((observable, oldValue, newValue) -> themeDidChange()));
         
         editorController.sceneStyleSheetProperty().addListener((ListChangeListener<File>) change -> sceneStyleSheetsDidChange()
         );
@@ -1024,8 +1029,10 @@ public class ContentPanelController extends AbstractFxmlPanelController
     private void themeDidChange() {
         if (contentGroup != null) {
             final EditorPlatform.Theme theme = getEditorController().getTheme();
+            final EditorPlatform.GluonSwatch gluonSwatch = getEditorController().getGluonSwatch();
+            final EditorPlatform.GluonTheme gluonTheme = getEditorController().getGluonTheme();
             final String themeStyleSheet = EditorPlatform.getThemeStylesheetURL(theme);
-            workspaceController.setThemeStyleSheet(themeStyleSheet, theme);
+            workspaceController.setThemeStyleSheet(themeStyleSheet, theme, gluonSwatch, gluonTheme);
         }
     }
     
