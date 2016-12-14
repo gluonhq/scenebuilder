@@ -128,7 +128,7 @@ public class BuiltinLibrary extends Library {
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.CardPane.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.CharmListView.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Chip.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, TAG_GLUON);
+        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.Dialog.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.DropdownButton.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.class, TAG_GLUON);
