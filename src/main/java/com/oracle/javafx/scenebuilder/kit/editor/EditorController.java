@@ -264,7 +264,7 @@ public class EditorController {
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<>(Theme.GLUON_MOBILE);
+            = new SimpleObjectProperty<>(Theme.MODENA);
     private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
             = new SimpleObjectProperty<>(EditorPlatform.GluonTheme.LIGHT);
     private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
