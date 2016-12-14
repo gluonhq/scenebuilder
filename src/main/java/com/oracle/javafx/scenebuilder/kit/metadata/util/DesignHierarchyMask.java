@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMCollection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
@@ -224,7 +225,7 @@ public class DesignHierarchyMask {
             // Default
             Class componentClass = sceneGraphObject.getClass();
             String fileName = componentClass.getSimpleName();
-            if (componentClass.getName().startsWith(BuiltinLibrary.GLUON_PACKAGE)) {
+            if (componentClass.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
                 fileName = BuiltinLibrary.GLUON_FILE_PREFIX + fileName;
             }
             url = ImageUtils.getNodeIconURL(fileName + ".png"); //NOI18N
