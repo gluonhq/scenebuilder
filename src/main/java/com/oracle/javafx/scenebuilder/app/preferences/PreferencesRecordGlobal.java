@@ -44,6 +44,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelContr
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,13 +92,19 @@ public class PreferencesRecordGlobal {
     private int recentItemsSize = DEFAULT_RECENT_ITEMS_SIZE;
     private final List<String> recentItems = new ArrayList<>();
 
+    private LocalDate showUpdateDialogDate = null;
+    private String ignoreVersion = null;
+
     private String registrationHash = null;
     private String registrationEmail = null;
     private boolean registrationOptIn = false;
 
+    private LocalDate lastSentTrackingInfoDate = null;
+
     private final Preferences applicationRootPreferences;
 
     final static Integer[] recentItemsSizes = {5, 10, 15, 20};
+
 
     public enum BackgroundImage {
 
@@ -378,6 +385,33 @@ public class PreferencesRecordGlobal {
         cpc.setGuidesColor(alignmentGuidesColor);
     }
 
+    public void setShowUpdateDialogAfter(LocalDate showUpdateDialogDate) {
+        this.showUpdateDialogDate = showUpdateDialogDate;
+        writeToJavaPreferences(UPDATE_DIALOG_DATE);
+    }
+
+    public LocalDate getShowUpdateDialogDate() {
+        return showUpdateDialogDate;
+    }
+
+    public void setIgnoreVersion(String ignoreVersion) {
+        this.ignoreVersion = ignoreVersion;
+        writeToJavaPreferences(IGNORE_VERSION);
+    }
+
+    public String getIgnoreVersion() {
+        return ignoreVersion;
+    }
+
+    public LocalDate getLastSentTrackingInfoDate() {
+        return lastSentTrackingInfoDate;
+    }
+
+    public void setLastSentTrackingInfoDate(LocalDate date) {
+        lastSentTrackingInfoDate = date;
+        writeToJavaPreferences(LAST_SENT_TRACKING_INFO_DATE);
+    }
+
     public void refreshBackgroundImage(DocumentWindowController dwc) {
         // Background images
         dwc.getContentPanelController().setWorkspaceBackground(getImage(backgroundImage));
@@ -573,6 +607,22 @@ public class PreferencesRecordGlobal {
         setRegistrationEmail(registrationEmail);
         final boolean registrationOptIn = applicationRootPreferences.getBoolean(REGISTRATION_OPT_IN, false);
         setRegistrationOptIn(registrationOptIn);
+
+        // Update dialog
+        String updateDialogDate = applicationRootPreferences.get(UPDATE_DIALOG_DATE, null);
+        if (updateDialogDate == null) {
+            showUpdateDialogDate = null;
+        } else {
+            showUpdateDialogDate = LocalDate.parse(updateDialogDate);
+        }
+        ignoreVersion = applicationRootPreferences.get(IGNORE_VERSION, null);
+
+        String dateString = applicationRootPreferences.get(LAST_SENT_TRACKING_INFO_DATE, null);
+        if (dateString == null) {
+            lastSentTrackingInfoDate = null;
+        } else {
+            lastSentTrackingInfoDate = LocalDate.parse(dateString);
+        }
     }
 
     public void writeToJavaPreferences(String key) {
@@ -626,6 +676,15 @@ public class PreferencesRecordGlobal {
                 break;
             case REGISTRATION_OPT_IN:
                 applicationRootPreferences.putBoolean(REGISTRATION_OPT_IN, isRegistrationOptIn());
+                break;
+            case UPDATE_DIALOG_DATE:
+                applicationRootPreferences.put(UPDATE_DIALOG_DATE, getShowUpdateDialogDate().toString());
+                break;
+            case IGNORE_VERSION:
+                applicationRootPreferences.put(IGNORE_VERSION, getIgnoreVersion());
+                break;
+            case LAST_SENT_TRACKING_INFO_DATE:
+                applicationRootPreferences.put(LAST_SENT_TRACKING_INFO_DATE, getLastSentTrackingInfoDate().toString());
                 break;
             default:
                 assert false;

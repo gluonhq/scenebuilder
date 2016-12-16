@@ -30,10 +30,7 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
 <ButtonBar prefWidth="200.0" prefHeight="40.0" xmlns:fx="http://javafx.com/fxml">
   <buttons>

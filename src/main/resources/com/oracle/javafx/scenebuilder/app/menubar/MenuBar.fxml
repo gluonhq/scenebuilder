@@ -221,6 +221,7 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <Menu fx:id="themeMenu" mnemonicParsing="true" text="%menu.title.theme">
               <items>
+                <RadioMenuItem fx:id="gluonMobileThemeMenuItem" mnemonicParsing="false" text="%menu.title.theme.gluon_mobile" />
                 <RadioMenuItem fx:id="modenaThemeMenuItem" mnemonicParsing="false" text="%menu.title.theme.modena" />
                 <RadioMenuItem fx:id="modenaTouchThemeMenuItem" mnemonicParsing="false" text="%menu.title.theme.modena.touch" />
                 <SeparatorMenuItem mnemonicParsing="false" />

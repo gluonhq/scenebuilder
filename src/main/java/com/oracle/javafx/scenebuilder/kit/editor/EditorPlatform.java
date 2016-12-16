@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,10 +32,12 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import javafx.scene.input.MouseEvent;
@@ -78,7 +81,7 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme {
-
+        GLUON_MOBILE,
         MODENA,
         MODENA_TOUCH,
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
@@ -108,6 +111,9 @@ public class EditorPlatform {
         switch (theme) {
             default:
                 result = null;
+                break;
+            case GLUON_MOBILE:
+                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_STYLESHEET);
                 break;
             case MODENA:
                 result = Deprecation.MODENA_STYLESHEET;
@@ -159,6 +165,19 @@ public class EditorPlatform {
 
         return result;
     }
+
+    public static List<String> getAdditionalStylesheetsURL(Theme theme) {
+        List<String> result;
+        switch(theme) {
+            case GLUON_MOBILE:
+                result = Arrays.asList(GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BLUE_SWATCH), GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_THEME));
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
+    }
     
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
@@ -202,6 +221,10 @@ public class EditorPlatform {
     
     public static boolean isCaspian(Theme theme) {
         return theme.toString().startsWith("CASPIAN");
+    }
+
+    public static boolean isGluonMobile(Theme theme) {
+        return theme.toString().startsWith("GLUON_MOBILE");
     }
 
     /**

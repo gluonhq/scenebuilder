@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -47,10 +48,12 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ColumnR
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.CursorEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DividerPositionsEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DoubleEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DurationEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EnumEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EventHandlerEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FunctionalInterfaceEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FxIdEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.GenericEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.I18nStringEditor;
@@ -63,6 +66,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Propert
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.RotateEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringListEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleClassEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StylesheetEditor;
@@ -90,9 +94,11 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BoundsProperty
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.CursorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FontPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropertyMetadata;
@@ -105,6 +111,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TreeTableViewR
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.EffectPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ListValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -235,6 +242,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> integerEditorPool = new Stack<>();
     private final Stack<Editor> booleanEditorPool = new Stack<>();
     private final Stack<Editor> enumEditorPool = new Stack<>();
+    private final Stack<Editor> durationEditorPool = new Stack<>();
     private final Stack<Editor> effectPopupEditorPool = new Stack<>();
     private final Stack<Editor> fontPopupEditorPool = new Stack<>();
     private final Stack<Editor> genericEditorPool = new Stack<>();
@@ -245,8 +253,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> styleEditorPool = new Stack<>();
     private final Stack<Editor> styleClassEditorPool = new Stack<>();
     private final Stack<Editor> stylesheetEditorPool = new Stack<>();
+    private final Stack<Editor> observableListStringEditorPool = new Stack<>();
     private final Stack<Editor> fxIdEditorPool = new Stack<>();
     private final Stack<Editor> eventHandlerEditorPool = new Stack<>();
+    private final Stack<Editor> functionalInterfaceEditorPool = new Stack<>();
     private final Stack<Editor> cursorEditorPool = new Stack<>();
     private final Stack<Editor> paintPopupEditorPool = new Stack<>();
     private final Stack<Editor> imageEditorPool = new Stack<>();
@@ -330,6 +340,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(IntegerEditor.class, integerEditorPool);
         editorPools.put(BooleanEditor.class, booleanEditorPool);
         editorPools.put(EnumEditor.class, enumEditorPool);
+        editorPools.put(DurationEditor.class, durationEditorPool);
         editorPools.put(EffectPopupEditor.class, effectPopupEditorPool);
         editorPools.put(FontPopupEditor.class, fontPopupEditorPool);
         editorPools.put(GenericEditor.class, genericEditorPool);
@@ -340,8 +351,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(StyleEditor.class, styleEditorPool);
         editorPools.put(StyleClassEditor.class, styleClassEditorPool);
         editorPools.put(StylesheetEditor.class, stylesheetEditorPool);
+        editorPools.put(StringListEditor.class, observableListStringEditorPool);
         editorPools.put(FxIdEditor.class, fxIdEditorPool);
         editorPools.put(EventHandlerEditor.class, eventHandlerEditorPool);
+        editorPools.put(FunctionalInterfaceEditor.class, functionalInterfaceEditorPool);
         editorPools.put(CursorEditor.class, cursorEditorPool);
         editorPools.put(PaintPopupEditor.class, paintPopupEditorPool);
         editorPools.put(ImageEditor.class, imageEditorPool);
@@ -1381,8 +1394,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(DividerPositionsEditor.class, propMeta);
                     break;
                 default:
-                    // Generic editor
-                    propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
+                    propertyEditor = makePropertyEditor(propMeta instanceof StringListPropertyMetadata? StringListEditor.class : GenericEditor.class, propMeta);
                     break;
             }
         } else if (propMeta instanceof DoublePropertyMetadata) {
@@ -1415,7 +1427,6 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     propertyEditor = makePropertyEditor(TextAlignmentEditor.class, propMeta);
                     break;
                 default:
-                    // Enum editor
                     propertyEditor = makePropertyEditor(EnumEditor.class, propMeta);
                     break;
             }
@@ -1428,6 +1439,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         } else if (propMeta instanceof EventHandlerPropertyMetadata) {
             // EventHandler editor
             propertyEditor = makePropertyEditor(EventHandlerEditor.class, propMeta);
+        } else if (propMeta instanceof FunctionalInterfacePropertyMetadata) {
+          // Functional Interface editor
+            propertyEditor = makePropertyEditor(FunctionalInterfaceEditor.class, propMeta);
         } else if (propMeta instanceof EffectPropertyMetadata) {
             // Effect editor
             propertyEditor = makePropertyEditor(EffectPopupEditor.class, propMeta);
@@ -1459,6 +1473,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         } else if (propMeta instanceof ToggleGroupPropertyMetadata) {
             // ToggleGroup editor
             propertyEditor = makePropertyEditor(ToggleGroupEditor.class, propMeta);
+        } else if (propMeta instanceof DurationPropertyMetadata) {
+            propertyEditor = makePropertyEditor(DurationEditor.class, propMeta);
         } else {
             // Generic editor
             propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
@@ -1827,6 +1843,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 propertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
+        } else if (editorClass == StringListEditor.class) {
+            if (propertyEditor != null) {
+                ((StringListEditor) propertyEditor).reset(propMeta, selectedClasses);
+            } else {
+                propertyEditor = new StringListEditor(propMeta, selectedClasses);
+            }
         } else if (editorClass == FxIdEditor.class) {
             String controllerClass = getControllerClass();
             if (propertyEditor != null) {
@@ -1845,6 +1867,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 ((EventHandlerEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             } else {
                 propertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            }
+        } else if (editorClass == FunctionalInterfaceEditor.class) {
+            if (propertyEditor != null) {
+                // "getSuggestedEventHandlers" (a method that already existed in SB code) isn't working right. It simply
+                // returns all the methods in the Controller class regardless of if they are good candidates for
+                // EventHandlers. We use if because at least this way we'll present all the methods available as
+                // auto-suggestions.
+                ((FunctionalInterfaceEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            } else {
+                propertyEditor = new FunctionalInterfaceEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == EffectPopupEditor.class) {
             if (propertyEditor != null) {
@@ -1923,6 +1955,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 ((ButtonTypeEditor) propertyEditor).reset(propMeta, selectedClasses);
             } else {
                 propertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
+            }
+        } else if (editorClass == DurationEditor.class) {
+            if (propertyEditor != null) {
+                ((DurationEditor) propertyEditor).reset(propMeta, selectedClasses);
+            } else {
+                propertyEditor = new DurationEditor(propMeta, selectedClasses);
             }
         } else {
             if (propertyEditor != null) {
