@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
+import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMCollection;
@@ -120,7 +121,12 @@ public class DesignHierarchyMask {
                 },
         // ExpansionPanel
         EXPANDED_CONTENT,
-        COLLAPSED_CONTENT
+        COLLAPSED_CONTENT,
+        // ExpandedPanel
+        EX_CONTENT {
+            @Override
+            public String toString() { return "CONTENT"; }
+        }
     }
     private static final PropertyName graphicName = new PropertyName("graphic");
     private static final PropertyName contentName = new PropertyName("content");
@@ -415,13 +421,24 @@ public class DesignHierarchyMask {
         switch (accessory) {
             case CONTENT:
             case GRAPHIC:
-                if (sceneGraphObject instanceof DialogPane == true) {
+                if (sceneGraphObject instanceof DialogPane == true || sceneGraphObject  instanceof ExpansionPanel.ExpandedPanel == true) {
                     return false;
                 }
                 break;
             case DP_CONTENT:
             case DP_GRAPHIC:
-                if (sceneGraphObject instanceof DialogPane == false) {
+                if (sceneGraphObject instanceof DialogPane == false || sceneGraphObject instanceof ExpansionPanel.ExpandedPanel == true) {
+                    return false;
+                }
+                break;
+            case EXPANDABLE_CONTENT:
+            case COLLAPSED_CONTENT:
+                if (sceneGraphObject instanceof ExpansionPanel == false) {
+                    return false;
+                }
+                break;
+            case EX_CONTENT:
+                if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel == false) {
                     return false;
                 }
                 break;
@@ -479,6 +496,7 @@ public class DesignHierarchyMask {
                 result = javafx.scene.control.TreeTableColumn.class;
                 break;
             case DP_CONTENT:
+            case EX_CONTENT:
             case EXPANDABLE_CONTENT:
             case DP_GRAPHIC:
             case HEADER:
@@ -671,6 +689,7 @@ public class DesignHierarchyMask {
                 break;
             case CONTENT:
             case DP_CONTENT:
+            case EX_CONTENT:
                 result = contentName;
                 break;
             case EXPANDABLE_CONTENT:
@@ -1046,6 +1065,7 @@ public class DesignHierarchyMask {
                 || this.isAcceptingAccessory(Accessory.LEFT))
                 && ! (fxomObject.getSceneGraphObject() instanceof MenuButton
                         || fxomObject.getSceneGraphObject() instanceof MenuBar
-                        || fxomObject.getSceneGraphObject() instanceof ToolBar); // Jerome
+                        || fxomObject.getSceneGraphObject() instanceof ToolBar
+                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.ExpandedPanel); // Jerome
     }
 }

@@ -286,6 +286,8 @@ public class HierarchyDNDController {
                         accessory = ((HierarchyItemDialogPane) item).getAccessory();
                     } else if (item instanceof HierarchyItemExpansionPanel) {
                         accessory = ((HierarchyItemExpansionPanel) item).getAccessory();
+                    } else if (item instanceof HierarchyItemExpandedPanel) {
+                        accessory = ((HierarchyItemExpandedPanel) item).getAccessory();
                     } else {
                         accessory = Accessory.GRAPHIC;
                     }
