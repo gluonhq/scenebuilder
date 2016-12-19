@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,8 @@ import com.oracle.javafx.scenebuilder.app.SplitController;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BOTTOM_DIVIDER_VPOS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BOTTOM_VISIBLE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.DOCUMENT_VISIBLE;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_SWATCH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.I18N_RESOURCE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.STAGE_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.INSPECTOR_SECTION_ID;
@@ -49,10 +52,12 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RIGHT_VISIBLE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.SCENE_STYLE_SHEETS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.STAGE_WIDTH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.X_POS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.Y_POS;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
 
@@ -114,6 +119,9 @@ public class PreferencesRecordDocument {
     private double leftDividerVPos = DEFAULT_LEFT_DIVIDER_VPOS;
     private final List<String> sceneStyleSheets = new ArrayList<>();
     private String I18NResource = null;
+    private EditorPlatform.Theme theme;
+    private EditorPlatform.GluonSwatch gluonSwatch;
+    private EditorPlatform.GluonTheme gluonTheme;
 
     private Preferences documentPreferences;
     private final Preferences documentsRootPreferences; // preference root node for all documents records
@@ -134,6 +142,7 @@ public class PreferencesRecordDocument {
         assert stage != null;
         stage.xProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> setXPos(t1.doubleValue()));
         stage.yProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> setYPos(t1.doubleValue()));
+
 
         // Add stage height and width listeners
         stage.heightProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> setStageHeight(t1.doubleValue()));
@@ -159,6 +168,11 @@ public class PreferencesRecordDocument {
         // Add scene style sheets listener
         final EditorController ec = documentWindowController.getEditorController();
         ec.sceneStyleSheetProperty().addListener(sceneStyleSheetsListener);
+
+        // Add theme and Gluon theme listener
+        ec.themeProperty().addListener(((observable, oldValue, newValue) -> setTheme(newValue)));
+        ec.gluonSwatchProperty().addListener(((observable, oldValue, newValue) -> setGluonSwatch(newValue)));
+        ec.gluonThemeProperty().addListener(((observable, oldValue, newValue) -> setGluonTheme(newValue)));
     }
     
     public void resetDocumentPreferences() {
@@ -313,6 +327,30 @@ public class PreferencesRecordDocument {
         }
     }
 
+    public void setTheme(EditorPlatform.Theme theme) {
+        this.theme = theme;
+    }
+
+    public EditorPlatform.Theme getTheme() {
+        return theme;
+    }
+
+    public void setGluonSwatch(EditorPlatform.GluonSwatch gluonSwatch) {
+        this.gluonSwatch = gluonSwatch;
+    }
+
+    public EditorPlatform.GluonSwatch getGluonSwatch() {
+        return gluonSwatch;
+    }
+
+    public void setGluonTheme(EditorPlatform.GluonTheme gluonTheme) {
+        this.gluonTheme = gluonTheme;
+    }
+
+    public EditorPlatform.GluonTheme getGluonTheme() {
+        return gluonTheme;
+    }
+
     public void refreshXPos() {
         if (xPos != UNDEFINED_POS) {
             documentWindowController.getStage().setX(xPos);
@@ -429,6 +467,33 @@ public class PreferencesRecordDocument {
         }
     }
 
+    public void refreshTheme() {
+        if (theme == null) {
+            return;
+        }
+
+        EditorController editorController = documentWindowController.getEditorController();
+        editorController.setTheme(theme);
+    }
+
+    public void refreshGluonSwatch() {
+        if (gluonSwatch == null) {
+            return;
+        }
+
+        EditorController editorController = documentWindowController.getEditorController();
+        editorController.setGluonSwatch(gluonSwatch);
+    }
+
+    public void refreshGluonTheme() {
+        if (gluonTheme == null) {
+            return;
+        }
+
+        EditorController editorController = documentWindowController.getEditorController();
+        editorController.setGluonTheme(gluonTheme);
+    }
+
     public void refresh() {
         refreshXPos();
         refreshYPos();
@@ -446,6 +511,9 @@ public class PreferencesRecordDocument {
         refreshLeftDividerVPos();
         refreshSceneStyleSheets();
         refreshI18NResource();
+        refreshTheme();
+        refreshGluonSwatch();
+        refreshGluonTheme();
     }
 
     /**
@@ -564,6 +632,28 @@ public class PreferencesRecordDocument {
         // I18NResource
         final String resource = documentPreferences.get(I18N_RESOURCE, null); //NOI18N
         setI18NResource(resource);
+
+        // Theme and Gluon Theme
+        final String theme = documentPreferences.get(THEME, null);
+        if (theme != null) {
+            setTheme(EditorPlatform.Theme.valueOf(theme));
+        } else {
+            setTheme(documentWindowController.getEditorController().getTheme());
+        }
+
+        final String gluonSwatch = documentPreferences.get(GLUON_SWATCH, null);
+        if (gluonSwatch != null) {
+            setGluonSwatch(EditorPlatform.GluonSwatch.valueOf(gluonSwatch));
+        } else {
+            setGluonSwatch(documentWindowController.getEditorController().getGluonSwatch());
+        }
+
+        final String gluonTheme = documentPreferences.get(GLUON_THEME, null);
+        if (gluonTheme != null) {
+            setGluonTheme(EditorPlatform.GluonTheme.valueOf(gluonTheme));
+        } else {
+            setGluonTheme(documentWindowController.getEditorController().getGluonTheme());
+        }
     }
 
     /**
@@ -641,6 +731,11 @@ public class PreferencesRecordDocument {
         } else {
             documentPreferences.remove(I18N_RESOURCE);
         }
+
+        // Theme and Gluon Theme
+        documentPreferences.put(THEME, getTheme().name());
+        documentPreferences.put(GLUON_SWATCH, getGluonSwatch().name());
+        documentPreferences.put(GLUON_THEME, getGluonTheme().name());
     }
 
     /**

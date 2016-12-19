@@ -33,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
+import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
@@ -95,54 +96,234 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme {
-        GLUON_MOBILE,
-        MODENA,
-        MODENA_TOUCH,
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK,
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK,
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE,
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK,
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK,
-        CASPIAN,
-        CASPIAN_HIGH_CONTRAST,
-        CASPIAN_EMBEDDED,
-        CASPIAN_EMBEDDED_HIGH_CONTRAST,
-        CASPIAN_EMBEDDED_QVGA,
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST
+        GLUON_MOBILE {
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.gluonmobile");
+            }
+        },
+        MODENA{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena");
+            }
+        },
+        MODENA_TOUCH{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.touch");
+            }
+        },
+        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.high.contrast.blackonwhite");
+            }
+        },
+        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.high.contrast.whiteonblack");
+            }
+        },
+        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.high.contrast.yellowonblack");
+            }
+        },
+        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.touch.high.contract.blackonwhite");
+            }
+        },
+        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.touch.high.contrast.whiteonblack");
+            }
+        },
+        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.modena.touch.high.contrast.yellowonblack");
+            }
+        },
+        CASPIAN{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian");
+            }
+        },
+        CASPIAN_HIGH_CONTRAST{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian.high.contrast");
+            }
+        },
+        CASPIAN_EMBEDDED{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian.embedded");
+            }
+        },
+        CASPIAN_EMBEDDED_HIGH_CONTRAST{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian.embedded.high.contrast");
+            }
+        },
+        CASPIAN_EMBEDDED_QVGA{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian.embedded.qvga");
+            }
+        },
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST{
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.caspian.embedded.qvga.high.contrast");
+            }
+        }
     }
 
     /**
      * Gluon Swatch
      */
     public enum GluonSwatch {
-        BLUE,
-        CYAN,
-        DEEP_ORANGE,
-        DEEP_PURPLE,
-        GREEN,
-        INDIGO,
-        LIGHT_BLUE,
-        PINK,
-        PURPLE,
-        RED,
-        TEAL,
-        LIGHT_GREEN,
-        LIME,
-        YELLOW,
-        AMBER,
-        ORANGE,
-        BROWN,
-        GREY,
-        BLUE_GREY;
+        BLUE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.blue");
+            }
+        },
+        CYAN{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.cyan");
+            }
+        },
+        DEEP_ORANGE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.deeporange");
+            }
+        },
+        DEEP_PURPLE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.deeppurple");
+            }
+        },
+        GREEN{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.green");
+            }
+        },
+        INDIGO{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.indigo");
+            }
+        },
+        LIGHT_BLUE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.lightblue");
+            }
+        },
+        PINK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.pink");
+            }
+        },
+        PURPLE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.purple");
+            }
+        },
+        RED{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.red");
+            }
+        },
+        TEAL{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.teal");
+            }
+        },
+        LIGHT_GREEN{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.lightgreen");
+            }
+        },
+        LIME{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.lime");
+            }
+        },
+        YELLOW{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.yellow");
+            }
+        },
+        AMBER{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.amber");
+            }
+        },
+        ORANGE{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.orange");
+            }
+        },
+        BROWN{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.brown");
+            }
+        },
+        GREY{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.grey");
+            }
+        },
+        BLUE_GREY{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.swatch.bluegrey");
+            }
+        };
     }
 
     /**
      * Gluon Theme
      */
     public enum GluonTheme {
-        LIGHT,
-        DARK;
+        LIGHT{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.theme.light");
+            }
+        },
+        DARK{
+            @Override
+            public String toString() {
+                return I18N.getString("title.gluon.theme.dark");
+            }
+        };
     }
 
     /**

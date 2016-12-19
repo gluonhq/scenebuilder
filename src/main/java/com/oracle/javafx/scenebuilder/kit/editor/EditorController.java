@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
@@ -264,11 +265,11 @@ public class EditorController {
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<>(Theme.MODENA);
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_THEME);
     private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
-            = new SimpleObjectProperty<>(EditorPlatform.GluonTheme.LIGHT);
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_GLUON_THEME);
     private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
-            = new SimpleObjectProperty<>(EditorPlatform.GluonSwatch.BLUE);
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_SWATCH);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty

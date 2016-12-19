@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,8 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BACKGROUND_IMAGE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_SWATCH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_WIDTH;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.HIERARCHY_DISPLAY_OPTION;
@@ -44,6 +47,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PARENT_RING_COLOR;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.BackgroundImage;
@@ -60,6 +64,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGl
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.recentItemsSizes;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DoubleField;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
@@ -114,6 +119,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private Rectangle parentRingGraphic;
     @FXML
     private ChoiceBox<Integer> recentItemsSize;
+    @FXML
+    private ChoiceBox<EditorPlatform.Theme> themes;
+    @FXML
+    private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
+    @FXML
+    private ChoiceBox<EditorPlatform.GluonTheme> gluonTheme;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -204,6 +215,19 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         cssAnalyzerColumnsOrder.getItems().setAll(Arrays.asList(CSSAnalyzerColumnsOrder.class.getEnumConstants()));
         cssAnalyzerColumnsOrder.setValue(recordGlobal.getCSSAnalyzerColumnsOrder());
         cssAnalyzerColumnsOrder.getSelectionModel().selectedItemProperty().addListener(new ColumnOrderListener());
+
+        // Theme and Gluon Theme
+        themes.getItems().setAll(Arrays.asList(EditorPlatform.Theme.class.getEnumConstants()));
+        themes.setValue(recordGlobal.getTheme());
+        themes.getSelectionModel().selectedItemProperty().addListener(new ThemesListener());
+
+        gluonSwatch.getItems().setAll(Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants()));
+        gluonSwatch.setValue(recordGlobal.getSwatch());
+        gluonSwatch.getSelectionModel().selectedItemProperty().addListener(new SwatchListener());
+
+        gluonTheme.getItems().setAll(Arrays.asList(EditorPlatform.GluonTheme.class.getEnumConstants()));
+        gluonTheme.setValue(recordGlobal.getGluonTheme());
+        gluonTheme.getSelectionModel().selectedItemProperty().addListener(new GluonThemeListener());
 
         // Number of open recent items
         recentItemsSize.getItems().setAll(recentItemsSizes);
@@ -353,6 +377,51 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.writeToJavaPreferences(CSS_TABLE_COLUMNS_ORDERING_REVERSED);
             // Update UI
             recordGlobal.refreshCSSAnalyzerColumnsOrder();
+        }
+    }
+
+    private static class ThemesListener implements ChangeListener<EditorPlatform.Theme> {
+        @Override
+        public void changed(ObservableValue<? extends EditorPlatform.Theme> observable, EditorPlatform.Theme oldValue, EditorPlatform.Theme newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setTheme(newValue);
+            recordGlobal.writeToJavaPreferences(THEME);
+            // Update UI
+            recordGlobal.refreshTheme();
+        }
+    }
+
+    private static class SwatchListener implements ChangeListener<EditorPlatform.GluonSwatch> {
+        @Override
+        public void changed(ObservableValue<? extends EditorPlatform.GluonSwatch> observable, EditorPlatform.GluonSwatch oldValue, EditorPlatform.GluonSwatch newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setSwatch(newValue);
+            recordGlobal.writeToJavaPreferences(GLUON_SWATCH);
+            // Update UI
+            recordGlobal.refreshSwatch();
+        }
+    }
+
+    private static class GluonThemeListener implements ChangeListener<EditorPlatform.GluonTheme> {
+        @Override
+        public void changed(ObservableValue<? extends EditorPlatform.GluonTheme> observable, EditorPlatform.GluonTheme oldValue, EditorPlatform.GluonTheme newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setGluonTheme(newValue);
+            recordGlobal.writeToJavaPreferences(GLUON_THEME);
+            // Update UI
+            recordGlobal.refreshGluonTheme();
         }
     }
 
