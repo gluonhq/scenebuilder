@@ -526,7 +526,7 @@ public class EditorPlatform {
     }
 
     public static boolean isGluonMobile(Theme theme) {
-        return theme.toString().startsWith("GLUON_MOBILE");
+        return theme == Theme.GLUON_MOBILE;
     }
 
     /**

@@ -1052,6 +1052,7 @@ public class MenuBarController {
         orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
         brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
         greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
+        blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
 
         lightTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.LIGHT));
         darkTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.DARK));
