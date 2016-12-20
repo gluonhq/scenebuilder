@@ -224,7 +224,8 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <Menu fx:id="themeMenu" mnemonicParsing="true" text="%menu.title.theme">
               <items>
-                <RadioMenuItem fx:id="gluonMobileThemeMenuItem" mnemonicParsing="false" text="%title.theme.gluonmobile" />
+                <RadioMenuItem fx:id="gluonMobileLightThemeMenuItem" mnemonicParsing="false" text="%title.theme.gluonmobilelight" />
+                <RadioMenuItem fx:id="gluonMobileDarkThemeMenuItem" mnemonicParsing="false" text="%title.theme.gluonmobiledark" />
                 <RadioMenuItem fx:id="modenaThemeMenuItem" mnemonicParsing="false" text="%title.theme.modena" />
                 <RadioMenuItem fx:id="modenaTouchThemeMenuItem" mnemonicParsing="false" text="%title.theme.modena.touch" />
                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -239,7 +240,7 @@
                 <CheckMenuItem fx:id="caspianHighContrastThemeMenuItem" mnemonicParsing="false" text="%title.theme.caspian.high.contrast" />
               </items>
             </Menu>
-            <Menu fx:id="gluonThemeMenu" mnemonicParsing="true" text="%menu.title.gluon" >
+            <Menu fx:id="gluonThemeMenu" mnemonicParsing="true" text="%menu.title.gluon.swatch" >
               <items>
                 <RadioMenuItem fx:id="blueSwatch" mnemonicParsing="false" text="%title.gluon.swatch.blue" />
                 <RadioMenuItem fx:id="cyanSwatch" mnemonicParsing="false" text="%title.gluon.swatch.cyan" />
@@ -260,9 +261,6 @@
                 <RadioMenuItem fx:id="brownSwatch" mnemonicParsing="false" text="%title.gluon.swatch.brown" />
                 <RadioMenuItem fx:id="greySwatch" mnemonicParsing="false" text="%title.gluon.swatch.grey" />
                 <RadioMenuItem fx:id="blueGreySwatch" mnemonicParsing="false" text="%title.gluon.swatch.bluegrey" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <RadioMenuItem fx:id="lightTheme" mnemonicParsing="false" text="%title.gluon.theme.light" />
-                <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" text="%title.gluon.theme.dark" />
               </items>
             </Menu>
             <Menu fx:id="styleSheetMenu" mnemonicParsing="true" text="%menu.title.scene.stylesheets">

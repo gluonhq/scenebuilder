@@ -123,8 +123,6 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private ChoiceBox<EditorPlatform.Theme> themes;
     @FXML
     private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
-    @FXML
-    private ChoiceBox<EditorPlatform.GluonTheme> gluonTheme;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -224,11 +222,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         gluonSwatch.getItems().setAll(Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants()));
         gluonSwatch.setValue(recordGlobal.getSwatch());
         gluonSwatch.getSelectionModel().selectedItemProperty().addListener(new SwatchListener());
-
-        gluonTheme.getItems().setAll(Arrays.asList(EditorPlatform.GluonTheme.class.getEnumConstants()));
-        gluonTheme.setValue(recordGlobal.getGluonTheme());
-        gluonTheme.getSelectionModel().selectedItemProperty().addListener(new GluonThemeListener());
-
+        
         // Number of open recent items
         recentItemsSize.getItems().setAll(recentItemsSizes);
         recentItemsSize.setValue(recordGlobal.getRecentItemsSize());

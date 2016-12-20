@@ -324,7 +324,9 @@ public class MenuBarController {
     @FXML
     private MenuItem showPreviewInDialogMenuItem;
     @FXML
-    private RadioMenuItem gluonMobileThemeMenuItem;
+    private RadioMenuItem gluonMobileLightThemeMenuItem;
+    @FXML
+    private RadioMenuItem gluonMobileDarkThemeMenuItem;
     @FXML
     private RadioMenuItem modenaThemeMenuItem;
     @FXML
@@ -408,11 +410,6 @@ public class MenuBarController {
     private RadioMenuItem greySwatch;
     @FXML
     private RadioMenuItem blueGreySwatch;
-
-    @FXML
-    private RadioMenuItem lightTheme;
-    @FXML
-    private RadioMenuItem darkTheme;
 
     // Window
     // Help
@@ -607,7 +604,8 @@ public class MenuBarController {
 
         assert showPreviewInWindowMenuItem != null;
         assert showPreviewInDialogMenuItem != null;
-        assert gluonMobileThemeMenuItem != null;
+        assert gluonMobileLightThemeMenuItem != null;
+        assert gluonMobileDarkThemeMenuItem != null;
         assert modenaThemeMenuItem != null;
         assert modenaTouchThemeMenuItem != null;
         assert modenaHighContrastBlackonwhiteThemeMenuItem != null;
@@ -1027,7 +1025,8 @@ public class MenuBarController {
         caspianEmbeddedThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED));
         caspianEmbeddedQVGAThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA));
 
-        gluonMobileThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE));
+        gluonMobileLightThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_LIGHT));
+        gluonMobileDarkThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_DARK));
         modenaThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA));
         modenaTouchThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_TOUCH));
         modenaHighContrastBlackonwhiteThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE));
@@ -1053,9 +1052,6 @@ public class MenuBarController {
         brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
         greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
         blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
-
-        lightTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.LIGHT));
-        darkTheme.setUserData(new GluonActionController(EditorPlatform.GluonTheme.DARK));
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
@@ -2225,6 +2221,11 @@ public class MenuBarController {
             }
 
             documentWindowController.getEditorController().setTheme(overiddingTheme);
+            if (overiddingTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT) {
+                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.LIGHT);
+            } else if (overiddingTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
+                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.DARK);
+            }
         }
 
         @Override
@@ -2238,8 +2239,11 @@ public class MenuBarController {
                         = documentWindowController.getEditorController().getTheme();
 
                 switch (theme) {
-                    case GLUON_MOBILE:
-                        res = EditorPlatform.isGluonMobile(currentTheme);
+                    case GLUON_MOBILE_LIGHT:
+                        res = EditorPlatform.isGluonMobileLight(currentTheme);
+                        break;
+                    case GLUON_MOBILE_DARK:
+                        res = EditorPlatform.isGluonMobileDark(currentTheme);
                         break;
                     // CASPIAN_HIGH_CONTRAST can be selected only if another CASPIAN
                     // theme is active.
@@ -2289,34 +2293,21 @@ public class MenuBarController {
     class GluonActionController extends MenuItemController {
 
         private EditorPlatform.GluonSwatch gluonSwatch;
-        private EditorPlatform.GluonTheme gluonTheme;
 
         public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
             this.gluonSwatch = gluonSwatch;
-            this.gluonTheme = null;
-        }
-
-        public GluonActionController(EditorPlatform.GluonTheme gluonTheme) {
-            this.gluonTheme = gluonTheme;
-            this.gluonSwatch = null;
-
         }
 
         @Override
         public boolean canPerform() {
             EditorPlatform.Theme currentTheme
                     = documentWindowController.getEditorController().getTheme();
-            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE);
+            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_LIGHT) || currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_DARK);
         }
 
         @Override
         public void perform() {
-            if (gluonTheme != null) {
-                documentWindowController.getEditorController().setGluonTheme(gluonTheme);
-            }
-            if (gluonSwatch != null) {
-                documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
-            }
+            documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
         }
 
         @Override
@@ -2324,12 +2315,8 @@ public class MenuBarController {
             boolean res = false;
             if (documentWindowController == null) {
                 res = false;
-            } else {
-                if (gluonTheme != null) {
-                    res = gluonTheme == documentWindowController.getEditorController().getGluonTheme();
-                } else if (gluonSwatch != null) {
-                    res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
-                }
+            } else if (gluonSwatch != null) {
+                res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
             }
             return res;
         }

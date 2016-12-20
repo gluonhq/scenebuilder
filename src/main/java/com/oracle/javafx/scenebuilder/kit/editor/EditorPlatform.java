@@ -96,10 +96,16 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme {
-        GLUON_MOBILE {
+        GLUON_MOBILE_LIGHT {
             @Override
             public String toString() {
-                return I18N.getString("title.theme.gluonmobile");
+                return I18N.getString("title.theme.gluonmobilelight");
+            }
+        },
+        GLUON_MOBILE_DARK {
+            @Override
+            public String toString() {
+                return I18N.getString("title.theme.gluonmobiledark");
             }
         },
         MODENA{
@@ -340,7 +346,8 @@ public class EditorPlatform {
             default:
                 result = null;
                 break;
-            case GLUON_MOBILE:
+            case GLUON_MOBILE_LIGHT:
+            case GLUON_MOBILE_DARK:
                 result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_STYLESHEET);
                 break;
             case MODENA:
@@ -525,8 +532,10 @@ public class EditorPlatform {
         return theme.toString().startsWith("CASPIAN");
     }
 
-    public static boolean isGluonMobile(Theme theme) {
-        return theme == Theme.GLUON_MOBILE;
+    public static boolean isGluonMobileLight(Theme theme) { return theme == Theme.GLUON_MOBILE_LIGHT; }
+
+    public static boolean isGluonMobileDark(Theme theme) {
+        return theme == Theme.GLUON_MOBILE_DARK;
     }
 
     /**

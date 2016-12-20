@@ -97,13 +97,11 @@
     <ChoiceBox fx:id="themes" GridPane.columnIndex="1" GridPane.rowIndex="12" />
     <Label text="%prefs.document.gluonswatch" GridPane.rowIndex="13" />
     <ChoiceBox fx:id="gluonSwatch" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-    <Label text="%prefs.document.gluontheme" GridPane.rowIndex="14" />
-    <ChoiceBox fx:id="gluonTheme" GridPane.columnIndex="1" GridPane.rowIndex="14" />
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="15" />
+    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="14" />
 
-    <Label text="%prefs.recent.items" GridPane.columnIndex="0" GridPane.rowIndex="16" />
-    <ChoiceBox fx:id="recentItemsSize" GridPane.columnIndex="1" GridPane.rowIndex="16">
+    <Label text="%prefs.recent.items" GridPane.columnIndex="0" GridPane.rowIndex="15" />
+    <ChoiceBox fx:id="recentItemsSize" GridPane.columnIndex="1" GridPane.rowIndex="15">
       <items>
         <FXCollections fx:factory="observableArrayList">
           <String fx:value="Item 1" />
@@ -113,9 +111,9 @@
       </items>
     </ChoiceBox>
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="17" />
+    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="16" />
 
-    <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="18" />
+    <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />

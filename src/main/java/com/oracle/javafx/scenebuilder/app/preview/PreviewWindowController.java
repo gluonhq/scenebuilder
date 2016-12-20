@@ -347,7 +347,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                         String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
                         String gluonSwatchStylesheet = EditorPlatform.getGluonSwatchStylesheetURL(editorControllerGluonSwatch);
                         String gluonThemeStylesheet = EditorPlatform.getGluonThemeStylesheetURL(editorControllerGluonTheme);
-                        if (editorControllerTheme == Theme.GLUON_MOBILE) {
+                        if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
                             ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
 
                             if (!newStylesheets.contains(themeStyleSheetString)) {
@@ -366,7 +366,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                             getScene().getStylesheets().clear();
                             getScene().getStylesheets().addAll(newStylesheets);
                         } else {
-                            String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE);
+                            String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE_LIGHT);
                             getScene().setUserAgentStylesheet(themeStyleSheetString);
                             getScene().getStylesheets().remove(gluonStylesheet);
                             getScene().getStylesheets().remove(gluonDocumentStylesheet);
