@@ -74,7 +74,7 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
- *
+ * Controller for Window when calling "Show Preview in Window"
  */
 public final class PreviewWindowController extends AbstractWindowController {
 

@@ -32,7 +32,10 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
+import com.gluonhq.charm.glisten.control.BottomNavigation;
+import com.gluonhq.charm.glisten.control.DropdownButton;
 import com.gluonhq.charm.glisten.control.ExpansionPanel;
+import com.gluonhq.charm.glisten.control.ToggleButtonGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMCollection;
@@ -72,6 +75,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableColumn;
@@ -1066,6 +1070,10 @@ public class DesignHierarchyMask {
                 && ! (fxomObject.getSceneGraphObject() instanceof MenuButton
                         || fxomObject.getSceneGraphObject() instanceof MenuBar
                         || fxomObject.getSceneGraphObject() instanceof ToolBar
-                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.ExpandedPanel); // Jerome
+                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.ExpandedPanel
+                        || fxomObject.getSceneGraphObject() instanceof DropdownButton
+                        || fxomObject.getSceneGraphObject() instanceof BottomNavigation
+                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.CollapsedPanel
+                        || fxomObject.getSceneGraphObject() instanceof ToggleButtonGroup); // Jerome
     }
 }
