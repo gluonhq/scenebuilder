@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
-import com.gluonhq.charm.glisten.visual.Theme;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlAction;

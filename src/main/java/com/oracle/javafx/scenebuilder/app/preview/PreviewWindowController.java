@@ -33,7 +33,6 @@
 package com.oracle.javafx.scenebuilder.app.preview;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
@@ -292,7 +291,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                         }
 
                         Object sceneGraphRoot = clone.getSceneGraphRoot();
-                        themeStyleSheetString = editorControllerTheme.getStylehsheetURL();
+                        themeStyleSheetString = editorControllerTheme.getStylesheetURL();
 
                         if (sceneGraphRoot instanceof Parent) {
                             ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
@@ -345,8 +344,8 @@ public final class PreviewWindowController extends AbstractWindowController {
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
                         String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-                        String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylehsheetURL();
-                        String gluonThemeStylesheet = editorControllerGluonTheme.getStylehsheetURL();
+                        String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURL();
+                        String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURL();
                         if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
                             ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
 
@@ -362,11 +361,11 @@ public final class PreviewWindowController extends AbstractWindowController {
                             if (!newStylesheets.contains(gluonThemeStylesheet)) {
                                 newStylesheets.add(gluonThemeStylesheet);
                             }
-                            getScene().setUserAgentStylesheet(Theme.MODENA.getStylehsheetURL());
+                            getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURL());
                             getScene().getStylesheets().clear();
                             getScene().getStylesheets().addAll(newStylesheets);
                         } else {
-                            String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylehsheetURL();
+                            String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylesheetURL();
                             getScene().setUserAgentStylesheet(themeStyleSheetString);
                             getScene().getStylesheets().remove(gluonStylesheet);
                             getScene().getStylesheets().remove(gluonDocumentStylesheet);

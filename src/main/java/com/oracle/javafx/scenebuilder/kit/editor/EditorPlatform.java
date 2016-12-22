@@ -34,16 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import javafx.scene.input.MouseEvent;
-
-import javax.swing.text.Style;
 
 /**
  * This class contains static methods that depends on the platform.
@@ -95,110 +91,40 @@ public class EditorPlatform {
     public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
 
     interface StylesheetProvider {
-        String getStylehsheetURL();
+        String getStylesheetURL();
     }
 
     /**
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT {
-            @Override
-            public String getStylehsheetURL() {
-                return GlistenStyleClasses.impl_loadResource("glisten.gls");
-            }
-        },
-        GLUON_MOBILE_DARK {
-            @Override
-            public String getStylehsheetURL() {
-                return GlistenStyleClasses.impl_loadResource("glisten.gls");
-            }
-        },
-        MODENA {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/sun/javafx/scene/control/skin/modena/modena.bss";
-            }
-        },
-        MODENA_TOUCH {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css";
-            }
-        },
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css";
-            }
-        },
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-whiteOnBlack.css";
-            }
-        },
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-yellowOnBlack.css";
-            }
-        },
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css";
-            }
-        },
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css";
-            }
-        },
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css";
-            }
-        },
-        CASPIAN {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/sun/javafx/scene/control/skin/caspian/caspian.bss";
-            }
-        },
-        CASPIAN_HIGH_CONTRAST {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-highContrast.css";
-            }
-        },
-        CASPIAN_EMBEDDED {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded.css";
-            }
-        },
-        CASPIAN_EMBEDDED_HIGH_CONTRAST {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-highContrast.css";
-            }
-        },
-        CASPIAN_EMBEDDED_QVGA {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga.css";
-            }
-        },
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST {
-            @Override
-            public String getStylehsheetURL() {
-                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga-highContrast.css";
-            }
-        };
+        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
+        MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
+        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
+        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-whiteOnBlack.css"),
+        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-yellowOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css"),
+        CASPIAN("com/sun/javafx/scene/control/skin/caspian/caspian.bss"),
+        CASPIAN_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-highContrast.css"),
+        CASPIAN_EMBEDDED("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded.css"),
+        CASPIAN_EMBEDDED_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-highContrast.css"),
+        CASPIAN_EMBEDDED_QVGA("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga.css"),
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga-highContrast.css");
 
+        private String url;
+
+        Theme(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public String getStylesheetURL() {
+            return url;
+        }
 
         @Override
         public String toString() {
@@ -239,7 +165,7 @@ public class EditorPlatform {
         }
 
         @Override
-        public String getStylehsheetURL() {
+        public String getStylesheetURL() {
             return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase() + ".gls");
         }
     }
@@ -258,14 +184,14 @@ public class EditorPlatform {
         }
 
         @Override
-        public String getStylehsheetURL() {
+        public String getStylesheetURL() {
             return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase() + ".gls");
         }
     }
     
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
-        return Theme.MODENA.getStylehsheetURL();
+        return Theme.MODENA.getStylesheetURL();
     }
 
     public static String getGluonDocumentStylesheetURL() {
