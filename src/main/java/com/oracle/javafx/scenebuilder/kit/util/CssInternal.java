@@ -76,20 +76,20 @@ import com.sun.javafx.css.parser.CSSParser;
 public class CssInternal {
 
     private final static String[] themeUrls = {
-        Deprecation.CASPIAN_EMBEDDED_HIGHCONTRAST_STYLESHEET,
-        Deprecation.CASPIAN_EMBEDDED_QVGA_HIGHCONTRAST_STYLESHEET,
-        Deprecation.CASPIAN_EMBEDDED_QVGA_STYLESHEET,
-        Deprecation.CASPIAN_EMBEDDED_STYLESHEET,
-        Deprecation.CASPIAN_HIGHCONTRAST_STYLESHEET,
-        Deprecation.CASPIAN_STYLESHEET,
-        Deprecation.MODENA_HIGHCONTRAST_BLACKONWHITE_STYLESHEET,
-        Deprecation.MODENA_HIGHCONTRAST_WHITEONBLACK_STYLESHEET,
-        Deprecation.MODENA_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET,
-        Deprecation.MODENA_STYLESHEET,
-        Deprecation.MODENA_TOUCH_HIGHCONTRAST_BLACKONWHITE_STYLESHEET,
-        Deprecation.MODENA_TOUCH_HIGHCONTRAST_WHITEONBLACK_STYLESHEET,
-        Deprecation.MODENA_TOUCH_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET,
-        Deprecation.MODENA_TOUCH_STYLESHEET
+        Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST.getStylehsheetURL(),
+            Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylehsheetURL(),
+        Theme.CASPIAN_EMBEDDED_QVGA.getStylehsheetURL(),
+        Theme.CASPIAN_EMBEDDED.getStylehsheetURL(),
+        Theme.CASPIAN_HIGH_CONTRAST.getStylehsheetURL(),
+        Theme.CASPIAN.getStylehsheetURL(),
+        Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE.getStylehsheetURL(),
+        Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK.getStylehsheetURL(),
+        Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylehsheetURL(),
+        Theme.MODENA.getStylehsheetURL(),
+        Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE.getStylehsheetURL(),
+        Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK.getStylehsheetURL(),
+        Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylehsheetURL(),
+        Theme.MODENA_TOUCH.getStylehsheetURL()
     };
 
     /**
@@ -104,12 +104,12 @@ public class CssInternal {
 
     public static boolean isCaspianTheme(Style style) {
         return style.getDeclaration().getRule().getStylesheet().getUrl()
-                .endsWith(Deprecation.CASPIAN_STYLESHEET);
+                .endsWith(Theme.CASPIAN.getStylehsheetURL());
     }
 
     public static boolean isModenaTheme(Style style) {
         return style.getDeclaration().getRule().getStylesheet().getUrl()
-                .endsWith(Deprecation.MODENA_TOUCH_STYLESHEET);
+                .endsWith(Theme.MODENA.getStylehsheetURL());
     }
 
     public static String getThemeDisplayName(Style style) {
@@ -146,7 +146,7 @@ public class CssInternal {
     }
 
     public static List<String> getThemeStyleClasses(Theme theme) {
-        String themeStyleSheet = EditorPlatform.getThemeStylesheetURL(theme);
+        String themeStyleSheet = theme.getStylehsheetURL();
         Set<String> themeClasses = new HashSet<>();
         // For Theme css, we need to get the text css (.css) to be able to parse it.
         // (instead of the default binary format .bss)

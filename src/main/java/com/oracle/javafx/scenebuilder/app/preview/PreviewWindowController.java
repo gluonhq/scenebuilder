@@ -292,7 +292,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                         }
 
                         Object sceneGraphRoot = clone.getSceneGraphRoot();
-                        themeStyleSheetString = EditorPlatform.getThemeStylesheetURL(editorControllerTheme);
+                        themeStyleSheetString = editorControllerTheme.getStylehsheetURL();
 
                         if (sceneGraphRoot instanceof Parent) {
                             ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
@@ -345,8 +345,8 @@ public final class PreviewWindowController extends AbstractWindowController {
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
                         String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-                        String gluonSwatchStylesheet = EditorPlatform.getGluonSwatchStylesheetURL(editorControllerGluonSwatch);
-                        String gluonThemeStylesheet = EditorPlatform.getGluonThemeStylesheetURL(editorControllerGluonTheme);
+                        String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylehsheetURL();
+                        String gluonThemeStylesheet = editorControllerGluonTheme.getStylehsheetURL();
                         if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
                             ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
 
@@ -362,11 +362,11 @@ public final class PreviewWindowController extends AbstractWindowController {
                             if (!newStylesheets.contains(gluonThemeStylesheet)) {
                                 newStylesheets.add(gluonThemeStylesheet);
                             }
-                            getScene().setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(Theme.MODENA));
+                            getScene().setUserAgentStylesheet(Theme.MODENA.getStylehsheetURL());
                             getScene().getStylesheets().clear();
                             getScene().getStylesheets().addAll(newStylesheets);
                         } else {
-                            String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE_LIGHT);
+                            String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylehsheetURL();
                             getScene().setUserAgentStylesheet(themeStyleSheetString);
                             getScene().getStylesheets().remove(gluonStylesheet);
                             getScene().getStylesheets().remove(gluonDocumentStylesheet);

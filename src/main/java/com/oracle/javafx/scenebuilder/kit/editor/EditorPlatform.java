@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Locale;
 import javafx.scene.input.MouseEvent;
 
+import javax.swing.text.Style;
+
 /**
  * This class contains static methods that depends on the platform.
  *
@@ -68,11 +70,6 @@ public class EditorPlatform {
     public static final boolean IS_WINDOWS = osName.contains("windows"); //NOI18N
 
     /**
-     * Charm Glisten version
-     */
-    public static final String GLUON_CHARM_GLISTEN_VERSION = "4.2.0";
-
-    /**
      * Gluon Glisten package
      */
     public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
@@ -90,407 +87,189 @@ public class EditorPlatform {
     /**
      * Gluon javadoc home (for Inspector and CSS Analyzer properties)
      */
-    public final static String GLUON_JAVADOC_HOME = "http://docs.gluonhq.com/charm/javadoc/" + GLUON_CHARM_GLISTEN_VERSION +"/"; //NOI18N
+    public final static String GLUON_JAVADOC_HOME = "http://docs.gluonhq.com/charm/javadoc/" + "latest" +"/"; //NOI18N
+
+    /**
+     * scene builder specific tweaks to Gluon theme
+     */
+    public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
+
+    interface StylesheetProvider {
+        String getStylehsheetURL();
+    }
 
     /**
      * Themes supported by Scene Builder Kit.
      */
-    public enum Theme {
+    public enum Theme implements StylesheetProvider {
         GLUON_MOBILE_LIGHT {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.gluonmobilelight");
+            public String getStylehsheetURL() {
+                return GlistenStyleClasses.impl_loadResource("glisten.gls");
             }
         },
         GLUON_MOBILE_DARK {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.gluonmobiledark");
+            public String getStylehsheetURL() {
+                return GlistenStyleClasses.impl_loadResource("glisten.gls");
             }
         },
-        MODENA{
+        MODENA {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena");
+            public String getStylehsheetURL() {
+                return "com/sun/javafx/scene/control/skin/modena/modena.bss";
             }
         },
-        MODENA_TOUCH{
+        MODENA_TOUCH {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.touch");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css";
             }
         },
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE{
+        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.high.contrast.blackonwhite");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css";
             }
         },
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK{
+        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.high.contrast.whiteonblack");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-whiteOnBlack.css";
             }
         },
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK{
+        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.high.contrast.yellowonblack");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-yellowOnBlack.css";
             }
         },
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE{
+        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.touch.high.contract.blackonwhite");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css";
             }
         },
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK{
+        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.touch.high.contrast.whiteonblack");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css";
             }
         },
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK{
+        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.modena.touch.high.contrast.yellowonblack");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css";
             }
         },
-        CASPIAN{
+        CASPIAN {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian");
+            public String getStylehsheetURL() {
+                return "com/sun/javafx/scene/control/skin/caspian/caspian.bss";
             }
         },
-        CASPIAN_HIGH_CONTRAST{
+        CASPIAN_HIGH_CONTRAST {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian.high.contrast");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-highContrast.css";
             }
         },
-        CASPIAN_EMBEDDED{
+        CASPIAN_EMBEDDED {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian.embedded");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded.css";
             }
         },
-        CASPIAN_EMBEDDED_HIGH_CONTRAST{
+        CASPIAN_EMBEDDED_HIGH_CONTRAST {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian.embedded.high.contrast");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-highContrast.css";
             }
         },
-        CASPIAN_EMBEDDED_QVGA{
+        CASPIAN_EMBEDDED_QVGA {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian.embedded.qvga");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga.css";
             }
         },
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST{
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST {
             @Override
-            public String toString() {
-                return I18N.getString("title.theme.caspian.embedded.qvga.high.contrast");
+            public String getStylehsheetURL() {
+                return "com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga-highContrast.css";
             }
+        };
+
+
+        @Override
+        public String toString() {
+            String lowerCaseName = name().toLowerCase();
+            return I18N.getString("title.theme." + lowerCaseName);
         }
     }
 
     /**
      * Gluon Swatch
      */
-    public enum GluonSwatch {
-        BLUE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.blue");
-            }
-        },
-        CYAN{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.cyan");
-            }
-        },
-        DEEP_ORANGE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.deeporange");
-            }
-        },
-        DEEP_PURPLE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.deeppurple");
-            }
-        },
-        GREEN{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.green");
-            }
-        },
-        INDIGO{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.indigo");
-            }
-        },
-        LIGHT_BLUE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.lightblue");
-            }
-        },
-        PINK{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.pink");
-            }
-        },
-        PURPLE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.purple");
-            }
-        },
-        RED{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.red");
-            }
-        },
-        TEAL{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.teal");
-            }
-        },
-        LIGHT_GREEN{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.lightgreen");
-            }
-        },
-        LIME{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.lime");
-            }
-        },
-        YELLOW{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.yellow");
-            }
-        },
-        AMBER{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.amber");
-            }
-        },
-        ORANGE{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.orange");
-            }
-        },
-        BROWN{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.brown");
-            }
-        },
-        GREY{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.grey");
-            }
-        },
-        BLUE_GREY{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.swatch.bluegrey");
-            }
-        };
+    public enum GluonSwatch implements StylesheetProvider {
+        BLUE ,
+        CYAN,
+        DEEP_ORANGE,
+        DEEP_PURPLE,
+        GREEN,
+        INDIGO,
+        LIGHT_BLUE,
+        PINK,
+        PURPLE,
+        RED,
+        TEAL,
+        LIGHT_GREEN,
+        LIME,
+        YELLOW,
+        AMBER,
+        ORANGE,
+        BROWN,
+        GREY,
+        BLUE_GREY;
+
+
+        @Override
+        public String toString() {
+            String lowerCaseSwatch = "title.gluon.swatch." + name().toLowerCase();
+            return I18N.getString(lowerCaseSwatch);
+        }
+
+        @Override
+        public String getStylehsheetURL() {
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase() + ".gls");
+        }
     }
 
     /**
      * Gluon Theme
      */
-    public enum GluonTheme {
-        LIGHT{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.theme.light");
-            }
-        },
-        DARK{
-            @Override
-            public String toString() {
-                return I18N.getString("title.gluon.theme.dark");
-            }
-        };
-    }
+    public enum GluonTheme implements StylesheetProvider {
+        LIGHT,
+        DARK;
 
-    /**
-     * Returns the url string for locating the specified stylesheet.
-     * SB uses a set of CSS files aggregating several @import statements (see DTL-6799).
-     *
-     * @param theme theme for which string should be computed
-     * @return string for locating the specified stylesheet.
-     */
-    public static String getThemeStylesheetURL(Theme theme) {
-        final String result;
-
-        switch (theme) {
-            default:
-                result = null;
-                break;
-            case GLUON_MOBILE_LIGHT:
-            case GLUON_MOBILE_DARK:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_STYLESHEET);
-                break;
-            case MODENA:
-                result = Deprecation.MODENA_STYLESHEET;
-                break;
-            case MODENA_TOUCH:
-                result = Deprecation.MODENA_TOUCH_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
-                result = Deprecation.MODENA_HIGHCONTRAST_BLACKONWHITE_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                result = Deprecation.MODENA_HIGHCONTRAST_WHITEONBLACK_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                result = Deprecation.MODENA_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_BLACKONWHITE_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_WHITEONBLACK_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET;
-                break;
-            case CASPIAN:
-                result = Deprecation.CASPIAN_STYLESHEET;
-                break;
-            case CASPIAN_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_HIGHCONTRAST_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED:
-                result = Deprecation.CASPIAN_EMBEDDED_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_EMBEDDED_HIGHCONTRAST_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_QVGA:
-                result = Deprecation.CASPIAN_EMBEDDED_QVGA_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_EMBEDDED_QVGA_HIGHCONTRAST_STYLESHEET;
-                break;
-        }
-        
-        if (!theme.equals(Theme.MODENA)) {
-            assert result != null : "Missing logic for " + theme;
+        @Override
+        public String toString() {
+            String lowerCaseName = "title.gluon.theme." + name().toLowerCase();
+            return I18N.getString(lowerCaseName);
         }
 
-        return result;
-    }
-
-    public static String getGluonThemeStylesheetURL(GluonTheme theme) {
-        String result;
-        switch (theme) {
-            case DARK:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_DARK_THEME);
-                break;
-            case LIGHT:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_THEME);
-                break;
-            default:
-                result = null;
-                break;
+        @Override
+        public String getStylehsheetURL() {
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase() + ".gls");
         }
-        return result;
-    }
-
-    public static String getGluonSwatchStylesheetURL(GluonSwatch swatch) {
-        String result;
-        switch(swatch) {
-            case BLUE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BLUE_SWATCH);
-                break;
-            case CYAN:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_CYAN_SWATCH);
-                break;
-            case DEEP_ORANGE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_DEEP_ORANGE_SWATCH);
-                break;
-            case DEEP_PURPLE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_DEEP_PURPLE_SWATCH);
-                break;
-            case GREEN:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_GREEN_SWATCH);
-                break;
-            case INDIGO:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_INDIGO_SWATCH);
-                break;
-            case LIGHT_BLUE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_BLUE_SWATCH);
-                break;
-            case PINK:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_PINK_SWATCH);
-                break;
-            case PURPLE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_PURPLE_SWATCH);
-                break;
-            case RED:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_RED_SWATCH);
-                break;
-            case TEAL:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_TEAL_SWATCH);
-                break;
-            case LIGHT_GREEN:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_GREEN_SWATCH);
-                break;
-            case LIME:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIME_SWATCH);
-                break;
-            case YELLOW:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_YELLOW_SWATCH);
-                break;
-            case AMBER:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_AMBER_SWATCH);
-                break;
-            case ORANGE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_ORANGE_SWATCH);
-                break;
-            case BROWN:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BROWN_SWATCH);
-                break;
-            case GREY:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_GREY_SWATCH);
-                break;
-            case BLUE_GREY:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BLUE_GREY_SWATCH);
-                break;
-            default:
-                result = null;
-                break;
-        }
-        return result;
     }
     
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
-        return Deprecation.MODENA_STYLESHEET;
+        return Theme.MODENA.getStylehsheetURL();
     }
 
     public static String getGluonDocumentStylesheetURL() {
-        return Deprecation.GLUON_DOCUMENT_STYLESHEET;
+        return GLUON_DOCUMENT_STYLESHEET;
     }
 
     public static boolean isModena(Theme theme) {

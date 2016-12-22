@@ -1031,7 +1031,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
             final EditorPlatform.Theme theme = getEditorController().getTheme();
             final EditorPlatform.GluonSwatch gluonSwatch = getEditorController().getGluonSwatch();
             final EditorPlatform.GluonTheme gluonTheme = getEditorController().getGluonTheme();
-            final String themeStyleSheet = EditorPlatform.getThemeStylesheetURL(theme);
+            final String themeStyleSheet = theme.getStylehsheetURL();
             workspaceController.setThemeStyleSheet(themeStyleSheet, theme, gluonSwatch, gluonTheme);
         }
     }

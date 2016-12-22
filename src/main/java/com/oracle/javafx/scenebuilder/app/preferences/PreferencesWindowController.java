@@ -73,6 +73,7 @@ import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.Mode;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -219,7 +220,10 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         themes.setValue(recordGlobal.getTheme());
         themes.getSelectionModel().selectedItemProperty().addListener(new ThemesListener());
 
-        gluonSwatch.getItems().setAll(Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants()));
+        List<EditorPlatform.GluonSwatch> gluonSwatches = Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants());
+        // Sort alphabetically
+        gluonSwatches.sort((s1, s2) -> s1.toString().compareTo(s2.toString()));
+        gluonSwatch.getItems().setAll(gluonSwatches);
         gluonSwatch.setValue(recordGlobal.getSwatch());
         gluonSwatch.getSelectionModel().selectedItemProperty().addListener(new SwatchListener());
         
