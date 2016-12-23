@@ -86,6 +86,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -1034,24 +1036,43 @@ public class MenuBarController {
         modenaHighContrastYellowonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK));
 
         blueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE));
+        addSwatchGraphic(blueSwatch);
         cyanSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.CYAN));
+        addSwatchGraphic(cyanSwatch);
         deepOrangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_ORANGE));
+        addSwatchGraphic(deepOrangeSwatch);
         deepPurpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_PURPLE));
+        addSwatchGraphic(deepPurpleSwatch);
         greenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREEN));
+        addSwatchGraphic(greenSwatch);
         indigoSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.INDIGO));
+        addSwatchGraphic(indigoSwatch);
         lightBlueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_BLUE));
+        addSwatchGraphic(lightBlueSwatch);
         pinkSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PINK));
+        addSwatchGraphic(pinkSwatch);
         purpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PURPLE));
+        addSwatchGraphic(purpleSwatch);
         redSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.RED));
+        addSwatchGraphic(redSwatch);
         tealSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.TEAL));
+        addSwatchGraphic(tealSwatch);
         lightGreenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_GREEN));
+        addSwatchGraphic(lightGreenSwatch);
         limeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIME));
+        addSwatchGraphic(limeSwatch);
         yellowSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.YELLOW));
+        addSwatchGraphic(yellowSwatch);
         amberSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.AMBER));
+        addSwatchGraphic(amberSwatch);
         orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
+        addSwatchGraphic(orangeSwatch);
         brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
+        addSwatchGraphic(brownSwatch);
         greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
+        addSwatchGraphic(greySwatch);
         blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
+        addSwatchGraphic(blueGreySwatch);
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
@@ -1130,6 +1151,13 @@ public class MenuBarController {
         insertMenu.setOnMenuValidation(onCustomPartOfInsertMenuValidationHandler);
         
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
+    }
+
+    private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
+        Rectangle rect = new Rectangle(8, 8);
+        rect.setFill(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().getColor());
+        rect.setStroke(Color.BLACK);
+        swatchMenuItem.setGraphic(rect);
     }
 
     /*
@@ -2296,6 +2324,10 @@ public class MenuBarController {
 
         public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
             this.gluonSwatch = gluonSwatch;
+        }
+
+        public EditorPlatform.GluonSwatch getSwatch() {
+            return gluonSwatch;
         }
 
         @Override
