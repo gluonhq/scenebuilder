@@ -61,6 +61,8 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGl
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_WIDTH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_SWATCH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.recentItemsSizes;
 
@@ -99,7 +101,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     @FXML
     private ChoiceBox<BackgroundImage> backgroundImage;
     @FXML
-    private ChoiceBox<ToolTheme> toolTheme;
+    private ChoiceBox<ToolTheme> scenebuilderTheme;
     @FXML
     private ChoiceBox<DISPLAY_MODE> libraryDisplayOption;
     @FXML
@@ -194,9 +196,9 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
                 new ParentRingColorListener(parentRingGraphic));
 
         // Tool theme
-        toolTheme.getItems().setAll(Arrays.asList(ToolTheme.class.getEnumConstants()));
-        toolTheme.setValue(recordGlobal.getToolTheme());
-        toolTheme.getSelectionModel().selectedItemProperty().addListener(new ToolThemeListener());
+        scenebuilderTheme.getItems().setAll(Arrays.asList(ToolTheme.class.getEnumConstants()));
+        scenebuilderTheme.setValue(recordGlobal.getToolTheme());
+        scenebuilderTheme.getSelectionModel().selectedItemProperty().addListener(new ToolThemeListener());
 
         // Library view option
         final DISPLAY_MODE availableDisplayMode[] = new DISPLAY_MODE[]{
@@ -273,8 +275,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Parent ring color
         parentRingColorPicker.setPaintProperty(DEFAULT_PARENT_RING_COLOR);
 
-        // Tool theme
-        toolTheme.setValue(DEFAULT_TOOL_THEME);
+        // SceneBuilder theme
+        scenebuilderTheme.setValue(DEFAULT_TOOL_THEME);
 
         // Library view option
         libraryDisplayOption.setValue(DEFAULT_LIBRARY_DISPLAY_OPTION);
@@ -287,6 +289,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
 
         // Number of open recent items
         recentItemsSize.setValue(DEFAULT_RECENT_ITEMS_SIZE);
+
+        // Default theme
+        themes.setValue(DEFAULT_THEME);
+
+        // Default Gluon swatch
+        gluonSwatch.setValue(DEFAULT_SWATCH);
     }
 
     /**
