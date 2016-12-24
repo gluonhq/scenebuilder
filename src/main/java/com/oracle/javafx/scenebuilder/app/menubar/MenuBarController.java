@@ -1154,10 +1154,7 @@ public class MenuBarController {
     }
 
     private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
-        Rectangle rect = new Rectangle(8, 8);
-        rect.setFill(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().getColor());
-        rect.setStroke(Color.BLACK);
-        swatchMenuItem.setGraphic(rect);
+        swatchMenuItem.setGraphic(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().createGraphic());
     }
 
     /*

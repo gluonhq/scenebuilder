@@ -39,8 +39,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This class contains static methods that depends on the platform.
@@ -177,6 +180,13 @@ public class EditorPlatform {
 
         public Color getColor() {
             return color;
+        }
+
+        public Node createGraphic() {
+            Rectangle rect = new Rectangle(8, 8);
+            rect.setFill(getColor());
+            rect.setStroke(Color.BLACK);
+            return rect;
         }
     }
 

@@ -35,11 +35,8 @@
 
 <DropdownButton xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.101">
     <items>
-        <MenuItem fx:id="choice1" text="Choice 1" />
+        <MenuItem text="Choice 1" />
         <MenuItem text="Choice 2" />
         <MenuItem text="Choice 3" />
     </items>
-    <selectedItem>
-        <fx:reference source="choice1"/>
-    </selectedItem>
 </DropdownButton>
