@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -318,6 +319,15 @@ public class StyleEditor extends InlineListEditor {
                     }
                 }
             };
+
+            // Select all text when the value of this editor is selected
+            // property text field is already taken care of in AutoSuggestEditor
+            valueTf.setOnMousePressed(event -> valueTf.selectAll());
+            valueTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    valueTf.selectAll();
+                }
+            }));
 
         }
 

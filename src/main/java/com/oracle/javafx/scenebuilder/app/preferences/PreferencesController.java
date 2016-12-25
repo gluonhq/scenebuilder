@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -98,6 +99,9 @@ public class PreferencesController {
     static final String LEFT_DIVIDER_VPOS = "leftDividerVPos"; //NOI18N
     static final String SCENE_STYLE_SHEETS = "sceneStyleSheets"; //NOI18N
     static final String I18N_RESOURCE = "I18NResource"; //NOI18N
+    static final String THEME = "theme";
+    static final String GLUON_SWATCH = "gluonSwatch";
+    static final String GLUON_THEME = "gluonTheme";
 
     private static PreferencesController singleton;
 

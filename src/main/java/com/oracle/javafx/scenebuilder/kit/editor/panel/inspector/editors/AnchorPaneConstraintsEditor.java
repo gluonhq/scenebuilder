@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -113,6 +114,32 @@ public class AnchorPaneConstraintsEditor extends PropertiesEditor {
                 new ConstraintEditor(bottomTf, bottomTb, selectedInstances, bottomPropMeta, constraintListener));
         contraintEditors.add(
                 new ConstraintEditor(leftTf, leftTb, selectedInstances, leftPropMeta, constraintListener));
+
+        // Select all text when this editor textfield is selected
+        topTf.setOnMousePressed(event -> topTf.selectAll());
+        topTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                topTf.selectAll();
+            }
+        }));
+        rightTf.setOnMousePressed(event -> rightTf.selectAll());
+        rightTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                rightTf.selectAll();
+            }
+        }));
+        bottomTf.setOnMousePressed(event -> rightTf.selectAll());
+        bottomTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                rightTf.selectAll();
+            }
+        }));
+        leftTf.setOnMousePressed(event -> rightTf.selectAll());
+        leftTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                rightTf.selectAll();
+            }
+        }));
     }
 
     @Override

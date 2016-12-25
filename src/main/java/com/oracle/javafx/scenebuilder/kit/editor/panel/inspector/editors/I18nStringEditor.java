@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -105,6 +106,14 @@ public class I18nStringEditor extends PropertyEditor {
             multiLineMode = !multiLineMode;
             updateMenuItems();
         });
+
+        // Select all text when this editor is selected
+        textNode.setOnMousePressed(event -> textNode.selectAll());
+        textNode.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textNode.selectAll();
+            }
+        }));
     }
 
     @Override

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -102,6 +103,14 @@ public class RotateEditor extends PropertyEditor {
 
         };
         setNumericEditorBehavior(this, rotateTf, valueListener, false);
+
+        // Select all text when this editor is selected
+        rotateTf.setOnMousePressed(event -> rotateTf.selectAll());
+        rotateTf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                rotateTf.selectAll();
+            }
+        }));
     }
 
     @Override

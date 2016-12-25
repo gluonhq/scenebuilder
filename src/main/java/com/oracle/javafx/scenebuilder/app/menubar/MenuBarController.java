@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -85,6 +86,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -257,6 +260,10 @@ public class MenuBarController {
     @FXML
     private MenuItem decreaseColumnSpanMenuItem;
     @FXML
+    private MenuItem phoneSetSizeMenuItem;
+    @FXML
+    private MenuItem tabletSetSizeMenuItem;
+    @FXML
     private RadioMenuItem qvgaSetSizeMenuItem;
     @FXML
     private RadioMenuItem vgaSetSizeMenuItem;
@@ -319,7 +326,9 @@ public class MenuBarController {
     @FXML
     private MenuItem showPreviewInDialogMenuItem;
     @FXML
-    private RadioMenuItem gluonMobileThemeMenuItem;
+    private RadioMenuItem gluonMobileLightThemeMenuItem;
+    @FXML
+    private RadioMenuItem gluonMobileDarkThemeMenuItem;
     @FXML
     private RadioMenuItem modenaThemeMenuItem;
     @FXML
@@ -351,6 +360,10 @@ public class MenuBarController {
     @FXML
     private MenuItem revealResourceMenuItem;
     @FXML
+    private RadioMenuItem phonePreviewSizeMenuItem;
+    @FXML
+    private RadioMenuItem tabletPreviewSizeMenuItem;
+    @FXML
     private RadioMenuItem qvgaPreviewSizeMenuItem;
     @FXML
     private RadioMenuItem vgaPreviewSizeMenuItem;
@@ -360,6 +373,45 @@ public class MenuBarController {
     private RadioMenuItem hdPreviewSizeMenuItem;
     @FXML
     private RadioMenuItem preferredPreviewSizeMenuItem;
+
+    @FXML
+    private RadioMenuItem blueSwatch;
+    @FXML
+    private RadioMenuItem cyanSwatch;
+    @FXML
+    private RadioMenuItem deepOrangeSwatch;
+    @FXML
+    private RadioMenuItem deepPurpleSwatch;
+    @FXML
+    private RadioMenuItem greenSwatch;
+    @FXML
+    private RadioMenuItem indigoSwatch;
+    @FXML
+    private RadioMenuItem lightBlueSwatch;
+    @FXML
+    private RadioMenuItem pinkSwatch;
+    @FXML
+    private RadioMenuItem purpleSwatch;
+    @FXML
+    private RadioMenuItem redSwatch;
+    @FXML
+    private RadioMenuItem tealSwatch;
+    @FXML
+    private RadioMenuItem lightGreenSwatch;
+    @FXML
+    private RadioMenuItem limeSwatch;
+    @FXML
+    private RadioMenuItem yellowSwatch;
+    @FXML
+    private RadioMenuItem amberSwatch;
+    @FXML
+    private RadioMenuItem orangeSwatch;
+    @FXML
+    private RadioMenuItem brownSwatch;
+    @FXML
+    private RadioMenuItem greySwatch;
+    @FXML
+    private RadioMenuItem blueGreySwatch;
 
     // Window
     // Help
@@ -521,6 +573,8 @@ public class MenuBarController {
         assert decreaseRowSpanMenuItem != null;
         assert increaseColumnSpanMenuItem != null;
         assert decreaseColumnSpanMenuItem != null;
+        assert phoneSetSizeMenuItem != null;
+        assert tabletSetSizeMenuItem != null;
         assert qvgaSetSizeMenuItem != null;
         assert vgaSetSizeMenuItem != null;
         assert touchSetSizeMenuItem != null;
@@ -552,7 +606,8 @@ public class MenuBarController {
 
         assert showPreviewInWindowMenuItem != null;
         assert showPreviewInDialogMenuItem != null;
-        assert gluonMobileThemeMenuItem != null;
+        assert gluonMobileLightThemeMenuItem != null;
+        assert gluonMobileDarkThemeMenuItem != null;
         assert modenaThemeMenuItem != null;
         assert modenaTouchThemeMenuItem != null;
         assert modenaHighContrastBlackonwhiteThemeMenuItem != null;
@@ -568,6 +623,8 @@ public class MenuBarController {
         assert setResourceMenuItem != null;
         assert removeResourceMenuItem != null;
         assert revealResourceMenuItem != null;
+        assert phonePreviewSizeMenuItem != null;
+        assert tabletPreviewSizeMenuItem != null;
         assert qvgaPreviewSizeMenuItem != null;
         assert vgaPreviewSizeMenuItem != null;
         assert touchPreviewSizeMenuItem != null;
@@ -874,6 +931,21 @@ public class MenuBarController {
         decreaseRowSpanMenuItem.setUserData(new EditActionController(EditAction.DECREASE_ROW_SPAN));
         increaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.INCREASE_COLUMN_SPAN));
         decreaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.DECREASE_COLUMN_SPAN));
+
+        phoneSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_335x600) {
+            @Override
+            public void perform() {
+                super.perform();
+                updatePreviewWindowSize(Size.SIZE_335x600);
+            }
+        });
+        tabletSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_900x600) {
+            @Override
+            public void perform() {
+                super.perform();
+                updatePreviewWindowSize(Size.SIZE_900x600);
+            }
+        });
         qvgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_320x240) {
             @Override
             public void perform() {
@@ -955,12 +1027,52 @@ public class MenuBarController {
         caspianEmbeddedThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED));
         caspianEmbeddedQVGAThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA));
 
-        gluonMobileThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE));
+        gluonMobileLightThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_LIGHT));
+        gluonMobileDarkThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_DARK));
         modenaThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA));
         modenaTouchThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_TOUCH));
         modenaHighContrastBlackonwhiteThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE));
         modenaHighContrastWhiteonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK));
         modenaHighContrastYellowonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK));
+
+        blueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE));
+        addSwatchGraphic(blueSwatch);
+        cyanSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.CYAN));
+        addSwatchGraphic(cyanSwatch);
+        deepOrangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_ORANGE));
+        addSwatchGraphic(deepOrangeSwatch);
+        deepPurpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_PURPLE));
+        addSwatchGraphic(deepPurpleSwatch);
+        greenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREEN));
+        addSwatchGraphic(greenSwatch);
+        indigoSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.INDIGO));
+        addSwatchGraphic(indigoSwatch);
+        lightBlueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_BLUE));
+        addSwatchGraphic(lightBlueSwatch);
+        pinkSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PINK));
+        addSwatchGraphic(pinkSwatch);
+        purpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PURPLE));
+        addSwatchGraphic(purpleSwatch);
+        redSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.RED));
+        addSwatchGraphic(redSwatch);
+        tealSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.TEAL));
+        addSwatchGraphic(tealSwatch);
+        lightGreenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_GREEN));
+        addSwatchGraphic(lightGreenSwatch);
+        limeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIME));
+        addSwatchGraphic(limeSwatch);
+        yellowSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.YELLOW));
+        addSwatchGraphic(yellowSwatch);
+        amberSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.AMBER));
+        addSwatchGraphic(amberSwatch);
+        orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
+        addSwatchGraphic(orangeSwatch);
+        brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
+        addSwatchGraphic(brownSwatch);
+        greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
+        addSwatchGraphic(greySwatch);
+        blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
+        addSwatchGraphic(blueGreySwatch);
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
@@ -1002,11 +1114,13 @@ public class MenuBarController {
                 return title;
             }
         });
-        qvgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_320x240));
-        vgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_640x480));
-        touchPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_1280x800));
-        hdPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_1920x1080));
-        preferredPreviewSizeMenuItem.setUserData(new SetSizeActionController(EditorController.Size.SIZE_PREFERRED));
+        phonePreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_335x600));
+        tabletPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_900x600));
+        qvgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_320x240));
+        vgaPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_640x480));
+        touchPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_1280x800));
+        hdPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_1920x1080));
+        preferredPreviewSizeMenuItem.setUserData(new SetSizeActionController(Size.SIZE_PREFERRED));
 
         /*
          * Window menu : it is setup after the other menus
@@ -1037,6 +1151,10 @@ public class MenuBarController {
         insertMenu.setOnMenuValidation(onCustomPartOfInsertMenuValidationHandler);
         
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
+    }
+
+    private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
+        swatchMenuItem.setGraphic(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().createGraphic());
     }
 
     /*
@@ -2128,6 +2246,11 @@ public class MenuBarController {
             }
 
             documentWindowController.getEditorController().setTheme(overiddingTheme);
+            if (overiddingTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT) {
+                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.LIGHT);
+            } else if (overiddingTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
+                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.DARK);
+            }
         }
 
         @Override
@@ -2141,8 +2264,11 @@ public class MenuBarController {
                         = documentWindowController.getEditorController().getTheme();
 
                 switch (theme) {
-                    case GLUON_MOBILE:
-                        res = EditorPlatform.isGluonMobile(currentTheme);
+                    case GLUON_MOBILE_LIGHT:
+                        res = EditorPlatform.isGluonMobileLight(currentTheme);
+                        break;
+                    case GLUON_MOBILE_DARK:
+                        res = EditorPlatform.isGluonMobileDark(currentTheme);
                         break;
                     // CASPIAN_HIGH_CONTRAST can be selected only if another CASPIAN
                     // theme is active.
@@ -2185,6 +2311,42 @@ public class MenuBarController {
                 }
             }
 
+            return res;
+        }
+    }
+
+    class GluonActionController extends MenuItemController {
+
+        private EditorPlatform.GluonSwatch gluonSwatch;
+
+        public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
+            this.gluonSwatch = gluonSwatch;
+        }
+
+        public EditorPlatform.GluonSwatch getSwatch() {
+            return gluonSwatch;
+        }
+
+        @Override
+        public boolean canPerform() {
+            EditorPlatform.Theme currentTheme
+                    = documentWindowController.getEditorController().getTheme();
+            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_LIGHT) || currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_DARK);
+        }
+
+        @Override
+        public void perform() {
+            documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
+        }
+
+        @Override
+        public boolean isSelected() {
+            boolean res = false;
+            if (documentWindowController == null) {
+                res = false;
+            } else if (gluonSwatch != null) {
+                res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
+            }
             return res;
         }
     }

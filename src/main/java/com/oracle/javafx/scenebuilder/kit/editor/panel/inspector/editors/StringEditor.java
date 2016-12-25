@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -65,6 +66,14 @@ public class StringEditor extends PropertyEditor {
         
         // Double line editor by default
         setLayoutFormat(LayoutFormat.DOUBLE_LINE);
+
+        // Select all text when this editor is selected
+        textField.setOnMousePressed(event -> textField.selectAll());
+        textField.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.selectAll();
+            }
+        }));
     }
     
     @Override

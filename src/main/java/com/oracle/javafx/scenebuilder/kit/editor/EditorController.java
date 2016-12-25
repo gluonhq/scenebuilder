@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
@@ -157,6 +159,8 @@ public class EditorController {
         USE_COMPUTED_SIZES,
         ADD_CONTEXT_MENU,
         ADD_TOOLTIP,
+        SET_SIZE_335x600,
+        SET_SIZE_900x600,
         SET_SIZE_320x240,
         SET_SIZE_640x480,
         SET_SIZE_1280x800,
@@ -226,6 +230,8 @@ public class EditorController {
      * under user control.
      */
     public enum Size {
+        SIZE_335x600,
+        SIZE_900x600,
         SIZE_320x240,
         SIZE_640x480,
         SIZE_1280x800,
@@ -259,7 +265,11 @@ public class EditorController {
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<>(Theme.MODENA);
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_THEME);
+    private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_GLUON_THEME);
+    private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
+            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_SWATCH);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty
@@ -555,7 +565,65 @@ public class EditorController {
     public ObservableValue<Theme> themeProperty() {
         return themeProperty;
     }
-    
+
+    /**
+     * Returns the gluon theme used by this editor
+     *
+     * @return the gluon theme used by this editor
+     */
+    public EditorPlatform.GluonTheme getGluonTheme() {
+        return gluonThemeProperty.get();
+    }
+
+    /**
+     * Sets the gluon theme used by this editor.
+     * Content and Preview panels sharing this editor will update
+     * their content to use this new theme.
+     *
+     * @param theme the theme to be used in this editor
+     */
+    public void setGluonTheme(EditorPlatform.GluonTheme theme) {
+        gluonThemeProperty.set(theme);
+    }
+
+    /**
+     * The property holding the gluon theme used by this editor
+     *
+     * @return the property holding the gluon theme used by this editor.
+     */
+    public ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty() {
+        return gluonThemeProperty;
+    }
+
+    /**
+     * Sets the gluon swatch used by this editor.
+     * Content and Preview panels sharing this editor will update
+     * their content to use this new swatch.
+     *
+     * @param swatch the swatch to be used in this editor
+     */
+    public void setGluonSwatch(EditorPlatform.GluonSwatch swatch) {
+        gluonSwatchProperty.set(swatch);
+    }
+
+    /**
+     * Returns the gluon swatch used by this editor
+     *
+     * @return the gluon swatch used by this editor
+     */
+    public EditorPlatform.GluonSwatch getGluonSwatch() {
+        return gluonSwatchProperty.get();
+    }
+
+    /**
+     * The property holding the gluon swatch used by this editor
+     *
+     * @return the property holding the gluon swatch used by this editor.
+     */
+    public ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty() {
+        return gluonSwatchProperty;
+    }
+
     /**
      * 
      * @return the list of scene style sheet used by this editor
@@ -1020,6 +1088,16 @@ public class EditorController {
                 jobManager.push(job);
                 break;
             }
+            case SET_SIZE_335x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_335x600);
+                jobManager.push(job);
+                break;
+            }
+            case SET_SIZE_900x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_900x600);
+                jobManager.push(job);
+                break;
+            }
             case SET_SIZE_320x240: {
                 final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_320x240);
                 jobManager.push(job);
@@ -1259,6 +1337,16 @@ public class EditorController {
             }
             case SEND_TO_BACK: {
                 final SendToBackJob job = new SendToBackJob(this);
+                result = job.isExecutable();
+                break;
+            }
+            case SET_SIZE_335x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_335x600);
+                result = job.isExecutable();
+                break;
+            }
+            case SET_SIZE_900x600: {
+                final UsePredefinedSizeJob job = new UsePredefinedSizeJob(this, Size.SIZE_900x600);
                 result = job.isExecutable();
                 break;
             }

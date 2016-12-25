@@ -408,7 +408,6 @@ public class StylesheetEditor extends InlineListEditor {
         private Type itemType = Type.PLAIN_STRING;
 
         public StylesheetItem(EditorItemDelegate editor, String url) {
-//            System.out.println("New StylesheetItem.");
             initialize(editor, url);
         }
 
@@ -421,7 +420,6 @@ public class StylesheetEditor extends InlineListEditor {
 
             setValue(url);
             EventHandler<ActionEvent> onActionListener = event -> {
-//                    System.out.println("StylesheetItem : onActionListener");
                 if (getValue().equals(currentValue)) {
                     // no change
                     return;
@@ -429,7 +427,6 @@ public class StylesheetEditor extends InlineListEditor {
                 if (stylesheetTf.getText().isEmpty()) {
                     remove(null);
                 }
-//                        System.out.println("StyleEditorItem : COMMIT");
                 editor.commit(StylesheetItem.this);
                 if (event != null && event.getSource() instanceof TextField) {
                     ((TextField) event.getSource()).selectAll();
