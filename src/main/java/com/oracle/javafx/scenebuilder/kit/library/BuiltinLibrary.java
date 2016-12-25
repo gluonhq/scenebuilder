@@ -125,7 +125,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(com.gluonhq.charm.glisten.control.AutoCompleteTextField.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Avatar.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.BottomNavigation.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.control.CardPane.class, TAG_GLUON);
+        addCustomizedItem(com.gluonhq.charm.glisten.control.CardPane.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.CharmListView.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.Chip.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, TAG_GLUON);
@@ -150,7 +150,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(com.gluonhq.charm.glisten.control.ProgressIndicator.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.SettingsPane.class, TAG_GLUON);
 //        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.SidePopupView.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.mvc.SplashView.class, TAG_GLUON);
+        addCustomizedItem(com.gluonhq.charm.glisten.mvc.SplashView.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.TextField.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, TAG_GLUON);
         addCustomizedItem(com.gluonhq.charm.glisten.mvc.View.class, TAG_GLUON);
