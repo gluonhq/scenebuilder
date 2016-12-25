@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -75,6 +76,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -87,6 +89,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public enum ApplicationControlAction {
 
         ABOUT,
+        CHECK_UPDATES,
         REGISTER,
         NEW_FILE,
         NEW_ALERT_DIALOG,
@@ -182,6 +185,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case REGISTER:
                 final RegistrationWindowController registrationWindowController = new RegistrationWindowController();
                 registrationWindowController.openWindow();
+                SBSettings.setWindowIcon(registrationWindowController.getStage());
+                break;
+
+            case CHECK_UPDATES:
+                checkUpdates();
                 break;
 
             case NEW_FILE:
@@ -238,6 +246,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
             case REGISTER:
+            case CHECK_UPDATES:
             case NEW_FILE:
             case NEW_ALERT_DIALOG:
             case NEW_BASIC_APPLICATION:
@@ -419,7 +428,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialog.getInstance().setOnHidden(event -> {
-                verifyLatestVersion();
+                verifyLatestVersionOnStartup();
                 verifyRegistration();
             });
 
@@ -917,10 +926,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void verifyLatestVersion() {
+    private void verifyLatestVersionOnStartup() {
         SBSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
-                // This can be because the url was not reachable so we don't show the update dialog
+                // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
             if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
@@ -940,7 +949,30 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 });
             }
         });
+    }
 
+    private void checkUpdates() {
+        SBSettings.getLatestVersion(latestVersion -> {
+            if (latestVersion == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
+                alert.setHeaderText(null);
+                alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
+                SBSettings.setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
+                alert.showAndWait();
+            }
+            if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                dialog.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                alert.setHeaderText(null);
+                alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                SBSettings.setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
+                alert.showAndWait();
+            }
+        });
     }
 
     private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal, String latestVersion) {

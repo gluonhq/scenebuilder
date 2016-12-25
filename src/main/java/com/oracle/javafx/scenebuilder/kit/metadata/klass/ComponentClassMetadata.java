@@ -160,6 +160,7 @@ public class ComponentClassMetadata extends ClassMetadata {
          * ExpansionPanelContainer      items
          * ToggleButtonGroup            toggles
          * CollapsedPanel               titleNodes
+         * SettingsPane                 options
          *
          * ------------------------------------
          *
@@ -212,6 +213,8 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = togglesName;
         } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class) {
             result = titleNodesName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.SettingsPane.class) {
+            result = optionsName;
         } else {
             result = null;
         }
@@ -232,5 +235,6 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName cardsName = new PropertyName("cards");
     private static final PropertyName togglesName = new PropertyName("toggles");
     private static final PropertyName titleNodesName = new PropertyName("titleNodes");
+    private static final PropertyName optionsName = new PropertyName("options");
 
 }

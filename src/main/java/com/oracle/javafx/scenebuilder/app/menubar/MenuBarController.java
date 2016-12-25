@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -367,6 +368,8 @@ public class MenuBarController {
     private MenuItem helpMenuItem;
     @FXML
     private MenuItem aboutMenuItem;
+    @FXML
+    private MenuItem checkUpdatesMenuItem;
 
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
@@ -576,6 +579,7 @@ public class MenuBarController {
 
         assert helpMenuItem != null;
         assert aboutMenuItem != null;
+        assert checkUpdatesMenuItem != null;
 
         /* 
          * To make MenuBar.fxml editable with SB 1.1, the menu bar is enclosed
@@ -1018,6 +1022,7 @@ public class MenuBarController {
         aboutMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.ABOUT));
         helpMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP));
         helpMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F1));
+        checkUpdatesMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.CHECK_UPDATES));
 
         /*
          * Put some generic handlers on each Menu and MenuItem.
