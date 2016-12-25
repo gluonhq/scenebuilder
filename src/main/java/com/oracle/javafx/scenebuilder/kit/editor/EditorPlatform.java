@@ -34,8 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -141,31 +145,29 @@ public class EditorPlatform {
      * Gluon Swatch
      */
     public enum GluonSwatch implements StylesheetProvider {
-        BLUE(Color.web("#2196F3")),
-        CYAN(Color.web("#00BCD4")),
-        DEEP_ORANGE(Color.web("#FF5722")),
-        DEEP_PURPLE(Color.web("#673AB7")),
-        GREEN(Color.web("#4CAF50")),
-        INDIGO(Color.web("#3F51B5")),
-        LIGHT_BLUE(Color.web("#03A9F4")),
-        PINK(Color.web("#E91E63")),
-        PURPLE(Color.web("#9C27B0")),
-        RED(Color.web("#F44336")),
-        TEAL(Color.web("#009688")),
-        LIGHT_GREEN(Color.web("#8BC34A")),
-        LIME(Color.web("#CDDC39")),
-        YELLOW(Color.web("#FFEB3B")),
-        AMBER(Color.web("#FFC107")),
-        ORANGE(Color.web("#FF9800")),
-        BROWN(Color.web("#795548")),
-        GREY(Color.web("#9E9E9E")),
-        BLUE_GREY(Color.web("#607D8B"));
+        BLUE,
+        CYAN,
+        DEEP_ORANGE,
+        DEEP_PURPLE,
+        GREEN,
+        INDIGO,
+        LIGHT_BLUE,
+        PINK,
+        PURPLE,
+        RED,
+        TEAL,
+        LIGHT_GREEN,
+        LIME,
+        YELLOW,
+        AMBER,
+        ORANGE,
+        BROWN,
+        GREY,
+        BLUE_GREY;
+
+        private static final String PRIMARY_SWATCH_500_STR = "-primary-swatch-500:";
 
         Color color;
-
-        GluonSwatch(Color color) {
-            this.color = color;
-        }
 
         @Override
         public String toString() {
@@ -179,6 +181,28 @@ public class EditorPlatform {
         }
 
         public Color getColor() {
+            if (color == null) {
+                URL url = null;
+                try {
+                    url = new URL(getStylesheetURL());
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                        String s = reader.readLine();
+                        while (s != null) {
+                            // Remove white spaces
+                            String trimmedString = s.replaceAll("\\s+", "");
+                            int indexOf = trimmedString.indexOf(PRIMARY_SWATCH_500_STR);
+                            if (indexOf != -1) {
+                                int indexOfSemiColon = trimmedString.indexOf(";");
+                                String colorString = trimmedString.substring(indexOf + PRIMARY_SWATCH_500_STR.length(), indexOfSemiColon);
+                                color = Color.web(colorString);
+                            }
+                            s = reader.readLine();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             return color;
         }
 
