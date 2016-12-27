@@ -33,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
 import com.gluonhq.charm.glisten.control.BottomNavigation;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.gluonhq.charm.glisten.control.DropdownButton;
 import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.gluonhq.charm.glisten.control.ToggleButtonGroup;

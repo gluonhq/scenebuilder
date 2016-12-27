@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,6 +43,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
@@ -69,7 +71,8 @@ public class FXOMDocument {
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
     private int updateDepth;
-    
+
+    private boolean hasGluonControls;
     
     
     public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, boolean normalize) throws IOException {
@@ -90,6 +93,8 @@ public class FXOMDocument {
             // Keeps this.fxomRoot == null
             // Keeps this.sceneGraphRoot == null
         }
+
+        hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
     }
     
     
@@ -373,6 +378,10 @@ public class FXOMDocument {
         assert sceneGraphHolder != null;
         sceneGraphHolder = null;
     }
+
+    public boolean hasGluonControls() {
+        return hasGluonControls;
+    }
     
     /**
      * Returns null or the object holding the scene graph of this fxom document.
@@ -386,5 +395,5 @@ public class FXOMDocument {
     public static interface SceneGraphHolder {
         public void fxomDocumentWillRefreshSceneGraph(FXOMDocument fxomDocument);
         public void fxomDocumentDidRefreshSceneGraph(FXOMDocument fxomDocument);
-    };
+    }
 }

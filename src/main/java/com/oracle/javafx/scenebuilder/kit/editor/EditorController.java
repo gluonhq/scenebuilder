@@ -33,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
@@ -1695,6 +1696,8 @@ public class EditorController {
             job = new InsertAsSubComponentJob(newObject, target, -1, this);
         }
 
+        WarnThemeAlert.createAlertIfAdequate(this, newObject).ifPresent(alert -> alert.showAndWait());
+
         jobManager.push(job);
     }
 
@@ -2480,6 +2483,8 @@ public class EditorController {
         fxomDocumentProperty.setValue(newFxomDocument);
         
         watchingController.fxomDocumentDidChange();
+
+        WarnThemeAlert.createAlertIfAdequate(this, newFxomDocument).ifPresent(alert -> alert.showAndWait());
         
     }
     
