@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.job.atomic;
 
+import com.oracle.javafx.scenebuilder.app.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -95,7 +97,9 @@ public class AddPropertyValueJob extends Job {
         getEditorController().getFxomDocument().beginUpdate();
         value.addToParentProperty(targetIndex, targetProperty);
         getEditorController().getFxomDocument().endUpdate();
-        
+
+        WarnThemeAlert.createAlertIfAdequate(getEditorController(), value).ifPresent(alert -> alert.showAndWait());
+
         assert value.getParentProperty() == targetProperty;
         assert value.getParentCollection() == null;
     }

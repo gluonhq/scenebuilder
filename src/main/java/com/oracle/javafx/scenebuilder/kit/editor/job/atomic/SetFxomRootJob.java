@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.job.atomic;
 
+import com.oracle.javafx.scenebuilder.app.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -71,6 +73,8 @@ public class SetFxomRootJob extends Job {
         fxomDocument.beginUpdate();
         fxomDocument.setFxomRoot(newRoot);
         fxomDocument.endUpdate();
+
+        WarnThemeAlert.createAlertIfAdequate(getEditorController(), newRoot).ifPresent(alert -> alert.showAndWait());
     }
 
     @Override

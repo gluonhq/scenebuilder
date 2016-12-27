@@ -77,6 +77,11 @@ public class EditorPlatform {
      * Gluon Glisten package
      */
     public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
+    
+    /**
+     * Gluon Glisten package
+     */
+    public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
 
     /**
      * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)

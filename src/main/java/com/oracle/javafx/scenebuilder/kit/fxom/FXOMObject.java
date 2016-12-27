@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueElement;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -733,7 +735,10 @@ public abstract class FXOMObject extends FXOMNode {
         parentCollection = newParentCollection;
     }
     
-    
+    public boolean isGluon() {
+        return sceneGraphObject.getClass().getName().startsWith(EditorPlatform.GLUON_PACKAGE);
+    }
+
     
     /*
      * Private
