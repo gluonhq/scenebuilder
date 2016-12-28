@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -57,6 +58,8 @@ public class SearchController extends AbstractFxmlController {
 
     public SearchController(EditorController c) {
         super(SearchController.class.getResource("Search.fxml"), c); //NOI18N
+
+
     }
 
     public final StringProperty textProperty() {
@@ -91,6 +94,14 @@ public class SearchController extends AbstractFxmlController {
                 searchField.clear();
             }
         });
+
+        // Select all text when this editor is selected
+        searchField.setOnMousePressed(event -> searchField.selectAll());
+        searchField.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                searchField.selectAll();
+            }
+        }));
         
         searchIcon.setOnMouseClicked(t -> searchField.clear());
     }

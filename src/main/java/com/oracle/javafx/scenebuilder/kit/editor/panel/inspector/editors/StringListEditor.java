@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -206,6 +207,14 @@ public class StringListEditor extends InlineListEditor {
             removeMi.setText(I18N.getString("inspector.list.remove"));
             moveUpMi.setText(I18N.getString("inspector.list.moveup"));
             moveDownMi.setText(I18N.getString("inspector.list.movedown"));
+
+            // Select all text when this editor is selected
+            textTextfield.setOnMousePressed(event -> textTextfield.selectAll());
+            textTextfield.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    textTextfield.selectAll();
+                }
+            }));
         }
 
         @Override

@@ -31,4 +31,4 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.ExpansionPanel.ExpandedPanel?>
-<ExpandedPanel />
+<ExpansionPanel.ExpandedPanel />

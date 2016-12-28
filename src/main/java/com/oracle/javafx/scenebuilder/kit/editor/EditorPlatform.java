@@ -33,14 +33,17 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
+import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This class contains static methods that depends on the platform.
@@ -65,7 +68,12 @@ public class EditorPlatform {
      * True if current platform is running Windows.
      */
     public static final boolean IS_WINDOWS = osName.contains("windows"); //NOI18N
-    
+
+    /**
+     * Gluon Glisten package
+     */
+    public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
+
     /**
      * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
      */
@@ -75,115 +83,141 @@ public class EditorPlatform {
      * Javadoc home (for Inspector and CSS Analyzer properties)
      */
     public final static String JAVADOC_HOME = "https://docs.oracle.com/javase/8/javafx/api/"; //NOI18N
-    
+
+    /**
+     * Gluon javadoc home (for Inspector and CSS Analyzer properties)
+     */
+    public final static String GLUON_JAVADOC_HOME = "http://docs.gluonhq.com/charm/javadoc/" + "latest" +"/"; //NOI18N
+
+    /**
+     * scene builder specific tweaks to Gluon theme
+     */
+    public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
+
+    interface StylesheetProvider {
+        String getStylesheetURL();
+    }
 
     /**
      * Themes supported by Scene Builder Kit.
      */
-    public enum Theme {
-        GLUON_MOBILE,
-        MODENA,
-        MODENA_TOUCH,
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK,
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK,
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE,
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK,
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK,
-        CASPIAN,
-        CASPIAN_HIGH_CONTRAST,
-        CASPIAN_EMBEDDED,
-        CASPIAN_EMBEDDED_HIGH_CONTRAST,
-        CASPIAN_EMBEDDED_QVGA,
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST
+    public enum Theme implements StylesheetProvider {
+        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
+        MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
+        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
+        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-whiteOnBlack.css"),
+        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-yellowOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css"),
+        CASPIAN("com/sun/javafx/scene/control/skin/caspian/caspian.bss"),
+        CASPIAN_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-highContrast.css"),
+        CASPIAN_EMBEDDED("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded.css"),
+        CASPIAN_EMBEDDED_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-highContrast.css"),
+        CASPIAN_EMBEDDED_QVGA("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga.css"),
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga-highContrast.css");
+
+        private String url;
+
+        Theme(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public String getStylesheetURL() {
+            return url;
+        }
+
+        @Override
+        public String toString() {
+            String lowerCaseName = name().toLowerCase();
+            return I18N.getString("title.theme." + lowerCaseName);
+        }
     }
 
     /**
-     * Returns the url string for locating the specified stylesheet.
-     * SB uses a set of CSS files aggregating several @import statements (see DTL-6799).
-     *
-     * @param theme theme for which string should be computed
-     * @return string for locating the specified stylesheet.
+     * Gluon Swatch
      */
-    public static String getThemeStylesheetURL(Theme theme) {
-        final String result;
+    public enum GluonSwatch implements StylesheetProvider {
+        BLUE(Color.web("#2196F3")),
+        CYAN(Color.web("#00BCD4")),
+        DEEP_ORANGE(Color.web("#FF5722")),
+        DEEP_PURPLE(Color.web("#673AB7")),
+        GREEN(Color.web("#4CAF50")),
+        INDIGO(Color.web("#3F51B5")),
+        LIGHT_BLUE(Color.web("#03A9F4")),
+        PINK(Color.web("#E91E63")),
+        PURPLE(Color.web("#9C27B0")),
+        RED(Color.web("#F44336")),
+        TEAL(Color.web("#009688")),
+        LIGHT_GREEN(Color.web("#8BC34A")),
+        LIME(Color.web("#CDDC39")),
+        YELLOW(Color.web("#FFEB3B")),
+        AMBER(Color.web("#FFC107")),
+        ORANGE(Color.web("#FF9800")),
+        BROWN(Color.web("#795548")),
+        GREY(Color.web("#9E9E9E")),
+        BLUE_GREY(Color.web("#607D8B"));
 
-        switch (theme) {
-            default:
-                result = null;
-                break;
-            case GLUON_MOBILE:
-                result = GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_STYLESHEET);
-                break;
-            case MODENA:
-                result = Deprecation.MODENA_STYLESHEET;
-                break;
-            case MODENA_TOUCH:
-                result = Deprecation.MODENA_TOUCH_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
-                result = Deprecation.MODENA_HIGHCONTRAST_BLACKONWHITE_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                result = Deprecation.MODENA_HIGHCONTRAST_WHITEONBLACK_STYLESHEET;
-                break;
-            case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                result = Deprecation.MODENA_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_BLACKONWHITE_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_WHITEONBLACK_STYLESHEET;
-                break;
-            case MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                result = Deprecation.MODENA_TOUCH_HIGHCONTRAST_YELLOWONBLACK_STYLESHEET;
-                break;
-            case CASPIAN:
-                result = Deprecation.CASPIAN_STYLESHEET;
-                break;
-            case CASPIAN_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_HIGHCONTRAST_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED:
-                result = Deprecation.CASPIAN_EMBEDDED_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_EMBEDDED_HIGHCONTRAST_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_QVGA:
-                result = Deprecation.CASPIAN_EMBEDDED_QVGA_STYLESHEET;
-                break;
-            case CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST:
-                result = Deprecation.CASPIAN_EMBEDDED_QVGA_HIGHCONTRAST_STYLESHEET;
-                break;
-        }
-        
-        if (!theme.equals(Theme.MODENA)) {
-            assert result != null : "Missing logic for " + theme;
+        Color color;
+
+        GluonSwatch(Color color) {
+            this.color = color;
         }
 
-        return result;
+        @Override
+        public String toString() {
+            String lowerCaseSwatch = "title.gluon.swatch." + name().toLowerCase();
+            return I18N.getString(lowerCaseSwatch);
+        }
+
+        @Override
+        public String getStylesheetURL() {
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase() + ".gls");
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public Node createGraphic() {
+            Rectangle rect = new Rectangle(8, 8);
+            rect.setFill(getColor());
+            rect.setStroke(Color.BLACK);
+            return rect;
+        }
     }
 
-    public static List<String> getAdditionalStylesheetsURL(Theme theme) {
-        List<String> result;
-        switch(theme) {
-            case GLUON_MOBILE:
-                result = Arrays.asList(GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_BLUE_SWATCH), GlistenStyleClasses.impl_loadResource(Deprecation.GLUON_LIGHT_THEME));
-                break;
-            default:
-                result = null;
-                break;
+    /**
+     * Gluon Theme
+     */
+    public enum GluonTheme implements StylesheetProvider {
+        LIGHT,
+        DARK;
+
+        @Override
+        public String toString() {
+            String lowerCaseName = "title.gluon.theme." + name().toLowerCase();
+            return I18N.getString(lowerCaseName);
         }
-        return result;
+
+        @Override
+        public String getStylesheetURL() {
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase() + ".gls");
+        }
     }
     
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
-        return Deprecation.MODENA_STYLESHEET;
+        return Theme.MODENA.getStylesheetURL();
     }
-    
+
+    public static String getGluonDocumentStylesheetURL() {
+        return GLUON_DOCUMENT_STYLESHEET;
+    }
+
     public static boolean isModena(Theme theme) {
         return theme.toString().startsWith("MODENA");
     }
@@ -223,8 +257,10 @@ public class EditorPlatform {
         return theme.toString().startsWith("CASPIAN");
     }
 
-    public static boolean isGluonMobile(Theme theme) {
-        return theme.toString().startsWith("GLUON_MOBILE");
+    public static boolean isGluonMobileLight(Theme theme) { return theme == Theme.GLUON_MOBILE_LIGHT; }
+
+    public static boolean isGluonMobileDark(Theme theme) {
+        return theme == Theme.GLUON_MOBILE_DARK;
     }
 
     /**

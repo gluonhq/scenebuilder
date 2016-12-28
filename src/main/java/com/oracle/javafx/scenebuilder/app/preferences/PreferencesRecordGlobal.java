@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlActi
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -78,6 +80,9 @@ public class PreferencesRecordGlobal {
             = DisplayOption.INFO;
     static final boolean DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED = false;
 
+    public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.Theme.MODENA;
+    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.GluonSwatch.BLUE;
+    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.GluonTheme.LIGHT;
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
 
     // Global preferences
@@ -103,6 +108,10 @@ public class PreferencesRecordGlobal {
     private LocalDate lastSentTrackingInfoDate = null;
 
     private final Preferences applicationRootPreferences;
+
+    private EditorPlatform.Theme theme = DEFAULT_THEME;
+    private EditorPlatform.GluonSwatch gluonSwatch = DEFAULT_SWATCH;
+    private EditorPlatform.GluonTheme gluonTheme = DEFAULT_GLUON_THEME;
 
     final static Integer[] recentItemsSizes = {5, 10, 15, 20};
 
@@ -264,6 +273,18 @@ public class PreferencesRecordGlobal {
     public void setCssTableColumnsOrderingReversed(boolean value) {
         cssTableColumnsOrderingReversed = value;
     }
+
+    public EditorPlatform.Theme getTheme() { return theme; }
+
+    public void setTheme(EditorPlatform.Theme theme) { this.theme = theme; }
+
+    public EditorPlatform.GluonSwatch getSwatch() { return gluonSwatch; }
+
+    public void setSwatch(EditorPlatform.GluonSwatch swatch) { this.gluonSwatch = swatch; }
+
+    public EditorPlatform.GluonTheme getGluonTheme() { return gluonTheme; }
+
+    public void setGluonTheme(EditorPlatform.GluonTheme theme) { this.gluonTheme = theme; }
 
     public int getRecentItemsSize() {
         return recentItemsSize;
@@ -465,6 +486,21 @@ public class PreferencesRecordGlobal {
         ec.setDefaultRootContainerWidth(rootContainerWidth);
     }
 
+    public void refreshTheme(DocumentWindowController dwc) {
+        final EditorController ec = dwc.getEditorController();
+        ec.setTheme(theme);
+    }
+
+    public void refreshSwatch(DocumentWindowController dwc) {
+        final EditorController ec = dwc.getEditorController();
+        ec.setGluonSwatch(gluonSwatch);
+    }
+
+    public void refreshGluonTheme(DocumentWindowController dwc) {
+        final EditorController ec = dwc.getEditorController();
+        ec.setGluonTheme(gluonTheme);
+    }
+
     public void refreshAlignmentGuidesColor() {
         final SceneBuilderApp app = SceneBuilderApp.getSingleton();
         for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
@@ -525,6 +561,27 @@ public class PreferencesRecordGlobal {
         }
     }
 
+    public void refreshTheme() {
+        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
+        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
+            refreshTheme(dwc);
+        }
+    }
+
+    public void refreshSwatch() {
+        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
+        for(DocumentWindowController dwc : app.getDocumentWindowControllers()) {
+            refreshSwatch(dwc);
+        }
+    }
+
+    public void refreshGluonTheme() {
+        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
+        for(DocumentWindowController dwc : app.getDocumentWindowControllers()) {
+            refreshGluonTheme(dwc);
+        }
+    }
+
     public void refresh(DocumentWindowController dwc) {
         refreshAlignmentGuidesColor(dwc);
         refreshBackgroundImage(dwc);
@@ -535,6 +592,9 @@ public class PreferencesRecordGlobal {
         refreshParentRingColor(dwc);
         refreshRootContainerHeight(dwc);
         refreshRootContainerWidth(dwc);
+        refreshTheme(dwc);
+        refreshSwatch(dwc);
+        refreshGluonTheme(dwc);
     }
     
     /**
@@ -624,6 +684,14 @@ public class PreferencesRecordGlobal {
         } else {
             lastSentTrackingInfoDate = LocalDate.parse(dateString);
         }
+
+        String themeName = applicationRootPreferences.get(THEME, DEFAULT_THEME.name());
+        theme = EditorPlatform.Theme.valueOf(themeName);
+        String swatchName = applicationRootPreferences.get(GLUON_SWATCH, DEFAULT_SWATCH.name());
+        gluonSwatch = EditorPlatform.GluonSwatch.valueOf(swatchName);
+        String gluonThemeName = applicationRootPreferences.get(GLUON_THEME, DEFAULT_GLUON_THEME.name());
+        gluonTheme = EditorPlatform.GluonTheme.valueOf(gluonThemeName);
+
     }
 
     public void writeToJavaPreferences(String key) {
@@ -686,6 +754,15 @@ public class PreferencesRecordGlobal {
                 break;
             case LAST_SENT_TRACKING_INFO_DATE:
                 applicationRootPreferences.put(LAST_SENT_TRACKING_INFO_DATE, getLastSentTrackingInfoDate().toString());
+                break;
+            case THEME:
+                applicationRootPreferences.put(THEME, getTheme().name());
+                break;
+            case GLUON_SWATCH:
+                applicationRootPreferences.put(GLUON_SWATCH, getSwatch().name());
+                break;
+            case GLUON_THEME:
+                applicationRootPreferences.put(GLUON_THEME, getGluonTheme().name());
                 break;
             default:
                 assert false;

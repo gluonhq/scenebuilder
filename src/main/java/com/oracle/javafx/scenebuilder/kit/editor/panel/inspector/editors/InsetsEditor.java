@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -89,6 +90,13 @@ public class InsetsEditor extends PropertyEditor {
                 userUpdateValueProperty(getValue());
             };
             setNumericEditorBehavior(this, tf, valueListener, false);
+            // Select all text when this editor is selected
+            tf.setOnMousePressed(event -> tf.selectAll());
+            tf.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+                if (newValue){
+                    tf.selectAll();
+                }
+            }));
         }
         linkBt.disableProperty().bind(disableProperty());
         setLayoutFormat(LayoutFormat.SIMPLE_LINE_BOTTOM);

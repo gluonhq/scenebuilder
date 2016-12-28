@@ -32,10 +32,9 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 
 import java.util.List;
@@ -76,8 +75,13 @@ class WorkspaceController {
     private boolean autoResize3DContent = true;
     private double scaling = 1.0;
     private RuntimeException layoutException;
+    private EditorController editorController;
 
     private FXOMDocument fxomDocument;
+
+    public WorkspaceController(EditorController editorController) {
+        this.editorController = editorController;
+    }
 
     public void panelControllerDidLoadFxml(ScrollPane scrollPane, 
             Group scalingGroup, SubScene contentSubScene, Group contentGroup, Label backgroundPane, 
@@ -155,51 +159,57 @@ class WorkspaceController {
         return result;
     }
     
-    public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme) {
+    public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme, EditorPlatform.GluonSwatch gluonSwatch, EditorPlatform.GluonTheme gluonTheme) {
         assert themeStyleSheet != null;
         assert theme != null;
-        String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
-        List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(EditorPlatform.Theme.GLUON_MOBILE);
-        if (theme == EditorPlatform.Theme.GLUON_MOBILE) {
-            contentSubScene.setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.MODENA));
+        assert gluonSwatch != null;
+        assert gluonTheme != null;
+        String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
+        String gluonSwatchStylesheet = gluonSwatch.getStylesheetURL();
+        String gluonThemeStylesheet = gluonTheme.getStylesheetURL();
+        String previousGluonSwatchStylesheet = editorController.getGluonSwatch().getStylesheetURL();
+        String previousGluonThemeStylesheet = editorController.getGluonTheme().getStylesheetURL();
+        if (theme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || theme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
+            contentSubScene.setUserAgentStylesheet(EditorPlatform.Theme.MODENA.getStylesheetURL());
             ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
+            currentStyleSheets.remove(previousGluonSwatchStylesheet);
+            currentStyleSheets.remove(previousGluonThemeStylesheet);
             if (!currentStyleSheets.contains(themeStyleSheet)) {
                 currentStyleSheets.add(themeStyleSheet);
             }
             if (!currentStyleSheets.contains(gluonDocumentStylesheet)) {
                 currentStyleSheets.add(gluonDocumentStylesheet);
             }
-            if (!currentStyleSheets.contains(additionalGluonStylesheets)) {
-                currentStyleSheets.addAll(additionalGluonStylesheets);
+            if (!currentStyleSheets.contains(gluonSwatchStylesheet)) {
+                currentStyleSheets.add(gluonSwatchStylesheet);
+            }
+            if (!currentStyleSheets.contains(gluonThemeStylesheet)) {
+                currentStyleSheets.add(gluonThemeStylesheet);
             }
             contentGroup.getStylesheets().clear();
             contentGroup.getStylesheets().setAll(currentStyleSheets);
             contentGroup.applyCss();
 //            setPreviewStyleSheets(Arrays.asList(themeStyleSheet));
-
         } else {
             contentSubScene.setUserAgentStylesheet(themeStyleSheet);
 
-            String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
+            String gluonMobileStyleSheet = EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL(); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
             contentGroup.getStylesheets().remove(gluonMobileStyleSheet);
             contentGroup.getStylesheets().remove(gluonDocumentStylesheet);
-            contentGroup.getStylesheets().remove(additionalGluonStylesheets);
+            contentGroup.getStylesheets().remove(previousGluonSwatchStylesheet);
+            contentGroup.getStylesheets().remove(previousGluonThemeStylesheet);
         }
     }
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
-        boolean shouldAddGluonMobile = false;
-        String gluonMobileStyleSheet = EditorPlatform.getThemeStylesheetURL(EditorPlatform.Theme.GLUON_MOBILE);
-        ObservableList<String> currentStyleSheets = contentGroup.getStylesheets();
-        if (currentStyleSheets.contains(gluonMobileStyleSheet)) {
-            shouldAddGluonMobile = true;
-        }
+        EditorPlatform.Theme currentTheme = editorController.getTheme();
         contentGroup.getStylesheets().clear();
         contentGroup.getStylesheets().addAll(previewStyleSheets);
-        if (shouldAddGluonMobile) {
-            contentGroup.getStylesheets().add(gluonMobileStyleSheet);
-            List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(EditorPlatform.Theme.GLUON_MOBILE);
-            contentGroup.getStylesheets().addAll(additionalGluonStylesheets);
+        if (currentTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || currentTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
+            contentGroup.getStylesheets().add(EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL()); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
+            contentGroup.getStylesheets().add(editorController.getGluonSwatch().getStylesheetURL());
+            contentGroup.getStylesheets().add(editorController.getGluonTheme().getStylesheetURL());
+            contentGroup.getStylesheets().add(EditorPlatform.getGluonDocumentStylesheetURL());
         }
         contentGroup.applyCss();
     }

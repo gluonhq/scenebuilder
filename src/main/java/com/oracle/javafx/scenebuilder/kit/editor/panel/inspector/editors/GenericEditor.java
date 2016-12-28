@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -59,6 +60,14 @@ public class GenericEditor extends PropertyEditor {
         EventHandler<ActionEvent> onActionListener = event -> userUpdateValueProperty(getValue());
         setTextEditorBehavior(this, textField, onActionListener);
         setDisable(true);
+
+        // Select all text when this editor is selected
+        textField.setOnMousePressed(event -> textField.selectAll());
+        textField.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.selectAll();
+            }
+        }));
     }
 
     @Override
