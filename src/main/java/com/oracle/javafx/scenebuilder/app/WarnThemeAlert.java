@@ -67,7 +67,7 @@ public class WarnThemeAlert extends Alert {
 
         resultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == setGluonTheme) {
-                editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE);
+                editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
             }
         });
 
@@ -75,7 +75,8 @@ public class WarnThemeAlert extends Alert {
     }
 
     public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMObject fxomObject) {
-        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE) {
+        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
+                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             return Optional.of(new WarnThemeAlert(editorController));
         } else {
             return Optional.empty();
@@ -83,7 +84,8 @@ public class WarnThemeAlert extends Alert {
     }
 
     public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMDocument fxomDocument) {
-        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE) {
+        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
+                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             return Optional.of(new WarnThemeAlert(editorController));
         } else {
             return Optional.empty();
