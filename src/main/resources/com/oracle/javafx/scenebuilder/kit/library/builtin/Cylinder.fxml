@@ -32,4 +32,4 @@
 -->
 <?import javafx.scene.shape.*?>
 
-<Cylinder radius="0.77" xmlns:fx="http://javafx.com/fxml"/>
+<Cylinder radius="20" height="100" xmlns:fx="http://javafx.com/fxml"/>

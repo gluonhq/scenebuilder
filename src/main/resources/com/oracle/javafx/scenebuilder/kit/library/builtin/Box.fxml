@@ -30,11 +30,6 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<Sphere radius="50" xmlns:fx="http://javafx.com/fxml"/>
+<Box width="100" height="100" depth="100" xmlns:fx="http://javafx.com/fxml"/>
