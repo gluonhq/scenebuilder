@@ -252,7 +252,7 @@ public class BuiltinLibrary extends Library {
         // Shapes
         addCustomizedItem(javafx.scene.shape.Arc.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.ArcTo.class, TAG_SHAPES);
-        addDefaultItem(javafx.scene.shape.Box.class, TAG_SHAPES, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.shape.Box.class, TAG_SHAPES, FX8_QUALIFIER);
         addCustomizedItem(javafx.scene.shape.Circle.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.ClosePath.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.CubicCurve.class, TAG_SHAPES);
