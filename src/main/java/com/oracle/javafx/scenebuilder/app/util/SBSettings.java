@@ -85,6 +85,8 @@ public class SBSettings {
             int currentVersionNumber = Integer.parseInt(currentVersionNumbers[i]);
             if (number > currentVersionNumber) {
                 return true;
+            } else if (number < currentVersionNumber) {
+                return false;
             }
         }
         return false;

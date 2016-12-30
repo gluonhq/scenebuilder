@@ -953,25 +953,38 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private void checkUpdates() {
         SBSettings.getLatestVersion(latestVersion -> {
-            if (latestVersion == null) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
-                alert.setHeaderText(null);
-                alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
-                SBSettings.setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
-                alert.showAndWait();
-            }
-            if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
-                dialog.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                alert.setHeaderText(null);
-                alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                SBSettings.setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
-                alert.showAndWait();
-            }
+            Platform.runLater(() -> {
+                if (latestVersion == null) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
+                    alert.setHeaderText(null);
+                    alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
+                    SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+                    alert.showAndWait();
+                }
+                try {
+                    if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                        dialog.showAndWait();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                        alert.setHeaderText(null);
+                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+                        alert.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    // The version number format is not supported and this is most probably only happening
+                    // in development so we don't localize the strings
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
+                    SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+                    alert.showAndWait();
+                }
+            });
         });
     }
 
