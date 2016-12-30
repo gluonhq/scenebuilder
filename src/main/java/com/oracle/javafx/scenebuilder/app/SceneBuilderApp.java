@@ -932,21 +932,25 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
-            if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                PreferencesController pc = PreferencesController.getSingleton();
-                PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+            try {
+                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                    PreferencesController pc = PreferencesController.getSingleton();
+                    PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
-                if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                    return;
-                }
+                    if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
+                        return;
+                    }
 
-                if (!isUpdateDialogDateReached(recordGlobal)) {
-                    return;
+                    if (!isUpdateDialogDateReached(recordGlobal)) {
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                        dialog.showAndWait();
+                    });
                 }
-                Platform.runLater(() -> {
-                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
-                    dialog.showAndWait();
-                });
+            } catch (NumberFormatException ex) {
+                showVersionNumberFormatError();
             }
         });
     }
@@ -975,17 +979,21 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         alert.showAndWait();
                     }
                 } catch (NumberFormatException ex) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    // The version number format is not supported and this is most probably only happening
-                    // in development so we don't localize the strings
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
-                    SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
-                    alert.showAndWait();
+                    showVersionNumberFormatError();
                 }
             });
         });
+    }
+
+    private void showVersionNumberFormatError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        // The version number format is not supported and this is most probably only happening
+        // in development so we don't localize the strings
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
+        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+        alert.showAndWait();
     }
 
     private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal, String latestVersion) {
