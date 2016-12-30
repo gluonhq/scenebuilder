@@ -950,7 +950,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     });
                 }
             } catch (NumberFormatException ex) {
-                showVersionNumberFormatError();
+                Platform.runLater(() -> showVersionNumberFormatError());
             }
         });
     }
