@@ -265,8 +265,6 @@ public class EditorController {
             = new SimpleObjectProperty<>(new BuiltinGlossary());
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_THEME);
     private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
             = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_GLUON_THEME);
     private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
@@ -537,7 +535,16 @@ public class EditorController {
     public ObservableValue<ResourceBundle> resourcesProperty() {
         return resourcesProperty;
     }
-    
+
+    // -- Theme property
+    private final ObjectProperty<Theme> themeProperty
+            = new SimpleObjectProperty<Theme>(PreferencesRecordGlobal.DEFAULT_THEME) {
+        @Override
+        protected void invalidated() {
+            getFxomDocument().refreshSceneGraph();
+        }
+    };
+
     /**
      * Returns the theme used by this editor.
      * 
