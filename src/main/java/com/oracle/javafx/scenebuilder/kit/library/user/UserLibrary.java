@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -254,15 +255,8 @@ public class UserLibrary extends Library {
     }
     
     void updateJarReports(Collection<JarReport> newJarReports) {
-        if (Platform.isFxApplicationThread()) {
-            previousJarReports.setAll(jarReports);
-            jarReports.setAll(newJarReports);
-        } else {
-            Platform.runLater(() -> {
-                previousJarReports.setAll(jarReports);
-                jarReports.setAll(newJarReports);
-            });
-        }
+        previousJarReports.setAll(jarReports);
+        jarReports.setAll(newJarReports);
     }
     
     void updateFxmlFileReports(Collection<Path> newFxmlFileReports) {

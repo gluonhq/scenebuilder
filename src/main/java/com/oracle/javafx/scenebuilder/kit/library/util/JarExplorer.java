@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,6 +40,10 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import com.oracle.javafx.scenebuilder.app.ImportingGluonControlsAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
@@ -122,18 +127,21 @@ public class JarExplorer {
         JarReportEntry.Status status;
         Throwable entryException;
         Class<?> entryClass = null;
+        String className;
         
         if (entry.isDirectory()) {
             status = JarReportEntry.Status.IGNORED;
             entryClass = null;
             entryException = null;
+            className = null;
         } else {
-            final String className = makeClassName(entry.getName());
+            className = makeClassName(entry.getName());
             // Filtering out what starts with com.javafx. is bound to DTL-6378.
             if (className == null || className.startsWith("java.") //NOI18N
                     || className.startsWith("javax.") || className.startsWith("javafx.") //NOI18N
                     || className.startsWith("com.oracle.javafx.scenebuilder.") //NOI18N
-                    || className.startsWith("com.javafx.")) { //NOI18N
+                    || className.startsWith("com.javafx.")
+                    || className.startsWith(EditorPlatform.GLUON_PACKAGE)) { //NOI18N
                 status = JarReportEntry.Status.IGNORED;
                 entryClass = null;
                 entryException = null;
@@ -155,10 +163,10 @@ public class JarExplorer {
                         status = JarReportEntry.Status.OK;
                         entryException = null;
                     }
-                } catch(RuntimeException|IOException x) {
+                } catch (RuntimeException | IOException x) {
                     status = JarReportEntry.Status.CANNOT_INSTANTIATE;
                     entryException = x;
-                } catch(Error | ClassNotFoundException x) {
+                } catch (Error | ClassNotFoundException x) {
                     status = JarReportEntry.Status.CANNOT_LOAD;
                     entryClass = null;
                     entryException = x;
@@ -166,7 +174,7 @@ public class JarExplorer {
             }
         }
         
-        return new JarReportEntry(entry.getName(), status, entryException, entryClass);
+        return new JarReportEntry(entry.getName(), status, entryException, entryClass, className);
     }
     
     

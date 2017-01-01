@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -78,6 +78,8 @@ public class PreferencesController {
 
     static final String UPDATE_DIALOG_DATE = "UPDATE_DIALOG_DATE";
     static final String IGNORE_VERSION = "IGNORE_VERSION";
+
+    static final String IMPORTED_GLUON_JARS = "IMPORTED_GLUON_JARS";
 
     static final String LAST_SENT_TRACKING_INFO_DATE = "LAST_SENT_TRACKING_INFO_DATE";
 

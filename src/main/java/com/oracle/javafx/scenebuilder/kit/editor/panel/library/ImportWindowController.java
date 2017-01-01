@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
+import com.oracle.javafx.scenebuilder.app.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
@@ -419,6 +420,7 @@ public class ImportWindowController extends AbstractModalDialog {
                         = row -> row.importRequired();
                 importList.setCellFactory(CheckBoxListCell.forListView(importRequired));
 
+                boolean importingGluonControls = false;
                 for (JarReport jarReport : jarReportList) {
                     for (JarReportEntry e : jarReport.getEntries()) {
                         if ((e.getStatus() == JarReportEntry.Status.OK) && e.isNode()) {
@@ -443,13 +445,21 @@ public class ImportWindowController extends AbstractModalDialog {
                                     });
                         }
                     }
+                    if (jarReport.hasGluonControls()) {
+                        importingGluonControls = true;
+                    }
                 }
-                
+
+                if (importingGluonControls) {
+                    new ImportingGluonControlsAlert().showAndWait();
+                }
+
                 // Sort based on the simple class name.
                 Collections.sort(importList.getItems(), new ImportRowComparator());
 
                 final int numOfComponentToImport = getNumOfComponentToImport(importList);
                 updateOKButtonTitle(numOfComponentToImport);
+                updateOKCancelDefaultState(numOfComponentToImport);
                 updateSelectionToggleText(numOfComponentToImport);
                 updateNumOfItemsLabelAndSelectionToggleState();
             } catch (InterruptedException | ExecutionException | IOException ex) {
@@ -605,6 +615,16 @@ public class ImportWindowController extends AbstractModalDialog {
             setOKButtonTitle(I18N.getString("import.button.import.component"));
         } else {
             setOKButtonTitle(I18N.getString("import.button.import.components"));
+        }
+    }
+
+    private void updateOKCancelDefaultState(int numOfComponentsToImport) {
+        if (numOfComponentsToImport == 0) {
+            cancelButton.setDefaultButton(true);
+            cancelButton.requestFocus();
+        } else {
+            okButton.setDefaultButton(true);
+            okButton.requestFocus();
         }
     }
     

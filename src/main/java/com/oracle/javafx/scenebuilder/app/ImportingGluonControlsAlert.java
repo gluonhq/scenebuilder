@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,64 +32,66 @@
 
 package com.oracle.javafx.scenebuilder.app;
 
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
+public class ImportingGluonControlsAlert extends Alert {
 
-public class WarnThemeAlert extends Alert {
-    private static boolean hasBeenShown = false;
-
-    private WarnThemeAlert(EditorController editorController) {
+    public ImportingGluonControlsAlert() {
         super(AlertType.WARNING);
-        
-        setHeaderText(I18N.getString("alert.theme.gluon.mobile.headertext"));
-        setContentText(I18N.getString("alert.theme.gluon.mobile.contenttext"));
 
-        ButtonType setGluonTheme = new ButtonType(I18N.getString("alert.theme.gluon.mobile.setgluontheme"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType ignore = new ButtonType(I18N.getString("alert.theme.gluon.mobile.ignore"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        setHeaderText(I18N.getString("alert.importing.gluon.headertext"));
+        setContentText(I18N.getString("alert.importing.gluon.contenttext"));
 
-        getButtonTypes().setAll(setGluonTheme, ignore);
+        ButtonType OKButton = new ButtonType(I18N.getString("alert.importing.gluon.ok.button"), ButtonBar.ButtonData.OK_DONE);
+
+        getButtonTypes().setAll(OKButton);
 
         getDialogPane().getStyleClass().add("SB-alert");
         getDialogPane().getStylesheets().add(SceneBuilderApp.class.getResource("css/Alert.css").toString());
 
         SBSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
+    }
 
-        resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == setGluonTheme) {
-                editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+    public static void updateImportedGluonJars(List<JarReport> jars) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        List<String> jarReportCollection = new ArrayList<>();
+        for (JarReport jarReport : jars) {
+            if (jarReport.hasGluonControls()) {
+                jarReportCollection.add(jarReport.getJar().getFileName().toString());
             }
-        });
-
-        setOnShown(event -> hasBeenShown = true);
-    }
-
-    public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMObject fxomObject) {
-        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            return Optional.of(new WarnThemeAlert(editorController));
+        }
+        if (jarReportCollection.isEmpty()) {
+            recordGlobal.setImportedGluonJars(new String[0]);
         } else {
-            return Optional.empty();
+            recordGlobal.setImportedGluonJars(jarReportCollection.toArray(new String[0]));
         }
     }
 
-    public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMDocument fxomDocument) {
-        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            return Optional.of(new WarnThemeAlert(editorController));
-        } else {
-            return Optional.empty();
+    public static boolean hasGluonJarBeenImported(String jar) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        String[] importedJars = recordGlobal.getImportedGluonJars();
+        if (importedJars == null) {
+            return false;
         }
-    }
 
+        for (String importedJar : importedJars) {
+            if (jar.equals(importedJar)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
