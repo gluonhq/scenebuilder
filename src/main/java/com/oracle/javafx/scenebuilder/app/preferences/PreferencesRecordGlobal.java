@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -100,6 +100,8 @@ public class PreferencesRecordGlobal {
 
     private LocalDate showUpdateDialogDate = null;
     private String ignoreVersion = null;
+
+    private String[] importedGluonJars = new String[0];
 
     private String registrationHash = null;
     private String registrationEmail = null;
@@ -425,6 +427,15 @@ public class PreferencesRecordGlobal {
         return ignoreVersion;
     }
 
+    public void setImportedGluonJars(String[] importedJars) {
+        this.importedGluonJars = importedJars;
+        writeToJavaPreferences(IMPORTED_GLUON_JARS);
+    }
+
+    public String[] getImportedGluonJars() {
+        return importedGluonJars;
+    }
+
     public LocalDate getLastSentTrackingInfoDate() {
         return lastSentTrackingInfoDate;
     }
@@ -685,6 +696,7 @@ public class PreferencesRecordGlobal {
             lastSentTrackingInfoDate = LocalDate.parse(dateString);
         }
 
+        // Document theme
         String themeName = applicationRootPreferences.get(THEME, DEFAULT_THEME.name());
         theme = EditorPlatform.Theme.valueOf(themeName);
         String swatchName = applicationRootPreferences.get(GLUON_SWATCH, DEFAULT_SWATCH.name());
@@ -692,6 +704,13 @@ public class PreferencesRecordGlobal {
         String gluonThemeName = applicationRootPreferences.get(GLUON_THEME, DEFAULT_GLUON_THEME.name());
         gluonTheme = EditorPlatform.GluonTheme.valueOf(gluonThemeName);
 
+        // Import Gluon Controls Alert
+        final String importedGluonJarsString = applicationRootPreferences.get(IMPORTED_GLUON_JARS, null);
+        if (importedGluonJarsString == null) {
+            this.importedGluonJars = new String[0];
+        } else {
+            this.importedGluonJars= importedGluonJarsString.split(",");
+        }
     }
 
     public void writeToJavaPreferences(String key) {
@@ -763,6 +782,18 @@ public class PreferencesRecordGlobal {
                 break;
             case GLUON_THEME:
                 applicationRootPreferences.put(GLUON_THEME, getGluonTheme().name());
+                break;
+            case IMPORTED_GLUON_JARS:
+                if (importedGluonJars.length == 0) {
+                    applicationRootPreferences.put(IMPORTED_GLUON_JARS, "");
+                } else {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (String s : importedGluonJars) {
+                        stringBuilder.append(s);
+                        stringBuilder.append(",");
+                    }
+                    applicationRootPreferences.put(IMPORTED_GLUON_JARS, stringBuilder.toString());
+                }
                 break;
             default:
                 assert false;

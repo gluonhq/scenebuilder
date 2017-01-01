@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.util;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import javafx.scene.Node;
 
 /**
@@ -50,8 +52,9 @@ public class JarReportEntry {
     private final Status status;
     private final Class<?> klass;
     private final Throwable exception;
+    private final String className;
 
-    public JarReportEntry(String name, Status status, Throwable exception, Class<?> klass) {
+    public JarReportEntry(String name, Status status, Throwable exception, Class<?> klass, String className) {
         assert name != null;
         assert (klass != null) || (status != Status.OK);
         assert (exception == null) || (status != Status.OK);
@@ -60,6 +63,7 @@ public class JarReportEntry {
         this.status = status;
         this.klass = klass;
         this.exception = exception;
+        this.className = className;
     }
 
     public String getName() {
@@ -81,6 +85,8 @@ public class JarReportEntry {
     public boolean isNode() {
         return (klass == null) ? false : Node.class.isAssignableFrom(klass);
     }
+
+    public boolean isGluon() { return className != null && className.startsWith(EditorPlatform.GLUON_PACKAGE); }
     
     /*
      * Object

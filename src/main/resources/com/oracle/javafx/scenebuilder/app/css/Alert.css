@@ -30,13 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.warn-theme.alert .header-panel {
+.SB-alert.alert .header-panel {
     -fx-background-color: #e2e2e2;
     -fx-border-color: #b4b4b4;
     -fx-border-width: 1 0 1 0;
 }
 
-.warn-theme.alert .label.content {
+.SB-alert.alert .label.content {
     -fx-background-color: #f6f6f7;
     -fx-padding: 16 10 3em 10;
 }
