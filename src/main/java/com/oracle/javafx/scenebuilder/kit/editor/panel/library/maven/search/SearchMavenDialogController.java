@@ -121,7 +121,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                         files.add(new File(mavenArtifact.getPath()));
                         if (!mavenArtifact.getDependencies().isEmpty()) {
                             files.addAll(Stream
-                                    .of(mavenArtifact.getDependencies().split(":"))
+                                    .of(mavenArtifact.getDependencies().split(File.pathSeparator))
                                     .map(File::new)
                                     .collect(Collectors.toList()));
                         }

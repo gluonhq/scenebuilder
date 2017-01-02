@@ -583,7 +583,7 @@ public class ImportWindowController extends AbstractModalDialog {
                 .stream()
                 .filter(r -> !r.isImportRequired())
                 .map(ImportRow::getCanonicalClassName)
-                .collect(Collectors.joining(":"));
+                .collect(Collectors.joining(File.pathSeparator));
     }
     
     // The title of the button is important in the sense it says to the user

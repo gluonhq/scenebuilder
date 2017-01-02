@@ -290,7 +290,7 @@ public class MavenRepositorySystem {
             return artifactResults.stream()
                     .skip(1) // exclude jar itself
                     .map(a -> a.getArtifact().getFile().getAbsolutePath())
-                    .collect(Collectors.joining(":"));
+                    .collect(Collectors.joining(File.pathSeparator));
         } catch (DependencyResolutionException ex) { }
         return "";
     }

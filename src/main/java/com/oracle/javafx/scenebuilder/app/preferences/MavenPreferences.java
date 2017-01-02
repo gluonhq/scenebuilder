@@ -41,7 +41,7 @@ public class MavenPreferences {
     private List<String> getArtifactJarDependencies(MavenArtifact artifact) {
         String dep = recordArtifacts.get(artifact.getCoordinates()).getMavenArtifact().getDependencies();
         if (dep != null && !dep.isEmpty()) {
-                return Stream.of(dep.split(":")).collect(Collectors.toList());
+                return Stream.of(dep.split(File.pathSeparator)).collect(Collectors.toList());
         } 
         return new ArrayList<>();
     }
@@ -78,7 +78,7 @@ public class MavenPreferences {
     public List<String> getArtifactFilter(MavenArtifact artifact) {
         String filter = recordArtifacts.get(artifact.getCoordinates()).getMavenArtifact().getFilter();
         if (filter != null && !filter.isEmpty()) {
-                return Stream.of(filter.split(":")).collect(Collectors.toList());
+                return Stream.of(filter.split(File.pathSeparator)).collect(Collectors.toList());
         } 
         return new ArrayList<>();
     }
@@ -100,7 +100,7 @@ public class MavenPreferences {
                 .stream()
                 .map(p -> p.getMavenArtifact().getDependencies())
                 .filter(d -> d != null && !d.isEmpty())
-                .flatMap(d -> Stream.of(d.split(":")))
+                .flatMap(d -> Stream.of(d.split(File.pathSeparator)))
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -141,7 +141,7 @@ public class MavenPreferences {
                 .stream()
                 .map(p -> p.getMavenArtifact().getFilter())
                 .filter(f -> f != null && !f.isEmpty())
-                .flatMap(f -> Stream.of(f.split(":")))
+                .flatMap(f -> Stream.of(f.split(File.pathSeparator)))
                 .distinct()
                 .collect(Collectors.toList());
     }
