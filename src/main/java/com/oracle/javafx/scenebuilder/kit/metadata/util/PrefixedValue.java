@@ -55,6 +55,7 @@ public class PrefixedValue {
         CLASSLOADER_RELATIVE_PATH,
         RESOURCE_KEY,
         EXPRESSION,
+        BINDING_EXPRESSION,
         PLAIN_STRING,
         INVALID
     }
@@ -90,6 +91,10 @@ public class PrefixedValue {
             }
             case EXPRESSION: {
                 this.value = FXMLLoader.EXPRESSION_PREFIX + suffix; //NOI18N
+                break;
+            }
+            case BINDING_EXPRESSION: {
+                this.value = FXMLLoader.BINDING_EXPRESSION_PREFIX + suffix + FXMLLoader.BINDING_EXPRESSION_SUFFIX; //NOI18N
                 break;
             }
             case PLAIN_STRING: {
@@ -128,12 +133,11 @@ public class PrefixedValue {
     }
     
     public boolean isExpression() {
-        // Fix for SB-200: Binding Expressions can't be treated as Expressions
-        return type == Type.EXPRESSION && !getSuffix().startsWith("{"); //NOI18N
+        return type == Type.EXPRESSION;
     }
     
     public boolean isBindingExpression() {
-        return type == Type.EXPRESSION && getSuffix().startsWith("{"); //NOI18N
+        return type == Type.BINDING_EXPRESSION;
     }
     
     public boolean isPlainString() {
@@ -168,6 +172,12 @@ public class PrefixedValue {
             case EXPRESSION: {
                 assert value.startsWith(FXMLLoader.EXPRESSION_PREFIX);
                 result = value.substring(FXMLLoader.EXPRESSION_PREFIX.length());
+                break;
+            }
+            case BINDING_EXPRESSION: {
+                assert value.startsWith(FXMLLoader.BINDING_EXPRESSION_PREFIX);
+                assert value.endsWith(FXMLLoader.BINDING_EXPRESSION_SUFFIX);
+                result = value.substring(FXMLLoader.BINDING_EXPRESSION_PREFIX.length() - FXMLLoader.BINDING_EXPRESSION_SUFFIX.length());
                 break;
             }
             case PLAIN_STRING: {
@@ -271,6 +281,13 @@ public class PrefixedValue {
                 result = Type.PLAIN_STRING;
             } else {
                 result = Type.RESOURCE_KEY;
+            }
+        } else if (v.startsWith(FXMLLoader.BINDING_EXPRESSION_PREFIX)) {
+            v = v.substring(FXMLLoader.BINDING_EXPRESSION_PREFIX.length());
+            if (v.isEmpty() || !v.endsWith(FXMLLoader.BINDING_EXPRESSION_SUFFIX)) {
+                result = Type.INVALID;
+            } else {
+                result = Type.BINDING_EXPRESSION;
             }
         } else if (v.startsWith(FXMLLoader.EXPRESSION_PREFIX)) {
             v = v.substring(FXMLLoader.EXPRESSION_PREFIX.length());
