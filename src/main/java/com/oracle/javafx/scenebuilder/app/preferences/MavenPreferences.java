@@ -1,3 +1,34 @@
+/*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
+ * All rights reserved. Use is subject to license terms.
+ *
+ * This file is available and licensed under the following license:
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  - Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the distribution.
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
@@ -41,7 +72,7 @@ public class MavenPreferences {
     private List<String> getArtifactJarDependencies(MavenArtifact artifact) {
         String dep = recordArtifacts.get(artifact.getCoordinates()).getMavenArtifact().getDependencies();
         if (dep != null && !dep.isEmpty()) {
-                return Stream.of(dep.split(":")).collect(Collectors.toList());
+                return Stream.of(dep.split(File.pathSeparator)).collect(Collectors.toList());
         } 
         return new ArrayList<>();
     }
@@ -78,7 +109,7 @@ public class MavenPreferences {
     public List<String> getArtifactFilter(MavenArtifact artifact) {
         String filter = recordArtifacts.get(artifact.getCoordinates()).getMavenArtifact().getFilter();
         if (filter != null && !filter.isEmpty()) {
-                return Stream.of(filter.split(":")).collect(Collectors.toList());
+                return Stream.of(filter.split(File.pathSeparator)).collect(Collectors.toList());
         } 
         return new ArrayList<>();
     }
@@ -100,7 +131,7 @@ public class MavenPreferences {
                 .stream()
                 .map(p -> p.getMavenArtifact().getDependencies())
                 .filter(d -> d != null && !d.isEmpty())
-                .flatMap(d -> Stream.of(d.split(":")))
+                .flatMap(d -> Stream.of(d.split(File.pathSeparator)))
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -141,7 +172,7 @@ public class MavenPreferences {
                 .stream()
                 .map(p -> p.getMavenArtifact().getFilter())
                 .filter(f -> f != null && !f.isEmpty())
-                .flatMap(f -> Stream.of(f.split(":")))
+                .flatMap(f -> Stream.of(f.split(File.pathSeparator)))
                 .distinct()
                 .collect(Collectors.toList());
     }
