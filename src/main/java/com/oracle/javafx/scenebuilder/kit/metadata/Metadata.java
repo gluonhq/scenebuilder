@@ -597,8 +597,6 @@ public class Metadata {
             new PropertyName("cacheShape");
     private final PropertyName cancelButtonName = 
             new PropertyName("cancelButton");
-    private final PropertyName cardsName =
-            new PropertyName("cards");
     private final PropertyName categoriesName = 
             new PropertyName("categories");
     private final PropertyName categoryGapName = 
@@ -931,6 +929,8 @@ public class Metadata {
             new PropertyName("onMousePressed");
     private final PropertyName onMouseReleasedName = 
             new PropertyName("onMouseReleased");
+    private final PropertyName onPullToRefreshName =
+            new PropertyName("onPullToRefresh");
     private final PropertyName onRotateName = 
             new PropertyName("onRotate");
     private final PropertyName onRotationFinishedName = 
@@ -1806,11 +1806,6 @@ public class Metadata {
                 true, /* readWrite */
                 false, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 46));
-    private final ComponentPropertyMetadata cards_Node_PropertyMetadata =
-            new ComponentPropertyMetadata(
-                cardsName,
-                NodeMetadata,
-                true); /* collection */
     private final ValuePropertyMetadata categoriesPropertyMetadata =
             new StringListPropertyMetadata(
                 categoriesName,
@@ -3029,6 +3024,13 @@ public class Metadata {
                 true, /* readWrite */
                 null, /* defaultValue */
                 new InspectorPath("Code", "Mouse", 7));
+    private final ValuePropertyMetadata onPullToRefreshPropertyMetadata =
+            new EventHandlerPropertyMetadata(
+                    onPullToRefreshName,
+                    true, /* readWrite */
+                    null, /* defaultValue */
+                    new InspectorPath("Code", "Specific", 0)
+            );
     private final ValuePropertyMetadata onRotatePropertyMetadata =
             new EventHandlerPropertyMetadata(
                 onRotateName,
@@ -4955,7 +4957,8 @@ public class Metadata {
         CanvasMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         CanvasMetadata.getProperties().add(width_Double_0_PropertyMetadata);
 
-        CardPaneMetadata.getProperties().add(cards_Node_PropertyMetadata);
+        CardPaneMetadata.getProperties().add(items_Node_PropertyMetadata);
+        CardPaneMetadata.getProperties().add(onPullToRefreshPropertyMetadata);
 
         CategoryAxisMetadata.getProperties().add(categoriesPropertyMetadata);
         CategoryAxisMetadata.getProperties().add(categorySpacingPropertyMetadata);
