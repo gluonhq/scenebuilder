@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
-import com.oracle.javafx.scenebuilder.app.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
@@ -541,7 +541,10 @@ public class EditorController {
             = new SimpleObjectProperty<Theme>(PreferencesRecordGlobal.DEFAULT_THEME) {
         @Override
         protected void invalidated() {
-            getFxomDocument().refreshSceneGraph();
+            FXOMDocument fxomDocument = getFxomDocument();
+            if (fxomDocument != null) {
+                fxomDocument.refreshSceneGraph();
+            }
         }
     };
 
@@ -1703,7 +1706,7 @@ public class EditorController {
             job = new InsertAsSubComponentJob(newObject, target, -1, this);
         }
 
-        WarnThemeAlert.createAlertIfAdequate(this, newObject).ifPresent(alert -> alert.showAndWait());
+        WarnThemeAlert.showAlertIfRequired(this, newObject);
 
         jobManager.push(job);
     }
@@ -2491,7 +2494,7 @@ public class EditorController {
         
         watchingController.fxomDocumentDidChange();
 
-        WarnThemeAlert.createAlertIfAdequate(this, newFxomDocument).ifPresent(alert -> alert.showAndWait());
+        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument);
         
     }
     

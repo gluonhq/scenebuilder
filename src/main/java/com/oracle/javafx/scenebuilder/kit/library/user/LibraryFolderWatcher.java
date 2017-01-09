@@ -32,9 +32,10 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
-import com.oracle.javafx.scenebuilder.app.ImportingGluonControlsAlert;
+import com.oracle.javafx.scenebuilder.app.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
@@ -77,7 +78,7 @@ class LibraryFolderWatcher implements Runnable {
     
     private final UserLibrary library;
     private final MavenPreferences mavenPreferences;
-    
+
     private enum FILE_TYPE {FXML, JAR};
     
     public LibraryFolderWatcher(UserLibrary library) {
@@ -333,7 +334,7 @@ class LibraryFolderWatcher implements Runnable {
             if (jarReport.hasGluonControls()) {
                 // We check if the jar has already been imported to avoid showing the import gluon jar
                 // alert every time Scene Builder starts for jars that have already been imported
-                if (!ImportingGluonControlsAlert.hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
+                if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
                     shouldShowImportGluonJarAlert = true;
                 }
             }
@@ -359,7 +360,7 @@ class LibraryFolderWatcher implements Runnable {
                 .distinct()
                 .collect(Collectors.toList()));
         library.updateJarReports(new ArrayList<>(jarReports));
-        ImportingGluonControlsAlert.updateImportedGluonJars(jarReports);
+        updateImportedGluonJars(jarReports);
         library.updateExplorationDate(new Date());
         
         // 5
@@ -404,5 +405,36 @@ class LibraryFolderWatcher implements Runnable {
         
         return result;
     }
-    
+
+    private static void updateImportedGluonJars(List<JarReport> jars) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        List<String> jarReportCollection = new ArrayList<>();
+        for (JarReport jarReport : jars) {
+            if (jarReport.hasGluonControls()) {
+                jarReportCollection.add(jarReport.getJar().getFileName().toString());
+            }
+        }
+        if (jarReportCollection.isEmpty()) {
+            recordGlobal.setImportedGluonJars(new String[0]);
+        } else {
+            recordGlobal.setImportedGluonJars(jarReportCollection.toArray(new String[0]));
+        }
+    }
+
+    private static boolean hasGluonJarBeenImported(String jar) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        String[] importedJars = recordGlobal.getImportedGluonJars();
+        if (importedJars == null) {
+            return false;
+        }
+
+        for (String importedJar : importedJars) {
+            if (jar.equals(importedJar)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

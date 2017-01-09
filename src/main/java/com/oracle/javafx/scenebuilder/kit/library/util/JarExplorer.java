@@ -41,9 +41,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.oracle.javafx.scenebuilder.app.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 

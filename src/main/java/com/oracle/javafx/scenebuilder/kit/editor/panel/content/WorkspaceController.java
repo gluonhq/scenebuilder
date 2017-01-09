@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -204,7 +204,7 @@ class WorkspaceController {
         // Update scenegraph layout, etc
         FXOMDocument fxomDocument = editorController.getFxomDocument();
         if (fxomDocument != null) {
-            editorController.getFxomDocument().refreshSceneGraph();
+            fxomDocument.refreshSceneGraph();
         }
     }
     

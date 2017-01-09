@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,23 +30,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app;
+package com.oracle.javafx.scenebuilder.app.alert;
 
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
 
-import java.util.Optional;
-
-
-public class WarnThemeAlert extends Alert {
+/**
+ * Used when the user adds a Gluon control to the document or loads a document with a Gluon control and
+ * Gluon Mobile theme is not set.
+ * When a Gluon control is used, Gluon Mobile theme must be set in order for the control to work correctly.
+ */
+public class WarnThemeAlert extends AlertBase {
     private static boolean hasBeenShown = false;
 
     private WarnThemeAlert(EditorController editorController) {
@@ -60,11 +59,6 @@ public class WarnThemeAlert extends Alert {
 
         getButtonTypes().setAll(setGluonTheme, ignore);
 
-        getDialogPane().getStyleClass().add("SB-alert");
-        getDialogPane().getStylesheets().add(SceneBuilderApp.class.getResource("css/Alert.css").toString());
-
-        SBSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
-
         resultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == setGluonTheme) {
                 editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
@@ -74,21 +68,17 @@ public class WarnThemeAlert extends Alert {
         setOnShown(event -> hasBeenShown = true);
     }
 
-    public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMObject fxomObject) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject) {
         if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            return Optional.of(new WarnThemeAlert(editorController));
-        } else {
-            return Optional.empty();
+            new WarnThemeAlert(editorController).showAndWait();
         }
     }
 
-    public static Optional<WarnThemeAlert> createAlertIfAdequate(EditorController editorController, FXOMDocument fxomDocument) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument) {
         if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            return Optional.of(new WarnThemeAlert(editorController));
-        } else {
-            return Optional.empty();
+            new WarnThemeAlert(editorController).showAndWait();
         }
     }
 
