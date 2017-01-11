@@ -31,4 +31,10 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?import com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel?>
-<ExpansionPanel.CollapsedPanel />
+<?import javafx.scene.control.Label?>
+<ExpansionPanel.CollapsedPanel prefWidth="252">
+    <titleNodes>
+        <Label text="TripName" />
+        <Label text="Caribbean cruise" />
+    </titleNodes>
+</ExpansionPanel.CollapsedPanel>
