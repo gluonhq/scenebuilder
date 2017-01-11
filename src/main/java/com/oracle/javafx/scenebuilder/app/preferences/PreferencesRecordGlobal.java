@@ -593,7 +593,7 @@ public class PreferencesRecordGlobal {
         }
     }
 
-    public void refresh(DocumentWindowController dwc) {
+    public void refresh(DocumentWindowController dwc, boolean refreshTheme) {
         refreshAlignmentGuidesColor(dwc);
         refreshBackgroundImage(dwc);
         refreshCSSAnalyzerColumnsOrder(dwc);
@@ -603,9 +603,11 @@ public class PreferencesRecordGlobal {
         refreshParentRingColor(dwc);
         refreshRootContainerHeight(dwc);
         refreshRootContainerWidth(dwc);
-        refreshTheme(dwc);
-        refreshSwatch(dwc);
-        refreshGluonTheme(dwc);
+        if (refreshTheme) {
+            refreshTheme(dwc);
+            refreshSwatch(dwc);
+            refreshGluonTheme(dwc);
+        }
     }
     
     /**

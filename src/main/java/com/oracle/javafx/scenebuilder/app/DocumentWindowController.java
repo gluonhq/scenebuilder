@@ -385,18 +385,18 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
         updateLoadFileTime();
         updateStageTitle(); // No-op if fxml has not been loaded yet
-        updateFromDocumentPreferences();
+        updateFromDocumentPreferences(true);
         watchingController.update();
     }
     
-    public void loadFromURL(URL fxmlURL) {
+    public void loadFromURL(URL fxmlURL, boolean refreshTheme) {
         assert fxmlURL != null;
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, null);
             updateLoadFileTime();
             updateStageTitle(); // No-op if fxml has not been loaded yet
-            updateFromDocumentPreferences();
+            updateFromDocumentPreferences(refreshTheme);
             watchingController.update();
         } catch(IOException x) {
             throw new IllegalStateException(x);
@@ -1083,7 +1083,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     @Override
     protected void controllerDidCreateStage() {
         updateStageTitle();
-        updateFromDocumentPreferences();
+        updateFromDocumentPreferences(true);
     }
     
     @Override
@@ -1777,13 +1777,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } // else controllerDidLoadFxml() will invoke me again
     }
     
-    private void updateFromDocumentPreferences() {
+    private void updateFromDocumentPreferences(boolean refreshTheme) {
         if (libraryPanelHost != null) { // Layout is over
             // Refresh UI with preferences 
             final PreferencesController pc = PreferencesController.getSingleton();
             // Preferences global to the application
             final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-            recordGlobal.refresh(this);
+            recordGlobal.refresh(this, refreshTheme);
             // Preferences specific to the document
             final PreferencesRecordDocument recordDocument = pc.getRecordDocument(this);
             recordDocument.readFromJavaPreferences();

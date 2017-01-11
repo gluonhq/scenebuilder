@@ -572,12 +572,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
         final URL url = template.getFXMLURL();
         EditorController editorController = documentWindowController.getEditorController();
-        if (url != null) {
-            documentWindowController.loadFromURL(url);
-        }
         if (template.getType() == Type.PHONE) {
             editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
             editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+        }
+        if (url != null) {
+            documentWindowController.loadFromURL(url, template.getType() != Type.PHONE);
         }
         documentWindowController.openWindow();
     }

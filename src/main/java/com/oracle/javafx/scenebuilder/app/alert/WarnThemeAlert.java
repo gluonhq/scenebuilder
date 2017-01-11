@@ -70,14 +70,14 @@ public class WarnThemeAlert extends AlertBase {
 
     public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject) {
         if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
+                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             new WarnThemeAlert(editorController).showAndWait();
         }
     }
 
     public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument) {
         if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                || editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
+                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             new WarnThemeAlert(editorController).showAndWait();
         }
     }
