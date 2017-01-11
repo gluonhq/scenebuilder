@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -120,23 +120,7 @@ public class MenuBarController {
     @FXML
     private MenuItem newMenuItem;
     @FXML
-    private MenuItem newAlertDialogMenuItem;
-    @FXML
-    private MenuItem newAlertDialogCssMenuItem;
-    @FXML
-    private MenuItem newAlertDialogI18nMenuItem;
-    @FXML
-    private MenuItem newBasicAppMenuItem;
-    @FXML
-    private MenuItem newBasicAppCssMenuItem;
-    @FXML
-    private MenuItem newBasicAppI18nMenuItem;
-    @FXML
-    private MenuItem newComplexAppMenuItem;
-    @FXML
-    private MenuItem newComplexAppCssMenuItem;
-    @FXML
-    private MenuItem newComplexAppI18nMenuItem;
+    private MenuItem newTemplateMenuItem;
     @FXML
     private MenuItem openMenuItem;
     @FXML
@@ -502,15 +486,7 @@ public class MenuBarController {
         assert windowMenu != null;
 
         assert newMenuItem != null;
-        assert newAlertDialogMenuItem != null;
-        assert newAlertDialogCssMenuItem != null;
-        assert newAlertDialogI18nMenuItem != null;
-        assert newBasicAppMenuItem != null;
-        assert newBasicAppCssMenuItem != null;
-        assert newBasicAppI18nMenuItem != null;
-        assert newComplexAppMenuItem != null;
-        assert newComplexAppCssMenuItem != null;
-        assert newComplexAppI18nMenuItem != null;
+        assert newTemplateMenuItem != null;
         assert openMenuItem != null;
         assert openRecentMenu != null;
         assert saveMenuItem != null;
@@ -670,15 +646,7 @@ public class MenuBarController {
          */
         newMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_FILE));
         newMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.N, modifier));
-        newAlertDialogMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_ALERT_DIALOG));
-        newAlertDialogCssMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_ALERT_DIALOG_CSS));
-        newAlertDialogI18nMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_ALERT_DIALOG_I18N));
-        newBasicAppMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_BASIC_APPLICATION));
-        newBasicAppCssMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_BASIC_APPLICATION_CSS));
-        newBasicAppI18nMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_BASIC_APPLICATION_I18N));
-        newComplexAppMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_COMPLEX_APPLICATION));
-        newComplexAppCssMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_COMPLEX_APPLICATION_CSS));
-        newComplexAppI18nMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_COMPLEX_APPLICATION_I18N));
+        newTemplateMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.NEW_TEMPLATE));
         openMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.OPEN_FILE));
         openMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.O, modifier));
         openRecentMenu.setOnShowing(t -> updateOpenRecentMenuItems());

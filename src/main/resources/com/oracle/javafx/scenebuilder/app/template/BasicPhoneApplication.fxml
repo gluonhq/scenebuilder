@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.AppBar?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<?import com.gluonhq.charm.glisten.mvc.View?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<View maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="335.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <AppBar titleText="Screen Title" BorderPane.alignment="CENTER">
+         <navIcon>
+            <Button>
+               <graphic>
+                  <Icon content="ARROW_BACK" />
+               </graphic>
+            </Button>
+         </navIcon>
+         <menuItems>
+            <MenuItem text="Menu Item 1" />
+            <MenuItem text="Menu Item 2" />
+         </menuItems>
+      </AppBar>
+   </top>
+   <center>
+      <Label text="Insert content here" BorderPane.alignment="CENTER" textFill="#9f9f9f">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </center>
+</View>

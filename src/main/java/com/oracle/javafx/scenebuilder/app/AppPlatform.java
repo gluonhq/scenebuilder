@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.util.MessageBox;
+import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_LINUX;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
@@ -289,7 +291,7 @@ public class AppPlatform {
             if (openRejected == false) {
                 // We're starting Scene Builder by opening a file so
                 // we shouldn't show the Welcome Dialog
-                WelcomeDialog.getInstance().hide();
+                WelcomeDialogWindowController.getInstance().getStage().hide();
                 notificationHandler.handleOpenFilesAction(Arrays.asList(files));
             }
         }

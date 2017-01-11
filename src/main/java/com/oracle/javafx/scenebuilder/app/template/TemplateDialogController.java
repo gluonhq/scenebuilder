@@ -82,10 +82,10 @@ public class TemplateDialogController extends AbstractModalDialog {
         setDefaultButtonID(AbstractModalDialog.ButtonID.OK);
         setShowDefaultButton(true);
         // Update title
-        final String title = MessageFormat.format(
-                I18N.getString("template.title.new.project"),
-                FxmlTemplates.getTemplateName(template));
-        getStage().setTitle(title);
+//        final String title = MessageFormat.format(
+//                I18N.getString("template.title.new.project"),
+//                FxmlTemplates.getTemplateName(template));
+//        getStage().setTitle(title);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class TemplateDialogController extends AbstractModalDialog {
         });
 
         // Update name text field
-        nameTextField.setText(FxmlTemplates.getTemplateName(template));
+//        nameTextField.setText(FxmlTemplates.getTemplateName(template));
 
         // Update location text field
         final File initialDirectory = EditorController.getNextInitialDirectory();
@@ -153,12 +153,12 @@ public class TemplateDialogController extends AbstractModalDialog {
             );
             // Create FXML and resource files
             if (createTemplateFiles(newProjectDirectory)) {
-                final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
-                final File fxmlFile = new File(newProjectDirectory, fxmlFileName);
+//                final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
+//                final File fxmlFile = new File(newProjectDirectory, fxmlFileName);
 
                 final DocumentWindowController newTemplateWindow
                         = SceneBuilderApp.getSingleton().makeNewWindow();
-                newTemplateWindow.loadFromFile(fxmlFile);
+//                newTemplateWindow.loadFromFile(fxmlFile);
                 newTemplateWindow.openWindow();
             }
         } catch (IOException ex) {
@@ -188,19 +188,19 @@ public class TemplateDialogController extends AbstractModalDialog {
     private boolean createTemplateFiles(final File newProjectDirectory) {
 
         assert newProjectDirectory.exists();
-        final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
+//        final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
 
         // Copy FXML file
-        if ( !copyResource(fxmlFileName, newProjectDirectory)) {
-            return false;
-        }
+//        if ( !copyResource(fxmlFileName, newProjectDirectory)) {
+//            return false;
+//        }
 
         // Copy resource files
-        for (String resourceFileName : FxmlTemplates.getResourceFileNames(template)) {
-            if ( !copyResource(resourceFileName, newProjectDirectory)) {
-                return false;
-            }
-        }
+//        for (String resourceFileName : FxmlTemplates.getResourceFileNames(template)) {
+//            if ( !copyResource(resourceFileName, newProjectDirectory)) {
+//                return false;
+//            }
+//        }
         return true;
     }
 
@@ -273,17 +273,17 @@ public class TemplateDialogController extends AbstractModalDialog {
         final String location = locationTextField.getText().trim();
         final String name = nameTextField.getText().trim();
         final String path = location + File.separator + name + File.separator;
-        final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
+//        final String fxmlFileName = FxmlTemplates.getTemplateFileName(template);
         final StringBuilder sb = new StringBuilder();
         // List fxml file
         sb.append(path);
-        sb.append(fxmlFileName);
+//        sb.append(fxmlFileName);
         // List resource files
-        for (String resourceFileName : FxmlTemplates.getResourceFileNames(template)) {
-            sb.append("\n"); //NOI18N
-            sb.append(path);
-            sb.append(resourceFileName);
-        }
+//        for (String resourceFileName : FxmlTemplates.getResourceFileNames(template)) {
+//            sb.append("\n"); //NOI18N
+//            sb.append(path);
+//            sb.append(resourceFileName);
+//        }
         detailsLabel.setText(sb.toString());
     }
 

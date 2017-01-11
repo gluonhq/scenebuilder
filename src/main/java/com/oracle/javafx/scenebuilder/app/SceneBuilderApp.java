@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -40,10 +40,13 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
-import com.oracle.javafx.scenebuilder.app.template.FxmlTemplates;
+import com.oracle.javafx.scenebuilder.app.template.Template;
 import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
+import com.oracle.javafx.scenebuilder.app.template.TemplatesWindowController;
+import com.oracle.javafx.scenebuilder.app.template.Type;
 import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
@@ -90,15 +93,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         ABOUT,
         REGISTER,
         NEW_FILE,
-        NEW_ALERT_DIALOG,
-        NEW_ALERT_DIALOG_CSS,
-        NEW_ALERT_DIALOG_I18N,
-        NEW_BASIC_APPLICATION,
-        NEW_BASIC_APPLICATION_CSS,
-        NEW_BASIC_APPLICATION_I18N,
-        NEW_COMPLEX_APPLICATION,
-        NEW_COMPLEX_APPLICATION_CSS,
-        NEW_COMPLEX_APPLICATION_I18N,
+        NEW_TEMPLATE,
         OPEN_FILE,
         CLOSE_FRONT_WINDOW,
         USE_DEFAULT_THEME,
@@ -191,19 +186,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 newWindow.openWindow();
                 break;
 
-            case NEW_ALERT_DIALOG:
-            case NEW_BASIC_APPLICATION:
-            case NEW_COMPLEX_APPLICATION:
-                performNewTemplate(a);
-                break;
-
-            case NEW_ALERT_DIALOG_CSS:
-            case NEW_ALERT_DIALOG_I18N:
-            case NEW_BASIC_APPLICATION_CSS:
-            case NEW_BASIC_APPLICATION_I18N:
-            case NEW_COMPLEX_APPLICATION_CSS:
-            case NEW_COMPLEX_APPLICATION_I18N:
-                performNewTemplateWithResources(a);
+            case NEW_TEMPLATE:
+                final TemplatesWindowController templatesWindowController = new TemplatesWindowController();
+                templatesWindowController.openWindow();
                 break;
 
             case OPEN_FILE:
@@ -240,15 +225,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case ABOUT:
             case REGISTER:
             case NEW_FILE:
-            case NEW_ALERT_DIALOG:
-            case NEW_BASIC_APPLICATION:
-            case NEW_COMPLEX_APPLICATION:
-            case NEW_ALERT_DIALOG_CSS:
-            case NEW_ALERT_DIALOG_I18N:
-            case NEW_BASIC_APPLICATION_CSS:
-            case NEW_BASIC_APPLICATION_I18N:
-            case NEW_COMPLEX_APPLICATION_CSS:
-            case NEW_COMPLEX_APPLICATION_I18N:
+            case NEW_TEMPLATE:
             case OPEN_FILE:
             case SHOW_PREFERENCES:
             case EXIT:
@@ -419,14 +396,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
             }
 
-            WelcomeDialog.getInstance().setOnHidden(event -> {
+            WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
                 verifyLatestVersion();
                 verifyRegistration();
             });
 
             // Unless we're on a Mac we're starting SB directly (fresh start)
             // so we're not opening any file and as such we should show the Welcome Dialog
-            WelcomeDialog.getInstance().show();
+            WelcomeDialogWindowController.getInstance().getStage().show();
 
         } else {
             // Open files passed as arguments by the platform
@@ -582,11 +559,27 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void performNewTemplate(ApplicationControlAction action) {
+    public void performNewTemplate(Template template) {
+        DocumentWindowController documentWC = getDocumentWindowControllers().get(0);
+        loadTemplateInWindow(template, documentWC);
+    }
+
+    public void performNewTemplateInNewWindow(Template template) {
         final DocumentWindowController newTemplateWindow = makeNewWindow();
-        final URL url = FxmlTemplates.getContentURL(action);
-        newTemplateWindow.loadFromURL(url);
-        newTemplateWindow.openWindow();
+        loadTemplateInWindow(template, newTemplateWindow);
+    }
+
+    private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
+        final URL url = template.getFXMLURL();
+        EditorController editorController = documentWindowController.getEditorController();
+        if (url != null) {
+            documentWindowController.loadFromURL(url);
+        }
+        if (template.getType() == Type.PHONE) {
+            editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
+            editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+        }
+        documentWindowController.openWindow();
     }
 
     private void performNewTemplateWithResources(ApplicationControlAction action) {
@@ -594,6 +587,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         tdc.setToolStylesheet(getToolStylesheet());
         tdc.openWindow();
     }
+
 
     private void performCloseFrontWindow() {
         if (preferencesWindowController != null

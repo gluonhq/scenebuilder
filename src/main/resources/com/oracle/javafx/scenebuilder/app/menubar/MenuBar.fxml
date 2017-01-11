@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2016, Gluon and/or its affiliates.
+  Copyright (c) 2016, 2017, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -45,20 +45,7 @@
         <Menu fx:id="fileMenu" mnemonicParsing="true" text="%menu.title.file">
           <items>
             <MenuItem fx:id="newMenuItem" mnemonicParsing="true" text="%menu.title.new" />
-            <Menu fx:id="newTemplateMenuItem" mnemonicParsing="true" text="%menu.title.new.template">
-              <items>
-                <MenuItem fx:id="newAlertDialogMenuItem" mnemonicParsing="false" text="%menu.title.new.alert.dialog" />
-                <MenuItem fx:id="newBasicAppMenuItem" mnemonicParsing="false" text="%menu.title.new.basic.app" />
-                <MenuItem fx:id="newComplexAppMenuItem" mnemonicParsing="false" text="%menu.title.new.complex.app" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem fx:id="newAlertDialogCssMenuItem" mnemonicParsing="false" text="%menu.title.new.alert.dialog.css" />
-                <MenuItem fx:id="newAlertDialogI18nMenuItem" mnemonicParsing="false" text="%menu.title.new.alert.dialog.i18n" />
-                <MenuItem fx:id="newBasicAppCssMenuItem" mnemonicParsing="false" text="%menu.title.new.basic.app.css" />
-                <MenuItem fx:id="newBasicAppI18nMenuItem" mnemonicParsing="false" text="%menu.title.new.basic.app.i18n" />
-                <MenuItem fx:id="newComplexAppCssMenuItem" mnemonicParsing="false" text="%menu.title.new.complex.app.css" />
-                <MenuItem fx:id="newComplexAppI18nMenuItem" mnemonicParsing="false" text="%menu.title.new.complex.app.i18n" />
-              </items>
-            </Menu>
+            <MenuItem fx:id="newTemplateMenuItem" mnemonicParsing="true" text="%menu.title.new.template" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="openMenuItem" mnemonicParsing="true" text="%menu.title.open" />
             <Menu fx:id="openRecentMenu" mnemonicParsing="true" text="%menu.title.open.recent">
