@@ -79,6 +79,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -91,6 +92,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public enum ApplicationControlAction {
 
         ABOUT,
+        CHECK_UPDATES,
         REGISTER,
         NEW_FILE,
         NEW_TEMPLATE,
@@ -178,6 +180,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case REGISTER:
                 final RegistrationWindowController registrationWindowController = new RegistrationWindowController();
                 registrationWindowController.openWindow();
+                SBSettings.setWindowIcon(registrationWindowController.getStage());
+                break;
+
+            case CHECK_UPDATES:
+                checkUpdates();
                 break;
 
             case NEW_FILE:
@@ -224,6 +231,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
             case REGISTER:
+            case CHECK_UPDATES:
             case NEW_FILE:
             case NEW_TEMPLATE:
             case OPEN_FILE:
@@ -397,7 +405,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                verifyLatestVersion();
+                verifyLatestVersionOnStartup();
                 verifyRegistration();
             });
 
@@ -912,30 +920,74 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void verifyLatestVersion() {
+    private void verifyLatestVersionOnStartup() {
         SBSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
-                // This can be because the url was not reachable so we don't show the update dialog
+                // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
-            if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                PreferencesController pc = PreferencesController.getSingleton();
-                PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+            try {
+                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                    PreferencesController pc = PreferencesController.getSingleton();
+                    PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
-                if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                    return;
-                }
+                    if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
+                        return;
+                    }
 
-                if (!isUpdateDialogDateReached(recordGlobal)) {
-                    return;
+                    if (!isUpdateDialogDateReached(recordGlobal)) {
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                        dialog.showAndWait();
+                    });
                 }
-                Platform.runLater(() -> {
-                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
-                    dialog.showAndWait();
-                });
+            } catch (NumberFormatException ex) {
+                Platform.runLater(() -> showVersionNumberFormatError());
             }
         });
+    }
 
+    private void checkUpdates() {
+        SBSettings.getLatestVersion(latestVersion -> {
+            Platform.runLater(() -> {
+                if (latestVersion == null) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
+                    alert.setHeaderText(null);
+                    alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
+                    SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+                    alert.showAndWait();
+                }
+                try {
+                    if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                        dialog.showAndWait();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                        alert.setHeaderText(null);
+                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+                        alert.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    showVersionNumberFormatError();
+                }
+            });
+        });
+    }
+
+    private void showVersionNumberFormatError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        // The version number format is not supported and this is most probably only happening
+        // in development so we don't localize the strings
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
+        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
+        alert.showAndWait();
     }
 
     private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal, String latestVersion) {

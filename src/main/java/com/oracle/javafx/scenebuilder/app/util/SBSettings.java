@@ -48,6 +48,9 @@ public class SBSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
+    public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
+    public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
+
     private static String sceneBuilderVersion;
     private static String latestVersion;
 
@@ -85,6 +88,8 @@ public class SBSettings {
             int currentVersionNumber = Integer.parseInt(currentVersionNumbers[i]);
             if (number > currentVersionNumber) {
                 return true;
+            } else if (number < currentVersionNumber) {
+                return false;
             }
         }
         return false;
@@ -99,14 +104,14 @@ public class SBSettings {
 
                     URL url = null;
                     try {
-                        url = new URL("http://download.gluonhq.com/scenebuilder/settings.properties");
+                        url = new URL(LATEST_VERSION_CHECK_URL);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
 
                     try (InputStream inputStream = url.openStream()) {
                         prop.load(inputStream);
-                        onlineVersionNumber = prop.getProperty("latestversion");
+                        onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
                     } catch (IOException ex) {
                         ex.printStackTrace();

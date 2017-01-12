@@ -37,11 +37,3 @@
 .progress-bar {
     -fx-color: #3C87EE;
 }
-
-
-/* This is here until we have a BottomNavigationButton */
-.bottom-nav:fixed > .bottom-nav-button:selected .label.icon-text,
-.bottom-nav:fixed > .bottom-nav-button:selected .text {
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
-}
