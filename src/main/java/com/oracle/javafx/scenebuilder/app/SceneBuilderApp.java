@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+import com.oracle.javafx.scenebuilder.app.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
@@ -953,11 +954,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         SBSettings.getLatestVersion(latestVersion -> {
             Platform.runLater(() -> {
                 if (latestVersion == null) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    SBAlert alert = new SBAlert(Alert.AlertType.ERROR);
                     alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
-                    alert.setHeaderText(null);
+                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
-                    SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
                     alert.showAndWait();
                 }
                 try {
@@ -965,11 +965,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
                         dialog.showAndWait();
                     } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION);
                         alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                        alert.setHeaderText(null);
+                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                         alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
                         alert.showAndWait();
                     }
                 } catch (NumberFormatException ex) {
@@ -980,13 +979,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void showVersionNumberFormatError() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        SBAlert alert = new SBAlert(Alert.AlertType.ERROR);
         // The version number format is not supported and this is most probably only happening
         // in development so we don't localize the strings
         alert.setTitle("Error");
-        alert.setHeaderText(null);
+        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
         alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
-        SBSettings.setWindowIcon((Stage) alert.getDialogPane().getScene().getWindow());
         alert.showAndWait();
     }
 

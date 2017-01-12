@@ -45,7 +45,7 @@ import javafx.scene.control.ButtonType;
  * Gluon Mobile theme is not set.
  * When a Gluon control is used, Gluon Mobile theme must be set in order for the control to work correctly.
  */
-public class WarnThemeAlert extends AlertBase {
+public class WarnThemeAlert extends SBAlert {
     private static boolean hasBeenShown = false;
 
     private WarnThemeAlert(EditorController editorController) {

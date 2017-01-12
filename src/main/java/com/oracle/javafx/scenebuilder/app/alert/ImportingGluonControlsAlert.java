@@ -32,19 +32,14 @@
 
 package com.oracle.javafx.scenebuilder.app.alert;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Used when the user is importing Gluon controls
  */
-public class ImportingGluonControlsAlert extends AlertBase {
+public class ImportingGluonControlsAlert extends SBAlert {
 
     public ImportingGluonControlsAlert() {
         super(AlertType.WARNING);
