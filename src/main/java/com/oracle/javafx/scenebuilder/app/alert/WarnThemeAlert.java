@@ -50,7 +50,8 @@ public class WarnThemeAlert extends SBAlert {
 
     private WarnThemeAlert(EditorController editorController) {
         super(AlertType.WARNING);
-        
+
+        setTitle(I18N.getString("alert.theme.gluon.mobile.title"));
         setHeaderText(I18N.getString("alert.theme.gluon.mobile.headertext"));
         setContentText(I18N.getString("alert.theme.gluon.mobile.contenttext"));
 

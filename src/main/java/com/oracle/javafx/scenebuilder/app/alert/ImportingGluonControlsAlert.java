@@ -44,6 +44,7 @@ public class ImportingGluonControlsAlert extends SBAlert {
     public ImportingGluonControlsAlert() {
         super(AlertType.WARNING);
 
+        setTitle(I18N.getString("alert.importing.gluon.title"));
         setHeaderText(I18N.getString("alert.importing.gluon.headertext"));
         setContentText(I18N.getString("alert.importing.gluon.contenttext"));
 
