@@ -1270,14 +1270,14 @@ public class Metadata {
             new PropertyName("wrapText");
     private final PropertyName xName = 
             new PropertyName("x");
-    private final PropertyName XAxisName = 
-            new PropertyName("XAxis");
+    private final PropertyName xAxisName =
+            new PropertyName("xAxis");
     private final PropertyName XAxisRotationName = 
             new PropertyName("XAxisRotation");
     private final PropertyName yName = 
             new PropertyName("y");
-    private final PropertyName YAxisName = 
-            new PropertyName("YAxis");
+    private final PropertyName yAxisName =
+            new PropertyName("yAxis");
     private final PropertyName zeroPositionName = 
             new PropertyName("zeroPosition");
     private final PropertyName zoomName = 
@@ -4544,9 +4544,9 @@ public class Metadata {
                 true, /* readWrite */
                 Double.NaN, /* defaultValue */
                 new InspectorPath("Layout", "Position", 12));
-    private final ComponentPropertyMetadata XAxisPropertyMetadata =
+    private final ComponentPropertyMetadata xAxisPropertyMetadata =
             new ComponentPropertyMetadata(
-                XAxisName,
+                    xAxisName,
                 AxisMetadata,
                 false); /* collection */
     private final ValuePropertyMetadata XAxisRotationPropertyMetadata =
@@ -4570,9 +4570,9 @@ public class Metadata {
                 true, /* readWrite */
                 Double.NaN, /* defaultValue */
                 new InspectorPath("Layout", "Position", 13));
-    private final ComponentPropertyMetadata YAxisPropertyMetadata =
+    private final ComponentPropertyMetadata yAxisPropertyMetadata =
             new ComponentPropertyMetadata(
-                YAxisName,
+                    yAxisName,
                 AxisMetadata,
                 false); /* collection */
     private final ValuePropertyMetadata zeroPositionPropertyMetadata =
@@ -5938,8 +5938,8 @@ public class Metadata {
         XYChartMetadata.getProperties().add(styleClass_c37_PropertyMetadata);
         XYChartMetadata.getProperties().add(verticalGridLinesVisiblePropertyMetadata);
         XYChartMetadata.getProperties().add(verticalZeroLineVisiblePropertyMetadata);
-        XYChartMetadata.getProperties().add(XAxisPropertyMetadata);
-        XYChartMetadata.getProperties().add(YAxisPropertyMetadata);
+        XYChartMetadata.getProperties().add(xAxisPropertyMetadata);
+        XYChartMetadata.getProperties().add(yAxisPropertyMetadata);
 
 
         // Populates hiddenProperties

@@ -141,8 +141,8 @@ public class DesignHierarchyMask {
     private static final PropertyName leftName = new PropertyName("left");
     private static final PropertyName rightName = new PropertyName("right");
     private static final PropertyName centerName = new PropertyName("center");
-    private static final PropertyName xAxisName = new PropertyName("XAxis");
-    private static final PropertyName yAxisName = new PropertyName("YAxis");
+    private static final PropertyName xAxisName = new PropertyName("xAxis");
+    private static final PropertyName yAxisName = new PropertyName("yAxis");
     private static final PropertyName placeholderName = new PropertyName("placeholder");
     private static final PropertyName tooltipName = new PropertyName("tooltip");
     private static final PropertyName contextMenuName = new PropertyName("contextMenu");
