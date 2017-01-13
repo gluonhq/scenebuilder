@@ -42,7 +42,6 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.app.template.Template;
-import com.oracle.javafx.scenebuilder.app.template.TemplateDialogController;
 import com.oracle.javafx.scenebuilder.app.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.app.template.Type;
 import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
@@ -590,13 +589,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
         documentWindowController.openWindow();
     }
-
-    private void performNewTemplateWithResources(ApplicationControlAction action) {
-        final TemplateDialogController tdc = new TemplateDialogController(action);
-        tdc.setToolStylesheet(getToolStylesheet());
-        tdc.openWindow();
-    }
-
 
     private void performCloseFrontWindow() {
         if (preferencesWindowController != null

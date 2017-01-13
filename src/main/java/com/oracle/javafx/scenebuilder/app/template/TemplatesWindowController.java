@@ -42,7 +42,7 @@ import javafx.stage.WindowEvent;
 public class TemplatesWindowController extends TemplatesBaseWindowController {
 
     public TemplatesWindowController() {
-        super(TemplateDialogController.class.getResource("TemplatesWindow.fxml"), //NOI18N
+        super(TemplatesWindowController.class.getResource("TemplatesWindow.fxml"), //NOI18N
                 I18N.getBundle());
     }
 
