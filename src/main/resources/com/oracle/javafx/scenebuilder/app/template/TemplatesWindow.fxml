@@ -57,7 +57,7 @@
                      <graphic>
                         <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../welcomedialog/basic_desktop.png" />
+                              <Image url="@basic_desktop.png" />
                            </image>
                            <effect>
                               <DropShadow color="#0000004d" />
@@ -72,7 +72,7 @@
                      <graphic>
                         <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../welcomedialog/complex_desktop.png" />
+                              <Image url="@complex_desktop.png" />
                            </image>
                            <effect>
                               <DropShadow color="#0000004d" />
@@ -111,7 +111,7 @@
                      <graphic>
                         <ImageView fitHeight="198.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../welcomedialog/basic_mobile.png" />
+                              <Image url="@basic_mobile.png" />
                            </image>
                            <effect>
                               <DropShadow color="#0000004d" />
