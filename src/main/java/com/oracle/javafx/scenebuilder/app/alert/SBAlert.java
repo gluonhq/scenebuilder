@@ -12,7 +12,7 @@ import javafx.stage.Window;
  */
 public class SBAlert extends Alert {
 
-    public AlertBase(AlertType alertType, Window owner) {
+    public SBAlert(AlertType alertType, Window owner) {
         super(alertType);
 
         initOwner(owner);

@@ -976,7 +976,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         SBSettings.getLatestVersion(latestVersion -> {
             Platform.runLater(() -> {
                 if (latestVersion == null) {
-                    SBAlert alert = new SBAlert(Alert.AlertType.ERROR);
+                    SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
                     alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
                     alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
@@ -984,10 +984,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
                 try {
                     if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, getFrontDocumentWindow().getStage());
                         dialog.showAndWait();
                     } else {
-                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION);
+                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
                         alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
                         alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                         alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
@@ -1001,7 +1001,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void showVersionNumberFormatError() {
-        SBAlert alert = new SBAlert(Alert.AlertType.ERROR);
+        SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
         // The version number format is not supported and this is most probably only happening
         // in development so we don't localize the strings
         alert.setTitle("Error");
