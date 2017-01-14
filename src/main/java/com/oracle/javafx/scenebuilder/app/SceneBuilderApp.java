@@ -411,8 +411,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                verifyLatestVersionOnStartup();
-                verifyRegistration();
+                showUpdateDialogIfRequired(() -> {
+                    if (!Platform.isFxApplicationThread()) {
+                        Platform.runLater(() -> showRegistrationDialogIfRequired());
+                    } else {
+                        showRegistrationDialogIfRequired();
+                    }
+
+                });
             });
 
             // Unless we're on a Mac we're starting SB directly (fresh start)
@@ -928,28 +934,37 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void verifyLatestVersionOnStartup() {
+    private void showUpdateDialogIfRequired(Runnable runAfterUpdateDialog) {
         SBSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
             try {
+            boolean showUpdateDialog = true;
                 if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
                     PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
                     if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                        return;
+                    showUpdateDialog = false;
                     }
 
                     if (!isUpdateDialogDateReached(recordGlobal)) {
-                        return;
+                    showUpdateDialog = false;
                     }
+            } else {
+                showUpdateDialog = false;
+            }
+            
+            if (showUpdateDialog) {
                     Platform.runLater(() -> {
                     UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, getDocumentWindowControllers().get(0).getStage());
+                    dialog.setOnHidden(event -> runAfterUpdateDialog.run());
                         dialog.showAndWait();
                     });
+            } else {
+                runAfterUpdateDialog.run();
                 }
             } catch (NumberFormatException ex) {
                 Platform.runLater(() -> showVersionNumberFormatError());
@@ -1011,7 +1026,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void verifyRegistration() {
+    private void showRegistrationDialogIfRequired() {
         PreferencesController pc = PreferencesController.getSingleton();
         PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         String registrationHash = recordGlobal.getRegistrationHash();
