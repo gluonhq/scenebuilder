@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.job.atomic;
 
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
@@ -98,7 +99,7 @@ public class AddPropertyValueJob extends Job {
         value.addToParentProperty(targetIndex, targetProperty);
         getEditorController().getFxomDocument().endUpdate();
 
-        WarnThemeAlert.showAlertIfRequired(getEditorController(), value);
+        WarnThemeAlert.showAlertIfRequired(getEditorController(), value, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
 
         assert value.getParentProperty() == targetProperty;
         assert value.getParentCollection() == null;

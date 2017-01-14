@@ -45,7 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.awt.*;
 import java.io.IOException;
@@ -55,7 +55,8 @@ import java.time.LocalDate;
 
 public class UpdateSceneBuilderDialog extends Dialog {
 
-    public UpdateSceneBuilderDialog(String latestVersion) {
+    public UpdateSceneBuilderDialog(String latestVersion, Window owner) {
+        initOwner(owner);
         setTitle(I18N.getString("download_scene_builder.title"));
         Label header = new Label(I18N.getString("download_scene_builder.header.label"));
         Label currentVersionTextLabel = new Label(I18N.getString("download_scene_builder.current_version.label"));

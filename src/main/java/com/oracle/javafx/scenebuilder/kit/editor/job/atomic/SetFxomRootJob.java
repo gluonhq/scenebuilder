@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.job.atomic;
 
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
@@ -74,7 +75,7 @@ public class SetFxomRootJob extends Job {
         fxomDocument.setFxomRoot(newRoot);
         fxomDocument.endUpdate();
 
-        WarnThemeAlert.showAlertIfRequired(getEditorController(), newRoot);
+        WarnThemeAlert.showAlertIfRequired(getEditorController(), newRoot, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
     }
 
     @Override

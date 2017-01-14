@@ -40,6 +40,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -60,8 +61,8 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
 
     protected SceneBuilderApp sceneBuilderApp;
 
-    public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources) {
-        super(fxmlURL, resources);
+    public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources, Window owner) {
+        super(fxmlURL, resources, owner);
         sceneBuilderApp = SceneBuilderApp.getSingleton();
     }
 

@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
+import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
@@ -342,7 +344,12 @@ class LibraryFolderWatcher implements Runnable {
 
         if (shouldShowImportGluonJarAlert) {
             Platform.runLater(() -> {
-                new ImportingGluonControlsAlert().showAndWait();
+                SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
+                DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
+                if (dwc == null) {
+                    dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
+                }
+                new ImportingGluonControlsAlert(dwc.getStage()).showAndWait();
             });
         }
 

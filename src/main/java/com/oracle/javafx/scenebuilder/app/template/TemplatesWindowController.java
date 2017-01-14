@@ -37,13 +37,16 @@ import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.stage.Modality;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 public class TemplatesWindowController extends TemplatesBaseWindowController {
+    private final Window owner;
 
-    public TemplatesWindowController() {
+    public TemplatesWindowController(Window owner) {
         super(TemplatesWindowController.class.getResource("TemplatesWindow.fxml"), //NOI18N
-                I18N.getBundle());
+                I18N.getBundle(), owner);
+        this.owner = owner;
     }
 
     @Override
@@ -63,8 +66,16 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     protected void controllerDidCreateStage() {
         super.controllerDidCreateStage();
         getStage().setTitle(I18N.getString("template.dialog.title"));
-        getStage().initModality(Modality.APPLICATION_MODAL);
         SBSettings.setWindowIcon(getStage());
+
+        if (this.owner == null) {
+            // Window will be application modal
+            getStage().initModality(Modality.APPLICATION_MODAL);
+        } else {
+            // Window will be window modal
+            getStage().initOwner(this.owner);
+            getStage().initModality(Modality.WINDOW_MODAL);
+        }
     }
 
     @Override

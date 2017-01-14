@@ -171,6 +171,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
+        DocumentWindowController dwc;
         switch (a) {
             case ABOUT:
                 aboutWindowController.openWindow();
@@ -178,7 +179,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case REGISTER:
-                final RegistrationWindowController registrationWindowController = new RegistrationWindowController();
+                dwc = getFrontDocumentWindow();
+                if (dwc == null) {
+                    dwc = getDocumentWindowControllers().get(0);
+                }
+                final RegistrationWindowController registrationWindowController = new RegistrationWindowController(dwc.getStage());
                 registrationWindowController.openWindow();
                 SBSettings.setWindowIcon(registrationWindowController.getStage());
                 break;
@@ -194,7 +199,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case NEW_TEMPLATE:
-                final TemplatesWindowController templatesWindowController = new TemplatesWindowController();
+                dwc = getFrontDocumentWindow();
+                final TemplatesWindowController templatesWindowController = new TemplatesWindowController(dwc.getStage());
                 templatesWindowController.openWindow();
                 break;
 
@@ -604,6 +610,15 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
+    public DocumentWindowController getFrontDocumentWindow() {
+        for (DocumentWindowController dwc : windowList) {
+            if (dwc.isFrontDocumentWindow()) {
+                return dwc;
+            }
+        }
+        return null;
+    }
+
     private void performOpenFiles(List<File> fxmlFiles,
                                   DocumentWindowController fromWindow) {
         assert fxmlFiles != null;
@@ -932,7 +947,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         return;
                     }
                     Platform.runLater(() -> {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion);
+                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, getDocumentWindowControllers().get(0).getStage());
                         dialog.showAndWait();
                     });
                 }

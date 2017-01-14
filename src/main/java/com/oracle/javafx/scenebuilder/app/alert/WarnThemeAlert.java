@@ -39,6 +39,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Window;
 
 /**
  * Used when the user adds a Gluon control to the document or loads a document with a Gluon control and
@@ -48,8 +49,8 @@ import javafx.scene.control.ButtonType;
 public class WarnThemeAlert extends SBAlert {
     private static boolean hasBeenShown = false;
 
-    private WarnThemeAlert(EditorController editorController) {
-        super(AlertType.WARNING);
+    private WarnThemeAlert(EditorController editorController, Window owner) {
+        super(AlertType.WARNING, owner);
 
         setTitle(I18N.getString("alert.theme.gluon.mobile.title"));
         setHeaderText(I18N.getString("alert.theme.gluon.mobile.headertext"));
@@ -69,17 +70,17 @@ public class WarnThemeAlert extends SBAlert {
         setOnShown(event -> hasBeenShown = true);
     }
 
-    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject, Window owner) {
         if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            new WarnThemeAlert(editorController).showAndWait();
+            new WarnThemeAlert(editorController, owner).showAndWait();
         }
     }
 
-    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument, Window owner) {
         if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            new WarnThemeAlert(editorController).showAndWait();
+            new WarnThemeAlert(editorController, owner).showAndWait();
         }
     }
 

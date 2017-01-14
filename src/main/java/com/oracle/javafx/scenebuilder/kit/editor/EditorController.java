@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
@@ -1706,7 +1708,8 @@ public class EditorController {
             job = new InsertAsSubComponentJob(newObject, target, -1, this);
         }
 
-        WarnThemeAlert.showAlertIfRequired(this, newObject);
+
+        WarnThemeAlert.showAlertIfRequired(this, newObject, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
 
         jobManager.push(job);
     }
@@ -2494,7 +2497,8 @@ public class EditorController {
         
         watchingController.fxomDocumentDidChange();
 
-        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument);
+        DocumentWindowController dwc = SceneBuilderApp.getSingleton().getFrontDocumentWindow();
+        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, dwc == null ? null : dwc.getStage());
         
     }
     

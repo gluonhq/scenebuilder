@@ -97,6 +97,7 @@ public class ImportWindowController extends AbstractModalDialog {
     double builtinPrefHeight;
     private int numOfImportedJar;
     private boolean copyFilesToUserLibraryDir;
+    private Window owner;
     
     // At first we put in this collection the items which are already excluded,
     // basically all which are listed in the filter file.
@@ -159,6 +160,7 @@ public class ImportWindowController extends AbstractModalDialog {
         importFiles = new ArrayList<>(files);
         this.copyFilesToUserLibraryDir = copyFilesToUserLibraryDir;
         this.artifactsFilter = artifactsFilter;
+        this.owner = owner;
     }
 
     /*
@@ -314,8 +316,8 @@ public class ImportWindowController extends AbstractModalDialog {
      */
     @Override
     protected void controllerDidCreateStage() {
+        super.controllerDidCreateStage();
         getStage().setTitle(I18N.getString("import.window.title"));
-        getStage().initModality(Modality.APPLICATION_MODAL);
     }
 
     /*
@@ -451,7 +453,7 @@ public class ImportWindowController extends AbstractModalDialog {
                 }
 
                 if (importingGluonControls) {
-                    new ImportingGluonControlsAlert().showAndWait();
+                    new ImportingGluonControlsAlert(owner).showAndWait();
                 }
 
                 // Sort based on the simple class name.

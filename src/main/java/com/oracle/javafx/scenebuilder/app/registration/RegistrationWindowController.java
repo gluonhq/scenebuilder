@@ -42,6 +42,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.net.*;
@@ -64,9 +65,12 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
     @FXML
     private CheckBox cbOptIn;
 
-    public RegistrationWindowController() {
+    final private Window owner;
+
+    public RegistrationWindowController(Window owner) {
         super(RegistrationWindowController.class.getResource("Registration.fxml"), //NOI18N
-                I18N.getBundle());
+                I18N.getBundle(), owner);
+        this.owner = owner;
     }
 
     @Override
@@ -86,7 +90,15 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
         assert getRoot().getScene().getWindow() != null;
 
         getStage().setTitle(I18N.getString("registration.title"));
-        getStage().initModality(Modality.APPLICATION_MODAL);
+
+        if (this.owner == null) {
+            // Window will be application modal
+            getStage().initModality(Modality.APPLICATION_MODAL);
+        } else {
+            // Window will be window modal
+            getStage().initOwner(this.owner);
+            getStage().initModality(Modality.WINDOW_MODAL);
+        }
     }
 
     @Override

@@ -35,14 +35,16 @@ package com.oracle.javafx.scenebuilder.app.alert;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Window;
+
 
 /**
  * Used when the user is importing Gluon controls
  */
 public class ImportingGluonControlsAlert extends SBAlert {
 
-    public ImportingGluonControlsAlert() {
-        super(AlertType.WARNING);
+    public ImportingGluonControlsAlert(Window owner) {
+        super(AlertType.WARNING, owner);
 
         setTitle(I18N.getString("alert.importing.gluon.title"));
         setHeaderText(I18N.getString("alert.importing.gluon.headertext"));
