@@ -268,9 +268,9 @@ public class EditorController {
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
     private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
-            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_GLUON_THEME);
+            = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_GLUON_THEME);
     private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
-            = new SimpleObjectProperty<>(PreferencesRecordGlobal.DEFAULT_SWATCH);
+            = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_SWATCH);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty
@@ -540,7 +540,7 @@ public class EditorController {
 
     // -- Theme property
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<Theme>(PreferencesRecordGlobal.DEFAULT_THEME) {
+            = new SimpleObjectProperty<Theme>(EditorPlatform.DEFAULT_THEME) {
         @Override
         protected void invalidated() {
             FXOMDocument fxomDocument = getFxomDocument();

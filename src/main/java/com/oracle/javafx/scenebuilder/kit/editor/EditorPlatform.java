@@ -98,6 +98,21 @@ public class EditorPlatform {
      */
     public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
 
+    /**
+     * Default theme
+     */
+    public static final Theme DEFAULT_THEME = Theme.MODENA;
+
+    /**
+     * Default Gluon Swatch
+     */
+    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = GluonSwatch.BLUE;
+
+    /**
+     * Default Gluon Theme
+     */
+    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = GluonTheme.LIGHT;
+
     interface StylesheetProvider {
         String getStylesheetURL();
     }

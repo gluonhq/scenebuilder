@@ -80,9 +80,9 @@ public class PreferencesRecordGlobal {
             = DisplayOption.INFO;
     static final boolean DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED = false;
 
-    public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.Theme.MODENA;
-    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.GluonSwatch.BLUE;
-    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.GluonTheme.LIGHT;
+    public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.DEFAULT_THEME;
+    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.DEFAULT_SWATCH;
+    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.DEFAULT_GLUON_THEME;
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
 
     // Global preferences
