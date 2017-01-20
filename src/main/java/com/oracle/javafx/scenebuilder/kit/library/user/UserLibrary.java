@@ -93,8 +93,10 @@ public class UserLibrary extends Library {
     // the user defined one displayed in the Library panel.
     // As a consequence an empty file means we display all items.
     private final String filterFileName = "filter.txt"; //NOI18N
-    
-    
+
+    private Runnable onImportingGluonControls;
+
+
     /*
      * Public
      */
@@ -135,6 +137,7 @@ public class UserLibrary extends Library {
             assert watcherThread == null;
 
             watcher = new LibraryFolderWatcher(this);
+            watcher.setOnImportingGluonControls(onImportingGluonControls);
             watcherThread = new Thread(watcher);
             watcherThread.setName(watcher.getClass().getSimpleName() + "(" + path  + ")"); //NOI18N
             watcherThread.setDaemon(true);
@@ -375,5 +378,9 @@ public class UserLibrary extends Library {
         lib.stopWatching();
         Thread.sleep(20 * 1000);
         System.out.println("Exiting"); //NOI18N
+    }
+
+    public void setOnImportingGluonControls(Runnable onImportingGluonControls) {
+        this.onImportingGluonControls = onImportingGluonControls;
     }
 }

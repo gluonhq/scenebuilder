@@ -16,7 +16,7 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithoutPackageName() throws IOException {
-        EditorController editorController = new EditorController();
+        EditorController editorController = new EditorController(null);
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithoutPackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
@@ -30,7 +30,7 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithSimplePackageName() throws IOException {
-        EditorController editorController = new EditorController();
+        EditorController editorController = new EditorController(null);
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithSimplePackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
@@ -44,7 +44,7 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithAdvancedPackageName() throws IOException {
-        EditorController editorController = new EditorController();
+        EditorController editorController = new EditorController(null);
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithAdvancedPackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);

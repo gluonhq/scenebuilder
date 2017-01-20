@@ -99,7 +99,7 @@ public class AddPropertyValueJob extends Job {
         value.addToParentProperty(targetIndex, targetProperty);
         getEditorController().getFxomDocument().endUpdate();
 
-        WarnThemeAlert.showAlertIfRequired(getEditorController(), value, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
+        WarnThemeAlert.showAlertIfRequired(getEditorController(), value, getEditorController().getOwnerWindow());
 
         assert value.getParentProperty() == targetProperty;
         assert value.getParentCollection() == null;

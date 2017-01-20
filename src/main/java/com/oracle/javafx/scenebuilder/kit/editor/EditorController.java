@@ -32,9 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
@@ -127,6 +124,7 @@ import javafx.scene.control.Control;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Window;
 import javafx.util.Callback;
 
 /**
@@ -281,6 +279,8 @@ public class EditorController {
             = new SimpleStringProperty(getBuiltinToolStylesheet());
     
     private Callback<Void, Boolean> requestTextEditingSessionEnd;
+
+    private Window ownerWindow;
     
     private static String builtinToolStylesheet;
     private static File nextInitialDirectory = new File(System.getProperty("user.home")); //NOI18N
@@ -1708,10 +1708,9 @@ public class EditorController {
             job = new InsertAsSubComponentJob(newObject, target, -1, this);
         }
 
-
-        WarnThemeAlert.showAlertIfRequired(this, newObject, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
-
         jobManager.push(job);
+
+        WarnThemeAlert.showAlertIfRequired(this, newObject, ownerWindow);
     }
 
     /**
@@ -2497,9 +2496,7 @@ public class EditorController {
         
         watchingController.fxomDocumentDidChange();
 
-        DocumentWindowController dwc = SceneBuilderApp.getSingleton().getFrontDocumentWindow();
-        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, dwc == null ? null : dwc.getStage());
-        
+        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
     }
     
     private final ChangeListener<ClassLoader> libraryClassLoaderListener
@@ -2523,5 +2520,13 @@ public class EditorController {
         errorReport.forget();
         watchingController.jobManagerRevisionDidChange();
 //        setPickModeEnabled(false);
+    }
+
+    public void setOwnerWindow(Window ownerWindow) {
+        this.ownerWindow = ownerWindow;
+    }
+
+    public Window getOwnerWindow() {
+        return ownerWindow;
     }
 }

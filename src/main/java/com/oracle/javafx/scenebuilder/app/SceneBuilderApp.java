@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+import com.oracle.javafx.scenebuilder.app.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.app.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
@@ -391,6 +392,17 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder());
+
+        userLibrary.setOnImportingGluonControls(() -> {
+            Platform.runLater(() -> {
+                SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
+                DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
+                if (dwc == null) {
+                    dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
+                }
+                new ImportingGluonControlsAlert(dwc.getStage()).showAndWait();
+            });
+        });
 
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
 

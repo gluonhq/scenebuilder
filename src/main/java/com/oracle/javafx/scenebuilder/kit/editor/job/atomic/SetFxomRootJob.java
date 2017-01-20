@@ -75,7 +75,7 @@ public class SetFxomRootJob extends Job {
         fxomDocument.setFxomRoot(newRoot);
         fxomDocument.endUpdate();
 
-        WarnThemeAlert.showAlertIfRequired(getEditorController(), newRoot, SceneBuilderApp.getSingleton().getFrontDocumentWindow().getStage());
+        WarnThemeAlert.showAlertIfRequired(getEditorController(), newRoot, getEditorController().getOwnerWindow());
     }
 
     @Override

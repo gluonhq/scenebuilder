@@ -186,7 +186,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private final SearchController cssPanelSearchController = new SearchController(editorController);;
     private final SceneStyleSheetMenuController sceneStyleSheetMenuController = new SceneStyleSheetMenuController(this);
     private final CssPanelMenuController cssPanelMenuController = new CssPanelMenuController(cssPanelController);
-    private final ResourceController resourceController = new ResourceController((this));    
+    private final ResourceController resourceController = new ResourceController((this));
     private final DocumentWatchingController watchingController = new DocumentWatchingController(this);
     
     // The controller below are created lazily because they need an owner
@@ -1085,6 +1085,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     protected void controllerDidCreateStage() {
         updateStageTitle();
         updateFromDocumentPreferences(true);
+        editorController.setOwnerWindow(getStage());
     }
     
     @Override

@@ -80,6 +80,7 @@ class LibraryFolderWatcher implements Runnable {
     
     private final UserLibrary library;
     private final MavenPreferences mavenPreferences;
+    private Runnable onImportingGluonControls;
 
     private enum FILE_TYPE {FXML, JAR};
     
@@ -342,15 +343,8 @@ class LibraryFolderWatcher implements Runnable {
             }
         }
 
-        if (shouldShowImportGluonJarAlert) {
-            Platform.runLater(() -> {
-                SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
-                DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
-                if (dwc == null) {
-                    dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
-                }
-                new ImportingGluonControlsAlert(dwc.getStage()).showAndWait();
-            });
+        if (shouldShowImportGluonJarAlert && onImportingGluonControls != null) {
+            onImportingGluonControls.run();
         }
 
         // 3)
@@ -443,5 +437,9 @@ class LibraryFolderWatcher implements Runnable {
             }
         }
         return false;
+    }
+
+    public void setOnImportingGluonControls(Runnable onImportingGluonControls) {
+        this.onImportingGluonControls = onImportingGluonControls;
     }
 }
