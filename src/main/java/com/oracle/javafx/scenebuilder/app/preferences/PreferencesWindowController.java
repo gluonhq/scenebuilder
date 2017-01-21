@@ -87,6 +87,8 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -130,9 +132,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
 
-    public PreferencesWindowController() {
+    private Window ownerWindow;
+
+    public PreferencesWindowController(Window ownerWindow) {
         super(PreferencesWindowController.class.getResource("Preferences.fxml"), //NOI18N
                 I18N.getBundle());
+        this.ownerWindow = ownerWindow;
     }
 
     /*
@@ -245,6 +250,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         assert getRoot().getScene().getWindow() != null;
 
         getStage().setTitle(I18N.getString("prefs.title"));
+        getStage().initModality(Modality.APPLICATION_MODAL);
+        getStage().initOwner(ownerWindow);
         getStage().setResizable(false);
     }
 

@@ -126,8 +126,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
     private final List<DocumentWindowController> windowList = new ArrayList<>();
-    private final PreferencesWindowController preferencesWindowController
-            = new PreferencesWindowController();
     private final AboutWindowController aboutWindowController
             = new AboutWindowController();
     private UserLibrary userLibrary;
@@ -222,6 +220,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case SHOW_PREFERENCES:
+                PreferencesWindowController preferencesWindowController = new PreferencesWindowController(source.getStage());
+                preferencesWindowController.setToolStylesheet(getToolStylesheet());
                 SBSettings.setWindowIcon(preferencesWindowController.getStage());
                 preferencesWindowController.openWindow();
                 break;
@@ -615,15 +615,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void performCloseFrontWindow() {
-        if (preferencesWindowController != null
-                && preferencesWindowController.getStage().isFocused()) {
-            preferencesWindowController.closeWindow();
-        } else {
-            for (DocumentWindowController dwc : windowList) {
-                if (dwc.isFrontDocumentWindow()) {
-                    dwc.performCloseFrontDocumentWindow();
-                    break;
-                }
+        for (DocumentWindowController dwc : windowList) {
+            if (dwc.isFrontDocumentWindow()) {
+                dwc.performCloseFrontDocumentWindow();
+                break;
             }
         }
     }
@@ -830,7 +825,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         for (DocumentWindowController dwc : windowList) {
             dwc.setToolStylesheet(toolStylesheet);
         }
-        preferencesWindowController.setToolStylesheet(toolStylesheet);
         aboutWindowController.setToolStylesheet(toolStylesheet);
     }
 
