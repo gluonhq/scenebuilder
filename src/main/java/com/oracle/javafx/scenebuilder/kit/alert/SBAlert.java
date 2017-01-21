@@ -1,9 +1,8 @@
-package com.oracle.javafx.scenebuilder.app.alert;
+package com.oracle.javafx.scenebuilder.kit.alert;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import javafx.scene.control.Alert;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 

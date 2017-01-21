@@ -32,7 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.oracle.javafx.scenebuilder.app.alert.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
