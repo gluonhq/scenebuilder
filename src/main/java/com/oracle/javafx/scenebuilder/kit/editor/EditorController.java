@@ -336,8 +336,8 @@ public class EditorController {
      * @param fxmlText null or the fxml text to be edited
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */
-    public void setFxmlText(String fxmlText) throws IOException {
-        setFxmlTextAndLocation(fxmlText, getFxmlLocation());
+    public void setFxmlText(String fxmlText, boolean checkGluonControls) throws IOException {
+        setFxmlTextAndLocation(fxmlText, getFxmlLocation(), checkGluonControls);
     }
     
     /**
@@ -731,7 +731,20 @@ public class EditorController {
     public URL getFxmlLocation() {
         return fxmlLocationProperty.getValue();
     }
-    
+
+    /**
+     * Sets both fxml text and location to be edited by this editor.
+     * Performs setFxmlText() and setFxmlLocation() but in a optimized manner
+     * (it avoids an extra scene graph refresh).
+     *
+     * @param fxmlText null or the fxml text to be edited
+     * @param fxmlLocation null or the location of the fxml text being edited
+     * @throws IOException if fxml text cannot be parsed and loaded correctly.
+     */
+    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation) throws IOException {
+        setFxmlTextAndLocation(fxmlText, fxmlLocation, false);
+    }
+
     /**
      * Sets both fxml text and location to be edited by this editor.
      * Performs setFxmlText() and setFxmlLocation() but in a optimized manner
@@ -739,13 +752,31 @@ public class EditorController {
      * 
      * @param fxmlText null or the fxml text to be edited
      * @param fxmlLocation null or the location of the fxml text being edited
+     * @param checkGluonControls if set to true a check will be made if the fxml contains G
+     *                           Gluon controls and if so, the correct theme is set
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */
-    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation) throws IOException {
-        updateFxomDocument(fxmlText, fxmlLocation, getResources());
+    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation, boolean checkGluonControls) throws IOException {
+        updateFxomDocument(fxmlText, fxmlLocation, getResources(), checkGluonControls);
         this.fxmlLocationProperty.setValue(fxmlLocation);
     }
-    
+
+    /**
+     * Sets fxml text, location and resources to be edited by this editor.
+     * Performs setFxmlText(), setFxmlLocation() and setResources() but in an
+     * optimized manner (it avoids extra scene graph refresh).
+     *
+     * @param fxmlText null or the fxml text to be edited
+     * @param fxmlLocation null or the location of the fxml text being edited
+     * @param resources null or the resource bundle used to load the fxml text
+     *
+     * @throws IOException if fxml text cannot be parsed and loaded correctly.
+     */
+    public void setFxmlTextLocationAndResources(String fxmlText, URL fxmlLocation,
+                                                ResourceBundle resources) throws IOException {
+        setFxmlTextLocationAndResources(fxmlText, fxmlLocation, resources, false);
+    }
+
     /**
      * Sets fxml text, location and resources to be edited by this editor.
      * Performs setFxmlText(), setFxmlLocation() and setResources() but in an
@@ -754,11 +785,13 @@ public class EditorController {
      * @param fxmlText null or the fxml text to be edited
      * @param fxmlLocation null or the location of the fxml text being edited
      * @param resources null or the resource bundle used to load the fxml text
+     * @param checkGluonControls if set to true a check will be made if the fxml contains G
+     *                           Gluon controls and if so, the correct theme is set
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */
     public void setFxmlTextLocationAndResources(String fxmlText, URL fxmlLocation,
-            ResourceBundle resources) throws IOException {
-        updateFxomDocument(fxmlText, fxmlLocation, resources);
+            ResourceBundle resources, boolean checkGluonControls) throws IOException {
+        updateFxomDocument(fxmlText, fxmlLocation, resources, checkGluonControls);
         this.fxmlLocationProperty.setValue(fxmlLocation);
     }
     
@@ -2480,7 +2513,7 @@ public class EditorController {
         return true;
     }
 
-    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources) throws IOException {
+    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources, boolean checkGluonControls) throws IOException {
         final FXOMDocument newFxomDocument;
         
         if (fxmlText != null) {
@@ -2496,7 +2529,9 @@ public class EditorController {
         
         watchingController.fxomDocumentDidChange();
 
-        WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
+        if (checkGluonControls) {
+            WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
+        }
     }
     
     private final ChangeListener<ClassLoader> libraryClassLoaderListener

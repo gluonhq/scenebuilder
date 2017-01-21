@@ -44,6 +44,7 @@ import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.selectionbar.SelectionBarController;
 import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonWindowController;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -383,30 +384,34 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void loadFromFile(File fxmlFile) throws IOException {
         final URL fxmlURL = fxmlFile.toURI().toURL();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
         updateLoadFileTime();
         updateStageTitle(); // No-op if fxml has not been loaded yet
         updateFromDocumentPreferences(true);
         watchingController.update();
+
+        WarnThemeAlert.showAlertIfRequired(editorController, editorController.getFxomDocument(), getStage());
     }
     
     public void loadFromURL(URL fxmlURL, boolean refreshTheme) {
         assert fxmlURL != null;
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-            editorController.setFxmlTextAndLocation(fxmlText, null);
+            editorController.setFxmlTextAndLocation(fxmlText, null, false);
             updateLoadFileTime();
             updateStageTitle(); // No-op if fxml has not been loaded yet
             updateFromDocumentPreferences(refreshTheme);
             watchingController.update();
+
+            WarnThemeAlert.showAlertIfRequired(editorController, editorController.getFxomDocument(), getStage());
         } catch(IOException x) {
             throw new IllegalStateException(x);
         }
     }
 
-    public void loadWithDefaultContent() {
+    public void updateWithDefaultContent() {
         try {
-            editorController.setFxmlTextAndLocation("", null); //NOI18N
+            editorController.setFxmlTextAndLocation("", null, true); //NOI18N
             updateLoadFileTime();
             updateStageTitle(); // No-op if fxml has not been loaded yet
             watchingController.update();
@@ -420,7 +425,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         assert (fxomDocument != null) && (fxomDocument.getLocation() != null);
         final URL fxmlURL = fxomDocument.getLocation();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, true);
         updateLoadFileTime();
         // Here we do not invoke updateStageTitleAndPreferences() neither watchingController.update()
     }

@@ -195,7 +195,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_FILE:
                 final DocumentWindowController newWindow = makeNewWindow();
-                newWindow.loadWithDefaultContent();
+                newWindow.updateWithDefaultContent();
                 newWindow.openWindow();
                 break;
 
@@ -413,7 +413,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (files.isEmpty()) {
             // Creates an empty document
             final DocumentWindowController newWindow = makeNewWindow();
-            newWindow.loadWithDefaultContent();
+            newWindow.updateWithDefaultContent();
             newWindow.openWindow();
 
             // Show ScenicView Tool when the JVM is started with option -Dscenic.

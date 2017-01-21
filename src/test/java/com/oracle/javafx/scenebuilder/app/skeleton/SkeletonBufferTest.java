@@ -16,10 +16,10 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithoutPackageName() throws IOException {
-        EditorController editorController = new EditorController(null);
+        EditorController editorController = new EditorController();
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithoutPackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
         SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
         String skeleton = skeletonBuffer.toString();
@@ -30,10 +30,10 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithSimplePackageName() throws IOException {
-        EditorController editorController = new EditorController(null);
+        EditorController editorController = new EditorController();
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithSimplePackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
         SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
         String skeleton = skeletonBuffer.toString();
@@ -44,10 +44,10 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithAdvancedPackageName() throws IOException {
-        EditorController editorController = new EditorController(null);
+        EditorController editorController = new EditorController();
         final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithAdvancedPackage.fxml");
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
         SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
         String skeleton = skeletonBuffer.toString();
