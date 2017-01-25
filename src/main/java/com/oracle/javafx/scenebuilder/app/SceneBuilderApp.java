@@ -419,9 +419,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
                 showUpdateDialogIfRequired(newWindow, () -> {
                     if (!Platform.isFxApplicationThread()) {
-                        Platform.runLater(() -> showRegistrationDialogIfRequired());
+                        Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
                     } else {
-                        showRegistrationDialogIfRequired();
+                        showRegistrationDialogIfRequired(newWindow);
                     }
 
                 });
@@ -1034,16 +1034,16 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void showRegistrationDialogIfRequired() {
+    private void showRegistrationDialogIfRequired(DocumentWindowController dwc) {
         PreferencesController pc = PreferencesController.getSingleton();
         PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         String registrationHash = recordGlobal.getRegistrationHash();
         if (registrationHash == null) {
-            performControlAction(ApplicationControlAction.REGISTER, null);
+            performControlAction(ApplicationControlAction.REGISTER, dwc);
         } else {
             String registrationEmail = recordGlobal.getRegistrationEmail();
             if (registrationEmail == null && Math.random() > 0.8) {
-                performControlAction(ApplicationControlAction.REGISTER, null);
+                performControlAction(ApplicationControlAction.REGISTER, dwc);
             }
         }
     }
