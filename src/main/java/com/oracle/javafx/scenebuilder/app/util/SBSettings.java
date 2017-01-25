@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -37,8 +37,14 @@ import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -51,8 +57,15 @@ public class SBSettings {
     public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
     public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
 
+    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version-8.4.0.json";
+
     private static String sceneBuilderVersion;
     private static String latestVersion;
+
+    private static String latestVersionText;
+    private static String latestVersionAnnouncementURL;
+
+    private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     static {
         initSceneBuiderVersion();
@@ -97,31 +110,62 @@ public class SBSettings {
 
     public static void getLatestVersion(Consumer<String> consumer) {
 
-            if (latestVersion == null) {
-                new Thread (() -> {
-                    Properties prop = new Properties();
-                    String onlineVersionNumber = null;
+        if (latestVersion == null) {
+            new Thread (() -> {
+                Properties prop = new Properties();
+                String onlineVersionNumber = null;
 
-                    URL url = null;
-                    try {
-                        url = new URL(LATEST_VERSION_CHECK_URL);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
+                URL url = null;
+                try {
+                    url = new URL(LATEST_VERSION_CHECK_URL);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
-                    try (InputStream inputStream = url.openStream()) {
-                        prop.load(inputStream);
-                        onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
+                try (InputStream inputStream = url.openStream()) {
+                    prop.load(inputStream);
+                    onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    latestVersion = onlineVersionNumber;
-                    consumer.accept(latestVersion);
-                }, "GetLatestVersion").start();
-            } else {
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                latestVersion = onlineVersionNumber;
                 consumer.accept(latestVersion);
+            }, "GetLatestVersion").start();
+        } else {
+            consumer.accept(latestVersion);
+        }
+    }
+
+    public static String getLatestVersionText() {
+        if (latestVersionText == null) {
+            updateLatestVersionInfo();
+        }
+        return latestVersionText;
+    }
+
+    private static void updateLatestVersionInfo() {
+        try {
+            URL url = new URL(LATEST_VERSION_INFORMATION_URL);
+
+            try (JsonReader reader = readerFactory.createReader(new InputStreamReader(url.openStream()))) {
+                JsonObject object = reader.readObject();
+                JsonObject announcementObject = object.getJsonObject("announcement");
+                latestVersionText = announcementObject.getString("text");
+                latestVersionAnnouncementURL = announcementObject.getString("url");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getLatestVersionAnnouncementURL() {
+        if (latestVersionAnnouncementURL == null) {
+            updateLatestVersionInfo();
+        }
+        return latestVersionAnnouncementURL;
     }
 
 }

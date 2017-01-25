@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -55,13 +55,14 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 
 public class UpdateSceneBuilderDialog extends Dialog {
+    public static final String DOWNLOAD_URL = "http://gluonhq.com/labs/scene-builder/#download";
 
-    public UpdateSceneBuilderDialog(String latestVersion, Window owner) {
+    public UpdateSceneBuilderDialog(String latestVersion, String latestVersionTextString, String announcementURL, Window owner) {
         initOwner(owner);
-        setTitle(I18N.getString("download_scene_builder.title"));
-        Label header = new Label(I18N.getString("download_scene_builder.header.label"));
-        Label currentVersionTextLabel = new Label(I18N.getString("download_scene_builder.current_version.label"));
-        Label latestVersionTextLabel = new Label(I18N.getString("download_scene_builder.last_version_number.label"));
+        setTitle(I18N.getString("download.scene.builder.title"));
+        Label header = new Label(I18N.getString("download.scene.builder.header.label"));
+        Label currentVersionTextLabel = new Label(I18N.getString("download.scene.builder.current.version.label"));
+        Label latestVersionTextLabel = new Label(I18N.getString("download.scene.builder.last.version.number.label"));
         Label currentVersionLabel = new Label(SBSettings.getSceneBuilderVersion());
         Label latestVersionLabel = new Label(latestVersion);
         GridPane gridPane = new GridPane();
@@ -69,13 +70,18 @@ public class UpdateSceneBuilderDialog extends Dialog {
         gridPane.add(currentVersionLabel, 1, 0);
         gridPane.add(latestVersionTextLabel, 0, 1);
         gridPane.add(latestVersionLabel, 1, 1);
+
+        Label latestVersionText = new Label(latestVersionTextString);
+
         gridPane.getColumnConstraints().add(new ColumnConstraints(100));
+
         VBox contentContainer = new VBox();
         contentContainer.getChildren().addAll(header, gridPane);
         BorderPane mainContainer = new BorderPane();
         mainContainer.setCenter(contentContainer);
         ImageView imageView = new ImageView(UpdateSceneBuilderDialog.class.getResource("computerDownload.png").toExternalForm());
         mainContainer.setRight(imageView);
+        mainContainer.setBottom(latestVersionText);
 
         getDialogPane().setContent(mainContainer);
 
@@ -83,11 +89,13 @@ public class UpdateSceneBuilderDialog extends Dialog {
         contentContainer.getStyleClass().add("content-container");
         getDialogPane().getStyleClass().add("download_scenebuilder-dialog");
         header.getStyleClass().add("header");
+        latestVersionText.getStyleClass().add("latest-version-text");
 
-        ButtonType downloadButton = new ButtonType(I18N.getString("download_scene_builder.download.label"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType ignoreThisUpdate = new ButtonType(I18N.getString("download_scene_builder.ignore.label"));
-        ButtonType remindLater = new ButtonType(I18N.getString("download_scene_builder.remind_later.label"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        getDialogPane().getButtonTypes().addAll(downloadButton, ignoreThisUpdate, remindLater);
+        ButtonType downloadButton = new ButtonType(I18N.getString("download.scene.builder.download.label"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType ignoreThisUpdate = new ButtonType(I18N.getString("download.scene.builder.ignore.label"));
+        ButtonType remindLater = new ButtonType(I18N.getString("download.scene.builder.remind.later.label"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType learnMore = new ButtonType(I18N.getString("download.scene.builder.learn.mode.label"));
+        getDialogPane().getButtonTypes().addAll(learnMore, downloadButton, ignoreThisUpdate, remindLater);
 
         getDialogPane().getStylesheets().add(SceneBuilderApp.class.getResource("css/UpdateSceneBuilderDialog.css").toString());
 
@@ -95,7 +103,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
             if (newValue == downloadButton) {
                 URI uri = null;
                 try {
-                    uri = new URI("http://gluonhq.com/labs/scene-builder/#download");
+                    uri = new URI(DOWNLOAD_URL);
                     Desktop.getDesktop().browse(uri);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
@@ -112,6 +120,16 @@ public class UpdateSceneBuilderDialog extends Dialog {
                 PreferencesController pc = PreferencesController.getSingleton();
                 PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setIgnoreVersion(latestVersion);
+            } else if (newValue == learnMore) {
+                URI uri = null;
+                try {
+                    uri = new URI(announcementURL);
+                    Desktop.getDesktop().browse(uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

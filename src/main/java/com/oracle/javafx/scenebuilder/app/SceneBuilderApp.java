@@ -170,7 +170,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
-        DocumentWindowController dwc;
         switch (a) {
             case ABOUT:
                 aboutWindowController.openWindow();
@@ -178,17 +177,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case REGISTER:
-                dwc = getFrontDocumentWindow();
-                if (dwc == null) {
-                    dwc = getDocumentWindowControllers().get(0);
-                }
-                final RegistrationWindowController registrationWindowController = new RegistrationWindowController(dwc.getStage());
+                final RegistrationWindowController registrationWindowController = new RegistrationWindowController(source.getStage());
                 registrationWindowController.openWindow();
                 SBSettings.setWindowIcon(registrationWindowController.getStage());
                 break;
 
             case CHECK_UPDATES:
-                checkUpdates();
+                checkUpdates(source);
                 break;
 
             case NEW_FILE:
@@ -198,8 +193,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case NEW_TEMPLATE:
-                dwc = getFrontDocumentWindow();
-                final TemplatesWindowController templatesWindowController = new TemplatesWindowController(dwc.getStage());
+                final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
                 templatesWindowController.openWindow();
                 break;
 
@@ -423,7 +417,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                showUpdateDialogIfRequired(() -> {
+                showUpdateDialogIfRequired(newWindow, () -> {
                     if (!Platform.isFxApplicationThread()) {
                         Platform.runLater(() -> showRegistrationDialogIfRequired());
                     } else {
@@ -940,74 +934,82 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void showUpdateDialogIfRequired(Runnable runAfterUpdateDialog) {
+    private void showUpdateDialogIfRequired(DocumentWindowController dwc, Runnable runAfterUpdateDialog) {
         SBSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
             try {
-            boolean showUpdateDialog = true;
+                boolean showUpdateDialog = true;
                 if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
                     PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
                     if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                    showUpdateDialog = false;
+                        showUpdateDialog = false;
                     }
 
                     if (!isUpdateDialogDateReached(recordGlobal)) {
-                    showUpdateDialog = false;
+                        showUpdateDialog = false;
                     }
-            } else {
-                showUpdateDialog = false;
-            }
-            
-            if (showUpdateDialog) {
+                } else {
+                    showUpdateDialog = false;
+                }
+
+                if (showUpdateDialog) {
+                    String latestVersionText = SBSettings.getLatestVersionText();
+                    String latestVersionAnnouncementURL = SBSettings.getLatestVersionAnnouncementURL();
                     Platform.runLater(() -> {
-                    UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, getDocumentWindowControllers().get(0).getStage());
-                    dialog.setOnHidden(event -> runAfterUpdateDialog.run());
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
+                                latestVersionAnnouncementURL, dwc.getStage());
+                        dialog.setOnHidden(event -> runAfterUpdateDialog.run());
                         dialog.showAndWait();
                     });
-            } else {
-                runAfterUpdateDialog.run();
+                } else {
+                    runAfterUpdateDialog.run();
                 }
             } catch (NumberFormatException ex) {
-                Platform.runLater(() -> showVersionNumberFormatError());
+                Platform.runLater(() -> showVersionNumberFormatError(dwc));
             }
         });
     }
 
-    private void checkUpdates() {
+    private void checkUpdates(DocumentWindowController source) {
         SBSettings.getLatestVersion(latestVersion -> {
-            Platform.runLater(() -> {
-                if (latestVersion == null) {
+            if (latestVersion == null) {
+                Platform.runLater(() -> {
                     SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
                     alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
                     alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
                     alert.showAndWait();
-                }
-                try {
-                    if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, getFrontDocumentWindow().getStage());
+                });
+            }
+            try {
+                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                    String latestVersionText = SBSettings.getLatestVersionText();
+                    String latestVersionAnnouncementURL = SBSettings.getLatestVersionAnnouncementURL();
+                    Platform.runLater(() -> {
+                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
+                                latestVersionAnnouncementURL, source.getStage());
                         dialog.showAndWait();
-                    } else {
-                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                        alert.showAndWait();
-                    }
-                } catch (NumberFormatException ex) {
-                    showVersionNumberFormatError();
+                    });
+                } else {
+                    SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
+                    alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
+                    alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                    alert.showAndWait();
                 }
-            });
+            } catch (NumberFormatException ex) {
+                Platform.runLater(() -> showVersionNumberFormatError(source));
+            }
         });
     }
 
-    private void showVersionNumberFormatError() {
-        SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
+    private void showVersionNumberFormatError(DocumentWindowController dwc) {
+        SBAlert alert = new SBAlert(Alert.AlertType.ERROR, dwc.getStage());
         // The version number format is not supported and this is most probably only happening
         // in development so we don't localize the strings
         alert.setTitle("Error");
