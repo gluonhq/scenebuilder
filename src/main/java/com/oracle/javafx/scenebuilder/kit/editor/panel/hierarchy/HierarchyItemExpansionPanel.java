@@ -125,7 +125,7 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
 
     @Override
     public Image getPlaceHolderImage() {
-        return ImageUtils.getNodeIcon("CustomNode.png");
+        return ImageUtils.getNodeIcon("Gluon_ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png");
     }
 
     @Override
