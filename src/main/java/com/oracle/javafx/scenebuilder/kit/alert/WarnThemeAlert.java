@@ -39,6 +39,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
@@ -49,7 +50,7 @@ import javafx.stage.Window;
 public class WarnThemeAlert extends SBAlert {
     private static boolean hasBeenShown = false;
 
-    private WarnThemeAlert(EditorController editorController, Window owner) {
+    private WarnThemeAlert(EditorController editorController, Stage owner) {
         super(AlertType.WARNING, owner);
 
         setTitle(I18N.getString("alert.theme.gluon.mobile.title"));
@@ -70,14 +71,14 @@ public class WarnThemeAlert extends SBAlert {
         setOnShown(event -> hasBeenShown = true);
     }
 
-    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject, Window owner) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject, Stage owner) {
         if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             new WarnThemeAlert(editorController, owner).showAndWait();
         }
     }
 
-    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument, Window owner) {
+    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument, Stage owner) {
         if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
                 && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
             new WarnThemeAlert(editorController, owner).showAndWait();

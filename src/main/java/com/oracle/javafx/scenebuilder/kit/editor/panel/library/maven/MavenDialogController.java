@@ -60,6 +60,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.eclipse.aether.artifact.Artifact;
@@ -187,7 +188,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
                     final ImportWindowController iwc
                             = new ImportWindowController(
                                 new LibraryPanelController(editorController), 
-                                files, installButton.getScene().getWindow(), false,
+                                files, (Stage)installButton.getScene().getWindow(), false,
                                 pc.getMavenPreferences().getArtifactsFilter());
                     iwc.setToolStylesheet(editorController.getToolStylesheet());
                     ButtonID userChoice = iwc.showAndWait();

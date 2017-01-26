@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.kit.alert;
 
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -41,14 +42,17 @@ import javafx.stage.Window;
  */
 public class SBAlert extends Alert {
 
-    public SBAlert(AlertType alertType, Window owner) {
+    public SBAlert(AlertType alertType, Stage owner) {
         super(alertType);
 
         initOwner(owner);
         getDialogPane().getStyleClass().add("SB-alert");
         getDialogPane().getStylesheets().add(SBAlert.class.getResource("Alert.css").toString());
-
-        SBSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
+        setIcons(owner);
     }
 
+    private void setIcons(Stage owner) {
+        Stage alertStage = (Stage) getDialogPane().getScene().getWindow();
+        alertStage.getIcons().setAll(owner.getIcons());
+    }
 }

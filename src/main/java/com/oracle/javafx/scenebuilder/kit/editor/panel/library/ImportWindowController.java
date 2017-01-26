@@ -96,7 +96,7 @@ public class ImportWindowController extends AbstractModalDialog {
     double builtinPrefHeight;
     private int numOfImportedJar;
     private boolean copyFilesToUserLibraryDir;
-    private Window owner;
+    private Stage owner;
     
     // At first we put in this collection the items which are already excluded,
     // basically all which are listed in the filter file.
@@ -148,11 +148,11 @@ public class ImportWindowController extends AbstractModalDialog {
     @FXML
     ToggleButton checkAllUncheckAllToggle;
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, Window owner) {
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner) {
         this(lpc, files, owner, true, new ArrayList<>());
     }
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, Window owner, 
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner,
             boolean copyFilesToUserLibraryDir, List<String> artifactsFilter) {
         super(ImportWindowController.class.getResource("ImportDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         libPanelController = lpc;
@@ -452,7 +452,8 @@ public class ImportWindowController extends AbstractModalDialog {
                 }
 
                 if (importingGluonControls) {
-                    new ImportingGluonControlsAlert(owner).showAndWait();
+                    ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(owner);
+                    alert.showAndWait();
                 }
 
                 // Sort based on the simple class name.

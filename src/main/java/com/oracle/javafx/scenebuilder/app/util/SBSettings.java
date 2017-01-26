@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app.util;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -85,6 +86,9 @@ public class SBSettings {
         }
     }
 
+    public static void setWindowIcon(Alert alert) {
+        setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
+    }
     public static void setWindowIcon(Stage stage) {
         Image icon16 = new Image(SBSettings.APP_ICON_16);
         Image icon32 = new Image(SBSettings.APP_ICON_32);

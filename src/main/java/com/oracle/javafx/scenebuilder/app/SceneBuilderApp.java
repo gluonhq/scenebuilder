@@ -394,7 +394,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 if (dwc == null) {
                     dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
                 }
-                new ImportingGluonControlsAlert(dwc.getStage()).showAndWait();
+                ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
+                SBSettings.setWindowIcon(alert);
+                alert.showAndWait();
             });
         });
 

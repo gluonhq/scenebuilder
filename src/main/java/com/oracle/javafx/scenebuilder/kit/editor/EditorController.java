@@ -124,6 +124,7 @@ import javafx.scene.control.Control;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
 
@@ -280,7 +281,7 @@ public class EditorController {
     
     private Callback<Void, Boolean> requestTextEditingSessionEnd;
 
-    private Window ownerWindow;
+    private Stage ownerWindow;
     
     private static String builtinToolStylesheet;
     private static File nextInitialDirectory = new File(System.getProperty("user.home")); //NOI18N
@@ -2557,11 +2558,11 @@ public class EditorController {
 //        setPickModeEnabled(false);
     }
 
-    public void setOwnerWindow(Window ownerWindow) {
+    public void setOwnerWindow(Stage ownerWindow) {
         this.ownerWindow = ownerWindow;
     }
 
-    public Window getOwnerWindow() {
+    public Stage getOwnerWindow() {
         return ownerWindow;
     }
 }

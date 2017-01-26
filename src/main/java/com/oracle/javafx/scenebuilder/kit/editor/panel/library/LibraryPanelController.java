@@ -753,7 +753,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                     }
 
                     final ImportWindowController iwc
-                            = new ImportWindowController(this, jarFiles, window);
+                            = new ImportWindowController(this, jarFiles, (Stage) window);
                     iwc.setToolStylesheet(getEditorController().getToolStylesheet());
                     // See comment in OnDragDropped handle set in method startListeningToDrop.
                     ButtonID userChoice = iwc.showAndWait();
