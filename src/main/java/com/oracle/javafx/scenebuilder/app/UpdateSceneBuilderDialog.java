@@ -36,6 +36,9 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import javafx.application.Application;
+import javafx.application.HostServices;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -55,7 +58,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 
 public class UpdateSceneBuilderDialog extends Dialog {
-    public static final String DOWNLOAD_URL = "http://gluonhq.com/labs/scene-builder/#download";
 
     public UpdateSceneBuilderDialog(String latestVersion, String latestVersionTextString, String announcementURL, Window owner) {
         initOwner(owner);
@@ -100,16 +102,9 @@ public class UpdateSceneBuilderDialog extends Dialog {
         getDialogPane().getStylesheets().add(SceneBuilderApp.class.getResource("css/UpdateSceneBuilderDialog.css").toString());
 
         resultProperty().addListener((observable, oldValue, newValue) -> {
+            HostServices hostServices = SceneBuilderApp.getSingleton().getHostServices();
             if (newValue == downloadButton) {
-                URI uri = null;
-                try {
-                    uri = new URI(DOWNLOAD_URL);
-                    Desktop.getDesktop().browse(uri);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                hostServices.showDocument(SBSettings.DOWNLOAD_URL);
             } else if (newValue == remindLater) {
                 LocalDate now = LocalDate.now();
                 LocalDate futureDate = now.plusWeeks(1);
@@ -121,15 +116,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
                 PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setIgnoreVersion(latestVersion);
             } else if (newValue == learnMore) {
-                URI uri = null;
-                try {
-                    uri = new URI(announcementURL);
-                    Desktop.getDesktop().browse(uri);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                hostServices.showDocument(announcementURL);
             }
         });
 

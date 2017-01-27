@@ -59,6 +59,8 @@ public class SBSettings {
 
     public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version-8.4.0.json";
 
+    public static final String DOWNLOAD_URL = "http://gluonhq.com/labs/scene-builder";
+
     private static String sceneBuilderVersion;
     private static String latestVersion;
 

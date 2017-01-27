@@ -752,7 +752,7 @@ public class EditorController {
      * 
      * @param fxmlText null or the fxml text to be edited
      * @param fxmlLocation null or the location of the fxml text being edited
-     * @param checkGluonControls if set to true a check will be made if the fxml contains G
+     * @param checkGluonControls if set to true a check will be made if the fxml contains
      *                           Gluon controls and if so, the correct theme is set
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */

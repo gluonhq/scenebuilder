@@ -987,7 +987,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 });
             }
             try {
-                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+//                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
                     String latestVersionText = SBSettings.getLatestVersionText();
                     String latestVersionAnnouncementURL = SBSettings.getLatestVersionAnnouncementURL();
                     Platform.runLater(() -> {
@@ -995,13 +995,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                                 latestVersionAnnouncementURL, source.getStage());
                         dialog.showAndWait();
                     });
-                } else {
-                    SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                    alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                    alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                    alert.showAndWait();
-                }
+//                } else {
+//                    SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
+//                    alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+//                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
+//                    alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+//                    alert.showAndWait();
+//                }
             } catch (NumberFormatException ex) {
                 Platform.runLater(() -> showVersionNumberFormatError(source));
             }
