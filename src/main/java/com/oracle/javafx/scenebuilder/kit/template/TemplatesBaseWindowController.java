@@ -103,8 +103,8 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
             if (child instanceof Button) {
                 Button button = (Button) child;
                 button.setOnAction(event -> {
-                    onTemplateChosen.accept((Template)button.getUserData());
                     getStage().hide();
+                    onTemplateChosen.accept((Template)button.getUserData());
                 });
             }
         }

@@ -44,6 +44,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
+import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.kit.template.Type;
@@ -580,17 +581,18 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public void performNewTemplateInNewWindow(Template template) {
         final DocumentWindowController newTemplateWindow = makeNewWindow();
         loadTemplateInWindow(template, newTemplateWindow);
+        newTemplateWindow.getStage().toFront();
     }
 
     private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
         final URL url = template.getFXMLURL();
         EditorController editorController = documentWindowController.getEditorController();
+        if (url != null) {
+            documentWindowController.loadFromURL(url, template.getType() != Type.PHONE);
+        }
         if (template.getType() == Type.PHONE) {
             editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
             editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
-        }
-        if (url != null) {
-            documentWindowController.loadFromURL(url, template.getType() != Type.PHONE);
         }
         documentWindowController.openWindow();
     }

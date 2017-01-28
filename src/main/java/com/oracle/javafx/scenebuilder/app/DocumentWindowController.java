@@ -393,17 +393,15 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         WarnThemeAlert.showAlertIfRequired(editorController, editorController.getFxomDocument(), getStage());
     }
     
-    public void loadFromURL(URL fxmlURL, boolean refreshTheme) {
+    public void loadFromURL(URL fxmlURL, boolean refreshThemeFromDocumentPreferences) {
         assert fxmlURL != null;
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, null, false);
             updateLoadFileTime();
             updateStageTitle(); // No-op if fxml has not been loaded yet
-            updateFromDocumentPreferences(refreshTheme);
+            updateFromDocumentPreferences(refreshThemeFromDocumentPreferences);
             watchingController.update();
-
-            WarnThemeAlert.showAlertIfRequired(editorController, editorController.getFxomDocument(), getStage());
         } catch(IOException x) {
             throw new IllegalStateException(x);
         }
