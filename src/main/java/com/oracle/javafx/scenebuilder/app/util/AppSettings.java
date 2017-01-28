@@ -39,7 +39,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -51,7 +50,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-public class SBSettings {
+public class AppSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
@@ -90,8 +89,8 @@ public class SBSettings {
         setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
     }
     public static void setWindowIcon(Stage stage) {
-        Image icon16 = new Image(SBSettings.APP_ICON_16);
-        Image icon32 = new Image(SBSettings.APP_ICON_32);
+        Image icon16 = new Image(AppSettings.APP_ICON_16);
+        Image icon32 = new Image(AppSettings.APP_ICON_32);
         stage.getIcons().addAll(icon16, icon32);
     }
 

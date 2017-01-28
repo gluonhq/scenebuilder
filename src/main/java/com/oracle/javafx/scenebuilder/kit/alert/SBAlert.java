@@ -31,11 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.alert;
 
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * All SB alerts should extend from this class to have a consistent look and feel

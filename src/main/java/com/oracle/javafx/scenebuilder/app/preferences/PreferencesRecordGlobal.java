@@ -35,7 +35,7 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlAction;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ToolTheme;
+import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;

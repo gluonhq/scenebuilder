@@ -79,6 +79,6 @@
     </StackPane>
   </content>
   <stylesheets>
-    <URL value="@../../css/Theme.css" />
+    <URL value="@../../../css/ThemeDefault.css" />
   </stylesheets>
 </ScrollPane>

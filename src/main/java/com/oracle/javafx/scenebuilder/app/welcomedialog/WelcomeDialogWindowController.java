@@ -38,7 +38,7 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.template.Template;
 import com.oracle.javafx.scenebuilder.app.template.TemplatesBaseWindowController;
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -143,7 +143,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     public static WelcomeDialogWindowController getInstance() {
         if (instance == null){
             instance = new WelcomeDialogWindowController();
-            SBSettings.setWindowIcon((Stage)instance.getStage());
+            AppSettings.setWindowIcon((Stage)instance.getStage());
         }
         return instance;
     }

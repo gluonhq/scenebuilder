@@ -231,6 +231,6 @@
 </VBox>
   </items>
   <stylesheets>
-    <URL value="@../../css/Theme.css" />
+    <URL value="@../../../css/ThemeDefault.css" />
   </stylesheets>
 </SplitPane>

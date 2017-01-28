@@ -35,10 +35,8 @@ package com.oracle.javafx.scenebuilder.app;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
-import javafx.application.Application;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import javafx.application.HostServices;
-import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -51,10 +49,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 
 public class UpdateSceneBuilderDialog extends Dialog {
@@ -65,7 +59,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
         Label header = new Label(I18N.getString("download.scene.builder.header.label"));
         Label currentVersionTextLabel = new Label(I18N.getString("download.scene.builder.current.version.label"));
         Label latestVersionTextLabel = new Label(I18N.getString("download.scene.builder.last.version.number.label"));
-        Label currentVersionLabel = new Label(SBSettings.getSceneBuilderVersion());
+        Label currentVersionLabel = new Label(AppSettings.getSceneBuilderVersion());
         Label latestVersionLabel = new Label(latestVersion);
         GridPane gridPane = new GridPane();
         gridPane.add(currentVersionTextLabel, 0, 0);
@@ -104,7 +98,7 @@ public class UpdateSceneBuilderDialog extends Dialog {
         resultProperty().addListener((observable, oldValue, newValue) -> {
             HostServices hostServices = SceneBuilderApp.getSingleton().getHostServices();
             if (newValue == downloadButton) {
-                hostServices.showDocument(SBSettings.DOWNLOAD_URL);
+                hostServices.showDocument(AppSettings.DOWNLOAD_URL);
             } else if (newValue == remindLater) {
                 LocalDate now = LocalDate.now();
                 LocalDate futureDate = now.plusWeeks(1);
@@ -120,6 +114,6 @@ public class UpdateSceneBuilderDialog extends Dialog {
             }
         });
 
-        SBSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
+        AppSettings.setWindowIcon((Stage)getDialogPane().getScene().getWindow());
     }
 }

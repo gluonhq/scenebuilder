@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.oracle.javafx.scenebuilder.kit.SBResources;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
@@ -125,7 +126,6 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Callback;
 
 /**
@@ -851,9 +851,7 @@ public class EditorController {
      */
     public static synchronized String getBuiltinToolStylesheet() {
         if (builtinToolStylesheet == null) {
-            final URL url = EditorController.class.getResource("css/Theme.css"); //NOI18N
-            assert url != null;
-            builtinToolStylesheet = url.toExternalForm();
+            builtinToolStylesheet = SBResources.THEME_DEFAULT_STYLESHEET;
         }
         return builtinToolStylesheet;
     }

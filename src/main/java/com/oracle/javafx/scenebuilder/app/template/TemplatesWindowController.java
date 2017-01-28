@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.template;
 
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.stage.Modality;
@@ -66,7 +66,7 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     protected void controllerDidCreateStage() {
         super.controllerDidCreateStage();
         getStage().setTitle(I18N.getString("template.dialog.title"));
-        SBSettings.setWindowIcon(getStage());
+        AppSettings.setWindowIcon(getStage());
 
         if (this.owner == null) {
             // Window will be application modal

@@ -34,6 +34,8 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+import com.oracle.javafx.scenebuilder.kit.SBResources;
+import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -46,7 +48,7 @@ import com.oracle.javafx.scenebuilder.app.template.Template;
 import com.oracle.javafx.scenebuilder.app.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.app.template.Type;
 import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
-import com.oracle.javafx.scenebuilder.app.util.SBSettings;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -105,22 +107,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         EXIT
     }
 
-    public enum ToolTheme {
-
-        DEFAULT {
-            @Override
-            public String toString() {
-                return I18N.getString("prefs.tool.theme.default");
-            }
-        },
-        DARK {
-            @Override
-            public String toString() {
-                return I18N.getString("prefs.tool.theme.dark");
-            }
-        }
-    }
-
     private static SceneBuilderApp singleton;
     private static String darkToolStylesheet;
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
@@ -173,13 +159,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
                 aboutWindowController.openWindow();
-                SBSettings.setWindowIcon(aboutWindowController.getStage());
+                AppSettings.setWindowIcon(aboutWindowController.getStage());
                 break;
 
             case REGISTER:
                 final RegistrationWindowController registrationWindowController = new RegistrationWindowController(source.getStage());
                 registrationWindowController.openWindow();
-                SBSettings.setWindowIcon(registrationWindowController.getStage());
+                AppSettings.setWindowIcon(registrationWindowController.getStage());
                 break;
 
             case CHECK_UPDATES:
@@ -216,7 +202,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case SHOW_PREFERENCES:
                 PreferencesWindowController preferencesWindowController = new PreferencesWindowController(source.getStage());
                 preferencesWindowController.setToolStylesheet(getToolStylesheet());
-                SBSettings.setWindowIcon(preferencesWindowController.getStage());
+                AppSettings.setWindowIcon(preferencesWindowController.getStage());
                 preferencesWindowController.openWindow();
                 break;
 
@@ -336,9 +322,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     public static synchronized String getDarkToolStylesheet() {
         if (darkToolStylesheet == null) {
-            final URL url = SceneBuilderApp.class.getResource("css/ThemeDark.css"); //NOI18N
-            assert url != null;
-            darkToolStylesheet = url.toExternalForm();
+            darkToolStylesheet = SBResources.THEME_DARK_STYLESHEET;
         }
         return darkToolStylesheet;
     }
@@ -395,7 +379,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
                 }
                 ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
-                SBSettings.setWindowIcon(alert);
+                AppSettings.setWindowIcon(alert);
                 alert.showAndWait();
             });
         });
@@ -554,7 +538,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public DocumentWindowController makeNewWindow() {
         final DocumentWindowController result = new DocumentWindowController();
 
-        SBSettings.setWindowIcon(result.getStage());
+        AppSettings.setWindowIcon(result.getStage());
 
         windowList.add(result);
         return result;
@@ -826,21 +810,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
 
     private String getToolStylesheet() {
-        final String result;
-
-        switch (this.toolTheme) {
-
-            default:
-            case DEFAULT:
-                result = EditorController.getBuiltinToolStylesheet();
-                break;
-
-            case DARK:
-                result = getDarkToolStylesheet();
-                break;
-        }
-
-        return result;
+        return SBResources.getToolStylesheet(toolTheme);
     }
     
     
@@ -937,14 +907,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void showUpdateDialogIfRequired(DocumentWindowController dwc, Runnable runAfterUpdateDialog) {
-        SBSettings.getLatestVersion(latestVersion -> {
+        AppSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 // This can be because the url was not reachable so we don't show the update dialog.
                 return;
             }
             try {
                 boolean showUpdateDialog = true;
-                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
+                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
                     PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
@@ -960,8 +930,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
 
                 if (showUpdateDialog) {
-                    String latestVersionText = SBSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = SBSettings.getLatestVersionAnnouncementURL();
+                    String latestVersionText = AppSettings.getLatestVersionText();
+                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
                     Platform.runLater(() -> {
                         UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
                                 latestVersionAnnouncementURL, dwc.getStage());
@@ -978,7 +948,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void checkUpdates(DocumentWindowController source) {
-        SBSettings.getLatestVersion(latestVersion -> {
+        AppSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 Platform.runLater(() -> {
                     SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
@@ -989,9 +959,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 });
             }
             try {
-                if (SBSettings.isCurrentVersionLowerThan(latestVersion)) {
-                    String latestVersionText = SBSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = SBSettings.getLatestVersionAnnouncementURL();
+                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                    String latestVersionText = AppSettings.getLatestVersionText();
+                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
                     Platform.runLater(() -> {
                         UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
                                 latestVersionAnnouncementURL, source.getStage());

@@ -90,7 +90,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </GridPane>
    </children>
    <stylesheets>
-      <URL value="@../../css/Theme.css" />
+      <URL value="@../../../css/ThemeDefault.css" />
       <URL value="@libraryDialog.css" />
    </stylesheets>
 </AnchorPane>
