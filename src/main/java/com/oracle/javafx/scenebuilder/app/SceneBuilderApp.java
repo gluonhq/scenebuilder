@@ -44,9 +44,9 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
-import com.oracle.javafx.scenebuilder.app.template.Template;
-import com.oracle.javafx.scenebuilder.app.template.TemplatesWindowController;
-import com.oracle.javafx.scenebuilder.app.template.Type;
+import com.oracle.javafx.scenebuilder.kit.template.Template;
+import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
+import com.oracle.javafx.scenebuilder.kit.template.Type;
 import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
@@ -180,6 +180,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_TEMPLATE:
                 final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
+                templatesWindowController.setOnTemplateChosen(this::performNewTemplateInNewWindow);
                 templatesWindowController.openWindow();
                 break;
 

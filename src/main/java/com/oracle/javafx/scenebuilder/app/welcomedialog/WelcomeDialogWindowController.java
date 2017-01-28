@@ -36,11 +36,10 @@ import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.template.Template;
-import com.oracle.javafx.scenebuilder.app.template.TemplatesBaseWindowController;
+import com.oracle.javafx.scenebuilder.kit.template.Template;
+import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -127,17 +126,8 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         emptyApp.setUserData(Template.EMPTY_APP);
 
+        setOnTemplateChosen(sceneBuilderApp::performNewTemplate);
         setupTemplateButtonHandlers();
-    }
-
-    protected EventHandler getTemplateEventHandler(Button button) {
-        return event -> sceneBuilderApp.performNewTemplate((Template)button.getUserData());
-    }
-
-    @Override
-    protected void controllerDidCreateScene() {
-        super.controllerDidCreateScene();
-        getScene().getStylesheets().add(WelcomeDialogWindowController.class.getResource("WelcomeWindow.css").toString());
     }
 
     public static WelcomeDialogWindowController getInstance() {

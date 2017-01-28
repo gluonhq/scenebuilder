@@ -30,12 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.template;
+package com.oracle.javafx.scenebuilder.kit.template;
 
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -77,17 +75,5 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
             getStage().initModality(Modality.WINDOW_MODAL);
         }
     }
-
-    @Override
-    protected void controllerDidCreateScene() {
-        super.controllerDidCreateScene();
-        getScene().getStylesheets().add(TemplatesWindowController.class.getResource("TemplatesWindow.css").toString());
-    }
-
-    @Override
-    protected EventHandler getTemplateEventHandler(Button button) {
-        return event -> sceneBuilderApp.performNewTemplateInNewWindow((Template)button.getUserData());
-    }
-
 }
 

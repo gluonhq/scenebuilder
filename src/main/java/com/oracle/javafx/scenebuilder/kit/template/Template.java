@@ -30,10 +30,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.template;
+package com.oracle.javafx.scenebuilder.kit.template;
 
-public enum Type {
-    DESKTOP,
-    TABLET,
-    PHONE
+import java.net.URL;
+
+import static com.oracle.javafx.scenebuilder.kit.template.Type.DESKTOP;
+import static com.oracle.javafx.scenebuilder.kit.template.Type.PHONE;
+
+public enum Template {
+
+    EMPTY_APP(DESKTOP, null),
+    BASIC_DESKTOP_APP (DESKTOP, "BasicDesktopApplication.fxml"),
+    COMPLEX_DESKTOP_APP (DESKTOP, "ComplexDesktopApplication.fxml"),
+    EMPTY_PHONE_APP (PHONE, "EmptyPhoneApplication.fxml"),
+    BASIC_PHONE_APP (PHONE, "BasicPhoneApplication.fxml");
+
+    private Type type;
+    private String fxmlFileName;
+
+    Template(Type type, String fxmlFileName) {
+        this.type = type;
+        this.fxmlFileName = fxmlFileName;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getFXMLFileName() {
+        return fxmlFileName;
+    }
+
+    public URL getFXMLURL() {
+        final String name = getFXMLFileName();
+        if (name == null) {
+            return null;
+        }
+        return Template.class.getResource(name);
+    }
 }

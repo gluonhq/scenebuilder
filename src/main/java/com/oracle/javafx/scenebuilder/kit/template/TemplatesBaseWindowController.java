@@ -30,11 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.template;
+package com.oracle.javafx.scenebuilder.kit.template;
 
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -44,6 +42,7 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowController {
 
@@ -59,11 +58,10 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
     @FXML
     protected VBox templateContainer;
 
-    protected SceneBuilderApp sceneBuilderApp;
+    private Consumer<Template> onTemplateChosen;
 
     public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources, Window owner) {
         super(fxmlURL, resources, owner);
-        sceneBuilderApp = SceneBuilderApp.getSingleton();
     }
 
 
@@ -105,13 +103,15 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
             if (child instanceof Button) {
                 Button button = (Button) child;
                 button.setOnAction(event -> {
-                    getTemplateEventHandler(button).handle(event);
+                    onTemplateChosen.accept((Template)button.getUserData());
                     getStage().hide();
                 });
             }
         }
     }
 
-    protected abstract EventHandler getTemplateEventHandler(Button button);
+    public void setOnTemplateChosen(Consumer<Template> onTemplateChosen) {
+        this.onTemplateChosen = onTemplateChosen;
+    }
 }
 

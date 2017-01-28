@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
     Copyright (c) 2017, Gluon and/or its affiliates.
     All rights reserved. Use is subject to license terms.
@@ -46,7 +47,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1024.0" stylesheets="@WelcomeWindow.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox styleClass="left-pane">
          <children>
@@ -124,7 +125,7 @@
                            <graphic>
                               <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../template/basic_desktop.png" />
+                                    <Image url="@../../kit/template/basic_desktop.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
@@ -139,7 +140,7 @@
                            <graphic>
                               <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../template/complex_desktop.png" />
+                                    <Image url="@../../kit/template/complex_desktop.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
@@ -178,7 +179,7 @@
                            <graphic>
                               <ImageView fitHeight="198.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../template/basic_mobile.png" />
+                                    <Image url="@../../kit/template/basic_mobile.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
