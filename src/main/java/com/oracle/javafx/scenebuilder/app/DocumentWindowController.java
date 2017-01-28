@@ -41,7 +41,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
-import com.oracle.javafx.scenebuilder.app.selectionbar.SelectionBarController;
+import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
 import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
@@ -607,6 +607,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     previewWindowController = new PreviewWindowController(editorController, getStage());
                     previewWindowController.setToolStylesheet(getToolStylesheet());
                 }
+                previewWindowController.getStage().centerOnScreen();
                 previewWindowController.openWindow();
                 break;
                 
