@@ -32,6 +32,9 @@
 
 package com.oracle.javafx.scenebuilder.kit.template;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+
 import java.net.URL;
 
 import static com.oracle.javafx.scenebuilder.kit.template.Type.DESKTOP;
@@ -67,5 +70,12 @@ public enum Template {
             return null;
         }
         return Template.class.getResource(name);
+    }
+
+    public static void prepareDocument(EditorController editorController, Template template) {
+        if (template.getType() == Type.PHONE) {
+            editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
+            editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+        }
     }
 }
