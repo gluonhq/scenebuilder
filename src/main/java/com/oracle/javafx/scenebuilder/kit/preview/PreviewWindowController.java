@@ -30,7 +30,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.preview;
+package com.oracle.javafx.scenebuilder.kit.preview;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -91,7 +91,7 @@ public final class PreviewWindowController extends AbstractWindowController {
     private Size currentSize = Size.SIZE_PREFERRED;
     private boolean sizeChangedFromMenu = false;
     private static final double TARGET_SIZE_3D = 500;
-    
+
     // These two one are used to host the width and height difference
     // coming from the decoration of the window; this is something highly
     // dependent on the operating system.
@@ -100,7 +100,7 @@ public final class PreviewWindowController extends AbstractWindowController {
     private boolean isDirty = false;
     private final long IMMEDIATE = 0; // milliseconds
     private final long DELAYED = 1000; // milliseconds
-    
+
     /**
      * The type of Camera used by the Preview panel.
      */
@@ -108,36 +108,36 @@ public final class PreviewWindowController extends AbstractWindowController {
 
         PARALLEL, PERSPECTIVE
     }
-        
+
     public PreviewWindowController(EditorController editorController, Window owner) {
         super(owner);
         this.editorController = editorController;
         this.editorController.fxomDocumentProperty().addListener(
                 (ChangeListener<FXOMDocument>) (ov, od, nd) -> {
-                  assert editorController.getFxomDocument() == nd;
-                  if (od != null) {
-                od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
-                od.cssRevisionProperty().removeListener(cssRevisionListener);
-                  }
-                  if (nd != null) {
-                nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
-                nd.cssRevisionProperty().addListener(cssRevisionListener);
-                requestUpdate(DELAYED);
-                  }
-               });
-        
+                    assert editorController.getFxomDocument() == nd;
+                    if (od != null) {
+                        od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
+                        od.cssRevisionProperty().removeListener(cssRevisionListener);
+                    }
+                    if (nd != null) {
+                        nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
+                        nd.cssRevisionProperty().addListener(cssRevisionListener);
+                        requestUpdate(DELAYED);
+                    }
+                });
+
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
             editorController.getFxomDocument().cssRevisionProperty().addListener(cssRevisionListener);
         }
-        
+
         this.editorControllerTheme = editorController.getTheme();
         this.editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> {
             if (t1 != null) {
                 editorControllerTheme = t1;
                 requestUpdate(DELAYED);
             }
-         });
+        });
 
         this.editorControllerGluonSwatch = editorController.getGluonSwatch();
         this.editorController.gluonSwatchProperty().addListener(((observable, oldValue, newValue) -> {
@@ -154,7 +154,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                 requestUpdate(DELAYED);
             }
         }));
-        
+
         this.sceneStyleSheet = editorController.getSceneStyleSheets();
         this.editorController.sceneStyleSheetProperty().addListener((ChangeListener<ObservableList<File>>) (ov, t, t1) -> {
             if (t1 != null) {
@@ -162,11 +162,11 @@ public final class PreviewWindowController extends AbstractWindowController {
                 requestUpdate(DELAYED);
             }
         });
-        
+
         this.editorController.resourcesProperty().addListener((ChangeListener<ResourceBundle>) (ov, t, t1) -> requestUpdate(DELAYED));
         this.editorController.sampleDataEnabledProperty().addListener((ChangeListener<Boolean>) (ov, t, t1) -> requestUpdate(DELAYED));
     }
-    
+
     /*
      * AbstractWindowController
      */
@@ -183,7 +183,6 @@ public final class PreviewWindowController extends AbstractWindowController {
 
     @Override
     public void onCloseRequest(WindowEvent event) {
-//        System.out.println("PreviewWindowController::onCloseRequest called");
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -232,10 +231,9 @@ public final class PreviewWindowController extends AbstractWindowController {
         }
         dialog.show();
     }
-    
+
     @Override
     public void closeWindow() {
-//        System.out.println("PreviewWindowController::closeWindow called");
         super.closeWindow();
         isDirty = true;
     }
@@ -265,8 +263,6 @@ public final class PreviewWindowController extends AbstractWindowController {
      * In some cases it is wise to used delay = 0, e.g. when opening the window.
      */
     private void requestUpdate(long delay) {
-//        System.out.println("PreviewWindowController::requestUpdate: Called");
-
         TimerTask timerTask = new TimerTask() {
 
             @Override
@@ -279,7 +275,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     if (fxomDocument != null) {
                         // We clone the FXOMDocument
                         FXOMDocument clone;
-                        
+
                         try {
                             clone = new FXOMDocument(fxomDocument.getFxmlText(),
                                     fxomDocument.getLocation(),
@@ -307,18 +303,18 @@ public final class PreviewWindowController extends AbstractWindowController {
                             ((Parent) sceneGraphRoot).getStylesheets().removeAll();
 
                             // Apply the new styling
-                           ((Parent) sceneGraphRoot).getStylesheets().addAll(newStyleSheets1);
+                            ((Parent) sceneGraphRoot).getStylesheets().addAll(newStyleSheets1);
                         } else if (sceneGraphRoot instanceof Node) {
                             StackPane sp1 = new StackPane();
                             sp1.setId(NID_PREVIEW_ROOT);
-                            
+
                             // Compute the proper styling
                             List<String> newStyleSheets2 = new ArrayList<>();
                             computeStyleSheets(newStyleSheets2, sceneGraphRoot);
 
                             // Apply the new styling as a whole
                             sp1.getStylesheets().addAll(newStyleSheets2);
-                            
+
                             // With some 3D assets such as TuxRotation the
                             // rendering is wrong unless applyCSS is called.
                             ((Node) sceneGraphRoot).applyCss();
@@ -386,27 +382,27 @@ public final class PreviewWindowController extends AbstractWindowController {
         timer = new Timer(true);
         timer.schedule(timerTask, delay); // milliseconds
     }
-    
+
     public boolean userResizedPreviewWindow() {
         boolean res = false;
         double sceneHeight = getScene().getHeight();
         double sceneWidth = getScene().getWidth();
-        
-        if ( sceneHeight > 0 && sceneWidth > 0) {
+
+        if (sceneHeight > 0 && sceneWidth > 0) {
             double prefHeight = getRoot().prefHeight(-1);
             double prefWidth = getRoot().prefWidth(-1);
-            
-            if ((! MathUtils.equals(prefHeight, sceneHeight)
-                    && ! MathUtils.equals(sceneHeight, HEIGHT_WHEN_EMPTY)
-                    && ! MathUtils.equals(sceneHeight, getHeightFromSize(getSize())))
+
+            if ((!MathUtils.equals(prefHeight, sceneHeight)
+                    && !MathUtils.equals(sceneHeight, HEIGHT_WHEN_EMPTY)
+                    && !MathUtils.equals(sceneHeight, getHeightFromSize(getSize())))
                     ||
-                    (! MathUtils.equals(prefWidth, sceneWidth)
-                    && ! MathUtils.equals(sceneWidth, WIDTH_WHEN_EMPTY)
-                    && ! MathUtils.equals(sceneWidth, getWidthFromSize(getSize())))) {
+                    (!MathUtils.equals(prefWidth, sceneWidth)
+                            && !MathUtils.equals(sceneWidth, WIDTH_WHEN_EMPTY)
+                            && !MathUtils.equals(sceneWidth, getWidthFromSize(getSize())))) {
                 res = true;
             }
         }
-        
+
         return res;
     }
 
@@ -428,7 +424,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                 // sure the area rendered has the exact size we want.
                 getStage().setWidth(getWidthFromSize(getSize()) + decorationX);
                 getStage().setHeight(getHeightFromSize(getSize()) + decorationY);
-            } else if ( ! userResizedPreviewWindow()) {
+            } else if (!userResizedPreviewWindow()) {
                 // Experience shows 3D layout defined so that top level item is
                 // a Group are rendered correctly on their own. The 3D case is
                 // something that deserves a closer look anyway.
@@ -441,7 +437,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     // the user size, else we size the layout to the scene.
                     getStage().sizeToScene();
                 }
-                
+
                 // The first time preview is rendered we always enter this case.
                 // The whole layout is made visible and size difference between
                 // Scene and Stage allows to compute size taken by decoration.
@@ -459,7 +455,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                 = editorController.getFxomDocument();
         getStage().setTitle(DocumentWindowController.makeTitle(fxomDocument));
     }
-    
+
     public final void setCameraType(PreviewWindowController.CameraType ct) {
         cameraType = ct;
         updateCamera();
@@ -469,11 +465,9 @@ public final class PreviewWindowController extends AbstractWindowController {
         if (getScene() != null) {
             if (cameraType == CameraType.PERSPECTIVE) {
                 // Set Perspective Camera
-//                System.out.println("Adding a perspective camera to Preview...");
                 getScene().setCamera(new PerspectiveCamera(false));
             } else {
                 // Set Parallel Camera
-//                System.out.println("Adding a parallel camera to Preview...");
                 getScene().setCamera(null); // null defaults to Parallel camera
             }
         }
@@ -492,7 +486,7 @@ public final class PreviewWindowController extends AbstractWindowController {
      * Enables or disables autoresizing of 3D content.
      *
      * @param autoResize3DContent true if this preview panel should autoresize
-     * 3D content.
+     *                            3D content.
      */
     public void setAutoResize3DContent(boolean autoResize3DContent) {
         this.autoResize3DContent = autoResize3DContent;
@@ -502,7 +496,6 @@ public final class PreviewWindowController extends AbstractWindowController {
     // camera to become able to display it.
     Node updateAutoResizeTransform(Node whatever) {
         Node res = whatever;
-//        System.out.println("PreviewWindowController::updateAutoResizeTransform: Called");
         assert editorController.getFxomDocument() != null;
 
         if (editorController.is3D() && autoResize3DContent) {
@@ -519,20 +512,19 @@ public final class PreviewWindowController extends AbstractWindowController {
             final double tZ = -rootBounds.getMinZ();
             res.getTransforms().add(new Scale(scale, scale, scale));
             res.getTransforms().add(new Translate(tX, tY, tZ));
-//            System.out.println("updateAutoResizeTransform " + scaleX + " - " + scaleY + " - " + scaleZ + " - " + scale);
 
             // Set the scene camera to PerspectiveCamera, to see 3D nodes correctly.
             setCameraType(CameraType.PERSPECTIVE);
         } else {
             setCameraType(CameraType.PARALLEL);
         }
-        
+
         return res;
     }
 
     private double getWidthFromSize(Size size) {
         double res = WIDTH_WHEN_EMPTY;
-        
+
         switch (size) {
             case SIZE_335x600:
                 res = 335.0;
@@ -558,13 +550,13 @@ public final class PreviewWindowController extends AbstractWindowController {
             default:
                 break;
         }
-        
+
         return res;
     }
 
     private double getHeightFromSize(Size size) {
         double res = HEIGHT_WHEN_EMPTY;
-        
+
         switch (size) {
             case SIZE_335x600:
                 res = 600.0;
@@ -590,25 +582,24 @@ public final class PreviewWindowController extends AbstractWindowController {
             default:
                 break;
         }
-        
+
         return res;
     }
-    
+
     /**
-     * 
      * @return the current Size used for previewing.
      */
     public Size getSize() {
         return currentSize;
     }
-    
+
     public void setSize(Size size) {
         currentSize = size;
         sizeChangedFromMenu = true;
         requestUpdate(IMMEDIATE);
     }
-    
-    private void computeStyleSheets(List<String> newStyleSheets, Object sceneGraphRoot) {        
+
+    private void computeStyleSheets(List<String> newStyleSheets, Object sceneGraphRoot) {
         if (sceneGraphRoot instanceof Parent) {
             // At that stage current style sheets are the one defined within the FXML
             ObservableList<String> currentStyleSheets = ((Parent) sceneGraphRoot).getStylesheets();
@@ -631,19 +622,19 @@ public final class PreviewWindowController extends AbstractWindowController {
             }
         }
     }
-    
+
     public boolean sizeDoesFit(Size size) {
         boolean res = false;
-        
+
         if (getStage() != null) {
             Rectangle2D frame = getBiggestViewableRectangle();
-                        
+
             if (getWidthFromSize(size) <= frame.getWidth() - decorationX
                     && getHeightFromSize(size) <= frame.getHeight() - decorationY) {
                 res = true;
             }
         }
-        
+
         return res;
     }
 }
