@@ -34,7 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -78,7 +78,6 @@ import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 

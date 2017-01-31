@@ -88,7 +88,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.BorderPaneDriver;

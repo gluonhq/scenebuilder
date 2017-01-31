@@ -34,7 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 
 import java.util.List;
@@ -44,7 +44,6 @@ import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;

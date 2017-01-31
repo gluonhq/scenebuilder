@@ -32,7 +32,7 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy;
 
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;

@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.job.BatchJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;

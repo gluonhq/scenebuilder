@@ -38,7 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AccessoryDropTarget
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ContainerZDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.GridPaneDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.RootDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyFxIdJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;

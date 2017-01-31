@@ -34,7 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue.Type;

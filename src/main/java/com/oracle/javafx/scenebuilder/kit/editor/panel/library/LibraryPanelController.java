@@ -35,7 +35,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.DocumentDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;

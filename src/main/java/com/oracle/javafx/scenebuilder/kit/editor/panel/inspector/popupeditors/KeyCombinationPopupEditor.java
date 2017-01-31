@@ -32,7 +32,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.AutoSuggestEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;

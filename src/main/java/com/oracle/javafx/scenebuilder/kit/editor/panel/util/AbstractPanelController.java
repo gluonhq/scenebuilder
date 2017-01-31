@@ -69,7 +69,7 @@ public abstract class AbstractPanelController {
     private Parent panelRoot;
     
     /**
-     * BASE constructor for invocation by the subclasses.
+     * Base constructor for invocation by the subclasses.
      * Subclass implementations should make sure that this constructor can be
      * invoked outside of the JavaFX thread.
      * 

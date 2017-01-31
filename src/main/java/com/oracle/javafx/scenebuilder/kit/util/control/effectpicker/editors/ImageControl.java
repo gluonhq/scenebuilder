@@ -32,7 +32,7 @@
 package com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.editors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPickerController;
 import java.io.File;

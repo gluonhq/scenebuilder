@@ -36,7 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.DocumentDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.ExternalDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import static com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.treeview.HierarchyTreeCell.HIERARCHY_FIRST_CELL;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;

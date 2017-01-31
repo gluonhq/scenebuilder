@@ -34,13 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.alert;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * Used when the user adds a Gluon control to the document or loads a document with a Gluon control and

@@ -38,7 +38,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;

@@ -36,7 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.SBResources;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.job.AddContextMenuToSelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.AddTooltipToSelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.ModifySelectionJob;

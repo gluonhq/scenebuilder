@@ -113,8 +113,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
     private final List<DocumentWindowController> windowList = new ArrayList<>();
-    private final AboutWindowController aboutWindowController
-            = new AboutWindowController();
     private UserLibrary userLibrary;
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
@@ -159,6 +157,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
         switch (a) {
             case ABOUT:
+                AboutWindowController aboutWindowController = new AboutWindowController();
+                aboutWindowController.setToolStylesheet(getToolStylesheet());
                 aboutWindowController.openWindow();
                 AppSettings.setWindowIcon(aboutWindowController.getStage());
                 break;
@@ -803,7 +803,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         for (DocumentWindowController dwc : windowList) {
             dwc.setToolStylesheet(toolStylesheet);
         }
-        aboutWindowController.setToolStylesheet(toolStylesheet);
     }
 
 

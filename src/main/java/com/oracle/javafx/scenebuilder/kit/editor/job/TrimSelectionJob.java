@@ -34,7 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.job;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ToggleFxRootJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyFxControllerJob;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.RemoveObjectJob;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;

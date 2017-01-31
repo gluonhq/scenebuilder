@@ -31,7 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.messagelog;
 
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
