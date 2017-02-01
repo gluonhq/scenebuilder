@@ -42,7 +42,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
-import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonWindowController;
+import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
@@ -778,7 +778,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 
             case SHOW_SAMPLE_CONTROLLER:
                 if (skeletonWindowController == null) {
-                    skeletonWindowController = new SkeletonWindowController(editorController, getStage());
+                    skeletonWindowController = new SkeletonWindowController(editorController,
+                            makeTitle(editorController.getFxomDocument()), getStage());
                     skeletonWindowController.setToolStylesheet(getToolStylesheet());
                 }
                 AppSettings.setWindowIcon(skeletonWindowController.getStage());

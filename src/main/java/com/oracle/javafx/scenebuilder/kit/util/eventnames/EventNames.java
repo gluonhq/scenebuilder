@@ -1,4 +1,4 @@
-package com.oracle.javafx.scenebuilder.app.util.eventnames;
+package com.oracle.javafx.scenebuilder.kit.util.eventnames;
 
 /**
  * Collects all the event names possible to be set in the Code section.

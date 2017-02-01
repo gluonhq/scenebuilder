@@ -29,12 +29,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.skeleton;
+package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonBuffer.FORMAT_TYPE;
-import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonBuffer.TEXT_TYPE;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -42,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -65,7 +62,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     TextArea textArea;
 
     @FXML
-    void onCopyAction(ActionEvent event) {
+    private void onCopyAction(ActionEvent event) {
         final Map<DataFormat, Object> content = new HashMap<>();
 
         if (textArea.getSelection().getLength() == 0) {
@@ -80,21 +77,24 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     private final EditorController editorController;
     private boolean dirty = false;
 
-    public SkeletonWindowController(EditorController editorController, Window owner) {
+    private String documentName;
+
+    public SkeletonWindowController(EditorController editorController, String documentName, Window owner) {
         super(SkeletonWindowController.class.getResource("SkeletonWindow.fxml"), I18N.getBundle(), owner); //NOI18N
         this.editorController = editorController;
+        this.documentName = documentName;
 
         this.editorController.fxomDocumentProperty().addListener(
                 (ChangeListener<FXOMDocument>) (ov, od, nd) -> {
-                  assert editorController.getFxomDocument() == nd;
-                  if (od != null) {
-                od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
-                  }
-                  if (nd != null) {
-                nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
-                update();
-                  }
-               });
+                    assert editorController.getFxomDocument() == nd;
+                    if (od != null) {
+                        od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
+                    }
+                    if (nd != null) {
+                        nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
+                        update();
+                    }
+                });
 
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
@@ -105,11 +105,11 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     public void onCloseRequest(WindowEvent event) {
         getStage().close();
     }
-    
+
     @Override
     public void openWindow() {
         super.openWindow();
-        
+
         if (dirty) {
             update();
         }
@@ -139,29 +139,28 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
             = (observable, oldValue, newValue) -> update();
 
     private void updateTitle() {
-        String documentName = DocumentWindowController.makeTitle(editorController.getFxomDocument());
         final String title = I18N.getString("skeleton.window.title", documentName);
         getStage().setTitle(title);
     }
 
     private void update() {
         assert editorController.getFxomDocument() != null;
-        
+
         // No need to eat CPU if the skeleton window isn't opened
         if (getStage().isShowing()) {
             updateTitle();
-            final SkeletonBuffer buf = new SkeletonBuffer(editorController.getFxomDocument());
+            final SkeletonBuffer buf = new SkeletonBuffer(editorController.getFxomDocument(), documentName);
 
             if (commentCheckBox.isSelected()) {
-                buf.setTextType(TEXT_TYPE.WITH_COMMENTS);
+                buf.setTextType(SkeletonBuffer.TEXT_TYPE.WITH_COMMENTS);
             } else {
-                buf.setTextType(TEXT_TYPE.WITHOUT_COMMENTS);
+                buf.setTextType(SkeletonBuffer.TEXT_TYPE.WITHOUT_COMMENTS);
             }
 
             if (formatCheckBox.isSelected()) {
-                buf.setFormat(FORMAT_TYPE.FULL);
+                buf.setFormat(SkeletonBuffer.FORMAT_TYPE.FULL);
             } else {
-                buf.setFormat(FORMAT_TYPE.COMPACT);
+                buf.setFormat(SkeletonBuffer.FORMAT_TYPE.COMPACT);
             }
 
             textArea.setText(buf.toString());

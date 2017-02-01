@@ -1,5 +1,8 @@
 package com.oracle.javafx.scenebuilder.app.util.eventnames;
 
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventTypeNames;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

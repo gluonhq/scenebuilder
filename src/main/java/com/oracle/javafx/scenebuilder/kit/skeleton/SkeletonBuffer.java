@@ -30,13 +30,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.skeleton;
+package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.app.util.eventnames.EventNames;
-import com.oracle.javafx.scenebuilder.app.util.eventnames.ImportBuilder;
-import com.oracle.javafx.scenebuilder.app.util.eventnames.FindEventNamesUtil;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.ImportBuilder;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
@@ -49,7 +48,7 @@ import java.util.*;
 /**
  *
  */
-class SkeletonBuffer {
+public class SkeletonBuffer {
 
     private final FXOMDocument document;
     private final String INDENT = "    "; //NOI18N
@@ -65,19 +64,20 @@ class SkeletonBuffer {
     private final StringBuilder handlers = new StringBuilder();
     private static final String FXML_ANNOTATION = "@FXML\n";
 
-    enum TEXT_TYPE {
+    private final String documentName;
 
+    public enum TEXT_TYPE {
         WITH_COMMENTS, WITHOUT_COMMENTS
-    };
+    }
 
-    enum FORMAT_TYPE {
-
+    public enum FORMAT_TYPE {
         COMPACT, FULL
     }
 
-    SkeletonBuffer(FXOMDocument document) {
+    public SkeletonBuffer(FXOMDocument document, String documentName) {
         assert document != null;
         this.document = document;
+        this.documentName = documentName;
     }
 
     public void setTextType(TEXT_TYPE type) {
@@ -90,7 +90,6 @@ class SkeletonBuffer {
 
     private void constructHeader() {
         if (textType == TEXT_TYPE.WITH_COMMENTS) {
-            String documentName = DocumentWindowController.makeTitle(document);
             final String title = I18N.getString("skeleton.window.title", documentName);
             header.append("/**\n"); //NOI18N
             header.append(" * "); //NOI18N
@@ -158,7 +157,6 @@ class SkeletonBuffer {
         constructHeader();
         constructPackageLine();
         constructClassLine();
-        String documentName = DocumentWindowController.makeTitle(document);
 
         // All that depends on fx:id
         Map<String, FXOMObject> fxids = document.collectFxIds();

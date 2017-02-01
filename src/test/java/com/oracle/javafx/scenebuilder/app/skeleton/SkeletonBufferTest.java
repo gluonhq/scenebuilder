@@ -2,6 +2,7 @@ package com.oracle.javafx.scenebuilder.app.skeleton;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonBuffer;
 import org.junit.Test;
 
 import java.io.IOException;

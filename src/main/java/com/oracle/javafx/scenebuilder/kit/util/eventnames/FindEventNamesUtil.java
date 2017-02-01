@@ -1,4 +1,4 @@
-package com.oracle.javafx.scenebuilder.app.util.eventnames;
+package com.oracle.javafx.scenebuilder.kit.util.eventnames;
 
 import java.util.Map;
 import java.util.Optional;
