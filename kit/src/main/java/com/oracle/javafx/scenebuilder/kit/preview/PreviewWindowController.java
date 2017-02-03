@@ -32,14 +32,13 @@
  */
 package com.oracle.javafx.scenebuilder.kit.preview;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
 
 import java.io.File;
@@ -51,6 +50,7 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.oracle.javafx.scenebuilder.kit.util.Utils;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -267,111 +267,111 @@ public final class PreviewWindowController extends AbstractWindowController {
 
             @Override
             public void run() {
-                // JavaFX data should only be accessed on the JavaFX thread. 
-                // => we must wrap the code into a Runnable object and call the Platform.runLater
-                Platform.runLater(() -> {
-                    final FXOMDocument fxomDocument = editorController.getFxomDocument();
-                    String themeStyleSheetString = null;
-                    if (fxomDocument != null) {
-                        // We clone the FXOMDocument
-                        FXOMDocument clone;
+            // JavaFX data should only be accessed on the JavaFX thread.
+            // => we must wrap the code into a Runnable object and call the Platform.runLater
+            Platform.runLater(() -> {
+                final FXOMDocument fxomDocument = editorController.getFxomDocument();
+                String themeStyleSheetString = null;
+                if (fxomDocument != null) {
+                    // We clone the FXOMDocument
+                    FXOMDocument clone;
 
-                        try {
-                            clone = new FXOMDocument(fxomDocument.getFxmlText(),
-                                    fxomDocument.getLocation(),
-                                    fxomDocument.getClassLoader(),
-                                    fxomDocument.getResources());
-                            clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
-                        } catch (IOException ex) {
-                            throw new RuntimeException("Bug in PreviewWindowController::requestUpdate", ex); //NOI18N
-                        }
+                    try {
+                        clone = new FXOMDocument(fxomDocument.getFxmlText(),
+                                fxomDocument.getLocation(),
+                                fxomDocument.getClassLoader(),
+                                fxomDocument.getResources());
+                        clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
+                    } catch (IOException ex) {
+                        throw new RuntimeException("Bug in PreviewWindowController::requestUpdate", ex); //NOI18N
+                    }
 
-                        Object sceneGraphRoot = clone.getSceneGraphRoot();
-                        themeStyleSheetString = editorControllerTheme.getStylesheetURL();
+                    Object sceneGraphRoot = clone.getSceneGraphRoot();
+                    themeStyleSheetString = editorControllerTheme.getStylesheetURL();
 
-                        if (sceneGraphRoot instanceof Parent) {
-                            ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
-                            assert ((Parent) sceneGraphRoot).getScene() == null;
+                    if (sceneGraphRoot instanceof Parent) {
+                        ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
+                        assert ((Parent) sceneGraphRoot).getScene() == null;
 
-                            setRoot((Parent) updateAutoResizeTransform((Parent) sceneGraphRoot));
+                        setRoot((Parent) updateAutoResizeTransform((Parent) sceneGraphRoot));
 
-                            // Compute the proper styling
-                            List<String> newStyleSheets1 = new ArrayList<>();
-                            computeStyleSheets(newStyleSheets1, sceneGraphRoot);
+                        // Compute the proper styling
+                        List<String> newStyleSheets1 = new ArrayList<>();
+                        computeStyleSheets(newStyleSheets1, sceneGraphRoot);
 
-                            // Clean all styling
-                            ((Parent) sceneGraphRoot).getStylesheets().removeAll();
+                        // Clean all styling
+                        ((Parent) sceneGraphRoot).getStylesheets().removeAll();
 
-                            // Apply the new styling
-                            ((Parent) sceneGraphRoot).getStylesheets().addAll(newStyleSheets1);
-                        } else if (sceneGraphRoot instanceof Node) {
-                            StackPane sp1 = new StackPane();
-                            sp1.setId(NID_PREVIEW_ROOT);
+                        // Apply the new styling
+                        ((Parent) sceneGraphRoot).getStylesheets().addAll(newStyleSheets1);
+                    } else if (sceneGraphRoot instanceof Node) {
+                        StackPane sp1 = new StackPane();
+                        sp1.setId(NID_PREVIEW_ROOT);
 
-                            // Compute the proper styling
-                            List<String> newStyleSheets2 = new ArrayList<>();
-                            computeStyleSheets(newStyleSheets2, sceneGraphRoot);
+                        // Compute the proper styling
+                        List<String> newStyleSheets2 = new ArrayList<>();
+                        computeStyleSheets(newStyleSheets2, sceneGraphRoot);
 
-                            // Apply the new styling as a whole
-                            sp1.getStylesheets().addAll(newStyleSheets2);
+                        // Apply the new styling as a whole
+                        sp1.getStylesheets().addAll(newStyleSheets2);
 
-                            // With some 3D assets such as TuxRotation the
-                            // rendering is wrong unless applyCSS is called.
-                            ((Node) sceneGraphRoot).applyCss();
-                            sp1.getChildren().add(updateAutoResizeTransform((Node) sceneGraphRoot));
-                            setRoot(sp1);
-                        } else {
-                            setCameraType(CameraType.PARALLEL);
-                            sizeChangedFromMenu = false;
-                            StackPane sp2 = new StackPane(new Label(I18N.getString("preview.not.node")));
-                            sp2.setId(NID_PREVIEW_ROOT);
-                            sp2.setPrefSize(WIDTH_WHEN_EMPTY, HEIGHT_WHEN_EMPTY);
-                            setRoot(sp2);
-                        }
+                        // With some 3D assets such as TuxRotation the
+                        // rendering is wrong unless applyCSS is called.
+                        ((Node) sceneGraphRoot).applyCss();
+                        sp1.getChildren().add(updateAutoResizeTransform((Node) sceneGraphRoot));
+                        setRoot(sp1);
                     } else {
                         setCameraType(CameraType.PARALLEL);
                         sizeChangedFromMenu = false;
-                        StackPane sp3 = new StackPane(new Label(I18N.getString("preview.no.document")));
-                        sp3.setId(NID_PREVIEW_ROOT);
-                        sp3.setPrefSize(WIDTH_WHEN_EMPTY, HEIGHT_WHEN_EMPTY);
-                        setRoot(sp3);
+                        StackPane sp2 = new StackPane(new Label(I18N.getString("preview.not.node")));
+                        sp2.setId(NID_PREVIEW_ROOT);
+                        sp2.setPrefSize(WIDTH_WHEN_EMPTY, HEIGHT_WHEN_EMPTY);
+                        setRoot(sp2);
                     }
+                } else {
+                    setCameraType(CameraType.PARALLEL);
+                    sizeChangedFromMenu = false;
+                    StackPane sp3 = new StackPane(new Label(I18N.getString("preview.no.document")));
+                    sp3.setId(NID_PREVIEW_ROOT);
+                    sp3.setPrefSize(WIDTH_WHEN_EMPTY, HEIGHT_WHEN_EMPTY);
+                    setRoot(sp3);
+                }
 
-                    getScene().setRoot(getRoot());
-                    if (themeStyleSheetString != null) {
-                        String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-                        String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURL();
-                        String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURL();
-                        if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
-                            ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
+                getScene().setRoot(getRoot());
+                if (themeStyleSheetString != null) {
+                    String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
+                    String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURL();
+                    String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURL();
+                    if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
+                        ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
 
-                            if (!newStylesheets.contains(themeStyleSheetString)) {
-                                newStylesheets.add(themeStyleSheetString);
-                            }
-                            if (!newStylesheets.contains(gluonDocumentStylesheet)) {
-                                newStylesheets.add(gluonDocumentStylesheet);
-                            }
-                            if (!newStylesheets.contains(gluonSwatchStylesheet)) {
-                                newStylesheets.add(gluonSwatchStylesheet);
-                            }
-                            if (!newStylesheets.contains(gluonThemeStylesheet)) {
-                                newStylesheets.add(gluonThemeStylesheet);
-                            }
-                            getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURL());
-                            getScene().getStylesheets().clear();
-                            getScene().getStylesheets().addAll(newStylesheets);
-                        } else {
-                            String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylesheetURL();
-                            getScene().setUserAgentStylesheet(themeStyleSheetString);
-                            getScene().getStylesheets().remove(gluonStylesheet);
-                            getScene().getStylesheets().remove(gluonDocumentStylesheet);
-                            getScene().getStylesheets().remove(gluonSwatchStylesheet);
-                            getScene().getStylesheets().remove(gluonThemeStylesheet);
+                        if (!newStylesheets.contains(themeStyleSheetString)) {
+                            newStylesheets.add(themeStyleSheetString);
                         }
+                        if (!newStylesheets.contains(gluonDocumentStylesheet)) {
+                            newStylesheets.add(gluonDocumentStylesheet);
+                        }
+                        if (!newStylesheets.contains(gluonSwatchStylesheet)) {
+                            newStylesheets.add(gluonSwatchStylesheet);
+                        }
+                        if (!newStylesheets.contains(gluonThemeStylesheet)) {
+                            newStylesheets.add(gluonThemeStylesheet);
+                        }
+                        getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURL());
+                        getScene().getStylesheets().clear();
+                        getScene().getStylesheets().addAll(newStylesheets);
+                    } else {
+                        String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylesheetURL();
+                        getScene().setUserAgentStylesheet(themeStyleSheetString);
+                        getScene().getStylesheets().remove(gluonStylesheet);
+                        getScene().getStylesheets().remove(gluonDocumentStylesheet);
+                        getScene().getStylesheets().remove(gluonSwatchStylesheet);
+                        getScene().getStylesheets().remove(gluonThemeStylesheet);
                     }
-                    updateWindowSize();
-                    updateWindowTitle();
-                });
+                }
+                updateWindowSize();
+                updateWindowTitle();
+            });
             }
         };
 
@@ -453,7 +453,7 @@ public final class PreviewWindowController extends AbstractWindowController {
     private void updateWindowTitle() {
         final FXOMDocument fxomDocument
                 = editorController.getFxomDocument();
-        getStage().setTitle(DocumentWindowController.makeTitle(fxomDocument));
+        getStage().setTitle(Utils.makeTitle(fxomDocument));
     }
 
     public final void setCameraType(PreviewWindowController.CameraType ct) {

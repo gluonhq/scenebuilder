@@ -74,6 +74,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.util.Utils;
 import com.sun.javafx.scene.control.behavior.KeyBinding;
 
 import java.io.File;
@@ -469,27 +470,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         cssPanelController.setTableColumnsOrderingReversed(cssTableColumnsOrderingReversed);
     }
 
-    public static final String makeTitle(FXOMDocument fxomDocument) {
-        final String title;
-        
-        if (fxomDocument == null) {
-            title = I18N.getString("label.no.document");
-        } else if (fxomDocument.getLocation() == null) {
-            title = I18N.getString("label.untitled");
-        } else {
-            String name = ""; //NOI18N
-            try {
-                final File toto = new File(fxomDocument.getLocation().toURI());
-                name = toto.getName();
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException("Bug", ex); //NOI18N
-            }
-            title = name;
-        }
-        
-        return title;
-    }
-    
     public boolean canPerformControlAction(DocumentControlAction controlAction) {
         final boolean result;
         
@@ -779,7 +759,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case SHOW_SAMPLE_CONTROLLER:
                 if (skeletonWindowController == null) {
                     skeletonWindowController = new SkeletonWindowController(editorController,
-                            makeTitle(editorController.getFxomDocument()), getStage());
+                            Utils.makeTitle(editorController.getFxomDocument()), getStage());
                     skeletonWindowController.setToolStylesheet(getToolStylesheet());
                 }
                 AppSettings.setWindowIcon(skeletonWindowController.getStage());
@@ -1782,7 +1762,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
 
     private void updateStageTitle() {
         if (libraryPanelHost != null) {
-            getStage().setTitle(makeTitle(editorController.getFxomDocument()));
+            getStage().setTitle(Utils.makeTitle(editorController.getFxomDocument()));
         } // else controllerDidLoadFxml() will invoke me again
     }
     
