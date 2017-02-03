@@ -1,0 +1,50 @@
+mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
+
+jar {
+    baseName = 'scenebuilder'
+}
+
+dependencies {
+    compile project(':kit')
+}
+
+apply plugin: 'maven'
+
+artifacts {
+    archives jar
+//    archives shadowJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUser = getStringProperty('publishRepositoryUser', '');
+            def repoPassword = getStringProperty('publishRepositoryPassword', '');
+            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+                authentication userName: repoUser, password: repoPassword
+            }
+            repository(url: repoUrl) {
+                authentication(userName: repoUser, password: repoPassword);
+            }
+//            addFilter('scenebuilder-all') { artifact, file ->
+//                artifact.name == 'scenebuilder-all'
+//            }
+            addFilter('scenebuilder') { artifact, file ->
+                artifact.name == 'scenebuilder'
+            }
+//            pom('scenebuilder-all') {
+//                artifactId = 'scenebuilder-all'
+//            }
+        }
+    }
+}
+
+private String getStringProperty(String name, String defaultValue) {
+    if (!hasProperty(name)) {
+        return defaultValue
+    }
+
+    def propertyValue = getProperty(name)
+    return propertyValue != null ? propertyValue.toString().trim() : defaultValue
+}

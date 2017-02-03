@@ -1,109 +1,138 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
-buildscript {
-  repositories { jcenter() }
-  dependencies {
-    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-  }
-}
-
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-def tryGetProperty = {String name, String defaultValue ->
-    if (!project.hasProperty(name)) {
-        return defaultValue
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
-
-    return project.property(name)?.toString()
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
-    maven {
-        url "https://oss.sonatype.org/content/repositories/releases/"
-    }
-    maven {
-        url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
-    }
-
-    jcenter()
-    mavenCentral()
-//    flatDir {
-//        dirs 'lib'
-//    }
-}
-
-dependencies {
-    // maven dependencies
-    compile 'org.eclipse.aether:aether-api:1.1.0'
-    compile 'org.eclipse.aether:aether-impl:1.1.0'
-    compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
-    compile 'org.eclipse.aether:aether-transport-file:1.1.0'
-    compile 'org.eclipse.aether:aether-transport-http:1.1.0'
-    compile 'org.apache.maven:maven-aether-provider:3.3.9'
-
-    compile 'com.gluonhq:charm-glisten:4.4.0-SNAPSHOT'
-
-//    compile name: 'ScenicView'
-
-    // REST API
-    compile 'org.apache.httpcomponents:httpclient:4.5.2'
-    compile 'javax.json:javax.json-api:1.0'
-    runtime 'org.glassfish:javax.json:1.0.4'
-    
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.2.0'
-}
-
-group = 'com.gluonhq.scenebuilder'
-version = tryGetProperty('VERSION', '8.4.0-SNAPSHOT')
-mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    def tryGetProperty = {String name, String defaultValue ->
+        if (!project.hasProperty(name)) {
+            return defaultValue
+        }
+
+        return project.property(name)?.toString()
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases/"
+        }
+        maven {
+            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+        }
+
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        // maven dependencies
+        compile 'org.eclipse.aether:aether-api:1.1.0'
+        compile 'org.eclipse.aether:aether-impl:1.1.0'
+        compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
+        compile 'org.eclipse.aether:aether-transport-file:1.1.0'
+        compile 'org.eclipse.aether:aether-transport-http:1.1.0'
+        compile 'org.apache.maven:maven-aether-provider:3.3.9'
+
+        compile 'com.gluonhq:charm-glisten:4.4.0-SNAPSHOT'
+
+        // REST API
+        compile 'org.apache.httpcomponents:httpclient:4.5.2'
+        compile 'javax.json:javax.json-api:1.0'
+        runtime 'org.glassfish:javax.json:1.0.4'
+        
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.assertj:assertj-core:3.2.0'
+    }
+
+    group = 'com.gluonhq.scenebuilder'
+    version = tryGetProperty('VERSION', '8.4.0-SNAPSHOT')
+
+    processResources {
+        def buildDate = new Date().format(rootProject.buildDateFormat)
+        from ('src/main/resources') {
+            include '**/*.properties'
+            expand([
+                version: version,
+                javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
+                buildDate: buildDate,
+                mainClassName: mainClassName
+            ])
+            filter(EscapeUnicode)
+        }
+        into buildDir
+    }
+}
+
+
 
 clean {
     delete "dist"
-}
-
-processResources {
-    def buildDate = new Date().format(buildDateFormat)
-    from ('src/main/resources') {
-        include '**/*.properties'
-        expand([
-            version: version,
-            javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
-            buildDate: buildDate,
-            mainClassName: mainClassName
-        ])
-        filter(EscapeUnicode)
-    }
-    into buildDir
-}
-
-jar {
-    baseName = 'scenebuilder'
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
 }
 
 shadowJar {
     baseName = 'scenebuilder-all'
 }
 
-task kitJar(type: Jar, dependsOn: classes, description: 'Creates a jar for the SceneBuilder kit.') {
-    baseName = 'scenebuilder-kit'
-    from (sourceSets.main.output) {
-        include "com/oracle/javafx/scenebuilder/kit/**/*"
-    }
-}
-
-apply from: 'maven-publish.gradle'
-
 if (!hasProperty('mainClass')) {
     ext.mainClass = mainClassName
 }
+
+
+apply plugin: 'maven'
+
+artifacts {
+    archives jar
+    archives shadowJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUser = getStringProperty('publishRepositoryUser', '');
+            def repoPassword = getStringProperty('publishRepositoryPassword', '');
+            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+                authentication userName: repoUser, password: repoPassword
+            }
+            repository(url: repoUrl) {
+                authentication(userName: repoUser, password: repoPassword);
+            }
+            addFilter('scenebuilder-all') { artifact, file ->
+                artifact.name == 'scenebuilder-all'
+            }
+            addFilter('scenebuilder') { artifact, file ->
+                artifact.name == 'scenebuilder'
+            }
+            pom('scenebuilder-all') {
+                artifactId = 'scenebuilder-all'
+            }
+        }
+    }
+}
+
+private String getStringProperty(String name, String defaultValue) {
+    if (!hasProperty(name)) {
+        return defaultValue
+    }
+
+    def propertyValue = getProperty(name)
+    return propertyValue != null ? propertyValue.toString().trim() : defaultValue
+}
+
