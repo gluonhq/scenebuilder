@@ -33,7 +33,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
