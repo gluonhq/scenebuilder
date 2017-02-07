@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.SBResources;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
@@ -44,7 +45,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
-import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.kit.template.Type;
@@ -371,11 +372,25 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public void handleLaunch(List<String> files) {
         setApplicationUncaughtExceptionHandler();
 
+        MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         // Creates the user library
-        userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder());
+        userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
+                () -> mavenPreferences.getArtifactsPathsWithDependencies(),
+                () -> mavenPreferences.getArtifactsFilter());
 
-        userLibrary.setOnImportingGluonControls(() -> {
-            Platform.runLater(() -> {
+        userLibrary.setOnUpdatedJarReports(jarReports -> {
+            boolean shouldShowImportGluonJarAlert = false;
+            for (JarReport jarReport : jarReports) {
+                if (jarReport.hasGluonControls()) {
+                    // We check if the jar has already been imported to avoid showing the import gluon jar
+                    // alert every time Scene Builder starts for jars that have already been imported
+                    if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
+                        shouldShowImportGluonJarAlert = true;
+                    }
+
+                }
+            }
+            if (shouldShowImportGluonJarAlert) {
                 SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
                 DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
                 if (dwc == null) {
@@ -384,7 +399,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
                 AppSettings.setWindowIcon(alert);
                 alert.showAndWait();
-            });
+            }
+            updateImportedGluonJars(jarReports);
         });
 
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
@@ -1029,4 +1045,37 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             dwc.getEditorController().getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
         }
     }
+
+    private static void updateImportedGluonJars(List<JarReport> jars) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        List<String> jarReportCollection = new ArrayList<>();
+        for (JarReport jarReport : jars) {
+            if (jarReport.hasGluonControls()) {
+                jarReportCollection.add(jarReport.getJar().getFileName().toString());
+            }
+        }
+        if (jarReportCollection.isEmpty()) {
+            recordGlobal.setImportedGluonJars(new String[0]);
+        } else {
+            recordGlobal.setImportedGluonJars(jarReportCollection.toArray(new String[0]));
+        }
+    }
+
+    private static boolean hasGluonJarBeenImported(String jar) {
+        PreferencesController pc = PreferencesController.getSingleton();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
+        String[] importedJars = recordGlobal.getImportedGluonJars();
+        if (importedJars == null) {
+            return false;
+        }
+
+        for (String importedJar : importedJars) {
+            if (jar.equals(importedJar)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -32,9 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
-import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
@@ -75,14 +72,11 @@ import java.util.stream.Collectors;
 class LibraryFolderWatcher implements Runnable {
     
     private final UserLibrary library;
-    private final MavenPreferences mavenPreferences;
-    private Runnable onImportingGluonControls;
 
     private enum FILE_TYPE {FXML, JAR};
     
     public LibraryFolderWatcher(UserLibrary library) {
         this.library = library;
-        mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
     }
 
     /*
@@ -111,9 +105,9 @@ class LibraryFolderWatcher implements Runnable {
         library.setItems(BuiltinLibrary.getLibrary().getItems());
 
         // Attempts to add the maven jars, including dependencies
-        List<Path> currentMavenJars = mavenPreferences.getArtifactsPathsWithDependencies();
+        List<Path> additionalJars = library.getAdditionalJarPaths().get();
         
-        final Set<Path> currentJars = new HashSet<>(currentMavenJars);
+        final Set<Path> currentJars = new HashSet<>(additionalJars);
         final Set<Path> currentFxmls = new HashSet<>();
                 
         // Now attempts to discover the user library folder
@@ -201,7 +195,7 @@ class LibraryFolderWatcher implements Runnable {
                             library.setItems(BuiltinLibrary.getLibrary().getItems());
                             
                             // Now attempts to add the maven jars
-                            List<Path> currentMavenJars = mavenPreferences.getArtifactsPaths();
+                            List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
                             
                             final Set<Path> fxmls = new HashSet<>();
                             fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
@@ -324,24 +318,26 @@ class LibraryFolderWatcher implements Runnable {
 
         // 2)
         final List<JarReport> jarReports = new ArrayList<>();
-        boolean shouldShowImportGluonJarAlert = false;
+//        boolean shouldShowImportGluonJarAlert = false;
         for (Path currentJar : jars) {
             Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.jar", currentJar));
             final JarExplorer explorer = new JarExplorer(currentJar);
             JarReport jarReport = explorer.explore(classLoader);
             jarReports.add(jarReport);
-            if (jarReport.hasGluonControls()) {
-                // We check if the jar has already been imported to avoid showing the import gluon jar
-                // alert every time Scene Builder starts for jars that have already been imported
-                if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
-                    shouldShowImportGluonJarAlert = true;
-                }
-            }
+
+            //            if (jarReport.hasGluonControls()) {
+//                // We check if the jar has already been imported to avoid showing the import gluon jar
+//                // alert every time Scene Builder starts for jars that have already been imported
+//                if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
+//                    shouldShowImportGluonJarAlert = true;
+//                }
+//
+//            }
         }
 
-        if (shouldShowImportGluonJarAlert && onImportingGluonControls != null) {
-            onImportingGluonControls.run();
-        }
+//        if (shouldShowImportGluonJarAlert && onImportingGluonControls != null) {
+//            onImportingGluonControls.run();
+//        }
 
         // 3)
         final List<LibraryItem> newItems = new ArrayList<>();
@@ -357,7 +353,7 @@ class LibraryFolderWatcher implements Runnable {
                 .distinct()
                 .collect(Collectors.toList()));
         library.updateJarReports(new ArrayList<>(jarReports));
-        updateImportedGluonJars(jarReports);
+        library.getOnFinishedUpdatingJarReports().accept(jarReports);
         library.updateExplorationDate(new Date());
         
         // 5
@@ -370,7 +366,7 @@ class LibraryFolderWatcher implements Runnable {
         final List<LibraryItem> result = new ArrayList<>();
         final URL iconURL = ImageUtils.getNodeIconURL(null);
         final List<String> excludedItems = library.getFilter();
-        final List<String> artifactsFilter = mavenPreferences.getArtifactsFilter();
+        final List<String> artifactsFilter = library.getAdditionalFilter().get();
                 
         for (JarReportEntry e : jarReport.getEntries()) {
             if ((e.getStatus() == JarReportEntry.Status.OK) && e.isNode()) {
@@ -401,41 +397,5 @@ class LibraryFolderWatcher implements Runnable {
         }
         
         return result;
-    }
-
-    private static void updateImportedGluonJars(List<JarReport> jars) {
-        PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-        List<String> jarReportCollection = new ArrayList<>();
-        for (JarReport jarReport : jars) {
-            if (jarReport.hasGluonControls()) {
-                jarReportCollection.add(jarReport.getJar().getFileName().toString());
-            }
-        }
-        if (jarReportCollection.isEmpty()) {
-            recordGlobal.setImportedGluonJars(new String[0]);
-        } else {
-            recordGlobal.setImportedGluonJars(jarReportCollection.toArray(new String[0]));
-        }
-    }
-
-    private static boolean hasGluonJarBeenImported(String jar) {
-        PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-        String[] importedJars = recordGlobal.getImportedGluonJars();
-        if (importedJars == null) {
-            return false;
-        }
-
-        for (String importedJar : importedJars) {
-            if (jar.equals(importedJar)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void setOnImportingGluonControls(Runnable onImportingGluonControls) {
-        this.onImportingGluonControls = onImportingGluonControls;
     }
 }

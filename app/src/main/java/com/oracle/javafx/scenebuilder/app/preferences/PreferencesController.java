@@ -43,7 +43,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
- * Defines preferences for Scene Builder.
+ * Defines preferences for Scene Builder App.
  */
 public class PreferencesController {
 

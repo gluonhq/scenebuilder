@@ -54,6 +54,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -70,7 +73,8 @@ import javafx.collections.ObservableList;
  */
 public class UserLibrary extends Library {
     
-    public enum State { READY, WATCHING };
+    public enum State { READY, WATCHING }
+
     public static final String TAG_USER_DEFINED = "Custom"; //NOI18N
     
     private final String path;
@@ -94,15 +98,31 @@ public class UserLibrary extends Library {
     // As a consequence an empty file means we display all items.
     private final String filterFileName = "filter.txt"; //NOI18N
 
-    private Runnable onImportingGluonControls;
-
+    private Supplier<List<Path>> additionalJarPaths;
+    private Supplier<List<String>> additionalFilter;
+    private Consumer<List<JarReport>> onFinishedUpdatingJarReports;
 
     /*
      * Public
      */
-    
+
     public UserLibrary(String path) {
+        this(path, null, null);
+    }
+
+    public UserLibrary(String path, Supplier<List<Path>> additionalJarPaths, Supplier<List<String>> additionalFilter) {
         this.path = path;
+        this.additionalJarPaths = additionalJarPaths;
+        this.additionalFilter = additionalFilter;
+    }
+
+    public void setAdditionalJarPaths(Supplier<List<Path>> additionalJarPaths)
+    {
+        this.additionalJarPaths = additionalJarPaths;
+    }
+
+    public void setAdditionalFilter(Supplier<List<String>> additionalFilter) {
+        this.additionalFilter = additionalFilter;
     }
     
     public String getPath() {
@@ -137,7 +157,6 @@ public class UserLibrary extends Library {
             assert watcherThread == null;
 
             watcher = new LibraryFolderWatcher(this);
-            watcher.setOnImportingGluonControls(onImportingGluonControls);
             watcherThread = new Thread(watcher);
             watcherThread.setName(watcher.getClass().getSimpleName() + "(" + path  + ")"); //NOI18N
             watcherThread.setDaemon(true);
@@ -249,6 +268,18 @@ public class UserLibrary extends Library {
         return res;
     }
 
+    public void setOnUpdatedJarReports(Consumer<List<JarReport>> onFinishedUpdatingJarReports) {
+        this.onFinishedUpdatingJarReports = onFinishedUpdatingJarReports;
+    }
+
+    public final ReadOnlyBooleanProperty firstExplorationCompletedProperty() {
+        return firstExplorationCompleted.getReadOnlyProperty();
+    }
+
+    public final boolean isFirstExplorationCompleted() {
+        return firstExplorationCompleted.get();
+    }
+
     /*
      * Package
      */
@@ -321,15 +352,19 @@ public class UserLibrary extends Library {
             Platform.runLater(() -> firstExplorationCompleted.set(true));
         }
     }
-    
-    public final ReadOnlyBooleanProperty firstExplorationCompletedProperty() {
-        return firstExplorationCompleted.getReadOnlyProperty();
+
+    Supplier<List<Path>> getAdditionalJarPaths() {
+        return additionalJarPaths;
     }
-    
-    public final boolean isFirstExplorationCompleted() {
-        return firstExplorationCompleted.get();
+
+    Supplier<List<String>> getAdditionalFilter() {
+        return additionalFilter;
     }
-    
+
+    Consumer<List<JarReport>> getOnFinishedUpdatingJarReports() {
+        return onFinishedUpdatingJarReports;
+    }
+
     /*
      * Library
      */
@@ -378,9 +413,5 @@ public class UserLibrary extends Library {
         lib.stopWatching();
         Thread.sleep(20 * 1000);
         System.out.println("Exiting"); //NOI18N
-    }
-
-    public void setOnImportingGluonControls(Runnable onImportingGluonControls) {
-        this.onImportingGluonControls = onImportingGluonControls;
     }
 }
