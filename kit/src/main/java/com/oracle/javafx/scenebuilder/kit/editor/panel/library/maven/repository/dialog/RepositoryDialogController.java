@@ -52,6 +52,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -108,7 +109,7 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
     private Repository oldRepository;
     private final Service<String> testService;
     
-    public RepositoryDialogController(EditorController editorController, Window owner) {
+    public RepositoryDialogController(EditorController editorController, Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;

@@ -109,7 +109,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private final Window owner;
     
     public SearchMavenDialogController(EditorController editorController,
-            Window owner) {
+            Stage owner) {
         super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;

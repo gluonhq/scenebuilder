@@ -69,6 +69,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -109,7 +110,7 @@ public final class PreviewWindowController extends AbstractWindowController {
         PARALLEL, PERSPECTIVE
     }
 
-    public PreviewWindowController(EditorController editorController, Window owner) {
+    public PreviewWindowController(EditorController editorController, Stage owner) {
         super(owner);
         this.editorController = editorController;
         this.editorController.fxomDocumentProperty().addListener(
