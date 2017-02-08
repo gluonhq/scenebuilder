@@ -97,7 +97,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     @FXML
     private Button installButton;
 
-    private final DocumentWindowController documentWindowController;
+    private final EditorController editorController;
 
     private final UserLibrary userLibrary;
     
@@ -108,12 +108,12 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private DefaultArtifact artifact;
     private final Window owner;
     
-    public SearchMavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
+    public SearchMavenDialogController(EditorController editorController,
             Window owner) {
         super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
-        this.documentWindowController = documentWindowController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
+        this.editorController = editorController;
         
         maven = new MavenRepositorySystem(true); // only releases
         
@@ -308,7 +308,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     }
 
     private void logInfoMessage(String key, Object... args) {
-        documentWindowController.getEditorController().getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
+        editorController.getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
     }
     
     private String getArtifactCoordinates() {

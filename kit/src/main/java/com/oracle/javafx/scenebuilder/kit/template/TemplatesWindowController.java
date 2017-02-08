@@ -34,13 +34,14 @@ package com.oracle.javafx.scenebuilder.kit.template;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 public class TemplatesWindowController extends TemplatesBaseWindowController {
     private final Window owner;
 
-    public TemplatesWindowController(Window owner) {
+    public TemplatesWindowController(Stage owner) {
         super(TemplatesWindowController.class.getResource("TemplatesWindow.fxml"), //NOI18N
                 I18N.getBundle(), owner);
         this.owner = owner;

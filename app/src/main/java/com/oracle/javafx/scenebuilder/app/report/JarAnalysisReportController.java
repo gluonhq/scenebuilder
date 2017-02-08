@@ -47,6 +47,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -86,7 +87,7 @@ public class JarAnalysisReportController extends AbstractFxmlWindowController {
     private int prefixCounter = 0;
     private boolean dirty = false;
 
-    public JarAnalysisReportController(EditorController editorController, Window owner) {
+    public JarAnalysisReportController(EditorController editorController, Stage owner) {
         super(JarAnalysisReportController.class.getResource("JarAnalysisReport.fxml"), I18N.getBundle(), owner); //NOI18N
         this.editorController = editorController;
     }

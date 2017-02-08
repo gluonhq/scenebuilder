@@ -38,6 +38,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import java.net.URL;
@@ -60,7 +61,7 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
 
     private Consumer<Template> onTemplateChosen;
 
-    public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources, Window owner) {
+    public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources, Stage owner) {
         super(fxmlURL, resources, owner);
     }
 

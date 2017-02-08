@@ -43,6 +43,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -58,17 +59,14 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
 
     @FXML
     private ListView<RepositoryListItem> repositoryListView;
-    
-    private final DocumentWindowController documentWindowController;
 
     private final EditorController editorController;
     private final Window owner;
     
     private ObservableList<RepositoryListItem> listItems;
     
-    public RepositoryManagerController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
+    public RepositoryManagerController(EditorController editorController, Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryManager.fxml"), I18N.getBundle(), owner); //NOI18N
-        this.documentWindowController = documentWindowController;
         this.owner = owner;
         this.editorController = editorController;
     }

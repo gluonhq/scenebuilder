@@ -89,8 +89,6 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     @FXML
     private Button installButton;
 
-    private final DocumentWindowController documentWindowController;
-
     private final UserLibrary userLibrary;
     
     private MavenRepositorySystem maven;
@@ -98,6 +96,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     private Service<ObservableList<Version>> versionsService;
     private final Service<MavenArtifact> installService;
     private final Window owner;
+    private final EditorController editorController;
     
     private final ChangeListener<Version> comboBoxListener = (obs, ov, nv) -> {
         remoteRepository = maven.getRemoteRepository(nv);
@@ -110,12 +109,12 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     };
     
     
-    public MavenDialogController(EditorController editorController, DocumentWindowController documentWindowController, 
-            Window owner) {
+    public MavenDialogController(EditorController editorController,
+            Stage owner) {
         super(LibraryPanelController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
-        this.documentWindowController = documentWindowController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
+        this.editorController = editorController;
         
         maven = new MavenRepositorySystem(false);
         
@@ -304,7 +303,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     }
 
     private void logInfoMessage(String key, Object... args) {
-        documentWindowController.getEditorController().getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
+        editorController.getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
     }
     
     private String getArtifactCoordinates() {

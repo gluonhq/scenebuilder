@@ -88,6 +88,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -132,11 +133,11 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
 
-    private Window ownerWindow;
+    private Stage ownerWindow;
 
-    public PreferencesWindowController(Window ownerWindow) {
+    public PreferencesWindowController(Stage ownerWindow) {
         super(PreferencesWindowController.class.getResource("Preferences.fxml"), //NOI18N
-                I18N.getBundle());
+                I18N.getBundle(), ownerWindow);
         this.ownerWindow = ownerWindow;
     }
 

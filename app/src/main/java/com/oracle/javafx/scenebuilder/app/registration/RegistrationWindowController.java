@@ -42,6 +42,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -67,7 +68,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
 
     final private Window owner;
 
-    public RegistrationWindowController(Window owner) {
+    public RegistrationWindowController(Stage owner) {
         super(RegistrationWindowController.class.getResource("Registration.fxml"), //NOI18N
                 I18N.getBundle(), owner);
         this.owner = owner;

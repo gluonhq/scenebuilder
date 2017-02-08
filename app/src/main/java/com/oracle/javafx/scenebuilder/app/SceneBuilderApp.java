@@ -167,7 +167,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case REGISTER:
                 final RegistrationWindowController registrationWindowController = new RegistrationWindowController(source.getStage());
                 registrationWindowController.openWindow();
-                AppSettings.setWindowIcon(registrationWindowController.getStage());
                 break;
 
             case CHECK_UPDATES:
@@ -182,7 +181,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_TEMPLATE:
                 final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
-                AppSettings.setWindowIcon(templatesWindowController.getStage());
                 templatesWindowController.setOnTemplateChosen(this::performNewTemplateInNewWindow);
                 templatesWindowController.openWindow();
                 break;
@@ -206,7 +204,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case SHOW_PREFERENCES:
                 PreferencesWindowController preferencesWindowController = new PreferencesWindowController(source.getStage());
                 preferencesWindowController.setToolStylesheet(getToolStylesheet());
-                AppSettings.setWindowIcon(preferencesWindowController.getStage());
                 preferencesWindowController.openWindow();
                 break;
 

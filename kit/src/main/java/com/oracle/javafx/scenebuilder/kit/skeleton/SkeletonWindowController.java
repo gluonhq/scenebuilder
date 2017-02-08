@@ -46,6 +46,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -79,7 +80,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
 
     private String documentName;
 
-    public SkeletonWindowController(EditorController editorController, String documentName, Window owner) {
+    public SkeletonWindowController(EditorController editorController, String documentName, Stage owner) {
         super(SkeletonWindowController.class.getResource("SkeletonWindow.fxml"), I18N.getBundle(), owner); //NOI18N
         this.editorController = editorController;
         this.documentName = documentName;

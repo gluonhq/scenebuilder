@@ -32,11 +32,8 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
@@ -53,7 +50,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-import javafx.stage.Window;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
@@ -65,6 +62,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -84,17 +82,17 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private Button manageButton;
 
-    private final DocumentWindowController documentWindowController;
-
     private final EditorController editorController;
     private final UserLibrary userLibrary;
-    private final Window owner;
+    private final Stage owner;
     
     private ObservableList<DialogListItem> listItems;
+
+    private Runnable onAddJar;
+    private Consumer<Path> onEditFXML;
     
-    public LibraryDialogController(EditorController editorController, DocumentWindowController documentWindowController, Window owner) {
+    public LibraryDialogController(EditorController editorController, Stage owner) {
         super(LibraryPanelController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
-        this.documentWindowController = documentWindowController;
         this.owner = owner;
         this.editorController = editorController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
@@ -171,21 +169,22 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void manage() {
-        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController, documentWindowController, getStage());
-        AppSettings.setWindowIcon(repositoryDialogController.getStage());
+        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController, getStage());
         repositoryDialogController.openWindow();
     }
     
     @FXML
     private void addJar() {
-        documentWindowController.onImportJarFxml(getStage());
+//        documentWindowController.onImportJarFxml(getStage());
+        if (onAddJar != null) {
+            onAddJar.run();
+        }
         loadLibraryList();
     }
 
     @FXML
     private void addRelease() {
-        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController, documentWindowController, getStage());
-        AppSettings.setWindowIcon(mavenDialogController.getStage());
+        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
@@ -200,8 +199,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void addManually() {
-        MavenDialogController mavenDialogController = new MavenDialogController(editorController, documentWindowController, getStage());
-        AppSettings.setWindowIcon(mavenDialogController.getStage());
+        MavenDialogController mavenDialogController = new MavenDialogController(editorController, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
@@ -266,17 +264,19 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                             Arrays.asList(item.getFilePath().toFile()), getStage());
                     iwc.setToolStylesheet(editorController.getToolStylesheet());
                     // See comment in OnDragDropped handle set in method startListeningToDrop.
-                    AppSettings.setWindowIcon(iwc.getStage());
                     AbstractModalDialog.ButtonID userChoice = iwc.showAndWait();
                     if (userChoice == AbstractModalDialog.ButtonID.OK) {
                         logInfoMessage("log.user.maven.updated", item);
                     }
                 } else {
-                    if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
-                        closeWindow();
+//                    if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
+//                        closeWindow();
+//                    }
+//                    SceneBuilderApp.getSingleton().performOpenRecent(documentWindowController,
+//                            item.getFilePath().toFile());
+                    if (onEditFXML != null) {
+                        onEditFXML.accept(item.getFilePath());
                     }
-                    SceneBuilderApp.getSingleton().performOpenRecent(documentWindowController, 
-                            item.getFilePath().toFile());
                 } 
             }
         } else if (dialogListItem instanceof ArtifactDialogListItem) {
@@ -291,7 +291,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                         new LibraryPanelController(editorController), 
                                 files, getStage(), false, filter);
             iwc.setToolStylesheet(editorController.getToolStylesheet());
-            AppSettings.setWindowIcon(iwc.getStage());
             AbstractModalDialog.ButtonID userChoice = iwc.showAndWait();
             if (userChoice == AbstractModalDialog.ButtonID.OK) {
                 mavenArtifact.setFilter(iwc.getNewExcludedItems());
@@ -319,5 +318,13 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
         userLibrary.startWatching();
         
+    }
+
+    public void setOnAddJar(Runnable onAddJar) {
+        this.onAddJar = onAddJar;
+    }
+
+    public void setOnEditFXML(Consumer<Path> onEditFXML) {
+        this.onEditFXML = onEditFXML;
     }
 }

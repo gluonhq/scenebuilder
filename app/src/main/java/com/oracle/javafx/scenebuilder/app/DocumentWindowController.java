@@ -43,7 +43,6 @@ import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
 import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonWindowController;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -762,7 +761,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                             Utils.makeTitle(editorController.getFxomDocument()), getStage());
                     skeletonWindowController.setToolStylesheet(getToolStylesheet());
                 }
-                AppSettings.setWindowIcon(skeletonWindowController.getStage());
                 skeletonWindowController.openWindow();
                 break;
                 
@@ -1256,9 +1254,16 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     @FXML
     public void onManageJarFxml(ActionEvent event) {
         if(libraryDialogController==null){
-            libraryDialogController = new LibraryDialogController(editorController, this, getStage());
+            libraryDialogController = new LibraryDialogController(editorController, getStage());
+            libraryDialogController.setOnAddJar(() -> onImportJarFxml(libraryDialogController.getStage()));
+            libraryDialogController.setOnEditFXML(fxmlPath -> {
+                    if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
+                        libraryDialogController.closeWindow();
+                    }
+                    SceneBuilderApp.getSingleton().performOpenRecent(this,
+                            fxmlPath.toFile());
+            });
         }
-        AppSettings.setWindowIcon(libraryDialogController.getStage());
 
         libraryDialogController.openWindow();
     }
@@ -1330,7 +1335,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             jarAnalysisReportController = new JarAnalysisReportController(getEditorController(), getStage());
             jarAnalysisReportController.setToolStylesheet(getToolStylesheet());
         }
-        AppSettings.setWindowIcon(jarAnalysisReportController.getStage());
         jarAnalysisReportController.openWindow();
     }
     
@@ -2050,8 +2054,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             d.setOKButtonTitle(I18N.getString("label.save"));
             d.setActionButtonTitle(I18N.getString("label.do.not.save"));
             d.setActionButtonVisible(true);
-            AppSettings.setWindowIcon(d.getStage());
-            
+
             switch(d.showAndWait()) {
                 default:
                 case OK:

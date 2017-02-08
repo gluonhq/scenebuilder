@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
@@ -59,14 +60,14 @@ public abstract class AbstractFxmlWindowController extends AbstractWindowControl
         this(fxmlURL, resources, null, sizeToScene);
     }
     
-    public AbstractFxmlWindowController(URL fxmlURL, ResourceBundle resources, Window owner) {
+    public AbstractFxmlWindowController(URL fxmlURL, ResourceBundle resources, Stage owner) {
         super(owner);
         assert fxmlURL != null : "Check fxml path given to " + getClass().getSimpleName();
         this.fxmlURL = fxmlURL;
         this.resources = resources;
     }
 
-    public AbstractFxmlWindowController(URL fxmlURL, ResourceBundle resources, Window owner, boolean sizeToScene) {
+    public AbstractFxmlWindowController(URL fxmlURL, ResourceBundle resources, Stage owner, boolean sizeToScene) {
         super(owner, sizeToScene);
         assert fxmlURL != null : "Check fxml path given to " + getClass().getSimpleName();
         this.fxmlURL = fxmlURL;
