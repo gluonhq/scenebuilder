@@ -175,7 +175,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private void manage() {
         RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController,
-                getStage());
+                userM2Repository, tempM2Repository, getStage());
         repositoryDialogController.openWindow();
     }
     

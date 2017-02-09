@@ -63,11 +63,17 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
     private final Stage owner;
 
     private ObservableList<RepositoryListItem> listItems;
+
+    private final String userM2Repository;
+    private final String tempM2Repository;
     
-    public RepositoryManagerController(EditorController editorController, Stage owner) {
+    public RepositoryManagerController(EditorController editorController, String userM2Repository,
+                                       String tempM2Repository, Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryManager.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
+        this.userM2Repository = userM2Repository;
+        this.tempM2Repository = tempM2Repository;
     }
 
     @Override
@@ -127,7 +133,8 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
     }
 
     private void repositoryDialog(Repository repository) {
-        RepositoryDialogController repositoryDialogController = new RepositoryDialogController(editorController, getStage());
+        RepositoryDialogController repositoryDialogController = new RepositoryDialogController(editorController,
+                userM2Repository, tempM2Repository, getStage());
         repositoryDialogController.openWindow();
         repositoryDialogController.setRepository(repository);
         repositoryDialogController.getStage().showingProperty().addListener(new InvalidationListener() {

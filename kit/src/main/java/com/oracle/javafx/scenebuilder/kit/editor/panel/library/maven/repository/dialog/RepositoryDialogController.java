@@ -108,11 +108,17 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
     private MavenRepositorySystem maven;
     private Repository oldRepository;
     private final Service<String> testService;
+
+    private final String userM2Repository;
+    private final String tempM2Repository;
     
-    public RepositoryDialogController(EditorController editorController, Stage owner) {
+    public RepositoryDialogController(EditorController editorController, String userM2Repository,
+                                      String tempM2Repository, Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
+        this.userM2Repository = userM2Repository;
+        this.tempM2Repository = tempM2Repository;
         
         testService = new Service<String>() {
             @Override
@@ -212,7 +218,7 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
         passwordTextfield.disableProperty().bind(privateCheckBox.selectedProperty().not());
         progress.visibleProperty().bind(testService.runningProperty());
         resultLabel.setText("");
-        maven = new MavenRepositorySystem(false);
+        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository);
     }
     
     private void logInfoMessage(String key, Object... args) {
