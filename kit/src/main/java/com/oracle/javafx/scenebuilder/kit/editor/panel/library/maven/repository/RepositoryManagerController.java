@@ -60,8 +60,8 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
     private ListView<RepositoryListItem> repositoryListView;
 
     private final EditorController editorController;
-    private final Window owner;
-    
+    private final Stage owner;
+
     private ObservableList<RepositoryListItem> listItems;
     
     public RepositoryManagerController(EditorController editorController, Stage owner) {

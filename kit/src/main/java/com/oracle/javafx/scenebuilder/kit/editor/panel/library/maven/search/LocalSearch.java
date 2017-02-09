@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
-import com.oracle.javafx.scenebuilder.app.AppPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +47,8 @@ public class LocalSearch implements Search {
             
     private final String m2;
         
-    public LocalSearch() {
-        m2 = AppPlatform.getUserM2Repository() + File.separator;
+    public LocalSearch(String userM2Repostory) {
+        m2 = userM2Repostory + File.separator;
     }
     
     @Override

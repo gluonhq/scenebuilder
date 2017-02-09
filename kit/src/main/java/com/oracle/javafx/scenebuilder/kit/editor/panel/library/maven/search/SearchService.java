@@ -68,11 +68,14 @@ public class SearchService extends Service<Void> {
     private final BooleanProperty searching;
     
     private List<Task<ObservableList<DefaultArtifact>>> tasks;
+
+    private final String userM2Repository;
     
-    public SearchService() {
+    public SearchService(String userM2Repository) {
         setExecutor(exec);
         result = FXCollections.observableArrayList();
         searching = new SimpleBooleanProperty();
+        this.userM2Repository = userM2Repository;
     }
     
     public void setQuery(String query) {
@@ -110,7 +113,7 @@ public class SearchService extends Service<Void> {
                     createSearchTask(new NexusSearch(MavenPresets.SONATYPE, "http://oss.sonatype.org", "", "")),
                     createSearchTask(new JcenterSearch("", "")),
                     createSearchTask(new NexusSearch(MavenPresets.GLUON_NEXUS, "http://nexus.gluonhq.com/nexus", "", "")),
-                    createSearchTask(new LocalSearch()));
+                    createSearchTask(new LocalSearch(userM2Repository)));
                 
                 AtomicInteger count = new AtomicInteger();
                 tasks.forEach(task -> 

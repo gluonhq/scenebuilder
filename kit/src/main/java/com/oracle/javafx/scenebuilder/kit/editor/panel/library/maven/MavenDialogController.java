@@ -108,14 +108,14 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     };
     
     
-    public MavenDialogController(EditorController editorController,
-            Stage owner) {
+    public MavenDialogController(EditorController editorController, String userM2Repository,
+            String tempM2Repository,Stage owner) {
         super(LibraryPanelController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
         this.editorController = editorController;
         
-        maven = new MavenRepositorySystem(false);
+        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository);
         
         versionsService = new Service<ObservableList<Version>>() {
             @Override

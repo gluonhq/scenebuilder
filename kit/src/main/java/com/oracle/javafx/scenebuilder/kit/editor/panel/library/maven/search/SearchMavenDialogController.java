@@ -106,18 +106,18 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private final SearchService searchService;
     private final Service<MavenArtifact> installService;
     private DefaultArtifact artifact;
-    private final Window owner;
+    private final Stage owner;
     
-    public SearchMavenDialogController(EditorController editorController,
-            Stage owner) {
+    public SearchMavenDialogController(EditorController editorController, String userM2Repository,
+                                       String tempM2Repository, Stage owner) {
         super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
         this.editorController = editorController;
         
-        maven = new MavenRepositorySystem(true); // only releases
+        maven = new MavenRepositorySystem(true, userM2Repository, tempM2Repository); // only releases
         
-        searchService = new SearchService();
+        searchService = new SearchService(userM2Repository);
         searchService.getResult().addListener((ListChangeListener.Change<? extends Artifact> c) -> {
             while (c.next()) {
                 resultsListView.getItems().setAll(searchService.getResult()

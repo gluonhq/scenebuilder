@@ -174,7 +174,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void manage() {
-        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController, getStage());
+        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController,
+                getStage());
         repositoryDialogController.openWindow();
     }
     
@@ -189,7 +190,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void addRelease() {
-        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController, getStage());
+        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController,
+                userM2Repository, tempM2Repository, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
@@ -204,7 +206,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void addManually() {
-        MavenDialogController mavenDialogController = new MavenDialogController(editorController, getStage());
+        MavenDialogController mavenDialogController = new MavenDialogController(editorController, userM2Repository,
+                tempM2Repository, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
