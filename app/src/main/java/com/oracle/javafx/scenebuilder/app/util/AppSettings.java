@@ -42,6 +42,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -173,4 +174,22 @@ public class AppSettings {
         return latestVersionAnnouncementURL;
     }
 
+    public static String getUserM2Repository() {
+        String m2Path = System.getProperty("user.home") + File.separator +
+                ".m2" + File.separator + "repository"; //NOI18N
+
+        // TODO: Allow custom path for .m2
+
+        assert m2Path != null;
+
+        return m2Path;
+    }
+
+    public static String getTempM2Repository() {
+        String m2Path = System.getProperty("java.io.tmpdir") + File.separator + "m2Tmp"; //NOI18N
+
+        assert m2Path != null;
+
+        return m2Path;
+    }
 }

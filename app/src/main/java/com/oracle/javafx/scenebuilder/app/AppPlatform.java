@@ -94,26 +94,7 @@ public class AppPlatform {
         
         return userLibraryFolder;
     }
-    
-    public static synchronized String getUserM2Repository() {
-        String m2Path = System.getProperty("user.home") + File.separator +
-                ".m2" + File.separator + "repository"; //NOI18N
-        
-        // TODO: Allow custom path for .m2
-        
-        assert m2Path != null;
-        
-        return m2Path;
-    }
-    
-    public static synchronized String getTempM2Repository() {
-        String m2Path = System.getProperty("java.io.tmpdir") + File.separator + "m2Tmp"; //NOI18N
-        
-        assert m2Path != null;
-        
-        return m2Path;
-    }
-    
+
     public static boolean requestStart(
             AppNotificationHandler notificationHandler, Application.Parameters parameters)  
     throws IOException {

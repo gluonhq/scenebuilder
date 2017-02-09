@@ -39,6 +39,7 @@ import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
@@ -1254,7 +1255,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     @FXML
     public void onManageJarFxml(ActionEvent event) {
         if(libraryDialogController==null){
-            libraryDialogController = new LibraryDialogController(editorController, getStage());
+            libraryDialogController = new LibraryDialogController(editorController, AppSettings.getUserM2Repository(),
+                    AppSettings.getTempM2Repository(), getStage());
             libraryDialogController.setOnAddJar(() -> onImportJarFxml(libraryDialogController.getStage()));
             libraryDialogController.setOnEditFXML(fxmlPath -> {
                     if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {

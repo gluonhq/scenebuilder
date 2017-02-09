@@ -90,12 +90,17 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     private Runnable onAddJar;
     private Consumer<Path> onEditFXML;
+
+    private String userM2Repository;
+    private String tempM2Repository;
     
-    public LibraryDialogController(EditorController editorController, Stage owner) {
+    public LibraryDialogController(EditorController editorController, String userM2Repository, String tempM2Repository, Stage owner) {
         super(LibraryPanelController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
+        this.userM2Repository = userM2Repository;
+        this.tempM2Repository = tempM2Repository;
     }
 
     @Override

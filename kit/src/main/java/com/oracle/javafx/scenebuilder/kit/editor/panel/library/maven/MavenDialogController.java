@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;

@@ -32,8 +32,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
-import com.oracle.javafx.scenebuilder.app.AppPlatform;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.File;
@@ -104,9 +102,15 @@ public class MavenRepositorySystem {
     private final boolean onlyReleases;
     
     private BasicRepositoryConnectorFactory basicRepositoryConnectorFactory;
+
+    private String userM2Repository;
+
+    private String tempM2Repository;
     
-    public MavenRepositorySystem(boolean onlyReleases) {
+    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository, String tempM2Repository) {
         this.onlyReleases = onlyReleases;
+        this.userM2Repository = userM2Repository;
+        this.tempM2Repository = tempM2Repository;
         initRepositorySystem();
     }
     
@@ -118,7 +122,7 @@ public class MavenRepositorySystem {
         locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
             @Override
             public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-                throw new RuntimeException(I18N.getString("maven.dialog.creation.failed"), exception);
+                throw new RuntimeException(exception);
             }
         });
         
@@ -129,7 +133,7 @@ public class MavenRepositorySystem {
 
         session = MavenRepositorySystemUtils.newSession();
 
-        localRepo = new LocalRepository(new File(AppPlatform.getUserM2Repository()));
+        localRepo = new LocalRepository(new File(userM2Repository));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
         // TODO: log file transfers
@@ -245,7 +249,7 @@ public class MavenRepositorySystem {
         
     public String resolveArtifacts(RemoteRepository remoteRepository, Artifact... artifact) {
         
-        LocalRepository localTmpRepo = new LocalRepository(AppPlatform.getTempM2Repository());
+        LocalRepository localTmpRepo = new LocalRepository(tempM2Repository);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localTmpRepo));
         
         List<Artifact> artifacts = Stream.of(artifact)
@@ -300,7 +304,7 @@ public class MavenRepositorySystem {
         } catch (ArtifactResolutionException ex) { }
         
         try {
-            FileUtils.deleteDirectory(AppPlatform.getTempM2Repository());
+            FileUtils.deleteDirectory(tempM2Repository);
         } catch (IOException ex) { }
         
         return absolutePath;
@@ -361,5 +365,4 @@ public class MavenRepositorySystem {
         
         return "";
     }
-    
 }
