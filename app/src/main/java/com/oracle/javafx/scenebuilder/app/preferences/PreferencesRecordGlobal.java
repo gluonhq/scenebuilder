@@ -32,15 +32,10 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
-import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlAction;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
 import java.io.File;
@@ -54,6 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -185,6 +181,8 @@ public class PreferencesRecordGlobal {
         return backgroundImage;
     }
 
+    public Image getBackgroundImageImage() { return getImage(backgroundImage); }
+
     public void setBackgroundImage(BackgroundImage value) {
         backgroundImage = value;
     }
@@ -223,7 +221,7 @@ public class PreferencesRecordGlobal {
 
     public void updateLibraryDisplayOption(DISPLAY_MODE value) {
         libraryDisplayOption = value;
-        writeToJavaPreferences(LIBRARY_DISPLAY_OPTION);
+        writeToJavaPreferences(PreferencesControllerBase.LIBRARY_DISPLAY_OPTION);
     }
 
     public DisplayOption getHierarchyDisplayOption() {
@@ -236,7 +234,7 @@ public class PreferencesRecordGlobal {
 
     public void updateHierarchyDisplayOption(DisplayOption value) {
         hierarchyDisplayOption = value;
-        writeToJavaPreferences(HIERARCHY_DISPLAY_OPTION);
+        writeToJavaPreferences(PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION);
     }
 
     public CSSAnalyzerColumnsOrder getDefaultCSSAnalyzerColumnsOrder() {
@@ -404,11 +402,6 @@ public class PreferencesRecordGlobal {
         this.registrationOptIn = registrationOptIn;
     }
 
-    public void refreshAlignmentGuidesColor(DocumentWindowController dwc) {
-        final ContentPanelController cpc = dwc.getContentPanelController();
-        cpc.setGuidesColor(alignmentGuidesColor);
-    }
-
     public void setShowUpdateDialogAfter(LocalDate showUpdateDialogDate) {
         this.showUpdateDialogDate = showUpdateDialogDate;
         writeToJavaPreferences(UPDATE_DIALOG_DATE);
@@ -445,171 +438,6 @@ public class PreferencesRecordGlobal {
         writeToJavaPreferences(LAST_SENT_TRACKING_INFO_DATE);
     }
 
-    public void refreshBackgroundImage(DocumentWindowController dwc) {
-        // Background images
-        dwc.getContentPanelController().setWorkspaceBackground(getImage(backgroundImage));
-    }
-
-    public void refreshCSSAnalyzerColumnsOrder(DocumentWindowController dwc) {
-        dwc.refreshCssTableColumnsOrderingReversed(cssTableColumnsOrderingReversed);
-    }
-
-    public void refreshToolTheme(DocumentWindowController dwc) {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        final ApplicationControlAction aca;
-        switch(toolTheme) {
-            case DEFAULT:
-                aca = ApplicationControlAction.USE_DEFAULT_THEME;
-                break;
-            case DARK:
-                aca = ApplicationControlAction.USE_DARK_THEME;
-                break;
-            default:
-                assert false;
-                aca = null;
-                break;
-         }
-        app.performControlAction(aca, dwc);
-    }
-    
-    public void refreshLibraryDisplayOption(DocumentWindowController dwc) {
-        dwc.refreshLibraryDisplayOption(libraryDisplayOption);
-    }
-
-    public void refreshHierarchyDisplayOption(DocumentWindowController dwc) {
-        dwc.refreshHierarchyDisplayOption(hierarchyDisplayOption);
-    }
-
-    public void refreshParentRingColor(DocumentWindowController dwc) {
-        final ContentPanelController cpc = dwc.getContentPanelController();
-        cpc.setPringColor(parentRingColor);
-        final AbstractHierarchyPanelController hpc = dwc.getHierarchyPanelController();
-        hpc.setParentRingColor(parentRingColor);
-    }
-
-    public void refreshRootContainerHeight(DocumentWindowController dwc) {
-        final EditorController ec = dwc.getEditorController();
-        ec.setDefaultRootContainerHeight(rootContainerHeight);
-    }
-
-    public void refreshRootContainerWidth(DocumentWindowController dwc) {
-        final EditorController ec = dwc.getEditorController();
-        ec.setDefaultRootContainerWidth(rootContainerWidth);
-    }
-
-    public void refreshTheme(DocumentWindowController dwc) {
-        final EditorController ec = dwc.getEditorController();
-        ec.setTheme(theme);
-    }
-
-    public void refreshSwatch(DocumentWindowController dwc) {
-        final EditorController ec = dwc.getEditorController();
-        ec.setGluonSwatch(gluonSwatch);
-    }
-
-    public void refreshGluonTheme(DocumentWindowController dwc) {
-        final EditorController ec = dwc.getEditorController();
-        ec.setGluonTheme(gluonTheme);
-    }
-
-    public void refreshAlignmentGuidesColor() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshAlignmentGuidesColor(dwc);
-        }
-    }
-
-    public void refreshBackgroundImage() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshBackgroundImage(dwc);
-        }
-    }
-
-    public void refreshCSSAnalyzerColumnsOrder() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshCSSAnalyzerColumnsOrder(dwc);
-        }
-    }
-
-    public void refreshToolTheme() {
-        refreshToolTheme(null);
-    }
-
-    public void refreshLibraryDisplayOption() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshLibraryDisplayOption(dwc);
-        }
-    }
-
-    public void refreshHierarchyDisplayOption() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshHierarchyDisplayOption(dwc);
-        }
-    }
-
-    public void refreshParentRingColor() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshParentRingColor(dwc);
-        }
-    }
-
-    public void refreshRootContainerHeight() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshRootContainerHeight(dwc);
-        }
-    }
-
-    public void refreshRootContainerWidth() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshRootContainerWidth(dwc);
-        }
-    }
-
-    public void refreshTheme() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for (DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshTheme(dwc);
-        }
-    }
-
-    public void refreshSwatch() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for(DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshSwatch(dwc);
-        }
-    }
-
-    public void refreshGluonTheme() {
-        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
-        for(DocumentWindowController dwc : app.getDocumentWindowControllers()) {
-            refreshGluonTheme(dwc);
-        }
-    }
-
-    public void refresh(DocumentWindowController dwc, boolean refreshTheme) {
-        refreshAlignmentGuidesColor(dwc);
-        refreshBackgroundImage(dwc);
-        refreshCSSAnalyzerColumnsOrder(dwc);
-        refreshToolTheme(dwc);
-        refreshLibraryDisplayOption(dwc);
-        refreshHierarchyDisplayOption(dwc);
-        refreshParentRingColor(dwc);
-        refreshRootContainerHeight(dwc);
-        refreshRootContainerWidth(dwc);
-        if (refreshTheme) {
-            refreshTheme(dwc);
-            refreshSwatch(dwc);
-            refreshGluonTheme(dwc);
-        }
-    }
-    
     /**
      * Read data from the java preferences DB and initialize properties.
      */
@@ -618,25 +446,25 @@ public class PreferencesRecordGlobal {
         assert applicationRootPreferences != null;
 
         // Document size
-        final double height = applicationRootPreferences.getDouble(ROOT_CONTAINER_HEIGHT,
+        final double height = applicationRootPreferences.getDouble(PreferencesControllerBase.ROOT_CONTAINER_HEIGHT,
                 DEFAULT_ROOT_CONTAINER_HEIGHT);
         setRootContainerHeight(height);
-        final double width = applicationRootPreferences.getDouble(ROOT_CONTAINER_WIDTH,
+        final double width = applicationRootPreferences.getDouble(PreferencesControllerBase.ROOT_CONTAINER_WIDTH,
                 DEFAULT_ROOT_CONTAINER_WIDTH);
         setRootContainerWidth(width);
 
         // Background image
-        final String image = applicationRootPreferences.get(BACKGROUND_IMAGE,
+        final String image = applicationRootPreferences.get(PreferencesControllerBase.BACKGROUND_IMAGE,
                 DEFAULT_BACKGROUND_IMAGE.name());
         setBackgroundImage(BackgroundImage.valueOf(image));
 
         // Alignment guides color
-        final String agColor = applicationRootPreferences.get(ALIGNMENT_GUIDES_COLOR,
+        final String agColor = applicationRootPreferences.get(PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR,
                 DEFAULT_ALIGNMENT_GUIDES_COLOR.toString());
         setAlignmentGuidesColor(Color.valueOf(agColor));
 
         // Parent ring color
-        final String prColor = applicationRootPreferences.get(PARENT_RING_COLOR,
+        final String prColor = applicationRootPreferences.get(PreferencesControllerBase.PARENT_RING_COLOR,
                 DEFAULT_PARENT_RING_COLOR.toString());
         setParentRingColor(Color.valueOf(prColor));
 
@@ -646,12 +474,12 @@ public class PreferencesRecordGlobal {
         setToolTheme(ToolTheme.valueOf(tool_theme));
 
         // Library display option
-        final String library_DisplayOption = applicationRootPreferences.get(LIBRARY_DISPLAY_OPTION,
+        final String library_DisplayOption = applicationRootPreferences.get(PreferencesControllerBase.LIBRARY_DISPLAY_OPTION,
                 DEFAULT_LIBRARY_DISPLAY_OPTION.name());
         setLibraryDisplayOption(DISPLAY_MODE.valueOf(library_DisplayOption));
 
         // Hierarchy display option
-        final String hierarchy_DisplayOption = applicationRootPreferences.get(HIERARCHY_DISPLAY_OPTION,
+        final String hierarchy_DisplayOption = applicationRootPreferences.get(PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION,
                 DEFAULT_HIERARCHY_DISPLAY_OPTION.name());
         setHierarchyDisplayOption(DisplayOption.valueOf(hierarchy_DisplayOption));
 
@@ -699,11 +527,11 @@ public class PreferencesRecordGlobal {
         }
 
         // Document theme
-        String themeName = applicationRootPreferences.get(THEME, DEFAULT_THEME.name());
+        String themeName = applicationRootPreferences.get(PreferencesControllerBase.THEME, DEFAULT_THEME.name());
         theme = EditorPlatform.Theme.valueOf(themeName);
-        String swatchName = applicationRootPreferences.get(GLUON_SWATCH, DEFAULT_SWATCH.name());
+        String swatchName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_SWATCH, DEFAULT_SWATCH.name());
         gluonSwatch = EditorPlatform.GluonSwatch.valueOf(swatchName);
-        String gluonThemeName = applicationRootPreferences.get(GLUON_THEME, DEFAULT_GLUON_THEME.name());
+        String gluonThemeName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_THEME, DEFAULT_GLUON_THEME.name());
         gluonTheme = EditorPlatform.GluonTheme.valueOf(gluonThemeName);
 
         // Import Gluon Controls Alert
@@ -720,29 +548,29 @@ public class PreferencesRecordGlobal {
         assert applicationRootPreferences != null;
         assert key != null;
         switch (key) {
-            case ROOT_CONTAINER_HEIGHT:
-                applicationRootPreferences.putDouble(ROOT_CONTAINER_HEIGHT, getRootContainerHeight());
+            case PreferencesControllerBase.ROOT_CONTAINER_HEIGHT:
+                applicationRootPreferences.putDouble(PreferencesControllerBase.ROOT_CONTAINER_HEIGHT, getRootContainerHeight());
                 break;
-            case ROOT_CONTAINER_WIDTH:
-                applicationRootPreferences.putDouble(ROOT_CONTAINER_WIDTH, getRootContainerWidth());
+            case PreferencesControllerBase.ROOT_CONTAINER_WIDTH:
+                applicationRootPreferences.putDouble(PreferencesControllerBase.ROOT_CONTAINER_WIDTH, getRootContainerWidth());
                 break;
-            case BACKGROUND_IMAGE:
-                applicationRootPreferences.put(BACKGROUND_IMAGE, getBackgroundImage().name());
+            case PreferencesControllerBase.BACKGROUND_IMAGE:
+                applicationRootPreferences.put(PreferencesControllerBase.BACKGROUND_IMAGE, backgroundImage.name());
                 break;
-            case ALIGNMENT_GUIDES_COLOR:
-                applicationRootPreferences.put(ALIGNMENT_GUIDES_COLOR, getAlignmentGuidesColor().toString());
+            case PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR:
+                applicationRootPreferences.put(PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR, getAlignmentGuidesColor().toString());
                 break;
-            case PARENT_RING_COLOR:
-                applicationRootPreferences.put(PARENT_RING_COLOR, getParentRingColor().toString());
+            case PreferencesControllerBase.PARENT_RING_COLOR:
+                applicationRootPreferences.put(PreferencesControllerBase.PARENT_RING_COLOR, getParentRingColor().toString());
                 break;
             case TOOL_THEME:
                 applicationRootPreferences.put(TOOL_THEME, getToolTheme().name());
                 break;
-            case LIBRARY_DISPLAY_OPTION:
-                applicationRootPreferences.put(LIBRARY_DISPLAY_OPTION, getLibraryDisplayOption().name());
+            case PreferencesControllerBase.LIBRARY_DISPLAY_OPTION:
+                applicationRootPreferences.put(PreferencesControllerBase.LIBRARY_DISPLAY_OPTION, getLibraryDisplayOption().name());
                 break;
-            case HIERARCHY_DISPLAY_OPTION:
-                applicationRootPreferences.put(HIERARCHY_DISPLAY_OPTION, getHierarchyDisplayOption().name());
+            case PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION:
+                applicationRootPreferences.put(PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION, getHierarchyDisplayOption().name());
                 break;
             case CSS_TABLE_COLUMNS_ORDERING_REVERSED:
                 applicationRootPreferences.putBoolean(CSS_TABLE_COLUMNS_ORDERING_REVERSED, isCssTableColumnsOrderingReversed());
@@ -776,14 +604,14 @@ public class PreferencesRecordGlobal {
             case LAST_SENT_TRACKING_INFO_DATE:
                 applicationRootPreferences.put(LAST_SENT_TRACKING_INFO_DATE, getLastSentTrackingInfoDate().toString());
                 break;
-            case THEME:
-                applicationRootPreferences.put(THEME, getTheme().name());
+            case PreferencesControllerBase.THEME:
+                applicationRootPreferences.put(PreferencesControllerBase.THEME, getTheme().name());
                 break;
-            case GLUON_SWATCH:
-                applicationRootPreferences.put(GLUON_SWATCH, getSwatch().name());
+            case PreferencesControllerBase.GLUON_SWATCH:
+                applicationRootPreferences.put(PreferencesControllerBase.GLUON_SWATCH, getSwatch().name());
                 break;
-            case GLUON_THEME:
-                applicationRootPreferences.put(GLUON_THEME, getGluonTheme().name());
+            case PreferencesControllerBase.GLUON_THEME:
+                applicationRootPreferences.put(PreferencesControllerBase.GLUON_THEME, getGluonTheme().name());
                 break;
             case IMPORTED_GLUON_JARS:
                 if (importedGluonJars.length == 0) {

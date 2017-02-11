@@ -32,22 +32,23 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALIGNMENT_GUIDES_COLOR;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BACKGROUND_IMAGE;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.BACKGROUND_IMAGE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_SWATCH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_THEME;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_HEIGHT;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ROOT_CONTAINER_WIDTH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.HIERARCHY_DISPLAY_OPTION;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LIBRARY_DISPLAY_OPTION;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PARENT_RING_COLOR;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_SWATCH;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_THEME;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_HEIGHT;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_WIDTH;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.LIBRARY_DISPLAY_OPTION;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.PARENT_RING_COLOR;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.THEME;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.BackgroundImage;
@@ -81,6 +82,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
@@ -89,7 +91,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -162,7 +163,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             // Update preferences
             recordGlobal.writeToJavaPreferences(ROOT_CONTAINER_HEIGHT);
             // Update UI
-            recordGlobal.refreshRootContainerHeight();
+//            recordGlobal.refreshRootContainerHeight();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshRootContainerHeight(recordGlobal));
         });
         rootContainerWidth.setText(String.valueOf(recordGlobal.getRootContainerWidth()));
         rootContainerWidth.setOnAction(t -> {
@@ -172,7 +174,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             // Update preferences
             recordGlobal.writeToJavaPreferences(ROOT_CONTAINER_WIDTH);
             // Update UI
-            recordGlobal.refreshRootContainerWidth();
+//            recordGlobal.refreshRootContainerWidth();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshRootContainerWidth(recordGlobal));
         });
 
         // Background image
@@ -323,7 +326,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setBackgroundImage(newValue);
             recordGlobal.writeToJavaPreferences(BACKGROUND_IMAGE);
             // Update UI
-            recordGlobal.refreshBackgroundImage();
+//            recordGlobal.refreshBackgroundImage();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshBackgroundImage(recordGlobal));
         }
     }
 
@@ -340,7 +344,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setToolTheme(newValue);
             recordGlobal.writeToJavaPreferences(TOOL_THEME);
             // Update UI
-            recordGlobal.refreshToolTheme();
+//            recordGlobal.refreshToolTheme();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshToolTheme(recordGlobal));
         }
     }
 
@@ -356,7 +361,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setLibraryDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(LIBRARY_DISPLAY_OPTION);
             // Update UI
-            recordGlobal.refreshLibraryDisplayOption();
+//            recordGlobal.refreshLibraryDisplayOption();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshLibraryDisplayOption(recordGlobal));
         }
     }
 
@@ -373,7 +379,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setHierarchyDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(HIERARCHY_DISPLAY_OPTION);
             // Update UI
-            recordGlobal.refreshHierarchyDisplayOption();
+//            recordGlobal.refreshHierarchyDisplayOption();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshHierarchyDisplayOption(recordGlobal));
         }
     }
 
@@ -390,7 +397,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setCSSAnalyzerColumnsOrder(newValue);
             recordGlobal.writeToJavaPreferences(CSS_TABLE_COLUMNS_ORDERING_REVERSED);
             // Update UI
-            recordGlobal.refreshCSSAnalyzerColumnsOrder();
+//            recordGlobal.refreshCSSAnalyzerColumnsOrder();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshCssTableColumnsOrderingReversed(recordGlobal));
         }
     }
 
@@ -405,7 +413,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setTheme(newValue);
             recordGlobal.writeToJavaPreferences(THEME);
             // Update UI
-            recordGlobal.refreshTheme();
+//            recordGlobal.refreshTheme();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshTheme(recordGlobal));
         }
     }
 
@@ -420,7 +429,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setSwatch(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_SWATCH);
             // Update UI
-            recordGlobal.refreshSwatch();
+//            recordGlobal.refreshSwatch();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshSwatch(recordGlobal));
         }
     }
 
@@ -435,7 +445,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setGluonTheme(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_THEME);
             // Update UI
-            recordGlobal.refreshGluonTheme();
+//            recordGlobal.refreshGluonTheme();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshGluonTheme(recordGlobal));
         }
     }
 
@@ -474,7 +485,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setAlignmentGuidesColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(ALIGNMENT_GUIDES_COLOR);
             // Update UI
-            recordGlobal.refreshAlignmentGuidesColor();
+//            recordGlobal.refreshAlignmentGuidesColor();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshAlignmentGuidesColor(recordGlobal));
             graphic.setFill(newValue);
         }
     }
@@ -498,7 +510,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.setParentRingColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(PARENT_RING_COLOR);
             // Update UI
-            recordGlobal.refreshParentRingColor();
+//            recordGlobal.refreshParentRingColor();
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshParentRingColor(recordGlobal));
             graphic.setFill(newValue);
         }
     }

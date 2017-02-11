@@ -76,6 +76,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1073,6 +1074,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
         }
         return false;
+    }
+
+    public static void applyToAllDocumentWindows(Consumer<DocumentWindowController> consumer) {
+        for (DocumentWindowController dwc : getSingleton().getDocumentWindowControllers()) {
+            consumer.accept(dwc);
+        }
     }
 
 }

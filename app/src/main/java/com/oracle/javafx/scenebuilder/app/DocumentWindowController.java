@@ -117,6 +117,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -468,6 +469,79 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
 
     public void refreshCssTableColumnsOrderingReversed(boolean cssTableColumnsOrderingReversed) {
         cssPanelController.setTableColumnsOrderingReversed(cssTableColumnsOrderingReversed);
+    }
+
+    public void refreshCssTableColumnsOrderingReversed(PreferencesRecordGlobal preferences) {
+        refreshCssTableColumnsOrderingReversed(preferences.isCssTableColumnsOrderingReversed());
+    }
+
+    public void refreshAlignmentGuidesColor(PreferencesRecordGlobal preferences) {
+        final ContentPanelController cpc = getContentPanelController();
+        cpc.setGuidesColor(preferences.getAlignmentGuidesColor());
+    }
+
+    public void refreshBackgroundImage(PreferencesRecordGlobal preferences) {
+        // Background images
+        getContentPanelController().setWorkspaceBackground(preferences.getBackgroundImageImage());
+    }
+
+    public void refreshToolTheme(PreferencesRecordGlobal preferences) {
+        final SceneBuilderApp app = SceneBuilderApp.getSingleton();
+        final SceneBuilderApp.ApplicationControlAction aca;
+        switch(preferences.getToolTheme()) {
+            case DEFAULT:
+                aca = SceneBuilderApp.ApplicationControlAction.USE_DEFAULT_THEME;
+                break;
+            case DARK:
+                aca = SceneBuilderApp.ApplicationControlAction.USE_DARK_THEME;
+                break;
+            default:
+                assert false;
+                aca = null;
+                break;
+        }
+        app.performControlAction(aca, this);
+    }
+
+    public void refreshLibraryDisplayOption(PreferencesRecordGlobal preferences) {
+        refreshLibraryDisplayOption(preferences.getLibraryDisplayOption());
+    }
+
+    public void refreshHierarchyDisplayOption(PreferencesRecordGlobal preferences) {
+        refreshHierarchyDisplayOption(preferences.getHierarchyDisplayOption());
+    }
+
+    public void refreshParentRingColor(PreferencesRecordGlobal preferences) {
+        Color parentRingColor = preferences.getParentRingColor();
+        final ContentPanelController cpc = getContentPanelController();
+        cpc.setPringColor(parentRingColor);
+        final AbstractHierarchyPanelController hpc = getHierarchyPanelController();
+        hpc.setParentRingColor(parentRingColor);
+    }
+
+    public void refreshRootContainerHeight(PreferencesRecordGlobal preferencesRecordGlobal) {
+        final EditorController ec = getEditorController();
+        ec.setDefaultRootContainerHeight(preferencesRecordGlobal.getRootContainerHeight());
+    }
+
+    public void refreshRootContainerWidth(PreferencesRecordGlobal preferencesRecordGlobal) {
+        final EditorController ec = getEditorController();
+        ec.setDefaultRootContainerWidth(preferencesRecordGlobal.getRootContainerWidth());
+    }
+
+    public void refreshTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
+        final EditorController ec = getEditorController();
+        ec.setTheme(preferencesRecordGlobal.getTheme());
+    }
+
+    public void refreshSwatch(PreferencesRecordGlobal preferencesRecordGlobal) {
+        final EditorController ec = getEditorController();
+        ec.setGluonSwatch(preferencesRecordGlobal.getSwatch());
+    }
+
+    public void refreshGluonTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
+        final EditorController ec = getEditorController();
+        ec.setGluonTheme(preferencesRecordGlobal.getGluonTheme());
     }
 
     public boolean canPerformControlAction(DocumentControlAction controlAction) {
@@ -1778,7 +1852,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             final PreferencesController pc = PreferencesController.getSingleton();
             // Preferences global to the application
             final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-            recordGlobal.refresh(this, refreshTheme);
+//            recordGlobal.refresh(this, refreshTheme);
+            refreshFromPreferencesRecordGlobal(recordGlobal, refreshTheme);
             // Preferences specific to the document
             final PreferencesRecordDocument recordDocument = pc.getRecordDocument(this);
             recordDocument.readFromJavaPreferences();
@@ -1786,7 +1861,24 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             recordDocument.refresh();
         }
     }
-    
+
+    public void refreshFromPreferencesRecordGlobal(PreferencesRecordGlobal recordGlobal, boolean refreshTheme) {
+        refreshAlignmentGuidesColor(recordGlobal;
+        refreshBackgroundImage(recordGlobal);
+        refreshCssTableColumnsOrderingReversed(recordGlobal);
+        refreshToolTheme(recordGlobal);
+        refreshLibraryDisplayOption(recordGlobal);
+        refreshHierarchyDisplayOption(recordGlobal);
+        refreshParentRingColor(recordGlobal);
+        refreshRootContainerHeight(recordGlobal);
+        refreshRootContainerWidth(recordGlobal);
+        if (refreshTheme) {
+            refreshTheme(recordGlobal);
+            refreshSwatch(recordGlobal);
+            refreshGluonTheme(recordGlobal);
+        }
+    }
+
     private void resetDocumentPreferences() {
         final PreferencesController pc = PreferencesController.getSingleton();
         final PreferencesRecordDocument recordDocument = pc.getRecordDocument(this);
