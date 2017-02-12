@@ -34,7 +34,7 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
-import com.oracle.javafx.scenebuilder.app.preferences.MavenPreferences;
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.SBResources;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;

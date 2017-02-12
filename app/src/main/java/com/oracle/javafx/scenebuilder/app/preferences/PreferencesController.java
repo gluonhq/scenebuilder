@@ -35,7 +35,9 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,34 +98,19 @@ public class PreferencesController extends PreferencesControllerBase{
      *                                                                         *
      **************************************************************************/
 
-    private final Preferences documentsRootPreferences;
-    private final Preferences artifactsRootPreferences;
-    private final Preferences repositoriesRootPreferences;
-    private final PreferencesRecordGlobal recordGlobal;
-    private final MavenPreferences mavenPreferences;
     private final RepositoryPreferences repositoryPreferences;
     private final Map<DocumentWindowController, PreferencesRecordDocument> recordDocuments = new HashMap<>();
 
+    /***************************************************************************
+     *                                                                         *
+     * Constructors                                                            *
+     *                                                                         *
+     **************************************************************************/
+
     private PreferencesController() {
-        super(SB_RELEASE_NODE);
+        super(SB_RELEASE_NODE, new PreferencesRecordGlobal());
 
-        // Preferences global to the SB application
-        recordGlobal = new PreferencesRecordGlobal(applicationRootPreferences);
-
-        // Preferences specific to the document
-        // Create the root node for all documents preferences
-        documentsRootPreferences = applicationRootPreferences.node(DOCUMENTS);
-
-        // Preferences specific to the maven artifacts
-        // Create the root node for all artifacts preferences
-        artifactsRootPreferences = applicationRootPreferences.node(ARTIFACTS);
-        
-        // Preferences specific to the repositories
-        // Create the root node for all repositories preferences
-        repositoriesRootPreferences = applicationRootPreferences.node(REPOSITORIES);
-        
         // Cleanup document preferences at start time : 
-        // We keep only document preferences for the documents defined in RECENT_ITEMS
         final String items = applicationRootPreferences.get(RECENT_ITEMS, null); //NOI18N
         if (items != null && items.isEmpty() == false) {
             // Remove document preferences node if needed
@@ -138,18 +125,13 @@ public class PreferencesController extends PreferencesControllerBase{
                     // If path is null or empty, this means preferences DB has been corrupted
                     if (nodePath == null || nodePath.isEmpty()) {
                         documentPreferences.removeNode();
-                    } else if (items.contains(nodePath) == false) {
-                        documentPreferences.removeNode();
                     }
                 }
             } catch (BackingStoreException ex) {
                 Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        // maven artifacts
-        mavenPreferences = new MavenPreferences();
-        
+
         // create initial map of existing artifacts
         try {
             final String[] childrenNames = artifactsRootPreferences.childrenNames();
@@ -189,6 +171,12 @@ public class PreferencesController extends PreferencesControllerBase{
         }
     }
 
+    /***************************************************************************
+     *                                                                         *
+     * Methods                                                                 *
+     *                                                                         *
+     **************************************************************************/
+
     public static synchronized PreferencesController getSingleton() {
         if (singleton == null) {
             singleton = new PreferencesController();
@@ -197,9 +185,6 @@ public class PreferencesController extends PreferencesControllerBase{
         return singleton;
     }
 
-    public PreferencesRecordGlobal getRecordGlobal() {
-        return recordGlobal;
-    }
 
     public PreferencesRecordDocument getRecordDocument(final DocumentWindowController dwc) {
         final PreferencesRecordDocument recordDocument;
@@ -214,7 +199,7 @@ public class PreferencesController extends PreferencesControllerBase{
 
     public void clearRecentItems() {
         // Clear RECENT ITEMS global preferences
-        getRecordGlobal().clearRecentItems();
+        ((PreferencesRecordGlobal)getRecordGlobal()).clearRecentItems();
         // Clear individual DOCUMENTS preferences
         try {
             // Remove nodes from the DOCUMENTS root preference

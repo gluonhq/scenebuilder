@@ -34,8 +34,6 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
 import java.io.File;
@@ -47,27 +45,48 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
-
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.*;
 
 /**
- * Defines preferences global to the application.
+ * Defines preferences global to the SB application.
  */
-public class PreferencesRecordGlobal {
+public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
+
+    /***************************************************************************
+     *                                                                         *
+     * Support Classes                                                         *
+     *                                                                         *
+     **************************************************************************/
+
+    public enum CSSAnalyzerColumnsOrder {
+
+        DEFAULTS_FIRST {
+
+            @Override
+            public String toString() {
+                return I18N.getString("prefs.cssanalyzer.columns.defaults.first");
+            }
+        },
+        DEFAULTS_LAST {
+
+            @Override
+            public String toString() {
+                return I18N.getString("prefs.cssanalyzer.columns.defaults.last");
+            }
+        }
+    }
+
+    /***************************************************************************
+     *                                                                         *
+     * Static fields                                                           *
+     *                                                                         *
+     **************************************************************************/
 
     // Default values
     static final double DEFAULT_ROOT_CONTAINER_HEIGHT = 400;
     static final double DEFAULT_ROOT_CONTAINER_WIDTH = 600;
-
-    static final BackgroundImage DEFAULT_BACKGROUND_IMAGE
-            = BackgroundImage.BACKGROUND_03;
-    static final Color DEFAULT_ALIGNMENT_GUIDES_COLOR = Color.RED;
-    static final Color DEFAULT_PARENT_RING_COLOR = Color.rgb(238, 168, 47);
 
     static final ToolTheme DEFAULT_TOOL_THEME = ToolTheme.DEFAULT;
     static final DISPLAY_MODE DEFAULT_LIBRARY_DISPLAY_OPTION
@@ -76,17 +95,15 @@ public class PreferencesRecordGlobal {
             = DisplayOption.INFO;
     static final boolean DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED = false;
 
-    public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.DEFAULT_THEME;
-    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.DEFAULT_SWATCH;
-    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.DEFAULT_GLUON_THEME;
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
 
+    /***************************************************************************
+     *                                                                         *
+     * Instance fields                                                         *
+     *                                                                         *
+     **************************************************************************/
+
     // Global preferences
-    private double rootContainerHeight = DEFAULT_ROOT_CONTAINER_HEIGHT;
-    private double rootContainerWidth = DEFAULT_ROOT_CONTAINER_WIDTH;
-    private BackgroundImage backgroundImage = DEFAULT_BACKGROUND_IMAGE;
-    private Color alignmentGuidesColor = DEFAULT_ALIGNMENT_GUIDES_COLOR;
-    private Color parentRingColor = DEFAULT_PARENT_RING_COLOR;
     private ToolTheme toolTheme = DEFAULT_TOOL_THEME;
     private DISPLAY_MODE libraryDisplayOption = DEFAULT_LIBRARY_DISPLAY_OPTION;
     private DisplayOption hierarchyDisplayOption = DEFAULT_HIERARCHY_DISPLAY_OPTION;
@@ -105,103 +122,22 @@ public class PreferencesRecordGlobal {
 
     private LocalDate lastSentTrackingInfoDate = null;
 
-    private final Preferences applicationRootPreferences;
-
-    private EditorPlatform.Theme theme = DEFAULT_THEME;
-    private EditorPlatform.GluonSwatch gluonSwatch = DEFAULT_SWATCH;
-    private EditorPlatform.GluonTheme gluonTheme = DEFAULT_GLUON_THEME;
-
     final static Integer[] recentItemsSizes = {5, 10, 15, 20};
 
+    /***************************************************************************
+     *                                                                         *
+     * Constructors                                                            *
+     *                                                                         *
+     **************************************************************************/
 
-    public enum BackgroundImage {
-
-        BACKGROUND_01 {
-
-                    @Override
-                    public String toString() {
-                        return I18N.getString("prefs.background.value1");
-                    }
-                },
-        BACKGROUND_02 {
-
-                    @Override
-                    public String toString() {
-                        return I18N.getString("prefs.background.value2");
-                    }
-                },
-        BACKGROUND_03 {
-
-                    @Override
-                    public String toString() {
-                        return I18N.getString("prefs.background.value3");
-                    }
-                }
+    public PreferencesRecordGlobal() {
     }
 
-    public enum CSSAnalyzerColumnsOrder {
-
-        DEFAULTS_FIRST {
-
-                    @Override
-                    public String toString() {
-                        return I18N.getString("prefs.cssanalyzer.columns.defaults.first");
-                    }
-                },
-        DEFAULTS_LAST {
-
-                    @Override
-                    public String toString() {
-                        return I18N.getString("prefs.cssanalyzer.columns.defaults.last");
-                    }
-                }
-    }
-
-    public PreferencesRecordGlobal(Preferences applicationRootPreferences) {
-        this.applicationRootPreferences = applicationRootPreferences;
-    }
-
-    public double getRootContainerHeight() {
-        return rootContainerHeight;
-    }
-
-    public void setRootContainerHeight(double value) {
-        rootContainerHeight = value;
-    }
-
-    public double getRootContainerWidth() {
-        return rootContainerWidth;
-    }
-
-    public void setRootContainerWidth(double value) {
-        rootContainerWidth = value;
-    }
-
-    public BackgroundImage getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    public Image getBackgroundImageImage() { return getImage(backgroundImage); }
-
-    public void setBackgroundImage(BackgroundImage value) {
-        backgroundImage = value;
-    }
-
-    public Color getAlignmentGuidesColor() {
-        return alignmentGuidesColor;
-    }
-
-    public void setAlignmentGuidesColor(Color value) {
-        alignmentGuidesColor = value;
-    }
-
-    public Color getParentRingColor() {
-        return parentRingColor;
-    }
-
-    public void setParentRingColor(Color value) {
-        parentRingColor = value;
-    }
+    /***************************************************************************
+     *                                                                         *
+     * Methods                                                                 *
+     *                                                                         *
+     **************************************************************************/
 
     public ToolTheme getToolTheme() {
         return toolTheme;
@@ -273,18 +209,6 @@ public class PreferencesRecordGlobal {
     public void setCssTableColumnsOrderingReversed(boolean value) {
         cssTableColumnsOrderingReversed = value;
     }
-
-    public EditorPlatform.Theme getTheme() { return theme; }
-
-    public void setTheme(EditorPlatform.Theme theme) { this.theme = theme; }
-
-    public EditorPlatform.GluonSwatch getSwatch() { return gluonSwatch; }
-
-    public void setSwatch(EditorPlatform.GluonSwatch swatch) { this.gluonSwatch = swatch; }
-
-    public EditorPlatform.GluonTheme getGluonTheme() { return gluonTheme; }
-
-    public void setGluonTheme(EditorPlatform.GluonTheme theme) { this.gluonTheme = theme; }
 
     public int getRecentItemsSize() {
         return recentItemsSize;
@@ -442,31 +366,16 @@ public class PreferencesRecordGlobal {
      * Read data from the java preferences DB and initialize properties.
      */
     public void readFromJavaPreferences() {
-
-        assert applicationRootPreferences != null;
+        super.readFromJavaPreferences();
 
         // Document size
-        final double height = applicationRootPreferences.getDouble(PreferencesControllerBase.ROOT_CONTAINER_HEIGHT,
-                DEFAULT_ROOT_CONTAINER_HEIGHT);
-        setRootContainerHeight(height);
-        final double width = applicationRootPreferences.getDouble(PreferencesControllerBase.ROOT_CONTAINER_WIDTH,
-                DEFAULT_ROOT_CONTAINER_WIDTH);
-        setRootContainerWidth(width);
+        if (getRootContainerHeight() == -1) {
+            setRootContainerHeight(DEFAULT_ROOT_CONTAINER_HEIGHT);
+        }
 
-        // Background image
-        final String image = applicationRootPreferences.get(PreferencesControllerBase.BACKGROUND_IMAGE,
-                DEFAULT_BACKGROUND_IMAGE.name());
-        setBackgroundImage(BackgroundImage.valueOf(image));
-
-        // Alignment guides color
-        final String agColor = applicationRootPreferences.get(PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR,
-                DEFAULT_ALIGNMENT_GUIDES_COLOR.toString());
-        setAlignmentGuidesColor(Color.valueOf(agColor));
-
-        // Parent ring color
-        final String prColor = applicationRootPreferences.get(PreferencesControllerBase.PARENT_RING_COLOR,
-                DEFAULT_PARENT_RING_COLOR.toString());
-        setParentRingColor(Color.valueOf(prColor));
+        if (getRootContainerWidth() == -1) {
+            setRootContainerWidth(DEFAULT_ROOT_CONTAINER_WIDTH);
+        }
 
         // Tool Theme
         final String tool_theme = applicationRootPreferences.get(TOOL_THEME,
@@ -526,14 +435,6 @@ public class PreferencesRecordGlobal {
             lastSentTrackingInfoDate = LocalDate.parse(dateString);
         }
 
-        // Document theme
-        String themeName = applicationRootPreferences.get(PreferencesControllerBase.THEME, DEFAULT_THEME.name());
-        theme = EditorPlatform.Theme.valueOf(themeName);
-        String swatchName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_SWATCH, DEFAULT_SWATCH.name());
-        gluonSwatch = EditorPlatform.GluonSwatch.valueOf(swatchName);
-        String gluonThemeName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_THEME, DEFAULT_GLUON_THEME.name());
-        gluonTheme = EditorPlatform.GluonTheme.valueOf(gluonThemeName);
-
         // Import Gluon Controls Alert
         final String importedGluonJarsString = applicationRootPreferences.get(IMPORTED_GLUON_JARS, null);
         if (importedGluonJarsString == null) {
@@ -548,21 +449,6 @@ public class PreferencesRecordGlobal {
         assert applicationRootPreferences != null;
         assert key != null;
         switch (key) {
-            case PreferencesControllerBase.ROOT_CONTAINER_HEIGHT:
-                applicationRootPreferences.putDouble(PreferencesControllerBase.ROOT_CONTAINER_HEIGHT, getRootContainerHeight());
-                break;
-            case PreferencesControllerBase.ROOT_CONTAINER_WIDTH:
-                applicationRootPreferences.putDouble(PreferencesControllerBase.ROOT_CONTAINER_WIDTH, getRootContainerWidth());
-                break;
-            case PreferencesControllerBase.BACKGROUND_IMAGE:
-                applicationRootPreferences.put(PreferencesControllerBase.BACKGROUND_IMAGE, backgroundImage.name());
-                break;
-            case PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR:
-                applicationRootPreferences.put(PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR, getAlignmentGuidesColor().toString());
-                break;
-            case PreferencesControllerBase.PARENT_RING_COLOR:
-                applicationRootPreferences.put(PreferencesControllerBase.PARENT_RING_COLOR, getParentRingColor().toString());
-                break;
             case TOOL_THEME:
                 applicationRootPreferences.put(TOOL_THEME, getToolTheme().name());
                 break;
@@ -604,15 +490,6 @@ public class PreferencesRecordGlobal {
             case LAST_SENT_TRACKING_INFO_DATE:
                 applicationRootPreferences.put(LAST_SENT_TRACKING_INFO_DATE, getLastSentTrackingInfoDate().toString());
                 break;
-            case PreferencesControllerBase.THEME:
-                applicationRootPreferences.put(PreferencesControllerBase.THEME, getTheme().name());
-                break;
-            case PreferencesControllerBase.GLUON_SWATCH:
-                applicationRootPreferences.put(PreferencesControllerBase.GLUON_SWATCH, getSwatch().name());
-                break;
-            case PreferencesControllerBase.GLUON_THEME:
-                applicationRootPreferences.put(PreferencesControllerBase.GLUON_THEME, getGluonTheme().name());
-                break;
             case IMPORTED_GLUON_JARS:
                 if (importedGluonJars.length == 0) {
                     applicationRootPreferences.put(IMPORTED_GLUON_JARS, "");
@@ -626,30 +503,9 @@ public class PreferencesRecordGlobal {
                 }
                 break;
             default:
-                assert false;
+                super.writeToJavaPreferences(key);
                 break;
         }
-    }
-
-    private static Image getImage(BackgroundImage bgi) {
-        final URL url;
-        switch (bgi) {
-            case BACKGROUND_01:
-                url = PreferencesRecordGlobal.class.getResource("Background-Blue-Grid.png"); //NOI18N
-                break;
-            case BACKGROUND_02:
-                url = PreferencesRecordGlobal.class.getResource("Background-Neutral-Grid.png"); //NOI18N
-                break;
-            case BACKGROUND_03:
-                url = ContentPanelController.getDefaultWorkspaceBackgroundURL();
-                break;
-            default:
-                url = null;
-                assert false;
-                break;
-        }
-        assert url != null;
-        return new Image(url.toExternalForm());
     }
 
 //    private static Image getShadowImage() {

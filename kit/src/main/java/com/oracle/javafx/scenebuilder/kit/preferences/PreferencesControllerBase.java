@@ -11,9 +11,9 @@ public abstract class PreferencesControllerBase {
      **************************************************************************/
 
     // NODES
-    protected static final String DOCUMENTS = "DOCUMENTS"; //NOI18N
-    protected static final String ARTIFACTS = "ARTIFACTS"; //NOI18N
-    protected static final String REPOSITORIES = "REPOSITORIES"; //NOI18N
+    private static final String DOCUMENTS = "DOCUMENTS"; //NOI18N
+    private static final String ARTIFACTS = "ARTIFACTS"; //NOI18N
+    private static final String REPOSITORIES = "REPOSITORIES"; //NOI18N
 
     // GLOBAL PREFERENCES
     public static final String ROOT_CONTAINER_HEIGHT = "ROOT_CONTAINER_HEIGHT"; //NOI18N
@@ -43,10 +43,53 @@ public abstract class PreferencesControllerBase {
      **************************************************************************/
 
     protected final Preferences applicationRootPreferences;
+    protected final PreferencesRecordGlobalBase recordGlobal;
+    protected final Preferences documentsRootPreferences;
+    protected  final Preferences artifactsRootPreferences;
+    protected final Preferences repositoriesRootPreferences;
+    protected final MavenPreferences mavenPreferences;
 
-    public PreferencesControllerBase(String basePrefNodeName) {
+
+
+    /***************************************************************************
+     *                                                                         *
+     * Constructors                                                            *
+     *                                                                         *
+     **************************************************************************/
+
+    public PreferencesControllerBase(String basePrefNodeName, PreferencesRecordGlobalBase recordGlobal) {
         applicationRootPreferences = Preferences.userNodeForPackage(getClass()).node(basePrefNodeName);
 
+        // Preferences global to the SB application
+        this.recordGlobal = recordGlobal;
+        recordGlobal.setApplicationRootPreferences(applicationRootPreferences);
+
+        // Preferences specific to the document
+        // Create the root node for all documents preferences
+        documentsRootPreferences = applicationRootPreferences.node(DOCUMENTS);
+
+        // Preferences specific to the maven artifacts
+        // Create the root node for all artifacts preferences
+        artifactsRootPreferences = applicationRootPreferences.node(ARTIFACTS);
+
+        // Preferences specific to the repositories
+        // Create the root node for all repositories preferences
+        repositoriesRootPreferences = applicationRootPreferences.node(REPOSITORIES);
+
+        // maven artifacts
+        mavenPreferences = new MavenPreferences();
+
     }
+
+    /***************************************************************************
+     *                                                                         *
+     * Methods                                                                 *
+     *                                                                         *
+     **************************************************************************/
+
+    public PreferencesRecordGlobalBase getRecordGlobal() {
+        return recordGlobal;
+    }
+
 
 }

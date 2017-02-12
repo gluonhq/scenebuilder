@@ -29,9 +29,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.preferences;
+package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -42,13 +44,31 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MavenPreferences {
-    
+
+    /***************************************************************************
+     *                                                                         *
+     * Instance fields                                                         *
+     *                                                                         *
+     **************************************************************************/
+
     private final Map<String, PreferencesRecordArtifact> recordArtifacts;
+
+    /***************************************************************************
+     *                                                                         *
+     * Support Classes                                                         *
+     *                                                                         *
+     **************************************************************************/
 
     public MavenPreferences() {
         this.recordArtifacts = new HashMap<>();
     }
-    
+
+    /***************************************************************************
+     *                                                                         *
+     * Methods                                                                 *
+     *                                                                         *
+     **************************************************************************/
+
     public PreferencesRecordArtifact getRecordArtifact(String coordinates) {
         return recordArtifacts.get(coordinates);
     }
