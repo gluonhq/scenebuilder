@@ -2,22 +2,14 @@ jar {
     baseName = 'scenebuilder-kit'
 }
 
-task kitJar(type: Jar, dependsOn: classes, description: 'Creates a jar for the SceneBuilder kit.') {
-    baseName = 'scenebuilder-kit'
-}
-
 apply plugin: 'maven'
-
-artifacts {
-    archives kitJar
-}
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
-            def repoUser = getStringProperty('publishRepositoryUser', '');
-            def repoPassword = getStringProperty('publishRepositoryPassword', '');
+            def repoUrl = project.getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUser = project.getStringProperty('publishRepositoryUser', '');
+            def repoPassword = project.getStringProperty('publishRepositoryPassword', '');
             snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
@@ -32,13 +24,4 @@ uploadArchives {
             }
         }
     }
-}
-
-private String getStringProperty(String name, String defaultValue) {
-    if (!hasProperty(name)) {
-        return defaultValue
-    }
-
-    def propertyValue = getProperty(name)
-    return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }

@@ -12,6 +12,14 @@ buildscript {
 }
 
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
+ext.getStringProperty = { name, defaultValue ->
+    if (!hasProperty(name)) {
+        return defaultValue
+    }
+
+    def propertyValue = getProperty(name)
+    return propertyValue != null ? propertyValue.toString().trim() : defaultValue
+}
 
 subprojects {
     apply plugin: 'java'
@@ -105,9 +113,9 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
-            def repoUser = getStringProperty('publishRepositoryUser', '');
-            def repoPassword = getStringProperty('publishRepositoryPassword', '');
+            def repoUrl = project.getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUser = project.getStringProperty('publishRepositoryUser', '');
+            def repoPassword = project.getStringProperty('publishRepositoryPassword', '');
             snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
@@ -126,13 +134,3 @@ uploadArchives {
         }
     }
 }
-
-private String getStringProperty(String name, String defaultValue) {
-    if (!hasProperty(name)) {
-        return defaultValue
-    }
-
-    def propertyValue = getProperty(name)
-    return propertyValue != null ? propertyValue.toString().trim() : defaultValue
-}
-
