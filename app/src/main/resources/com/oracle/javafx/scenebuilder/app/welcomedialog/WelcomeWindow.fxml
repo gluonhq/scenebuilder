@@ -125,7 +125,7 @@
                            <graphic>
                               <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../kit/template/basic_desktop.png" />
+                                    <Image url="@../../../../../../../../../../kit/src/main/resources/com/oracle/javafx/scenebuilder/kit/template//basic_desktop.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
@@ -140,7 +140,7 @@
                            <graphic>
                               <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../kit/template/complex_desktop.png" />
+                                    <Image url="@../../../../../../../../../../kit/src/main/resources/com/oracle/javafx/scenebuilder/kit/template/complex_desktop.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
@@ -179,7 +179,7 @@
                            <graphic>
                               <ImageView fitHeight="198.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../kit/template/basic_mobile.png" />
+                                    <Image url="@../../../../../../../../../../kit/src/main/resources/com/oracle/javafx/scenebuilder/kit/template/basic_mobile.png" />
                                  </image>
                                  <effect>
                                     <DropShadow color="#0000004d" />
