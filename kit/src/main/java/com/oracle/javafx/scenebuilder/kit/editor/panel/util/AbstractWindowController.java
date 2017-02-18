@@ -34,10 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.util;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -134,7 +136,9 @@ public abstract class AbstractWindowController {
                 stage.sizeToScene();
             }
             // By default we set the same icons as the owner
-            stage.getIcons().addAll(owner.getIcons());
+            if (owner != null) {
+                stage.getIcons().addAll(owner.getIcons());
+            }
 
             controllerDidCreateStage();
         }
