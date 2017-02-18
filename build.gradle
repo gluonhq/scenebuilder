@@ -1,7 +1,6 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
 apply plugin: 'java'
-apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 buildscript {
@@ -23,7 +22,6 @@ ext.getStringProperty = { name, defaultValue ->
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'application'
 
     def tryGetProperty = {String name, String defaultValue ->
         if (!project.hasProperty(name)) {
@@ -80,7 +78,6 @@ subprojects {
                 version: version,
                 javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
                 buildDate: buildDate,
-                mainClassName: mainClassName
             ])
             filter(EscapeUnicode)
         }
@@ -97,11 +94,6 @@ clean {
 shadowJar {
     baseName = 'scenebuilder-all'
 }
-
-if (!hasProperty('mainClass')) {
-    ext.mainClass = mainClassName
-}
-
 
 apply plugin: 'maven'
 
