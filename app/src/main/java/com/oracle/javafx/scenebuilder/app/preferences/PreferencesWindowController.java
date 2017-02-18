@@ -51,21 +51,24 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.BackgroundImage;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.BackgroundImage;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.CSSAnalyzerColumnsOrder;
 
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ALIGNMENT_GUIDES_COLOR;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_BACKGROUND_IMAGE;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
+
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_PARENT_RING_COLOR;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_SWATCH;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_THEME;
+
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.recentItemsSizes;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_HIERARCHY_DISPLAY_OPTION;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_LIBRARY_DISPLAY_OPTION;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_PARENT_RING_COLOR;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_WIDTH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_SWATCH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_THEME;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.recentItemsSizes;
+
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
@@ -152,7 +155,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         final PreferencesController preferencesController
                 = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
+                = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
 
         // Root container size
         rootContainerHeight.setText(String.valueOf(recordGlobal.getRootContainerHeight()));
@@ -269,7 +272,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         final PreferencesController preferencesController
                 = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal
-                = preferencesController.getRecordGlobal();
+                = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
 
         // Root container size
         rootContainerHeight.setText(String.valueOf(DEFAULT_ROOT_CONTAINER_HEIGHT));
@@ -321,7 +324,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setBackgroundImage(newValue);
             recordGlobal.writeToJavaPreferences(BACKGROUND_IMAGE);
@@ -339,7 +342,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setToolTheme(newValue);
             recordGlobal.writeToJavaPreferences(TOOL_THEME);
@@ -356,7 +359,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setLibraryDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(LIBRARY_DISPLAY_OPTION);
@@ -374,7 +377,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setHierarchyDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(HIERARCHY_DISPLAY_OPTION);
@@ -392,7 +395,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setCSSAnalyzerColumnsOrder(newValue);
             recordGlobal.writeToJavaPreferences(CSS_TABLE_COLUMNS_ORDERING_REVERSED);
@@ -408,7 +411,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setTheme(newValue);
             recordGlobal.writeToJavaPreferences(THEME);
@@ -424,7 +427,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setSwatch(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_SWATCH);
@@ -440,7 +443,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setGluonTheme(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_THEME);
@@ -458,7 +461,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setRecentItemsSize(newValue);
             recordGlobal.writeToJavaPreferences(RECENT_ITEMS_SIZE);
@@ -480,7 +483,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setAlignmentGuidesColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(ALIGNMENT_GUIDES_COLOR);
@@ -505,7 +508,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
+                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setParentRingColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(PARENT_RING_COLOR);

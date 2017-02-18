@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
@@ -100,13 +101,15 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         super.controllerDidLoadFxml();
         assert recentDocuments != null;
 
-        List<String> recentItems = PreferencesController.getSingleton().getRecordGlobal().getRecentItems();
+        PreferencesRecordGlobal preferencesRecordGlobal = (PreferencesRecordGlobal) PreferencesController
+                .getSingleton().getRecordGlobal();
+        List<String> recentItems = preferencesRecordGlobal.getRecentItems();
         if (recentItems.size() == 0) {
             Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
             noRecentItems.getStyleClass().add("no-recent-items-label");
             recentDocuments.getChildren().add(noRecentItems);
         }
-        for (int row = 0; row < PreferencesController.getSingleton().getRecordGlobal().getRecentItemsSize(); ++row) {
+        for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
             if (recentItems.size() < row + 1) {
                 break;
             }

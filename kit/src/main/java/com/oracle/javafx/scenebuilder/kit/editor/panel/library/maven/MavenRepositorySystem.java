@@ -32,7 +32,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +44,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.util.FileUtils;
@@ -103,14 +104,16 @@ public class MavenRepositorySystem {
     
     private BasicRepositoryConnectorFactory basicRepositoryConnectorFactory;
 
-    private String userM2Repository;
-
-    private String tempM2Repository;
+    private final String userM2Repository;
+    private final String tempM2Repository;
+    private final RepositoryPreferences repositoryPreferences;
     
-    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository, String tempM2Repository) {
+    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository, String tempM2Repository,
+                                 RepositoryPreferences repositoryPreferences) {
         this.onlyReleases = onlyReleases;
         this.userM2Repository = userM2Repository;
         this.tempM2Repository = tempM2Repository;
+        this.repositoryPreferences = repositoryPreferences;
         initRepositorySystem();
     }
     
@@ -167,7 +170,7 @@ public class MavenRepositorySystem {
                         (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
                 .map(this::createRepository)
                 .collect(Collectors.toList());
-        list.addAll(PreferencesController.getSingleton().getRepositoryPreferences().getRepositories().stream()
+        list.addAll(repositoryPreferences.getRepositories().stream()
                 .filter(r -> !onlyReleases ||
                         (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
                 .map(this::createRepository)

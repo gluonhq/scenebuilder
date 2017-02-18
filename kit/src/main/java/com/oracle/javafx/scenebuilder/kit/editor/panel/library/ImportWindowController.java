@@ -33,7 +33,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
@@ -58,6 +57,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -86,6 +86,11 @@ import javafx.util.Callback;
  */
 public class ImportWindowController extends AbstractModalDialog {
 
+    public enum PrefSize {
+
+        DEFAULT, TWO_HUNDRED_BY_ONE_HUNDRED, TWO_HUNDRED_BY_TWO_HUNDRED
+    };
+
     final List<File> importFiles;
     private final LibraryPanelController libPanelController;
     Task<List<JarReport>> exploringTask = null;
@@ -106,10 +111,7 @@ public class ImportWindowController extends AbstractModalDialog {
     private List<String> alreadyExcludedItems = new ArrayList<>();
     private final List<String> artifactsFilter;
 
-    public enum PrefSize {
-
-        DEFAULT, TWO_HUNDRED_BY_ONE_HUNDRED, TWO_HUNDRED_BY_TWO_HUNDRED
-    };
+    private final MavenPreferences mavenPreferences;
     
     @FXML
     private VBox leftHandSidePart;
@@ -146,12 +148,13 @@ public class ImportWindowController extends AbstractModalDialog {
     
     @FXML
     ToggleButton checkAllUncheckAllToggle;
+
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner) {
-        this(lpc, files, owner, true, new ArrayList<>());
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner) {
+        this(lpc, files, mavenPreferences, owner, true, new ArrayList<>());
     }
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner,
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner,
             boolean copyFilesToUserLibraryDir, List<String> artifactsFilter) {
         super(ImportWindowController.class.getResource("ImportDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         libPanelController = lpc;
@@ -159,6 +162,7 @@ public class ImportWindowController extends AbstractModalDialog {
         this.copyFilesToUserLibraryDir = copyFilesToUserLibraryDir;
         this.artifactsFilter = artifactsFilter;
         this.owner = owner;
+        this.mavenPreferences = mavenPreferences;
     }
 
     /*
@@ -345,7 +349,7 @@ public class ImportWindowController extends AbstractModalDialog {
             }
         }
         // add artifacts jars (main and dependencies)
-        res.addAll(PreferencesController.getSingleton().getMavenPreferences().getArtifactsFilesWithDependencies());
+        res.addAll(mavenPreferences.getArtifactsFilesWithDependencies());
         
         return res;
     }

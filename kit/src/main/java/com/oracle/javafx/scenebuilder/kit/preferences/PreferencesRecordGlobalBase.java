@@ -48,10 +48,10 @@ public abstract class PreferencesRecordGlobalBase {
      *                                                                         *
      **************************************************************************/
 
-    protected static final BackgroundImage DEFAULT_BACKGROUND_IMAGE
+    public static final BackgroundImage DEFAULT_BACKGROUND_IMAGE
             = BackgroundImage.BACKGROUND_03;
-    protected static final Color DEFAULT_ALIGNMENT_GUIDES_COLOR = Color.RED;
-    protected static final Color DEFAULT_PARENT_RING_COLOR = Color.rgb(238, 168, 47);
+    public static final Color DEFAULT_ALIGNMENT_GUIDES_COLOR = Color.RED;
+    public static final Color DEFAULT_PARENT_RING_COLOR = Color.rgb(238, 168, 47);
     public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.DEFAULT_THEME;
     public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.DEFAULT_SWATCH;
     public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.DEFAULT_GLUON_THEME;

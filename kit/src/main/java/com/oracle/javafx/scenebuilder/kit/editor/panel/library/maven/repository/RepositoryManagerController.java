@@ -31,13 +31,13 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.dialog.RepositoryDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -66,14 +66,17 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
 
     private final String userM2Repository;
     private final String tempM2Repository;
+    private final PreferencesControllerBase preferencesControllerBase;
     
     public RepositoryManagerController(EditorController editorController, String userM2Repository,
-                                       String tempM2Repository, Stage owner) {
+                                       String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                       Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryManager.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userM2Repository = userM2Repository;
         this.tempM2Repository = tempM2Repository;
+        this.preferencesControllerBase = preferencesControllerBase;
     }
 
     @Override
@@ -109,7 +112,7 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
         repositoryListView.setCellFactory(param -> new RepositoryManagerListCell());
         
         // custom repositories
-        listItems.addAll(PreferencesController.getSingleton().getRepositoryPreferences().getRepositories()
+        listItems.addAll(preferencesControllerBase.getRepositoryPreferences().getRepositories()
                 .stream()
                 .map(r -> new CustomRepositoryListItem(this, r))
                 .collect(Collectors.toList()));
@@ -134,7 +137,7 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
 
     private void repositoryDialog(Repository repository) {
         RepositoryDialogController repositoryDialogController = new RepositoryDialogController(editorController,
-                userM2Repository, tempM2Repository, getStage());
+                userM2Repository, tempM2Repository, preferencesControllerBase, getStage());
         repositoryDialogController.openWindow();
         repositoryDialogController.setRepository(repository);
         repositoryDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
@@ -155,7 +158,7 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
     public void delete(RepositoryListItem item) {
         // Remove repository
         logInfoMessage("log.user.repository.removed", item.getRepository().getId());
-        PreferencesController.getSingleton().removeRepository(item.getRepository().getId());
+        preferencesControllerBase.removeRepository(item.getRepository().getId());
         loadRepositoryList();
     }
     

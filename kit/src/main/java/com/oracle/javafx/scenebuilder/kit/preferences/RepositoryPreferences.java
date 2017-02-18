@@ -29,9 +29,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.preferences;
+package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordRepository;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

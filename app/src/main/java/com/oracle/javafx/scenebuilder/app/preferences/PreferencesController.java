@@ -38,6 +38,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordRepository;
+import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,7 +100,6 @@ public class PreferencesController extends PreferencesControllerBase{
      *                                                                         *
      **************************************************************************/
 
-    private final RepositoryPreferences repositoryPreferences;
     private final Map<DocumentWindowController, PreferencesRecordDocument> recordDocuments = new HashMap<>();
 
     /***************************************************************************
@@ -132,43 +133,8 @@ public class PreferencesController extends PreferencesControllerBase{
             }
         }
 
-        // create initial map of existing artifacts
-        try {
-            final String[] childrenNames = artifactsRootPreferences.childrenNames();
-            for (String child : childrenNames) {
-                Preferences artifactPreferences = artifactsRootPreferences.node(child);
-                MavenArtifact mavenArtifact = new MavenArtifact(child);
-                mavenArtifact.setPath(artifactPreferences.get(PreferencesRecordArtifact.PATH, null));
-                mavenArtifact.setDependencies(artifactPreferences.get(PreferencesRecordArtifact.DEPENDENCIES, null));
-                mavenArtifact.setFilter(artifactPreferences.get(PreferencesRecordArtifact.FILTER, null));
-                final PreferencesRecordArtifact recordArtifact = new PreferencesRecordArtifact(
-                        artifactsRootPreferences, mavenArtifact);
-                mavenPreferences.addRecordArtifact(child, recordArtifact);
-            }
-        } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        // repositories
-        repositoryPreferences = new RepositoryPreferences();
-        
-        // create initial map of existing repositories
-        try {
-            final String[] childrenNames = repositoriesRootPreferences.childrenNames();
-            for (String child : childrenNames) {
-                Preferences rp = repositoriesRootPreferences.node(child);
-                Repository repository = new Repository(rp.get(PreferencesRecordRepository.REPO_ID, null), 
-                        rp.get(PreferencesRecordRepository.REPO_TYPE, null),
-                        rp.get(PreferencesRecordRepository.REPO_URL, null),
-                        rp.get(PreferencesRecordRepository.REPO_USER, null),
-                        rp.get(PreferencesRecordRepository.REPO_PASS, null));
-                final PreferencesRecordRepository recordRepository = new PreferencesRecordRepository(
-                        artifactsRootPreferences, repository);
-                repositoryPreferences.addRecordRepository(child, recordRepository);
-            }
-        } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+
     }
 
     /***************************************************************************
@@ -213,58 +179,6 @@ public class PreferencesController extends PreferencesControllerBase{
             }
         } catch (BackingStoreException ex) {
             Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public MavenPreferences getMavenPreferences() {
-        return mavenPreferences;
-    }
-    
-    public PreferencesRecordArtifact getRecordArtifact(MavenArtifact mavenArtifact) {
-        PreferencesRecordArtifact recordArtifact = mavenPreferences.getRecordArtifact(mavenArtifact.getCoordinates());
-        if (recordArtifact == null) {
-            recordArtifact = new PreferencesRecordArtifact(artifactsRootPreferences, mavenArtifact);
-            mavenPreferences.addRecordArtifact(mavenArtifact.getCoordinates(), recordArtifact);
-        }
-        return recordArtifact;
-    }
-    
-    public void removeArtifact(String coordinates) {
-        if (coordinates != null && !coordinates.isEmpty() && 
-                mavenPreferences.getRecordArtifact(coordinates) != null) {
-            Preferences node = artifactsRootPreferences.node(coordinates);
-            try {
-                node.removeNode();
-                mavenPreferences.removeRecordArtifact(coordinates);
-            } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    
-    public RepositoryPreferences getRepositoryPreferences() {
-        return repositoryPreferences;
-    }
-    
-    public PreferencesRecordRepository getRecordRepository(Repository repository) {
-        PreferencesRecordRepository recordRepository = repositoryPreferences.getRecordRepository(repository.getId());
-        if (recordRepository == null) {
-            recordRepository = new PreferencesRecordRepository(repositoriesRootPreferences, repository);
-            repositoryPreferences.addRecordRepository(repository.getId(), recordRepository);
-        }
-        return recordRepository;
-    }
-    
-    public void removeRepository(String id) {
-        if (id != null && !id.isEmpty() && 
-                repositoryPreferences.getRecordRepository(id) != null) {
-            Preferences node = repositoriesRootPreferences.node(id);
-            try {
-                node.removeNode();
-                repositoryPreferences.removeRecordRepository(id);
-            } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 }

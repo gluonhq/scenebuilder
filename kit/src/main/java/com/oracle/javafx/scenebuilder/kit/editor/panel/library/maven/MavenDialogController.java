@@ -31,8 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
@@ -45,6 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -106,16 +107,19 @@ public class MavenDialogController extends AbstractFxmlWindowController {
             callVersionsService();
         }
     };
-    
+
+    private final PreferencesControllerBase preferencesControllerBase;
     
     public MavenDialogController(EditorController editorController, String userM2Repository,
-            String tempM2Repository,Stage owner) {
+            String tempM2Repository, PreferencesControllerBase preferencesControllerBase, Stage owner) {
         super(LibraryPanelController.class.getResource("MavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
         this.editorController = editorController;
+        this.preferencesControllerBase = preferencesControllerBase;
         
-        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository);
+        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository,
+                preferencesControllerBase.getRepositoryPreferences());
         
         versionsService = new Service<ObservableList<Version>>() {
             @Override
@@ -168,8 +172,6 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         installService.stateProperty().addListener((obs, ov, nv) -> {
             if (nv.equals(Worker.State.SUCCEEDED)) {
                 final MavenArtifact mavenArtifact = installService.getValue();
-                final PreferencesController pc = PreferencesController.getSingleton();
-    
                 if (mavenArtifact == null || mavenArtifact.getPath().isEmpty() || 
                         !new File(mavenArtifact.getPath()).exists()) {
                     logInfoMessage("log.user.maven.failed", getArtifactCoordinates());
@@ -185,9 +187,10 @@ public class MavenDialogController extends AbstractFxmlWindowController {
 
                     final ImportWindowController iwc
                             = new ImportWindowController(
-                                new LibraryPanelController(editorController), 
-                                files, (Stage)installButton.getScene().getWindow(), false,
-                                pc.getMavenPreferences().getArtifactsFilter());
+                            new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
+                            files, preferencesControllerBase.getMavenPreferences(),
+                            (Stage)installButton.getScene().getWindow(), false,
+                                preferencesControllerBase.getMavenPreferences().getArtifactsFilter());
                     iwc.setToolStylesheet(editorController.getToolStylesheet());
                     ButtonID userChoice = iwc.showAndWait();
                     if (userChoice == ButtonID.OK) {
@@ -318,7 +321,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
         userLibrary.stopWatching();
         
         // Update record artifact
-        final PreferencesRecordArtifact recordArtifact = PreferencesController.getSingleton().
+        final PreferencesRecordArtifact recordArtifact = preferencesControllerBase.
                 getRecordArtifact(mavenArtifact);
         recordArtifact.writeToJavaPreferences();
 

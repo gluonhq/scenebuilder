@@ -31,14 +31,14 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.dialog;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordRepository;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordRepository;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
@@ -111,14 +111,17 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
 
     private final String userM2Repository;
     private final String tempM2Repository;
+    private final PreferencesControllerBase preferencesControllerBase;
     
     public RepositoryDialogController(EditorController editorController, String userM2Repository,
-                                      String tempM2Repository, Stage owner) {
+                                      String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                      Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userM2Repository = userM2Repository;
         this.tempM2Repository = tempM2Repository;
+        this.preferencesControllerBase = preferencesControllerBase;
         
         testService = new Service<String>() {
             @Override
@@ -190,7 +193,7 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
                 typeTextfield.getText(), urlTextfield.getText());
         }
         if (oldRepository != null) {
-            PreferencesController.getSingleton().removeRepository(oldRepository.getId());
+            preferencesControllerBase.removeRepository(oldRepository.getId());
         }
         updatePreferences(repository);
         logInfoMessage(oldRepository == null ? "log.user.repository.added" :
@@ -218,7 +221,8 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
         passwordTextfield.disableProperty().bind(privateCheckBox.selectedProperty().not());
         progress.visibleProperty().bind(testService.runningProperty());
         resultLabel.setText("");
-        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository);
+        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository,
+                preferencesControllerBase.getRepositoryPreferences());
     }
     
     private void logInfoMessage(String key, Object... args) {
@@ -231,7 +235,7 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
         }
         
         // Update record repository
-        final PreferencesRecordRepository recordRepository = PreferencesController.getSingleton().
+        final PreferencesRecordRepository recordRepository = preferencesControllerBase.
                 getRecordRepository(repository);
         recordRepository.writeToJavaPreferences();
         

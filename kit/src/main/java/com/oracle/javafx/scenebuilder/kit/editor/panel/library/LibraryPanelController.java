@@ -75,6 +75,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -114,6 +115,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     boolean initiateImportDialog = false;
     final List<File> jarAndFxmlFiles = new ArrayList<>();
     private String userLibraryPathString = null;
+    private final MavenPreferences mavenPreferences;
 
     @FXML
     private Accordion libAccordion;
@@ -134,9 +136,10 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
      *
      * @param c the editor controller (never null).
      */
-    public LibraryPanelController(EditorController c) {
+    public LibraryPanelController(EditorController c, MavenPreferences mavenPreferences) {
         super(LibraryPanelController.class.getResource("LibraryPanel.fxml"), I18N.getBundle(), c); //NOI18N
         startListeningToLibrary();
+        this.mavenPreferences = mavenPreferences;
     }
 
     /**
@@ -753,7 +756,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                     }
 
                     final ImportWindowController iwc
-                            = new ImportWindowController(this, jarFiles, (Stage) window);
+                            = new ImportWindowController(this, jarFiles, mavenPreferences, (Stage) window);
                     iwc.setToolStylesheet(getEditorController().getToolStylesheet());
                     // See comment in OnDragDropped handle set in method startListeningToDrop.
                     ButtonID userChoice = iwc.showAndWait();

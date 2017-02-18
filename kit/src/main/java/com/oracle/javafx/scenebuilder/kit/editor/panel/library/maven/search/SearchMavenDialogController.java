@@ -31,8 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
@@ -49,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
@@ -106,15 +107,19 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private final Service<MavenArtifact> installService;
     private DefaultArtifact artifact;
     private final Stage owner;
+    private final PreferencesControllerBase preferencesControllerBase;
     
     public SearchMavenDialogController(EditorController editorController, String userM2Repository,
-                                       String tempM2Repository, Stage owner) {
+                                       String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                       Stage owner) {
         super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.owner = owner;
         this.editorController = editorController;
+        this.preferencesControllerBase = preferencesControllerBase;
         
-        maven = new MavenRepositorySystem(true, userM2Repository, tempM2Repository); // only releases
+        maven = new MavenRepositorySystem(true, userM2Repository, tempM2Repository,
+                preferencesControllerBase.getRepositoryPreferences()); // only releases
         
         searchService = new SearchService(userM2Repository);
         searchService.getResult().addListener((ListChangeListener.Change<? extends Artifact> c) -> {
@@ -142,7 +147,6 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
             if (ov.equals(Worker.State.RUNNING)) {
                 if (nv.equals(Worker.State.SUCCEEDED)) {
                     final MavenArtifact mavenArtifact = installService.getValue();
-                    final PreferencesController pc = PreferencesController.getSingleton();
 
                     if (mavenArtifact == null || mavenArtifact.getPath().isEmpty() || 
                             !new File(mavenArtifact.getPath()).exists()) {
@@ -159,9 +163,11 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                         
                         final ImportWindowController iwc
                                 = new ImportWindowController(
-                                    new LibraryPanelController(editorController), 
-                                    files, (Stage) installButton.getScene().getWindow(), false,
-                                    pc.getMavenPreferences().getArtifactsFilter());
+                                    new LibraryPanelController(editorController,
+                                            preferencesControllerBase.getMavenPreferences()),
+                                    files, preferencesControllerBase.getMavenPreferences(),
+                                    (Stage) installButton.getScene().getWindow(), false,
+                                    preferencesControllerBase.getMavenPreferences().getArtifactsFilter());
                         iwc.setToolStylesheet(editorController.getToolStylesheet());
                         ButtonID userChoice = iwc.showAndWait();
                         if (userChoice == ButtonID.OK) {
@@ -326,7 +332,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         userLibrary.stopWatching();
         
         // Update record artifact
-        final PreferencesRecordArtifact recordArtifact = PreferencesController.getSingleton().
+        final PreferencesRecordArtifact recordArtifact = preferencesControllerBase.
                 getRecordArtifact(mavenArtifact);
         recordArtifact.writeToJavaPreferences();
 
