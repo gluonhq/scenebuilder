@@ -22,7 +22,7 @@ public class SkeletonBufferTest {
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
+        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
@@ -36,7 +36,7 @@ public class SkeletonBufferTest {
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
+        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
@@ -50,7 +50,7 @@ public class SkeletonBufferTest {
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument());
+        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
