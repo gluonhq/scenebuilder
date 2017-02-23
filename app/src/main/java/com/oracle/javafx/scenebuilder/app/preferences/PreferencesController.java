@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordRepository;
 import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
 
@@ -59,7 +60,7 @@ public class PreferencesController extends PreferencesControllerBase{
      *                                                                         *
      **************************************************************************/
 
-    // JAVA PREFERENCES KEYS DEFINITIONS
+    // PREFERENCES NODE NAME
     static final String SB_RELEASE_NODE = "SB_2.0"; //NOI18N
 
     // GLOBAL PREFERENCES
@@ -180,5 +181,10 @@ public class PreferencesController extends PreferencesControllerBase{
         } catch (BackingStoreException ex) {
             Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public PreferencesRecordGlobal getRecordGlobal() {
+        return (PreferencesRecordGlobal) recordGlobal;
     }
 }

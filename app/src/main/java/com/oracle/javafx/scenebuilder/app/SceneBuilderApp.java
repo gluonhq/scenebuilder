@@ -449,7 +449,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private void sendTrackingStartupInfo() {
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
         boolean sendTrackingInfo = shouldSendTrackingInfo(recordGlobal);
 
@@ -660,8 +660,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case 0: { // Good
                 // Update recent items with opened files
                 final PreferencesController pc = PreferencesController.getSingleton();
-                final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
-                recordGlobal.addRecentItems(fxmlFiles);
+                pc.getRecordGlobal().addRecentItems(fxmlFiles);
                 break;
             }
             case 1: {
@@ -928,7 +927,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 boolean showUpdateDialog = true;
                 if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
-                    PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+                    PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
                     if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
                         showUpdateDialog = false;
@@ -1020,7 +1019,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private void showRegistrationDialogIfRequired(DocumentWindowController dwc) {
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         String registrationHash = recordGlobal.getRegistrationHash();
         if (registrationHash == null) {
             performControlAction(ApplicationControlAction.REGISTER, dwc);
@@ -1046,7 +1045,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private static void updateImportedGluonJars(List<JarReport> jars) {
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         List<String> jarReportCollection = new ArrayList<>();
         for (JarReport jarReport : jars) {
             if (jarReport.hasGluonControls()) {
@@ -1062,8 +1061,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private static boolean hasGluonJarBeenImported(String jar) {
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
-        String[] importedJars = recordGlobal.getImportedGluonJars();
+        String[] importedJars = pc.getRecordGlobal().getImportedGluonJars();
         if (importedJars == null) {
             return false;
         }
