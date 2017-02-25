@@ -1,5 +1,11 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
+// Scene Builder version and group
+allprojects {
+    group = 'com.gluonhq.scenebuilder'
+    version = '8.4.0-SNAPSHOT'
+}
+
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -22,15 +28,7 @@ ext.getStringProperty = { name, defaultValue ->
 
 subprojects {
     apply plugin: 'java'
-
-    def tryGetProperty = {String name, String defaultValue ->
-        if (!project.hasProperty(name)) {
-            return defaultValue
-        }
-
-        return project.property(name)?.toString()
-    }
-
+    
     repositories {
         mavenLocal()
         maven {
@@ -67,8 +65,6 @@ subprojects {
         testCompile 'org.assertj:assertj-core:3.2.0'
     }
 
-    group = 'com.gluonhq.scenebuilder'
-    version = tryGetProperty('VERSION', '8.4.0-SNAPSHOT')
 
     processResources {
         def buildDate = new Date().format(rootProject.buildDateFormat)
@@ -97,17 +93,12 @@ shadowJar {
 
 apply plugin: 'maven'
 
-artifacts {
-    archives jar
-    archives shadowJar
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = project.getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
-            def repoUser = project.getStringProperty('publishRepositoryUser', '');
-            def repoPassword = project.getStringProperty('publishRepositoryPassword', '');
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUser = getStringProperty('publishRepositoryUser', '');
+            def repoPassword = getStringProperty('publishRepositoryPassword', '');
             snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
