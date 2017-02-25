@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app.about;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.sun.javafx.tk.Toolkit;
 import com.sun.prism.GraphicsPipeline;
@@ -58,14 +59,14 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     @FXML
     private TextArea textArea;
     
-    private String sbBuildInfo = "Version 8.3.0"; //NOI18N
-    private String sbBuildVersion = "8.3.0"; //NOI18N
-    private String sbBuildDate = "2015-03-03"; //NOI18N
-    private String sbBuildJavaVersion = "8u60"; //NOI18N
+    private String sbBuildInfo;
+    private String sbBuildVersion;
+    private String sbBuildDate;
+    private String sbBuildJavaVersion;
     // The resource bundle contains two keys: about.copyright and about.copyright.open
-    private String sbAboutCopyrightKeyName = "about.copyright.open"; //NOI18N
-    // File name must be in sync with what we use in logging.properties
-    private final String LOG_FILE_NAME = "scenebuilder-8.3.0.log"; //NOI18N
+    private String sbAboutCopyrightKeyName;
+    // File name must be in sync with what we use in logging.properties (Don't understand this comment, haven't found any logging.properties file
+    private final String LOG_FILE_NAME = "scenebuilder-" + AppSettings.getSceneBuilderVersion() + ".log"; //NOI18N
 
     public AboutWindowController() {
         super(AboutWindowController.class.getResource("About.fxml"), //NOI18N

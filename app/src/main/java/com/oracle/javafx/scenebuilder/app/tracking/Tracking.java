@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.app.tracking;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class Tracking {
                         + "&java=" + URLEncoder.encode(java, "UTF-8")
                         + "&type=" + type
                         + "&id=" + hash
-                        + "&version=" + SceneBuilderApp.VERSION
+                        + "&version=" + AppSettings.getSceneBuilderVersion()
                         + (update ? "&update=true" : "");
 
                 URL url = new URL("http://usage.gluonhq.com/ul/log?" + urlParameters);
