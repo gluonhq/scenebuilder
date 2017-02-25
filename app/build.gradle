@@ -1,10 +1,19 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 
-jar {
+shadowJar {
     baseName = 'scenebuilder'
     manifest {
         attributes 'Main-Class': mainClassName
@@ -32,9 +41,9 @@ dependencies {
 
 apply plugin: 'maven'
 
-//artifacts {
-//    archives shadowJar
-//}
+artifacts {
+    archives shadowJar
+}
 
 uploadArchives {
     repositories {

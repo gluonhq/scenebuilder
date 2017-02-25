@@ -7,14 +7,6 @@ allprojects {
 }
 
 apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-buildscript {
-    repositories { jcenter() }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-    }
-}
 
 ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 ext.getStringProperty = { name, defaultValue ->
@@ -68,10 +60,6 @@ subprojects {
 
 clean {
     delete "dist"
-}
-
-shadowJar {
-    baseName = 'scenebuilder-all'
 }
 
 apply plugin: 'maven'
