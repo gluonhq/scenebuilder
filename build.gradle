@@ -64,24 +64,7 @@ subprojects {
         testCompile 'junit:junit:4.12'
         testCompile 'org.assertj:assertj-core:3.2.0'
     }
-
-
-    processResources {
-        def buildDate = new Date().format(rootProject.buildDateFormat)
-        from ('src/main/resources') {
-            include '**/*.properties'
-            expand([
-                version: version,
-                javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
-                buildDate: buildDate,
-            ])
-            filter(EscapeUnicode)
-        }
-        into buildDir
-    }
 }
-
-
 
 clean {
     delete "dist"

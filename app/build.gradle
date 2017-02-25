@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.EscapeUnicode
+
 apply plugin: 'application'
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
@@ -8,6 +10,20 @@ jar {
         attributes 'Main-Class': mainClassName
     }
 
+}
+
+processResources {
+    def buildDate = new Date().format(buildDateFormat)
+    from ('src/main/resources') {
+        include '**/*.properties'
+        expand([
+            version: version,
+            javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
+            buildDate: buildDate
+        ])
+        filter(EscapeUnicode)
+    }
+    into buildDir
 }
 
 dependencies {
