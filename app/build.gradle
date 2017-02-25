@@ -4,6 +4,10 @@ mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 
 jar {
     baseName = 'scenebuilder'
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
 }
 
 dependencies {
