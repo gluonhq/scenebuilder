@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@import "../../../../../../../../../../kit/src/main/resources/com/oracle/javafx/scenebuilder/kit/css/Base.css";
+@import "../../kit/css/Base.css";
 
 /*******************************************************************************
  * Menu Bar - text                                                             *

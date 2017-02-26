@@ -13,12 +13,23 @@ buildscript {
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 
+dependencies {
+    compile project(':kit')
+}
+
 shadowJar {
     baseName = 'scenebuilder'
     manifest {
         attributes 'Main-Class': mainClassName
     }
+}
 
+task run (dependsOn: assemble, overwrite: true) {
+    doLast {
+        String jarPath = relativePath(new File(libsDir, shadowJar.baseName + "-" + version + "-all.jar"))
+        javaexec
+                { main = '-jar'; args jarPath }
+    }
 }
 
 processResources {
@@ -35,15 +46,11 @@ processResources {
     into buildDir
 }
 
-dependencies {
-    compile project(':kit')
-}
-
-apply plugin: 'maven'
-
 artifacts {
     archives shadowJar
 }
+
+apply plugin: 'maven'
 
 uploadArchives {
     repositories {
