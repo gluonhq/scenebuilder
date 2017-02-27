@@ -155,7 +155,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         final PreferencesController preferencesController
                 = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal
-                = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                = preferencesController.getRecordGlobal();
 
         // Root container size
         rootContainerHeight.setText(String.valueOf(recordGlobal.getRootContainerHeight()));
@@ -272,7 +272,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         final PreferencesController preferencesController
                 = PreferencesController.getSingleton();
         final PreferencesRecordGlobal recordGlobal
-                = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                = preferencesController.getRecordGlobal();
 
         // Root container size
         rootContainerHeight.setText(String.valueOf(DEFAULT_ROOT_CONTAINER_HEIGHT));
@@ -324,7 +324,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setBackgroundImage(newValue);
             recordGlobal.writeToJavaPreferences(BACKGROUND_IMAGE);
@@ -342,7 +342,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setToolTheme(newValue);
             recordGlobal.writeToJavaPreferences(TOOL_THEME);
@@ -359,7 +359,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setLibraryDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(LIBRARY_DISPLAY_OPTION);
@@ -377,7 +377,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setHierarchyDisplayOption(newValue);
             recordGlobal.writeToJavaPreferences(HIERARCHY_DISPLAY_OPTION);
@@ -395,7 +395,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setCSSAnalyzerColumnsOrder(newValue);
             recordGlobal.writeToJavaPreferences(CSS_TABLE_COLUMNS_ORDERING_REVERSED);
@@ -411,7 +411,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setTheme(newValue);
             recordGlobal.writeToJavaPreferences(THEME);
@@ -427,7 +427,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setSwatch(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_SWATCH);
@@ -443,7 +443,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setGluonTheme(newValue);
             recordGlobal.writeToJavaPreferences(GLUON_THEME);
@@ -461,7 +461,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setRecentItemsSize(newValue);
             recordGlobal.writeToJavaPreferences(RECENT_ITEMS_SIZE);
@@ -483,7 +483,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setAlignmentGuidesColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(ALIGNMENT_GUIDES_COLOR);
@@ -508,7 +508,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
-                    = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+                    = preferencesController.getRecordGlobal();
             // Update preferences
             recordGlobal.setParentRingColor((Color) newValue);
             recordGlobal.writeToJavaPreferences(PARENT_RING_COLOR);

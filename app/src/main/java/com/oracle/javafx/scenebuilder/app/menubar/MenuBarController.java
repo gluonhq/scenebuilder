@@ -1256,7 +1256,7 @@ public class MenuBarController {
         final List<MenuItem> menuItems = new ArrayList<>();
 
         final PreferencesController pc = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         final List<String> recentItems = recordGlobal.getRecentItems();
 
         final MenuItem clearMenuItem = new MenuItem(I18N.getString("menu.title.open.recent.clear"));

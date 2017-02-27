@@ -749,7 +749,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 if (bottomSplitController.isTargetVisible()) {
                     // CSS panel is built lazely
                     // Need to update its table column ordering with preference value
-                    final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+                    final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                     refreshCssTableColumnsOrderingReversed(recordGlobal.isCssTableColumnsOrderingReversed());
                     // Enable pick mode
                     editorController.setPickModeEnabled(true);
@@ -1018,7 +1018,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         final PreferencesRecordDocument recordDocument = pc.getRecordDocument(this);
         recordDocument.writeToJavaPreferences();
         // Update record global
-        final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         // recentItems may not contain the current document
         // if the Open Recent -> Clear menu has been invoked
         if (recordGlobal.containsRecentItem(fxmlLocation) == false) {
@@ -1320,7 +1320,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private void updateHierarchyDisplayOption() {
         // Update preferences
         final PreferencesController preferencesController = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
         recordGlobal.updateHierarchyDisplayOption(hierarchyPanelController.getDisplayOption());
     }
 
@@ -1374,7 +1374,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private void updateLibraryDisplayOption() {
         // Update preferences
         final PreferencesController preferencesController = PreferencesController.getSingleton();
-        final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) preferencesController.getRecordGlobal();
+        final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
         recordGlobal.updateLibraryDisplayOption(libraryPanelController.getDisplayMode());
     }
 
@@ -1852,7 +1852,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             // Refresh UI with preferences 
             final PreferencesController pc = PreferencesController.getSingleton();
             // Preferences global to the application
-            final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+            final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 //            recordGlobal.refresh(this, refreshTheme);
             refreshFromPreferencesRecordGlobal(recordGlobal, refreshTheme);
             // Preferences specific to the document
@@ -2088,7 +2088,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
 
                     // Update recent items with just saved file
                     final PreferencesController pc = PreferencesController.getSingleton();
-                    final PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+                    final PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                     recordGlobal.addRecentItem(fxmlFile);
                 }
             }

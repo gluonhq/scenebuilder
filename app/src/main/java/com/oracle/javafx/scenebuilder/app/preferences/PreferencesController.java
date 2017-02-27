@@ -166,7 +166,7 @@ public class PreferencesController extends PreferencesControllerBase{
 
     public void clearRecentItems() {
         // Clear RECENT ITEMS global preferences
-        ((PreferencesRecordGlobal)getRecordGlobal()).clearRecentItems();
+        getRecordGlobal().clearRecentItems();
         // Clear individual DOCUMENTS preferences
         try {
             // Remove nodes from the DOCUMENTS root preference

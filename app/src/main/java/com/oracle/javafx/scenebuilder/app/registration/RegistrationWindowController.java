@@ -118,7 +118,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
     @FXML
     public void cancelUserRegistration() {
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         if (recordGlobal.getRegistrationHash() == null) {
             String hash = getUniqueId();
             recordGlobal.updateRegistrationFields(hash, null, null);
@@ -136,7 +136,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
         }
 
         PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         
         boolean update = recordGlobal.getRegistrationHash() != null;
         String hash = update ? recordGlobal.getRegistrationHash() : getUniqueId();

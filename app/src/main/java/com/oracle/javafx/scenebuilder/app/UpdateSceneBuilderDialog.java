@@ -103,11 +103,11 @@ public class UpdateSceneBuilderDialog extends Dialog {
                 LocalDate now = LocalDate.now();
                 LocalDate futureDate = now.plusWeeks(1);
                 PreferencesController pc = PreferencesController.getSingleton();
-                PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+                PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setShowUpdateDialogAfter(futureDate);
             } else if (newValue == ignoreThisUpdate) {
                 PreferencesController pc = PreferencesController.getSingleton();
-                PreferencesRecordGlobal recordGlobal = (PreferencesRecordGlobal) pc.getRecordGlobal();
+                PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
                 recordGlobal.setIgnoreVersion(latestVersion);
             } else if (newValue == learnMore) {
                 hostServices.showDocument(announcementURL);

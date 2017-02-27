@@ -101,7 +101,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         super.controllerDidLoadFxml();
         assert recentDocuments != null;
 
-        PreferencesRecordGlobal preferencesRecordGlobal = (PreferencesRecordGlobal) PreferencesController
+        PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
                 .getSingleton().getRecordGlobal();
         List<String> recentItems = preferencesRecordGlobal.getRecentItems();
         if (recentItems.size() == 0) {
