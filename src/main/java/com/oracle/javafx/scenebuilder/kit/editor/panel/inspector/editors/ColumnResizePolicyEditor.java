@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -53,7 +54,7 @@ public class ColumnResizePolicyEditor extends EnumEditor {
 
     @Override
     public Object getValue() {
-        String policy = getChoiceBox().getSelectionModel().getSelectedItem();
+        String policy = getComboBox().getSelectionModel().getSelectedItem();
         if (isTableView) {
             if (policy.equals(TableView.UNCONSTRAINED_RESIZE_POLICY.toString())) {
                 return TableView.UNCONSTRAINED_RESIZE_POLICY;
@@ -78,9 +79,9 @@ public class ColumnResizePolicyEditor extends EnumEditor {
 
     @Override
     protected void updateItems() {
-        getChoiceBox().getItems().clear();
-        getChoiceBox().getItems().add(TableView.UNCONSTRAINED_RESIZE_POLICY.toString());
-        getChoiceBox().getItems().add(TableView.CONSTRAINED_RESIZE_POLICY.toString());
+        getComboBox().getItems().clear();
+        getComboBox().getItems().add(TableView.UNCONSTRAINED_RESIZE_POLICY.toString());
+        getComboBox().getItems().add(TableView.CONSTRAINED_RESIZE_POLICY.toString());
     }
 
 }

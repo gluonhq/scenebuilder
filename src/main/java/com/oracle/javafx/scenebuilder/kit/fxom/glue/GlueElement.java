@@ -47,9 +47,11 @@ public class GlueElement extends GlueNode {
     private final static int INDENT_STEP = 3;
     
     private GlueDocument document;
+    // The XML tag name. Example: "Image"
     private String tagName;
+    // The child elements of this XML tag
     private final List<GlueElement> children = new ArrayList<>();
-
+    // Attributes of this tag. Example: key: "url" value: "file:/C:/Users/pedro/Documents/test.jpg"
     private final Map<String, String> attributes = new HashMap<>();
     private final List<GlueAuxiliary> front = new ArrayList<>();
     private final List<GlueAuxiliary> tail = new ArrayList<>();

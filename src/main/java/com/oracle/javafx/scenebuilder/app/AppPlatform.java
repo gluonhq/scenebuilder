@@ -287,6 +287,9 @@ public class AppPlatform {
             }
             
             if (openRejected == false) {
+                // We're starting Scene Builder by opening a file so
+                // we shouldn't show the Welcome Dialog
+                WelcomeDialog.getInstance().hide();
                 notificationHandler.handleOpenFilesAction(Arrays.asList(files));
             }
         }

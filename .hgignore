@@ -9,3 +9,6 @@ build/*
 .settings
 *.class
 bin
+.DS_Store
+lib/*
+scenicView.properties

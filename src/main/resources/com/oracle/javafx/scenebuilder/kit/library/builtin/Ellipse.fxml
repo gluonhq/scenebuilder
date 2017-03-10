@@ -30,10 +30,6 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
 <Ellipse fill="DODGERBLUE" radiusX="100.0" radiusY="80.0" stroke="BLACK" strokeType="INSIDE" />

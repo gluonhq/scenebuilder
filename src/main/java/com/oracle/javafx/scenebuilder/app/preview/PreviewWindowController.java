@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.preview;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
@@ -39,7 +41,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
 
 import java.io.File;
@@ -53,6 +54,7 @@ import java.util.TimerTask;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -131,8 +133,8 @@ public final class PreviewWindowController extends AbstractWindowController {
         this.editorControllerTheme = editorController.getTheme();
         this.editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> {
             if (t1 != null) {
-        editorControllerTheme = t1;
-        requestUpdate(DELAYED);
+                editorControllerTheme = t1;
+                requestUpdate(DELAYED);
             }
          });
         
@@ -324,7 +326,30 @@ public final class PreviewWindowController extends AbstractWindowController {
 
                     getScene().setRoot(getRoot());
                     if (themeStyleSheetString != null) {
-                        getScene().setUserAgentStylesheet(themeStyleSheetString);
+                        String gluonDocumentStylesheet = SceneBuilderApp.class.getResource("css/GluonDocument.css").toExternalForm();
+                        List<String> additionalGluonStylesheets = EditorPlatform.getAdditionalStylesheetsURL(Theme.GLUON_MOBILE);
+                        if (editorControllerTheme == Theme.GLUON_MOBILE) {
+                            ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
+
+                            if (!newStylesheets.contains(themeStyleSheetString)) {
+                                newStylesheets.add(themeStyleSheetString);
+                            }
+                            if (!newStylesheets.contains(gluonDocumentStylesheet)) {
+                                newStylesheets.add(gluonDocumentStylesheet);
+                            }
+                            if (!newStylesheets.contains(additionalGluonStylesheets)) {
+                                newStylesheets.addAll(additionalGluonStylesheets);
+                            }
+                            getScene().setUserAgentStylesheet(EditorPlatform.getThemeStylesheetURL(Theme.MODENA));
+                            getScene().getStylesheets().clear();
+                            getScene().getStylesheets().addAll(newStylesheets);
+                        } else {
+                            String gluonStylesheet = EditorPlatform.getThemeStylesheetURL(Theme.GLUON_MOBILE);
+                            getScene().setUserAgentStylesheet(themeStyleSheetString);
+                            getScene().getStylesheets().remove(gluonStylesheet);
+                            getScene().getStylesheets().remove(gluonDocumentStylesheet);
+                            getScene().getStylesheets().remove(additionalGluonStylesheets);
+                        }
                     }
                     updateWindowSize();
                     updateWindowTitle();

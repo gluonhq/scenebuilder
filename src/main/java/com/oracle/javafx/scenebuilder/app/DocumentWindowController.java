@@ -42,6 +42,7 @@ import com.oracle.javafx.scenebuilder.app.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.selectionbar.SelectionBarController;
 import com.oracle.javafx.scenebuilder.app.skeleton.SkeletonWindowController;
+import com.oracle.javafx.scenebuilder.app.util.SBSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -775,6 +776,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     skeletonWindowController = new SkeletonWindowController(editorController, getStage());
                     skeletonWindowController.setToolStylesheet(getToolStylesheet());
                 }
+                SBSettings.setWindowIcon(skeletonWindowController.getStage());
                 skeletonWindowController.openWindow();
                 break;
                 
@@ -1267,6 +1269,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         if(libraryDialogController==null){
             libraryDialogController = new LibraryDialogController(editorController, this, getStage());
         }
+        SBSettings.setWindowIcon(libraryDialogController.getStage());
 
         libraryDialogController.openWindow();
     }
@@ -1338,7 +1341,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             jarAnalysisReportController = new JarAnalysisReportController(getEditorController(), getStage());
             jarAnalysisReportController.setToolStylesheet(getToolStylesheet());
         }
-        
+        SBSettings.setWindowIcon(jarAnalysisReportController.getStage());
         jarAnalysisReportController.openWindow();
     }
     
@@ -2058,6 +2061,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             d.setOKButtonTitle(I18N.getString("label.save"));
             d.setActionButtonTitle(I18N.getString("label.do.not.save"));
             d.setActionButtonVisible(true);
+            SBSettings.setWindowIcon(d.getStage());
             
             switch(d.showAndWait()) {
                 default:

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -132,24 +133,36 @@ public class ComponentClassMetadata extends ClassMetadata {
          * Component Class -> Sub Component Property
          * =========================================
          * 
-         * Accordion        panes
-         * ButtonBar        buttons
-         * ContextMenu      items
-         * Menu             items
-         * MenuBar          menus
-         * MenuButton       items
-         * Path             elements
-         * SplitPane        items
-         * SplitMenuButton  items
-         * TableColumn      columns
-         * TableView        columns
-         * TabPane          tabs
-         * ToolBar          items
-         * TreeTableColumn  columns
-         * TreeTableView    columns
+         * Accordion                    panes
+         * ButtonBar                    buttons
+         * ContextMenu                  items
+         * Menu                         items
+         * MenuBar                      menus
+         * MenuButton                   items
+         * Path                         elements
+         * SplitPane                    items
+         * SplitMenuButton              items
+         * TableColumn                  columns
+         * TableView                    columns
+         * TabPane                      tabs
+         * ToolBar                      items
+         * TreeTableColumn              columns
+         * TreeTableView                columns
          * 
-         * Group            children
-         * Panes            children
+         * Group                        children
+         * Panes                        children
+         *
+         * ------------ Gluon ------------------
+         *
+         * BottomNavigation             actionItems
+         * CardPane                     cards
+         * DropdownButton               items
+         * ExpansionPanelContainer      items
+         * ToggleButtonGroup            toggles
+         * CollapsedPanel               titleNodes
+         *
+         * ------------------------------------
+         *
          * Other            null
          */
       
@@ -187,6 +200,18 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = childrenName;
         } else if (componentClass == javafx.scene.layout.Pane.class) {
             result = childrenName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
+            result = actionItemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.CardPane.class) {
+            result = cardsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class) {
+            result = itemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class) {
+            result = itemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ToggleButtonGroup.class) {
+            result = togglesName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class) {
+            result = titleNodesName;
         } else {
             result = null;
         }
@@ -202,5 +227,10 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName panesName = new PropertyName("panes");
     private static final PropertyName tabsName = new PropertyName("tabs");
     private static final PropertyName childrenName = new PropertyName("children");
+    // Gluon
+    private static final PropertyName actionItemsName = new PropertyName("actionItems");
+    private static final PropertyName cardsName = new PropertyName("cards");
+    private static final PropertyName togglesName = new PropertyName("toggles");
+    private static final PropertyName titleNodesName = new PropertyName("titleNodes");
 
 }

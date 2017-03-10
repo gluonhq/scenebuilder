@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+  Copyright (c) 2016, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -37,4 +38,4 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<Sphere radius="0.77" xmlns:fx="http://javafx.com/fxml"/>
+<Sphere radius="50" xmlns:fx="http://javafx.com/fxml"/>

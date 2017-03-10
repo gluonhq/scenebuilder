@@ -44,7 +44,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 
@@ -58,14 +57,14 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     @FXML
     private TextArea textArea;
     
-    private String sbBuildInfo = "Version 8.2.0"; //NOI18N
-    private String sbBuildVersion = "8.2.0"; //NOI18N
+    private String sbBuildInfo = "Version 8.3.0"; //NOI18N
+    private String sbBuildVersion = "8.3.0"; //NOI18N
     private String sbBuildDate = "2015-03-03"; //NOI18N
     private String sbBuildJavaVersion = "8u60"; //NOI18N
     // The resource bundle contains two keys: about.copyright and about.copyright.open
     private String sbAboutCopyrightKeyName = "about.copyright.open"; //NOI18N
     // File name must be in sync with what we use in logging.properties
-    private final String LOG_FILE_NAME = "scenebuilder-8.2.0.log"; //NOI18N
+    private final String LOG_FILE_NAME = "scenebuilder-8.3.0.log"; //NOI18N
 
     public AboutWindowController() {
         super(AboutWindowController.class.getResource("About.fxml"), //NOI18N
