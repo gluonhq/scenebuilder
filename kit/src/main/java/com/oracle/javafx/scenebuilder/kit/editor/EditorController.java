@@ -32,7 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.oracle.javafx.scenebuilder.kit.SBResources;
+import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
@@ -851,7 +851,7 @@ public class EditorController {
      */
     public static synchronized String getBuiltinToolStylesheet() {
         if (builtinToolStylesheet == null) {
-            builtinToolStylesheet = SBResources.THEME_DEFAULT_STYLESHEET;
+            builtinToolStylesheet = ResourceUtils.THEME_DEFAULT_STYLESHEET;
         }
         return builtinToolStylesheet;
     }
@@ -889,6 +889,27 @@ public class EditorController {
      */
     public Selection getSelection() {
         return selection;
+    }
+
+    /**
+     * Returns the list of selected objects
+     *
+     * @return the selected objects
+     */
+    public List<FXOMObject> getSelectedObjects() {
+        // Collects all the selected objects
+        final List<FXOMObject> selectedObjects = new ArrayList<>();
+        final Selection selection = getSelection();
+        if (selection.getGroup() instanceof ObjectSelectionGroup) {
+            final ObjectSelectionGroup osg = (ObjectSelectionGroup) selection.getGroup();
+            selectedObjects.addAll(osg.getItems());
+        } else if (selection.getGroup() instanceof GridSelectionGroup) {
+            final GridSelectionGroup gsg = (GridSelectionGroup) selection.getGroup();
+            selectedObjects.addAll(gsg.collectSelectedObjects());
+        } else {
+            assert false;
+        }
+        return selectedObjects;
     }
     
     
