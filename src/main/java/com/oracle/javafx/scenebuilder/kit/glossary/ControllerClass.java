@@ -39,6 +39,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -88,6 +89,12 @@ class ControllerClass {
     private Set<String> fxids;
     private Set<String> events;
 
+    private static final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+    private static final String MAVEN_DIR_STRUCTURE = "src" + FILE_SEPARATOR + "main";
+    private static final String MAVEN_JAVA_DIR_STRUCTURE = MAVEN_DIR_STRUCTURE + FILE_SEPARATOR + "java";
+    private static final String MAVEN_RESOURCES_DIR_STRUCTURE = MAVEN_DIR_STRUCTURE + FILE_SEPARATOR + "resources";
+    private static final boolean IGNORE_MAVEN_DIR_STRUCTURE = System.getProperty("ignore.maven.structure") != null;
+
     private ControllerClass(File file) throws IOException, JavaTokenizer.ParseException {
         assert file != null;
         this.file = file;
@@ -112,10 +119,21 @@ class ControllerClass {
 
     public static Set<ControllerClass> discoverFXMLControllerClasses(File fxmlFile) {
         ScanData data = new ScanData();
+        String name;
+        File parentFile;
 
+        // Check if FXML file path contains the default Maven resources path as a sub-string.
+        if (!IGNORE_MAVEN_DIR_STRUCTURE && fxmlFile.getAbsolutePath().contains(MAVEN_RESOURCES_DIR_STRUCTURE))
+        {
+            parentFile = new File(fxmlFile.getParent().replaceFirst(MAVEN_RESOURCES_DIR_STRUCTURE, MAVEN_JAVA_DIR_STRUCTURE));
+        }
+        else
+        {
+            parentFile = fxmlFile.getParentFile();
+        }
         try {
-            String name = getNoExtensionName(fxmlFile);
-            File parentFile = fxmlFile.getParentFile();
+            name = getNoExtensionName(fxmlFile);
+
             // Current + go up 1 dir level and scan.
             int maxDepth = 2;
             for (int i = 0; i < maxDepth; i++) {
