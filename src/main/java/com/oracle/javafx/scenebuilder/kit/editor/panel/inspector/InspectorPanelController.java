@@ -675,12 +675,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             propMetaSection.put(valuePropMeta.getInspectorPath(), valuePropMeta);
         }
 
-        if (propMetaSection.isEmpty()) {
-            displayEmptyMessage(gridPane);
-            return;
-        }
 
-        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
         String currentSubSection = ""; //NOI18N
         int lineIndex = 0;
         if (sectionId == SectionId.CODE) {
@@ -692,11 +687,17 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             lineIndex = addFxIdEditor(gridPane, lineIndex);
         }
 
+        if (propMetaSection.isEmpty()) {
+            displayEmptyMessage(gridPane);
+            return;
+        }
+
         if (lineIndex == 0 && propMetaSection.isEmpty()) {
             displayEmptyMessage(gridPane);
             return;
         }
 
+        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
         Set<PropertyName> groupProperties = new HashSet<>();
         while (iter.hasNext()) {
             // Loop on properties
