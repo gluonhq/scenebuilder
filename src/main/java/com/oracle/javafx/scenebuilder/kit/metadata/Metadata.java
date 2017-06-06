@@ -1332,8 +1332,6 @@ public class Metadata {
             new PropertyName("vgrow", javafx.scene.layout.VBox.class);
     private final PropertyName source =
             new PropertyName("source");
-    private final PropertyName charset =
-            new PropertyName("charset");
 
 
     // Property Metadata
@@ -4733,12 +4731,6 @@ public class Metadata {
                     Collections.emptyList(), /* defaultValue */
                     new InspectorPath("Properties", "Include FXML file", 2));
 
-    private final ValuePropertyMetadata charsetPropertyMetadata =
-            new StringPropertyMetadata(
-                    charset,
-                    true, /* readWrite */
-                    "", /* defaultValue */
-                    new InspectorPath("Properties", "Charset for included FXML file", 10));
 
 
     private Metadata() {
@@ -5963,7 +5955,6 @@ public class Metadata {
         IncludeElementMetadata.getProperties().add(snapToPixelPropertyMetadata);
         IncludeElementMetadata.getProperties().add(effectiveNodeOrientationPropertyMetadata);
         IncludeElementMetadata.getProperties().add(includeFxmlPropertyMetadata);
-        IncludeElementMetadata.getProperties().add(charsetPropertyMetadata);
 
         // Populates hiddenProperties
         hiddenProperties.add(new PropertyName("activated"));
