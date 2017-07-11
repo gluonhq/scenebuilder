@@ -38,16 +38,20 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
 
 import com.gluonhq.charm.glisten.control.BottomNavigation;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ComponentPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.*;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.*;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.*;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.EffectPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ButtonTypeListPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.DoubleListPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.TickMarkListPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPathComparator;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -193,18 +197,23 @@ public class Metadata {
         
         return result;
     }
-    
-    
+
     public ValuePropertyMetadata queryValueProperty(FXOMInstance fxomInstance, PropertyName targetName) {
         final ValuePropertyMetadata result;
         assert fxomInstance != null;
         assert targetName != null;
-        
+
         if (fxomInstance.getSceneGraphObject() == null) {
             // FXOM object is unresolved
             result = null;
         } else {
-            final Class<?> componentClass = fxomInstance.getSceneGraphObject().getClass();
+            final Class<?> componentClass;
+            if (fxomInstance.getDeclaredClass() == FXOMIntrinsic.class) {
+                componentClass = fxomInstance.getDeclaredClass();
+            } else {
+                componentClass = fxomInstance.getSceneGraphObject().getClass();
+            }
+
             final PropertyMetadata m = Metadata.getMetadata().queryProperty(componentClass, targetName);
             if (m instanceof ValuePropertyMetadata) {
                 result = (ValuePropertyMetadata) m;
@@ -212,7 +221,7 @@ public class Metadata {
                 result = null;
             }
         }
-        
+
         return result;
     }
     
@@ -254,7 +263,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.Control.class, RegionMetadata);
     private final ComponentClassMetadata LabeledMetadata = 
             new ComponentClassMetadata(javafx.scene.control.Labeled.class, ControlMetadata);
-    private final ComponentClassMetadata ButtonBaseMetadata =
+    private final ComponentClassMetadata ButtonBaseMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ButtonBase.class, LabeledMetadata);
     private final ComponentClassMetadata ComboBoxBaseMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ComboBoxBase.class, ControlMetadata);
@@ -303,7 +312,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.AmbientLight.class, LightBaseMetadata);
     private final ComponentClassMetadata CardPaneMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.CardPane.class, ControlMetadata);
-    private final ComponentClassMetadata GroupMetadata = 
+    private final ComponentClassMetadata GroupMetadata =
             new ComponentClassMetadata(javafx.scene.Group.class, ParentMetadata);
     private final ComponentClassMetadata ParallelCameraMetadata = 
             new ComponentClassMetadata(javafx.scene.ParallelCamera.class, CameraMetadata);
@@ -321,13 +330,13 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.BarChart.class, XYChartMetadata);
     private final ComponentClassMetadata BottomNavigationMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.BottomNavigation.class, ControlMetadata);
-    private final ComponentClassMetadata BubbleChartMetadata = 
+    private final ComponentClassMetadata BubbleChartMetadata =
             new ComponentClassMetadata(javafx.scene.chart.BubbleChart.class, XYChartMetadata);
     private final ComponentClassMetadata CategoryAxisMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.CategoryAxis.class, AxisMetadata);
     private final ComponentClassMetadata DropdownButtonMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.DropdownButton.class, ControlMetadata);
-    private final ComponentClassMetadata LineChartMetadata = 
+    private final ComponentClassMetadata LineChartMetadata =
             new ComponentClassMetadata(javafx.scene.chart.LineChart.class, XYChartMetadata);
     private final ComponentClassMetadata NumberAxisMetadata = 
             new ComponentClassMetadata(javafx.scene.chart.NumberAxis.class, ValueAxisMetadata);
@@ -341,7 +350,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.chart.StackedBarChart.class, XYChartMetadata);
     private final ComponentClassMetadata ToggleButtonGroupMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, ControlMetadata);
-    private final ComponentClassMetadata AccordionMetadata = 
+    private final ComponentClassMetadata AccordionMetadata =
             new ComponentClassMetadata(javafx.scene.control.Accordion.class, ControlMetadata);
     private final ComponentClassMetadata ButtonMetadata = 
             new ComponentClassMetadata(javafx.scene.control.Button.class, ButtonBaseMetadata);
@@ -355,7 +364,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.ChoiceBox.class, ControlMetadata);
     private final ComponentClassMetadata CollapsedPanelMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, RegionMetadata);
-    private final ComponentClassMetadata ColorPickerMetadata = 
+    private final ComponentClassMetadata ColorPickerMetadata =
             new ComponentClassMetadata(javafx.scene.control.ColorPicker.class, ComboBoxBaseMetadata);
     private final ComponentClassMetadata ComboBoxMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ComboBox.class, ComboBoxBaseMetadata);
@@ -379,7 +388,7 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.MenuBar.class, ControlMetadata);
     private final ComponentClassMetadata MenuButtonMetadata = 
             new ComponentClassMetadata(javafx.scene.control.MenuButton.class, ButtonBaseMetadata);
-    private final ComponentClassMetadata PaginationMetadata =
+    private final ComponentClassMetadata PaginationMetadata = 
             new ComponentClassMetadata(javafx.scene.control.Pagination.class, ControlMetadata);
     private final ComponentClassMetadata PasswordFieldMetadata = 
             new ComponentClassMetadata(javafx.scene.control.PasswordField.class, TextFieldMetadata);
@@ -475,7 +484,7 @@ public class Metadata {
             new ComponentClassMetadata( com.gluonhq.charm.glisten.control.ExpansionPanel.class, ControlMetadata);
     private final ComponentClassMetadata ExpansionPanelContainerMetadata =
             new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class, ControlMetadata);
-    private final ComponentClassMetadata HLineToMetadata = 
+    private final ComponentClassMetadata HLineToMetadata =
             new ComponentClassMetadata(javafx.scene.shape.HLineTo.class, PathElementMetadata);
     private final ComponentClassMetadata LineMetadata = 
             new ComponentClassMetadata(javafx.scene.shape.Line.class, ShapeMetadata);
@@ -511,6 +520,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.web.HTMLEditor.class, ControlMetadata);
     private final ComponentClassMetadata WebViewMetadata = 
             new ComponentClassMetadata(javafx.scene.web.WebView.class, ParentMetadata);
+    private final ComponentClassMetadata IncludeElementMetadata =
+            new ComponentClassMetadata(FXOMIntrinsic.class, null);
 
 
     // Property Names
@@ -529,7 +540,7 @@ public class Metadata {
             new PropertyName("accessibleText");
     private final PropertyName actionItemsName =
             new PropertyName("actionItems");
-    private final PropertyName alignmentName = 
+    private final PropertyName alignmentName =
             new PropertyName("alignment");
     private final PropertyName allowIndeterminateName = 
             new PropertyName("allowIndeterminate");
@@ -571,7 +582,7 @@ public class Metadata {
             new PropertyName("bottom");
     private final PropertyName bottomNavigationTypeName =
             new PropertyName("type");
-    private final PropertyName boundsInLocalName = 
+    private final PropertyName boundsInLocalName =
             new PropertyName("boundsInLocal");
     private final PropertyName boundsInParentName = 
             new PropertyName("boundsInParent");
@@ -597,7 +608,7 @@ public class Metadata {
             new PropertyName("cancelButton");
     private final PropertyName cardsName =
             new PropertyName("cards");
-    private final PropertyName categoriesName = 
+    private final PropertyName categoriesName =
             new PropertyName("categories");
     private final PropertyName categoryGapName = 
             new PropertyName("categoryGap");
@@ -621,7 +632,7 @@ public class Metadata {
             new PropertyName("closable");
     private final PropertyName collapsedContentName =
             new PropertyName("collapsedContent");
-    private final PropertyName collapsibleName = 
+    private final PropertyName collapsibleName =
             new PropertyName("collapsible");
     private final PropertyName colorName = 
             new PropertyName("color");
@@ -701,13 +712,13 @@ public class Metadata {
             new PropertyName("expandableContent");
     private final PropertyName expandedContentName =
             new PropertyName("expandedContent");
-    private final PropertyName expandedName = 
+    private final PropertyName expandedName =
             new PropertyName("expanded");
     private final PropertyName expandedItemCountName = 
             new PropertyName("expandedItemCount");
     private final PropertyName expandedPropertyName =
             new PropertyName("expanded");
-    private final PropertyName farClipName = 
+    private final PropertyName farClipName =
             new PropertyName("farClip");
     private final PropertyName fieldOfViewName = 
             new PropertyName("fieldOfView");
@@ -1069,7 +1080,7 @@ public class Metadata {
             new PropertyName("selected");
     private final PropertyName selectionTypeName =
             new PropertyName("selectionType");
-    private final PropertyName shapeName = 
+    private final PropertyName shapeName =
             new PropertyName("shape");
     private final PropertyName showRootName = 
             new PropertyName("showRoot");
@@ -1187,13 +1198,13 @@ public class Metadata {
             new PropertyName("title");
     private final PropertyName titleNodesName =
             new PropertyName("titleNodes");
-    private final PropertyName titleSideName = 
+    private final PropertyName titleSideName =
             new PropertyName("titleSide");
     private final PropertyName toggleGroupName = 
             new PropertyName("toggleGroup");
     private final PropertyName togglesName =
             new PropertyName("toggles");
-    private final PropertyName tooltipName = 
+    private final PropertyName tooltipName =
             new PropertyName("tooltip");
     private final PropertyName topName = 
             new PropertyName("top");
@@ -1319,6 +1330,8 @@ public class Metadata {
             new PropertyName("margin", javafx.scene.layout.VBox.class);
     private final PropertyName VBox_vgrowName = 
             new PropertyName("vgrow", javafx.scene.layout.VBox.class);
+    private final PropertyName source =
+            new PropertyName("source");
 
 
     // Property Metadata
@@ -4711,6 +4724,13 @@ public class Metadata {
                 true, /* readWrite */
                 new InspectorPath("Layout", "VBox Constraints", 0));
 
+    private final ValuePropertyMetadata includeFxmlPropertyMetadata =
+            new StringListPropertyMetadata(
+                    source,
+                    true, /* readWrite */
+                    Collections.emptyList(), /* defaultValue */
+                    new InspectorPath("Properties", "Include FXML file", 2));
+
 
 
     private Metadata() {
@@ -4848,6 +4868,7 @@ public class Metadata {
         componentClassMap.put(ValueAxisMetadata.getKlass(), ValueAxisMetadata);
         componentClassMap.put(WebViewMetadata.getKlass(), WebViewMetadata);
         componentClassMap.put(XYChartMetadata.getKlass(), XYChartMetadata);
+        componentClassMap.put(IncludeElementMetadata.getKlass(), IncludeElementMetadata);
 
         // ComponentMetadata -> PropertyMetadata
         AccordionMetadata.getProperties().add(panesPropertyMetadata);
@@ -5890,6 +5911,50 @@ public class Metadata {
         XYChartMetadata.getProperties().add(XAxisPropertyMetadata);
         XYChartMetadata.getProperties().add(YAxisPropertyMetadata);
 
+
+        IncludeElementMetadata.getProperties().add(AnchorPane_bottomAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_leftAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_rightAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(AnchorPane_topAnchorPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(BorderPane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(FlowPane_marginPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_columnIndexPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_columnSpanPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_halignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_hgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_rowIndexPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_rowSpanPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_valignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(GridPane_vgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(HBox_hgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(StackPane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(TilePane_alignmentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(VBox_vgrowPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(layoutXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(layoutYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(maxHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(maxWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(minHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(minWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(prefHeight_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(prefWidth_COMPUTED_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(rotatePropertyMetadata);
+        IncludeElementMetadata.getProperties().add(rotationAxisPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(scaleZPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateXPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateYPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(translateZPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(layoutBoundsPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(boundsInLocalPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(boundsInParentPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(baselineOffsetPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(resizable_Boolean_ro_PropertyMetadata);
+        IncludeElementMetadata.getProperties().add(contentBiasPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(snapToPixelPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(effectiveNodeOrientationPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(includeFxmlPropertyMetadata);
 
         // Populates hiddenProperties
         hiddenProperties.add(new PropertyName("activated"));

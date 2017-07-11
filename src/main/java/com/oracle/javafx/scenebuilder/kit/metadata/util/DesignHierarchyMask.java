@@ -959,30 +959,16 @@ public class DesignHierarchyMask {
      * @return the column index
      */
     public int getColumnIndex() {
-        final int result;
-        
+        int result = 0;
         if (fxomObject instanceof FXOMInstance) {
             assert fxomObject.getSceneGraphObject() != null;
             final FXOMInstance fxomInstance = (FXOMInstance) fxomObject;
-            final FXOMObject parentFxomObject = fxomInstance.getParentObject();
-            assert parentFxomObject.getSceneGraphObject() instanceof GridPane;
-
-            final PropertyName propertyName
-                    = new PropertyName("columnIndex", javafx.scene.layout.GridPane.class); //NOI18N
-            final ValuePropertyMetadata vpm
-                    = Metadata.getMetadata().queryValueProperty(fxomInstance, propertyName);
-            final Object value = vpm.getValueObject(fxomInstance);
-            // TODO : when DTL-5920 will be fixed, the null check will become unecessary
-            if (value == null) {
-                result = 0;
-            } else {
-                assert value instanceof Integer;
-                result = ((Integer) value);
-            }
-        } else {
-            result = 0;
+            result = getIndexFromGrid(fxomInstance, "columnIndex");
+        } else if(fxomObject instanceof FXOMIntrinsic) {
+            FXOMIntrinsic fxomIntrinsic = (FXOMIntrinsic) fxomObject;
+            FXOMInstance fxomInstance = fxomIntrinsic.createFxomInstanceFromIntrinsic();
+            result = getIndexFromGrid(fxomInstance, "columnIndex");
         }
-        
         return result;
     }
 
@@ -992,32 +978,39 @@ public class DesignHierarchyMask {
      * @return the row index
      */
     public int getRowIndex() {
-        final int result;
-
+        int result = 0;
         if (fxomObject instanceof FXOMInstance) {
             assert fxomObject.getSceneGraphObject() != null;
             final FXOMInstance fxomInstance = (FXOMInstance) fxomObject;
-            final FXOMObject parentFxomObject = fxomInstance.getParentObject();
-            assert parentFxomObject.getSceneGraphObject() instanceof GridPane;
-
-            final PropertyName propertyName
-                    = new PropertyName("rowIndex", javafx.scene.layout.GridPane.class); //NOI18N
-            final ValuePropertyMetadata vpm
-                    = Metadata.getMetadata().queryValueProperty(fxomInstance, propertyName);
-            final Object value = vpm.getValueObject(fxomInstance);
-            // TODO : when DTL-5920 will be fixed, the null check will become unecessary
-            if (value == null) {
-                result = 0;
-            } else {
-                assert value instanceof Integer;
-                result = ((Integer) value);
-            }
-        } else {
-            result = 0;
+            result = getIndexFromGrid(fxomInstance, "rowIndex");
+        } else if(fxomObject instanceof FXOMIntrinsic) {
+            FXOMIntrinsic fxomIntrinsic = (FXOMIntrinsic) fxomObject;
+            FXOMInstance fxomInstance = fxomIntrinsic.createFxomInstanceFromIntrinsic();
+            result = getIndexFromGrid(fxomInstance, "rowIndex");
         }
-        
         return result;
     }
+
+    private int getIndexFromGrid(final FXOMInstance fxomInstance, final String columnOrRow) {
+        int result;
+        final FXOMObject parentFxomObject = fxomInstance.getParentObject();
+        assert parentFxomObject.getSceneGraphObject() instanceof GridPane;
+
+        final PropertyName propertyName
+                = new PropertyName(columnOrRow, GridPane.class); //NOI18N
+        final ValuePropertyMetadata vpm
+                = Metadata.getMetadata().queryValueProperty(fxomInstance, propertyName);
+        final Object value = vpm.getValueObject(fxomInstance);
+        // TODO : when DTL-5920 will be fixed, the null check will become unecessary
+        if (value == null) {
+            result = 0;
+        } else {
+            assert value instanceof Integer;
+            result = ((Integer) value);
+        }
+        return result;
+    }
+
 
     // Should be in a shared Utils class ?
     public static boolean containsLineFeed(String str) {

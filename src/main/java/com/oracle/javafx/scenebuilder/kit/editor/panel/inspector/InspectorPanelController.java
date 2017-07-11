@@ -35,79 +35,25 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.job.ModifySelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.editor.job.ModifyCacheHintJob;
+import com.oracle.javafx.scenebuilder.kit.editor.job.ModifySelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyFxIdJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.togglegroup.ModifySelectionToggleGroupJob;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.AnchorPaneConstraintsEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.BooleanEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.BoundedDoubleEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ButtonTypeEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ColumnResizePolicyEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.CursorEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DividerPositionsEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DoubleEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DurationEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Editor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EnumEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EventHandlerEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FunctionalInterfaceEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.FxIdEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.GenericEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.I18nStringEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ImageEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.InsetsEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.IntegerEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.Point3DEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertiesEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.*;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.RotateEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StringListEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleClassEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StyleEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.StylesheetEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.TextAlignmentEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.ToggleGroupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.BoundsPopupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.EffectPopupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.FontPopupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.KeyCombinationPopupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.PaintPopupEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.Rectangle2DPopupEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.*;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMFxIdIndex;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.fxom.*;
 import com.oracle.javafx.scenebuilder.kit.glossary.Glossary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BoundsPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.CursorPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.*;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FontPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FunctionalInterfacePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.Point3DPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.Rectangle2DPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TableViewResizePolicyPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ToggleGroupPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TreeTableViewResizePolicyPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.EffectPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ListValuePropertyMetadata;
@@ -119,25 +65,6 @@ import com.oracle.javafx.scenebuilder.kit.metadata.util.ValuePropertyMetadataCla
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ValuePropertyMetadataNameComparator;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.Stack;
-import java.util.TreeMap;
-
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -151,22 +78,16 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
@@ -269,6 +190,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> rectangle2DPopupEditorPool = new Stack<>();
     private final Stack<Editor> toggleGroupEditorPool = new Stack<>();
     private final Stack<Editor> buttonTypeEditorPool = new Stack<>();
+    private final Stack<Editor> includeFxmlEditorPool = new Stack<>();
+    private final Stack<Editor> charsetEditorPool = new Stack<>();
     // ...
     //
     // Subsection title pool
@@ -299,13 +222,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
     private double searchResultDividerPosition;
 
+    // Charsets for the properties of included elements
+    private Map<String, Charset> availableCharsets;
+
     /*
      * Public
      */
     public InspectorPanelController(EditorController editorController) {
         super(InspectorPanelController.class.getResource(fxmlFile), I18N.getBundle(), editorController);
         this.editorController = editorController;
-        
+        this.availableCharsets = CharsetEditor.getStandardCharsets();
         viewModeProperty.setValue(ViewMode.SECTION);
         viewModeProperty.addListener(new ChangeListener<ViewMode>() {
             @Override
@@ -367,6 +293,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(Rectangle2DPopupEditor.class, rectangle2DPopupEditorPool);
         editorPools.put(ToggleGroupEditor.class, toggleGroupEditorPool);
         editorPools.put(ButtonTypeEditor.class, buttonTypeEditorPool);
+        editorPools.put(IncludeFxmlEditor.class, includeFxmlEditorPool);
+        editorPools.put(CharsetEditor.class, charsetEditorPool);
 
         // ...
     }
@@ -620,8 +548,15 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 // we may have a property changed here.
                 selectionState = newSelectionState;
+                updateClassNamesExtraForIncludes();
                 reset();
             }
+        }
+    }
+
+    private void updateClassNamesExtraForIncludes() {
+        if(!getSelectedIntrinsics().isEmpty()) {
+            updateClassNameInSectionTitles();
         }
     }
 
@@ -721,6 +656,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
         SortedMap<InspectorPath, ValuePropertyMetadata> propMetaSection = new TreeMap<>(Metadata.getMetadata().INSPECTOR_PATH_COMPARATOR);
         assert propMetaAll != null;
+        int i = 0;
         for (ValuePropertyMetadata valuePropMeta : propMetaAll) {
             InspectorPath inspectorPath = valuePropMeta.getInspectorPath();
             // Check section
@@ -728,6 +664,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 continue;
             }
             if (valuePropMeta.isStaticProperty() && !isStaticPropertyRelevant(valuePropMeta.getName())) {
+                i++;
                 continue;
             }
             if (isEditedMode()) {
@@ -738,12 +675,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             propMetaSection.put(valuePropMeta.getInspectorPath(), valuePropMeta);
         }
 
-        if (propMetaSection.isEmpty()) {
-            displayEmptyMessage(gridPane);
-            return;
-        }
 
-        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
         String currentSubSection = ""; //NOI18N
         int lineIndex = 0;
         if (sectionId == SectionId.CODE) {
@@ -754,6 +686,18 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             currentSubSection = FXID_SUBSECTION_NAME;
             lineIndex = addFxIdEditor(gridPane, lineIndex);
         }
+
+        if (propMetaSection.isEmpty()) {
+            displayEmptyMessage(gridPane);
+            return;
+        }
+
+        if (lineIndex == 0 && propMetaSection.isEmpty()) {
+            displayEmptyMessage(gridPane);
+            return;
+        }
+
+        Iterator<Entry<InspectorPath, ValuePropertyMetadata>> iter = propMetaSection.entrySet().iterator();
         Set<PropertyName> groupProperties = new HashSet<>();
         while (iter.hasNext()) {
             // Loop on properties
@@ -923,20 +867,21 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         return sectionStr.equalsIgnoreCase(sectionId.toString());
     }
 
-    private boolean isStaticPropertyRelevant(PropertyName propName) {
-        // Check if the static property class is the common parent of the selection
-        if (getCommonParent() == null) {
-            return false;
-        }
-        return getCommonParent() == propName.getResidenceClass();
-    }
-
     private boolean hasSelectedElement() {
         return hasFxomDocument() && (!selectionState.isSelectionEmpty());
     }
 
     private boolean hasSelectedElementNothingForInspector() {
         return hasFxomDocument() && getSelectedInstances().isEmpty();
+    }
+
+    private boolean hasSelectedIntrinsicNothingForInspector() {
+        return hasFxomDocument() && getSelectedIntrinsics().isEmpty();
+    }
+
+
+    private Set<FXOMIntrinsic> getSelectedIntrinsics() {
+        return selectionState.selectedIntrinsics;
     }
 
     private boolean hasMultipleSelection() {
@@ -1019,7 +964,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             addMessage(gridPane, I18N.getString("inspector.message.no.selected"));
             return true;
         }
-        if (hasSelectedElementNothingForInspector()) {
+        if (hasSelectedElementNothingForInspector() && hasSelectedIntrinsicNothingForInspector()) {
             addMessage(gridPane, I18N.getString("inspector.message.no.thingforinspector"));
             return true;
         }
@@ -1051,6 +996,32 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
         // Check display name
         return EditorUtils.toDisplayName(propSimpleName).toLowerCase(Locale.ENGLISH).contains(searchPattern.toLowerCase(Locale.ENGLISH));
+    }
+
+    private boolean isStaticPropertyRelevant(PropertyName propName) {
+        boolean isRelevant;
+        if(isIntrinsic()) {
+            isRelevant = checkIfStaticPropertyRelevantForIntrinsic(propName);
+        }
+        else {
+            // Check if the static property class is the common parent of the selection
+            if (getCommonParent() == null) return false;
+            isRelevant =  getCommonParent() == propName.getResidenceClass();
+        }
+        return isRelevant;
+    }
+
+    private boolean isIntrinsic() {
+        boolean result = false;
+        if(selectionState.selection.getHitItem() instanceof FXOMIntrinsic) {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean checkIfStaticPropertyRelevantForIntrinsic(PropertyName propName) {
+        FXOMIntrinsic fxomIntrinsic = (FXOMIntrinsic) selectionState.selection.getHitItem();
+        return fxomIntrinsic.getParentObject() != null && fxomIntrinsic.getParentProperty().getParentInstance().getSceneGraphObject().getClass() == propName.getResidenceClass();
     }
 
     private boolean hasSearchPattern() {
@@ -1132,6 +1103,27 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         return lineIndex;
     }
 
+
+    // used to get the CssId PropertyEditor to update the value while the SceneBuilder is running
+    private StringEditor getCssIdEditor(){
+        ValuePropertyMetadata metadataForCssIDEditor = new StringPropertyMetadata(new PropertyName("id"), true,
+                null, new InspectorPath("Properties", "JavaFX CSS", 3));
+        StringEditor cssIdEditor = (StringEditor) getPropertyEditor(metadataForCssIDEditor);
+        handlePropertyEditorChanges(cssIdEditor);
+        return cssIdEditor;
+    }
+
+//    private Button createButtonForFxId(){
+//        Button button = new Button("Also set CSS-Id with fx:id");
+//        button.setOnAction((ActionEvent) -> {
+//            String fxId = getSelectedInstance().getFxId();
+//            if (fxId == null)
+//                return;
+//            setSelectedFXOMInstances(getCssIdEditor().getPropertyMeta(), fxId);
+//        });
+//        return button;
+//    }
+
     private void handleValueChange(PropertyEditor propertyEditor) {
         // Handle the value change
         propertyEditor.addValueListener((ov, oldValue, newValue) -> {
@@ -1165,7 +1157,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 //        System.out.println("Property " + propertyEditor.getPropertyName() + ": Value changed from \"" + oldValue + "\" to \"" + newValue + "\"");
         if (propertyEditor instanceof FxIdEditor) {
             assert (newValue instanceof String) || (newValue == null);
-            setSelectedFXOMInstanceFxId(getSelectedInstance(), (String) newValue);
+            setSelectedFXOMInstanceFxId(getSelectedObject(), (String) newValue);
         } else if (propertyEditor instanceof ToggleGroupEditor) {
             assert (newValue instanceof String) || (newValue == null);
             setSelectionToggleGroup((String) newValue);
@@ -1285,7 +1277,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             fxIdEditor.setIndeterminate(true);
             fxIdEditor.setDisable(true);
         } else {
-            String instanceFxId = getSelectedInstance().getFxId();
+            String instanceFxId = getSelectedObject().getFxId();
             fxIdEditor.setDisable(false);
             fxIdEditor.setUpdateFromModel(true);
             fxIdEditor.reset(getSuggestedFxIds(getControllerClass()), getEditorController());
@@ -1329,7 +1321,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         }
         
         propertyEditor.setUpdateFromModel(true);
-        if (isRuledByCss) {
+        if (isRuledByCss && cssInfo != null) {
             propertyEditor.setRuledByCss(true);
             propertyEditor.setCssInfo(cssInfo);
             if(propertyEditor.isDisablePropertyBound()){
@@ -1375,6 +1367,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 case "id": //NOI18N
                     propertyEditor = makePropertyEditor(StringEditor.class, propMeta);
                     break;
+                case "charset":
+                    propertyEditor = makePropertyEditor(CharsetEditor.class, propMeta);
+                    break;
                 default:
                     propertyEditor = makePropertyEditor(I18nStringEditor.class, propMeta);
                     break;
@@ -1392,6 +1387,9 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                     break;
                 case "dividerPositions": //NOI18N
                     propertyEditor = makePropertyEditor(DividerPositionsEditor.class, propMeta);
+                    break;
+                case "source": //NOI18N
+                    propertyEditor = makePropertyEditor(IncludeFxmlEditor.class, propMeta);
                     break;
                 default:
                     propertyEditor = makePropertyEditor(propMeta instanceof StringListPropertyMetadata? StringListEditor.class : GenericEditor.class, propMeta);
@@ -1758,90 +1756,90 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
     private PropertyEditor makeOrResetPropertyEditor(
             Class<? extends Editor> editorClass, ValuePropertyMetadata propMeta, PropertyEditor propertyEditor) {
-
-        if (propertyEditor != null) {
-            propertyEditor.setUpdateFromModel(true);
+        PropertyEditor createdPropertyEditor = propertyEditor;
+        if (createdPropertyEditor != null) {
+            createdPropertyEditor.setUpdateFromModel(true);
         }
         Set<Class<?>> selectedClasses = getSelectedClasses();
         if (editorClass == I18nStringEditor.class) {
-            if (propertyEditor != null) {
-                ((I18nStringEditor) propertyEditor).reset(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
+            if (createdPropertyEditor != null) {
+                ((I18nStringEditor) createdPropertyEditor).reset(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
             } else {
-                propertyEditor = new I18nStringEditor(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
+                createdPropertyEditor = new I18nStringEditor(propMeta, selectedClasses, isMultiLinesSupported(selectedClasses, propMeta));
             }
         } else if (editorClass == StringEditor.class) {
-            if (propertyEditor != null) {
-                ((StringEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((StringEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new StringEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new StringEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DoubleEditor.class) {
             assert propMeta instanceof DoublePropertyMetadata;
             DoublePropertyMetadata doublePropMeta = (DoublePropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((DoubleEditor) propertyEditor).reset(propMeta, selectedClasses, getConstants(doublePropMeta));
+            if (createdPropertyEditor != null) {
+                ((DoubleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getConstants(doublePropMeta));
             } else {
-                propertyEditor = new DoubleEditor(propMeta, selectedClasses, getConstants(doublePropMeta));
+                createdPropertyEditor = new DoubleEditor(propMeta, selectedClasses, getConstants(doublePropMeta));
             }
         } else if (editorClass == IntegerEditor.class) {
             assert propMeta instanceof IntegerPropertyMetadata;
             IntegerPropertyMetadata integerPropMeta = (IntegerPropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((IntegerEditor) propertyEditor).reset(propMeta, selectedClasses,
+            if (createdPropertyEditor != null) {
+                ((IntegerEditor) createdPropertyEditor).reset(propMeta, selectedClasses,
                         getConstants(integerPropMeta), getMin(integerPropMeta), getMax(integerPropMeta));
             } else {
-                propertyEditor = new IntegerEditor(propMeta, selectedClasses,
+                createdPropertyEditor = new IntegerEditor(propMeta, selectedClasses,
                         getConstants(integerPropMeta), getMin(integerPropMeta), getMax(integerPropMeta));
             }
         } else if (editorClass == BooleanEditor.class) {
-            if (propertyEditor != null) {
-                ((BooleanEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((BooleanEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new BooleanEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new BooleanEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == EnumEditor.class) {
-            if (propertyEditor != null) {
-                ((EnumEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((EnumEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new EnumEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new EnumEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == InsetsEditor.class) {
-            if (propertyEditor != null) {
-                ((InsetsEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((InsetsEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new InsetsEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new InsetsEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == BoundedDoubleEditor.class) {
             assert propMeta instanceof DoublePropertyMetadata;
             DoublePropertyMetadata doublePropMeta = (DoublePropertyMetadata) propMeta;
-            if (propertyEditor != null) {
-                ((BoundedDoubleEditor) propertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
+            if (createdPropertyEditor != null) {
+                ((BoundedDoubleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
             } else {
-                propertyEditor = new BoundedDoubleEditor(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
+                createdPropertyEditor = new BoundedDoubleEditor(propMeta, selectedClasses, getSelectedInstances(), getConstants(doublePropMeta));
             }
         } else if (editorClass == RotateEditor.class) {
-            if (propertyEditor != null) {
-                ((RotateEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((RotateEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new RotateEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new RotateEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == StyleEditor.class) {
-            if (propertyEditor != null) {
-                ((StyleEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((StyleEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
-                propertyEditor = new StyleEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new StyleEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == StyleClassEditor.class) {
-            if (propertyEditor != null) {
-                ((StyleClassEditor) propertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
+            if (createdPropertyEditor != null) {
+                ((StyleClassEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
             } else {
-                propertyEditor = new StyleClassEditor(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
+                createdPropertyEditor = new StyleClassEditor(propMeta, selectedClasses, getSelectedInstances(), getEditorController());
             }
         } else if (editorClass == StylesheetEditor.class) {
-            if (propertyEditor != null) {
-                ((StylesheetEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+            if (createdPropertyEditor != null) {
+                ((StylesheetEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             } else {
-                propertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+                createdPropertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
         } else if (editorClass == StringListEditor.class) {
             if (propertyEditor != null) {
@@ -1851,22 +1849,22 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
         } else if (editorClass == FxIdEditor.class) {
             String controllerClass = getControllerClass();
-            if (propertyEditor != null) {
-                ((FxIdEditor) propertyEditor).reset(getSuggestedFxIds(controllerClass), getEditorController());
+            if (createdPropertyEditor != null) {
+                ((FxIdEditor) createdPropertyEditor).reset(getSuggestedFxIds(controllerClass), getEditorController());
             } else {
-                propertyEditor = new FxIdEditor(getSuggestedFxIds(controllerClass), getEditorController());
+                createdPropertyEditor = new FxIdEditor(getSuggestedFxIds(controllerClass), getEditorController());
             }
         } else if (editorClass == CursorEditor.class) {
-            if (propertyEditor != null) {
-                ((CursorEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((CursorEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new CursorEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new CursorEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == EventHandlerEditor.class) {
-            if (propertyEditor != null) {
-                ((EventHandlerEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+            if (createdPropertyEditor != null) {
+                ((EventHandlerEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             } else {
-                propertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+                createdPropertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == FunctionalInterfaceEditor.class) {
             if (propertyEditor != null) {
@@ -1879,82 +1877,82 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 propertyEditor = new FunctionalInterfaceEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == EffectPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((EffectPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((EffectPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new EffectPopupEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new EffectPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == FontPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((FontPopupEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((FontPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
-                propertyEditor = new FontPopupEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new FontPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == PaintPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((PaintPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((PaintPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new PaintPopupEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new PaintPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == ImageEditor.class) {
-            if (propertyEditor != null) {
-                ((ImageEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+            if (createdPropertyEditor != null) {
+                ((ImageEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             } else {
-                propertyEditor = new ImageEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
+                createdPropertyEditor = new ImageEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
         } else if (editorClass == BoundsPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((BoundsPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((BoundsPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new BoundsPopupEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new BoundsPopupEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == Point3DEditor.class) {
-            if (propertyEditor != null) {
-                ((Point3DEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((Point3DEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new Point3DEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new Point3DEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DividerPositionsEditor.class) {
-            if (propertyEditor != null) {
-                ((DividerPositionsEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((DividerPositionsEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new DividerPositionsEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new DividerPositionsEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == TextAlignmentEditor.class) {
-            if (propertyEditor != null) {
-                ((TextAlignmentEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((TextAlignmentEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new TextAlignmentEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new TextAlignmentEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == KeyCombinationPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((KeyCombinationPopupEditor) propertyEditor).reset(propMeta, selectedClasses, getEditorController());
+            if (createdPropertyEditor != null) {
+                ((KeyCombinationPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
             } else {
-                propertyEditor = new KeyCombinationPopupEditor(propMeta, selectedClasses, getEditorController());
+                createdPropertyEditor = new KeyCombinationPopupEditor(propMeta, selectedClasses, getEditorController());
             }
         } else if (editorClass == ColumnResizePolicyEditor.class) {
-            if (propertyEditor != null) {
-                ((ColumnResizePolicyEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((ColumnResizePolicyEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new ColumnResizePolicyEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new ColumnResizePolicyEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == Rectangle2DPopupEditor.class) {
-            if (propertyEditor != null) {
-                ((Rectangle2DPopupEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((Rectangle2DPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new Rectangle2DPopupEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new Rectangle2DPopupEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == ToggleGroupEditor.class) {
-            if (propertyEditor != null) {
-                ((ToggleGroupEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedToggleGroups());
+            if (createdPropertyEditor != null) {
+                ((ToggleGroupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSuggestedToggleGroups());
             } else {
-                propertyEditor = new ToggleGroupEditor(propMeta, selectedClasses, getSuggestedToggleGroups());
+                createdPropertyEditor = new ToggleGroupEditor(propMeta, selectedClasses, getSuggestedToggleGroups());
             }
         } else if (editorClass == ButtonTypeEditor.class) {
-            if (propertyEditor != null) {
-                ((ButtonTypeEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((ButtonTypeEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DurationEditor.class) {
             if (propertyEditor != null) {
@@ -1962,16 +1960,49 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             } else {
                 propertyEditor = new DurationEditor(propMeta, selectedClasses);
             }
-        } else {
-            if (propertyEditor != null) {
-                ((GenericEditor) propertyEditor).reset(propMeta, selectedClasses);
+        }
+        else if(editorClass == IncludeFxmlEditor.class) {
+            createdPropertyEditor = createOrResetIncludeFxmlEditor(createdPropertyEditor, selectedClasses, propMeta);
+        }
+        else if(editorClass == CharsetEditor.class) {
+            createdPropertyEditor = createOrResetCharsetEditor(createdPropertyEditor, selectedClasses, propMeta);
+        }
+        else {
+            if (createdPropertyEditor != null) {
+                ((GenericEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new GenericEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new GenericEditor(propMeta, selectedClasses);
             }
         }
-        propertyEditor.setUpdateFromModel(false);
+        if(createdPropertyEditor != null)
+            createdPropertyEditor.setUpdateFromModel(false);
 
-        return propertyEditor;
+        return createdPropertyEditor;
+    }
+
+    private PropertyEditor createOrResetIncludeFxmlEditor(PropertyEditor propertyEditor, Set<Class<?>> selectedClasses, ValuePropertyMetadata propMeta) {
+        PropertyEditor newPropertyEditor;
+        if (propertyEditor != null) {
+            newPropertyEditor = propertyEditor;
+            propertyEditor.reset(propMeta, selectedClasses);
+        }
+        else {
+            newPropertyEditor = new IncludeFxmlEditor(propMeta, selectedClasses, getEditorController());
+        }
+        return newPropertyEditor;
+    }
+
+    private PropertyEditor createOrResetCharsetEditor(PropertyEditor propertyEditor, Set<Class<?>> selectedClasses, ValuePropertyMetadata propMeta) {
+        PropertyEditor newPropertyEditor = null;
+        if (propMeta instanceof StringPropertyMetadata) {
+            if (propertyEditor != null) {
+                newPropertyEditor = propertyEditor;
+                ((CharsetEditor) propertyEditor).reset(propMeta, selectedClasses, this.availableCharsets);
+            } else {
+                newPropertyEditor = new CharsetEditor(propMeta, selectedClasses, this.availableCharsets);
+            }
+        }
+        return newPropertyEditor;
     }
 
     private PropertiesEditor makePropertiesEditor(Class<? extends Editor> editorClass, ValuePropertyMetadata[] propMetas) {
@@ -2028,11 +2059,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     }
 
     private void updateClassNameInSectionTitles() {
+        final String intrinsicClassName = "FXOMIntrinsic";
         String selClass = ""; //NOI18N
         if (getSelectedClasses().size() > 1) {
             selClass = I18N.getString("inspector.sectiontitle.multiple");
         } else if (getSelectedClasses().size() == 1) {
             selClass = getSelectedClass().getSimpleName();
+            if(intrinsicClassName.equals(selClass)) {
+                selClass =  retrieveNameForIntrinsic();
+            }
+
         }
 
         for (TitledPane titledPane : accordion.getPanes()) {
@@ -2047,6 +2083,17 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
             ((Label) graphic).setText(selClass);
         }
+    }
+
+    private String retrieveNameForIntrinsic() {
+        final String includeTagBinder = "fx:include - ";
+        String source = "";
+        if(getSelectedIntrinsics().iterator().hasNext()) {
+            FXOMIntrinsic fxomIntrinsic = getSelectedIntrinsics().iterator().next();
+            Path p = Paths.get(fxomIntrinsic.getSource());
+            source = includeTagBinder.concat(p.getFileName().toString());
+        }
+        return source;
     }
 
     private boolean isPropertyEditor(Editor editor) {
@@ -2111,9 +2158,14 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         return selectionState.getSelectedInstances();
     }
 
-    private FXOMInstance getSelectedInstance() {
-        assert getSelectedInstances().size() == 1;
-        return (FXOMInstance) getSelectedInstances().toArray()[0];
+    private FXOMObject getSelectedObject() {
+        if(getSelectedInstances().size() == 1) {
+            return (FXOMInstance) getSelectedInstances().toArray()[0];
+        }
+        else if(getSelectedIntrinsics().size() == 1) {
+            return (FXOMIntrinsic) getSelectedIntrinsics().toArray()[0];
+        }
+        return null;
     }
 
     private Set<FXOMInstance> getUnresolvedInstances() {
@@ -2135,13 +2187,13 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
     private boolean isBoundedByProperties(ValuePropertyMetadata propMeta) {
         // Only ScrollPane.hValue and ScrollPane.vValue for now
-        if (propMeta.getName().toString().equals(Editor.hValuePropName) 
+        if (propMeta.getName().toString().equals(Editor.hValuePropName)
                 || propMeta.getName().toString().equals(Editor.vValuePropName)) {
             return true;
         }
         return false;
     }
-    
+
     /*
      *   This class represents the selection state: 
      *   - the selected instances, 
@@ -2154,6 +2206,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
         private final Selection selection;
         private final Set<FXOMInstance> selectedInstances = new HashSet<>();
+        private final Set<FXOMIntrinsic> selectedIntrinsics = new HashSet<>();
         private final Set<Class<?>> selectedClasses = new HashSet<>();
         private Class<?> commonParentClass;
         private FXOMObject commonParentObject;
@@ -2166,24 +2219,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
         protected void initialize() {
             // New selection: initializePopupContent all the selection variables
-
             selectedInstances.clear();
+            selectedIntrinsics.clear();
             if (selection.getGroup() instanceof ObjectSelectionGroup) {
-                final ObjectSelectionGroup osg = (ObjectSelectionGroup) selection.getGroup();
-                for (FXOMObject obj : osg.getItems()) {
-                    if (obj instanceof FXOMInstance) {
-                        selectedInstances.add((FXOMInstance) obj);
-                    }
-                }
+                handleObjectSelectionGroup(selection.getGroup());
             } else if (selection.getGroup() instanceof GridSelectionGroup) {
-                GridSelectionGroup gsg = (GridSelectionGroup) selection.getGroup();
-                for (FXOMInstance inst : gsg.collectConstraintInstances()) {
-                    selectedInstances.add(inst);
-                    // Open the Layout section, since all the row/columns properties are there.
-                    if (getExpandedSectionId() != SectionId.LAYOUT) {
-                        setExpandedSection(SectionId.LAYOUT);
-                    }
-                }
+                handleGridSelectionGroup(selection.getGroup());
             }
 
             selectedClasses.clear();
@@ -2206,6 +2247,18 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 }
             }
 
+            for (FXOMIntrinsic intrinsic : selectedIntrinsics) {
+                if (commonParentClass == null) {
+                    // first instance
+                    commonParentClass = getParentClass(intrinsic);
+                } else {
+                    if (getParentClass(intrinsic) != commonParentClass) {
+                        commonParentClass = null;
+                        break;
+                    }
+                }
+            }
+
             commonParentObject = null;
             for (FXOMInstance instance : selectedInstances) {
                 if (commonParentObject == null) {
@@ -2219,11 +2272,57 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 }
             }
 
+            for (FXOMIntrinsic intrinsic : selectedIntrinsics) {
+                if (commonParentObject == null) {
+                    // first instance
+                    commonParentObject = intrinsic.getParentObject();
+                } else {
+                    if (intrinsic.getParentObject() != commonParentObject) {
+                        commonParentObject = null;
+                        break;
+                    }
+                }
+            }
+
             unresolvedInstances.clear();
             for (FXOMInstance instance : selectedInstances) {
                 if (instance.getSceneGraphObject() == null) {
                     unresolvedInstances.add(instance);
                 }
+            }
+        }
+
+        private void handleGridSelectionGroup(AbstractSelectionGroup group) {
+            GridSelectionGroup gsg = (GridSelectionGroup) group;
+            for (FXOMInstance inst : gsg.collectConstraintInstances()) {
+                selectedInstances.add(inst);
+                // Open the Layout section, since all the row/columns properties are there.
+                if (getExpandedSectionId() != SectionId.LAYOUT) {
+                    setExpandedSection(SectionId.LAYOUT);
+                }
+            }
+        }
+
+        private void handleObjectSelectionGroup(AbstractSelectionGroup group) {
+            final ObjectSelectionGroup osg = (ObjectSelectionGroup) group;
+            for (FXOMObject obj : osg.getItems()) {
+                handleFxomInstance(obj);
+                handleFxomIntrincis(obj);
+            }
+        }
+
+        private void handleFxomInstance(FXOMObject obj) {
+            if (obj instanceof FXOMInstance) {
+                selectedInstances.add((FXOMInstance) obj);
+            }
+        }
+
+        private void handleFxomIntrincis(FXOMObject obj) {
+            if(obj instanceof  FXOMIntrinsic) {
+                FXOMIntrinsic intrinsic = (FXOMIntrinsic) obj;
+                selectedIntrinsics.add(intrinsic);
+                FXOMInstance fxomInstance = intrinsic.createFxomInstanceFromIntrinsic();
+                selectedInstances.add(fxomInstance);
             }
         }
 
@@ -2251,7 +2350,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             return unresolvedInstances;
         }
 
-        private Class<?> getParentClass(FXOMInstance instance) {
+        private Class<?> getParentClass(FXOMObject instance) {
             FXOMObject parent = instance.getParentObject();
             if (parent == null) {
                 // root

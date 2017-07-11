@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<HBox id="StackPane" maxWidth="400" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <TextField id="textField" fx:id="includeFxmlField" prefWidth="200" editable="false"/>
+    <Button id="includeFxmlButton" fx:id="includeFxmlButton" maxWidth="50" mnemonicParsing="false" onAction="#addIncludeFile"  prefWidth="50" text="..." />
+  </children>
+</HBox>
