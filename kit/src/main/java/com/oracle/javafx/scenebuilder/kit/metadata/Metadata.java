@@ -602,7 +602,9 @@ public class Metadata {
             new PropertyName("cacheShape");
     private final PropertyName cancelButtonName = 
             new PropertyName("cancelButton");
-    private final PropertyName categoriesName = 
+    private final PropertyName cardsName =
+            new PropertyName("cards");
+    private final PropertyName categoriesName =
             new PropertyName("categories");
     private final PropertyName categoryGapName = 
             new PropertyName("categoryGap");

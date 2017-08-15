@@ -418,32 +418,31 @@ public class EditorUtils {
                 clazz = cl;
             }
         }
-        PropertyName propertyName = propMeta.getName();
-        if (propMeta.isStaticProperty()) {
-            clazz = propertyName.getResidenceClass();
-        } else {
-            clazz = getDefiningClass(clazz, propertyName).getKlass();
+        if(clazz == FXOMIntrinsic.class) {
+            url = FXINCLUDE_JAVADOC_URL;
         }
-        String propNameStr = propertyName.getName();
-        // First char in uppercase
-        propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
-        String methodName;
-        if (propMeta.getValueClass() == Boolean.class) {
-            methodName = "is" + propNameStr + "--"; //NOI18N
-        } else if (propMeta.isStaticProperty()) {
-            methodName = "get" + propNameStr + "-" + Node.class.getName() + "-"; //NOI18N
-        } else {
-            methodName = "get" + propNameStr + "--"; //NOI18N
-        }
+        else {
+            PropertyName propertyName = propMeta.getName();
+            if (propMeta.isStaticProperty()) {
+                clazz = propertyName.getResidenceClass();
+            } else {
+                clazz = getDefiningClass(clazz, propertyName).getKlass();
+            }
+            String propNameStr = propertyName.getName();
+            // First char in uppercase
+            propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
+            String methodName;
+            if (propMeta.getValueClass() == Boolean.class) {
+                methodName = "is" + propNameStr + "--"; //NOI18N
+            } else if (propMeta.isStaticProperty()) {
+                methodName = "get" + propNameStr + "-" + Node.class.getName() + "-"; //NOI18N
+            } else {
+                methodName = "get" + propNameStr + "--"; //NOI18N
+            }
 
-        String url;
-        if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-            url = EditorPlatform.GLUON_JAVADOC_HOME;
-        } else {
-            url = EditorPlatform.JAVADOC_HOME;
+            url = EditorPlatform.JAVADOC_HOME + clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
+            url += "#" + methodName; //NOI18N
         }
-        url += clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
-        url += "#" + methodName; //NOI18N
         EditorPlatform.open(url);
     }
 
