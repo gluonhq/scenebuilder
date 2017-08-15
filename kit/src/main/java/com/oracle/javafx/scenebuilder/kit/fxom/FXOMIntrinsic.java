@@ -33,19 +33,19 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueElement;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
 import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- *
+ * FXOM for special elements like includes or references.
  * 
  */
 public class FXOMIntrinsic extends FXOMObject {
-    
+
+    private static final String CHARSET_PROPERTY = "charset";
+    private static final String SOURCE_PROPERTY = "source";
+
     public enum Type {
         FX_INCLUDE,
         FX_REFERENCE,
@@ -57,14 +57,43 @@ public class FXOMIntrinsic extends FXOMObject {
     private Object sourceSceneGraphObject;
 
     
-    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject) {
+    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject,  List<FXOMProperty> properties) {
         super(document, glueElement, null);
         this.sourceSceneGraphObject = targetSceneGraphObject;
+        for (FXOMProperty p : properties) {
+            this.properties.put(p.getName(), p);
+        }
     }
     
     public FXOMIntrinsic(FXOMDocument document, Type type, String source) {
         super(document, makeTagNameFromType(type));
-        getGlueElement().getAttributes().put("source", source);
+        getGlueElement().getAttributes().put(SOURCE_PROPERTY, source);
+    }
+
+    public void addIntrinsicProperty(FXOMDocument fxomDocument) {
+        final Map<String, String> attributes = this.getGlueElement().getAttributes();
+        if(attributes.containsKey(CHARSET_PROPERTY)) {
+            createAndInsertProperty(attributes, fxomDocument, CHARSET_PROPERTY);
+        }
+        if(attributes.containsKey(SOURCE_PROPERTY)) {
+            createAndInsertProperty(attributes, fxomDocument, SOURCE_PROPERTY);
+        }
+    }
+
+    private void createAndInsertProperty(Map<String, String> attributes, FXOMDocument fxomDocument, String propertyKey) {
+        final String valueString = attributes.get(propertyKey);
+        PropertyName propertyName = new PropertyName(propertyKey);
+        FXOMProperty property = new FXOMPropertyT(fxomDocument, propertyName, valueString);
+        this.getProperties().put(propertyName, property);
+    }
+
+    public void removeCharsetProperty() {
+        final Map<String, String> attributes = this.getGlueElement().getAttributes();
+        if(attributes.containsKey(CHARSET_PROPERTY)) {
+            attributes.remove(CHARSET_PROPERTY);
+            PropertyName charsetPropertyName = new PropertyName(CHARSET_PROPERTY);
+            this.getProperties().remove(charsetPropertyName);
+        }
     }
 
     public Type getType() {
@@ -89,17 +118,17 @@ public class FXOMIntrinsic extends FXOMObject {
     }
     
     public String getSource() {
-        return getGlueElement().getAttributes().get("source");
-    }
-    
-    public void setSource(String source) {
-        if (source == null) {
-            getGlueElement().getAttributes().remove("source");
-        } else {
-            getGlueElement().getAttributes().put("source", source);
-        }
+        return getGlueElement().getAttributes().get(SOURCE_PROPERTY);
     }
 
+    public void setSource(String source) {
+        if (source == null) {
+            getGlueElement().getAttributes().remove(SOURCE_PROPERTY);
+        } else {
+            getGlueElement().getAttributes().put(SOURCE_PROPERTY, source);
+        }
+    }
+    
     public Object getSourceSceneGraphObject() {
         return sourceSceneGraphObject;
     }
@@ -110,6 +139,22 @@ public class FXOMIntrinsic extends FXOMObject {
     
     public Map<PropertyName, FXOMProperty> getProperties() {
         return properties;
+    }
+
+    public void fillProperties(Map<PropertyName, FXOMProperty> properties ) {
+        for (FXOMProperty p : properties.values()) {
+            this.properties.put(p.getName(), p);
+        }
+    }
+
+    public FXOMInstance createFxomInstanceFromIntrinsic() {
+        FXOMInstance fxomInstance = new FXOMInstance(this.getFxomDocument(), this.getGlueElement());
+        fxomInstance.setSceneGraphObject(this.getSourceSceneGraphObject());
+        fxomInstance.setDeclaredClass(this.getClass());
+        if(!this.getProperties().isEmpty()) {
+            fxomInstance.fillProperties(this.getProperties());
+        }
+        return fxomInstance;
     }
 
     /*

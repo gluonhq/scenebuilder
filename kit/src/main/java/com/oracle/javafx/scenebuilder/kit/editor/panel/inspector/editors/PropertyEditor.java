@@ -793,4 +793,7 @@ public abstract class PropertyEditor extends Editor {
         });
     }
 
+    public void disableResetValueMenuItem() {
+        resetvalueMenuItem.setDisable(true);
+    }
 }

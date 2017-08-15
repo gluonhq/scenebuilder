@@ -194,7 +194,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     public void testPublicStaticImport() {
         setupTestCase(FxmlTestInfo.PUBLIC_STATIC_IMPORT);
 
-        ArrayList<String> imports = new ArrayList();
+        ArrayList<String> imports = new ArrayList<>();
         fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
 
         assertEquals("imports length should be 4", 4, imports.size());

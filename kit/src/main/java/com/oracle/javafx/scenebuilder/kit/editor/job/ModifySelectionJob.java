@@ -66,40 +66,16 @@ public class ModifySelectionJob extends BatchDocumentJob {
     
     @Override
     protected List<Job> makeSubJobs() {
-
         final List<Job> result = new ArrayList<>();
         final Set<FXOMInstance> candidates = new HashSet<>();
         final Selection selection = getEditorController().getSelection();
         if (selection.getGroup() instanceof ObjectSelectionGroup) {
-            final ObjectSelectionGroup osg = (ObjectSelectionGroup) selection.getGroup();
-            for (FXOMObject fxomObject : osg.getItems()) {
-                if (fxomObject instanceof FXOMInstance) {
-                    candidates.add((FXOMInstance) fxomObject);
-                }
-            }
+            handleObjectSelectionGroup(selection.getGroup(), candidates);
         } else if (selection.getGroup() instanceof GridSelectionGroup) {
-            final GridSelectionGroup gsg = (GridSelectionGroup) selection.getGroup();
-            final DesignHierarchyMask mask = new DesignHierarchyMask(gsg.getAncestor());
-            for (int index : gsg.getIndexes()) {
-                FXOMObject constraints = null;
-                switch (gsg.getType()) {
-                    case COLUMN:
-                        constraints = mask.getColumnConstraintsAtIndex(index);
-                        break;
-                    case ROW:
-                        constraints = mask.getRowConstraintsAtIndex(index);
-                        break;
-                    default:
-                        assert false;
-                        break;
-                }
-                assert constraints instanceof FXOMInstance;
-                candidates.add((FXOMInstance) constraints);
-            }
+            handleGridSelectionGroup(selection.getGroup(), candidates);
         } else {
             assert selection.getGroup() == null : "Add implementation for " + selection.getGroup();
         }
-
         // Add ModifyObject jobs
         for (FXOMInstance fxomInstance : candidates) {
             final ModifyObjectJob subJob = new ModifyObjectJob(
@@ -108,8 +84,53 @@ public class ModifySelectionJob extends BatchDocumentJob {
                 result.add(subJob);
             }
         }
-        
         return result;
+    }
+
+    private void handleObjectSelectionGroup(AbstractSelectionGroup group, Set<FXOMInstance> candidates) {
+        final ObjectSelectionGroup osg = (ObjectSelectionGroup) group;
+        for (FXOMObject fxomObject : osg.getItems()) {
+            handleFxomInstance(fxomObject, candidates);
+            handleFxomIntrincis(fxomObject, candidates);
+        }
+    }
+
+
+    private void handleFxomInstance(FXOMObject fxomObject, Set<FXOMInstance> candidates) {
+        if (fxomObject instanceof FXOMInstance) {
+            candidates.add((FXOMInstance) fxomObject);
+        }
+
+    }
+
+    private void handleFxomIntrincis(FXOMObject fxomObject, Set<FXOMInstance> candidates) {
+        if(fxomObject instanceof FXOMIntrinsic) {
+            FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
+            FXOMInstance fxomInstance = intrinsic.createFxomInstanceFromIntrinsic();
+            candidates.add(fxomInstance);
+        }
+    }
+
+
+    private void handleGridSelectionGroup(AbstractSelectionGroup group, Set<FXOMInstance> candidates) {
+        final GridSelectionGroup gsg = (GridSelectionGroup) group;
+        final DesignHierarchyMask mask = new DesignHierarchyMask(gsg.getAncestor());
+        for (int index : gsg.getIndexes()) {
+            FXOMObject constraints = null;
+            switch (gsg.getType()) {
+                case COLUMN:
+                    constraints = mask.getColumnConstraintsAtIndex(index);
+                    break;
+                case ROW:
+                    constraints = mask.getRowConstraintsAtIndex(index);
+                    break;
+                default:
+                    assert false;
+                    break;
+            }
+            assert constraints instanceof FXOMInstance;
+            candidates.add((FXOMInstance) constraints);
+        }
     }
 
     @Override

@@ -91,6 +91,10 @@ public class FXOMInstance extends FXOMObject {
             p.setParentInstance(this);
         }
     }
+
+    public FXOMInstance(FXOMDocument fxomDocument, GlueElement glueElement) {
+        this(fxomDocument, glueElement, Collections.emptyList());
+    }
     
     public FXOMInstance(FXOMDocument fxomDocument, Class<?> declaredClass) {
         super(fxomDocument, PropertyName.makeClassFullName(declaredClass));
@@ -405,7 +409,7 @@ public class FXOMInstance extends FXOMObject {
         }
     }
 
-    
+
     /*
      * Package
      */
@@ -424,8 +428,14 @@ public class FXOMInstance extends FXOMObject {
         properties.remove(property.getName());
         
     }
-    
-    
+
+    public void fillProperties(Map<PropertyName, FXOMProperty> properties ) {
+        for (FXOMProperty p : properties.values()) {
+            this.properties.put(p.getName(), p);
+            p.setParentInstance(this);
+        }
+    }
+
     /*
      * Private
      */

@@ -35,25 +35,14 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.PopupEditor;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
@@ -67,12 +56,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuButton;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
         
 /**
  * Utility class for property editors.
@@ -82,6 +77,7 @@ import javafx.scene.layout.RowConstraints;
 public class EditorUtils {
 
     static final String[] FXML_RESERVED_KEYWORDS = {"null"}; //NOI18N
+    private static final String FXINCLUDE_JAVADOC_URL = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html#include_elements";
 
     public static void makeWidthStretchable(final Node node) {
         Parent p = node.getParent();
@@ -328,22 +324,22 @@ public class EditorUtils {
         return doubleRounded / roundingFactor;
     }
 
-    public static double computeLeftAnchor(FXOMInstance selectedInstance) {
+    public static double computeLeftAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeLeftAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeRightAnchor(FXOMInstance selectedInstance) {
+    public static double computeRightAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeRightAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeTopAnchor(FXOMInstance selectedInstance) {
+    public static double computeTopAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeTopAnchor(node, node.getLayoutBounds());
     }
 
-    public static double computeBottomAnchor(FXOMInstance selectedInstance) {
+    public static double computeBottomAnchor(FXOMObject selectedInstance) {
         Node node = getFxNode(selectedInstance);
         return computeBottomAnchor(node, node.getLayoutBounds());
     }
@@ -364,7 +360,7 @@ public class EditorUtils {
         return node.getParent().getLayoutBounds().getMaxY() - node.getLayoutY() - futureLayoutBounds.getMaxY();
     }
 
-    private static Node getFxNode(FXOMInstance selectedInstance) {
+    private static Node getFxNode(FXOMObject selectedInstance) {
         Object selectedObj = selectedInstance.getSceneGraphObject();
         assert selectedObj instanceof Node;
         return (Node) selectedObj;
@@ -412,6 +408,7 @@ public class EditorUtils {
 
     protected static void openUrl(Set<Class<?>> selectedClasses, ValuePropertyMetadata propMeta) throws IOException {
         Class<?> clazz = null;
+        String url;
         // In case of static property, we don't care of the selectedClasses
         if (selectedClasses != null) {
             for (Class<?> cl : selectedClasses) {

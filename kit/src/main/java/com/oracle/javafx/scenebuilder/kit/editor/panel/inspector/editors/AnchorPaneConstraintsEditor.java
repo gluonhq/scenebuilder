@@ -53,7 +53,7 @@ import javafx.scene.layout.Region;
 /**
  * Editor for AnchorPane constraints.
  *
- * 
+ *
  */
 public class AnchorPaneConstraintsEditor extends PropertiesEditor {
 
@@ -207,10 +207,10 @@ public class AnchorPaneConstraintsEditor extends PropertiesEditor {
             this.toggleButton = toggleButton;
             this.selectedInstances = selectedInstances;
             this.propMeta = propMeta;
-            
+
             initialize();
         }
-        
+
         private void initialize() {
             //
             // Text field
