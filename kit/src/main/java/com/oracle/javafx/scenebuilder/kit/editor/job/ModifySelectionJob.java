@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor.job;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
@@ -91,7 +92,7 @@ public class ModifySelectionJob extends BatchDocumentJob {
         final ObjectSelectionGroup osg = (ObjectSelectionGroup) group;
         for (FXOMObject fxomObject : osg.getItems()) {
             handleFxomInstance(fxomObject, candidates);
-            handleFxomIntrincis(fxomObject, candidates);
+            handleFxomIntrinsic(fxomObject, candidates);
         }
     }
 
@@ -103,7 +104,7 @@ public class ModifySelectionJob extends BatchDocumentJob {
 
     }
 
-    private void handleFxomIntrincis(FXOMObject fxomObject, Set<FXOMInstance> candidates) {
+    private void handleFxomIntrinsic(FXOMObject fxomObject, Set<FXOMInstance> candidates) {
         if(fxomObject instanceof FXOMIntrinsic) {
             FXOMIntrinsic intrinsic = (FXOMIntrinsic) fxomObject;
             FXOMInstance fxomInstance = intrinsic.createFxomInstanceFromIntrinsic();

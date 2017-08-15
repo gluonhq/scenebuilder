@@ -58,11 +58,6 @@ subprojects {
     }
 }
 
-group = 'com.gluonhq.scenebuilder'
-version = tryGetProperty('VERSION', '8.4.0-SNAPSHOT')
-mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
-ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
-
 clean {
     delete "dist"
 }
