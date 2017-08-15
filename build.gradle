@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.EscapeUnicode
 // Scene Builder version and group
 allprojects {
     group = 'com.gluonhq.scenebuilder'
-    version = '8.4.0-SNAPSHOT'
+    version = '9.0.0-SNAPSHOT'
 }
 
 apply plugin: 'java'

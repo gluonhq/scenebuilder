@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.scene.control.skin.TabPaneSkin;
+import javafx.scene.control.skin.TabPaneSkin;
 import java.util.Iterator;
 import java.util.Set;
 import javafx.geometry.BoundingBox;
@@ -90,10 +91,17 @@ public class TabPaneDesignInfoX /* extends TabDesignInfo */ {
         
         final Node result;
        
-        if (tabPane.getSkin() != null) {
-            assert tabPane.getSkin() instanceof TabPaneSkin;
-            final TabPaneSkin tabPaneSkin = (TabPaneSkin) tabPane.getSkin();
-            result = tabPaneSkin.getSelectedTabContentRegion();
+//        if (tabPane.getSkin() != null) {
+//            assert tabPane.getSkin() instanceof TabPaneSkin;
+//            final TabPaneSkin tabPaneSkin = (TabPaneSkin) tabPane.getSkin();
+//            result = tabPaneSkin.getSelectedTabContentRegion();
+//        } else {
+//            result = null;
+//        }
+
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
+            result = selectedTab.getContent();
         } else {
             result = null;
         }

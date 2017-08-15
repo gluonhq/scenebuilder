@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2017 Gluon and/or its affiliates.
- * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -31,43 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.metadata.util;
-
-import java.net.URL;
-import javafx.scene.image.Image;
-
-/**
- *
- */
-public class DesignImage {
-    private final Image image;
-    private final String location; // A URL or a relative path expression using @
-    
-    public DesignImage(Image image, String location) {
-        assert image != null;
-        assert location != null;
-        
-        this.image = image;
-        this.location = location;
-    }
-    
-    public DesignImage(Image image) {
-        assert image != null;
-        assert image.getUrl() != null;
-        
-        this.image = image;
-        this.location = image.getUrl();
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-    
-    public static URL getVoidImageUrl() {
-        return DesignImage.class.getResource("DesignImage.png"); //NOI18N
-    }
+public class ControllerWithoutPackage {
+ 
+    // no-op
 }

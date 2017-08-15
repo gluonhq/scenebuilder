@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+  Copyright (c) 2017, Gluon and/or its affiliates.
+  Copyright (c) 2017, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -34,7 +36,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../../editor/i18n/SceneBuilderKit.properties?>
+<?scenebuilder-preview-i18n-resource ../../../i18n/SceneBuilderKit.properties?>
 <!-- TODO textAlignement should be JUSTIFY for detailsLabel and messageLabel once RT-23231 is fixed -->
 
 <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="7.0" xmlns:fx="http://javafx.com/fxml">

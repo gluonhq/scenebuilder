@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,7 +34,6 @@ package com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.editors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPickerController;
 import java.io.File;
 import java.io.IOException;
@@ -168,7 +168,7 @@ public class ImageControl extends GridPane {
         }
 
         editor_label.setText(labelString);
-        editor_textfield.setText(initVal == null ? "" : Deprecation.getUrl(initVal)); //NOI18N
+        editor_textfield.setText(initVal == null ? "" : initVal.getUrl()); //NOI18N
         setValue(initVal);
     }
 }

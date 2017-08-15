@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -36,7 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.fxml.LoadListener;
+import javafx.fxml.LoadListener;
 import javafx.fxml.FXMLLoader;
 
 import javax.xml.stream.XMLStreamException;
@@ -80,9 +80,8 @@ class FXOMLoader implements LoadListener {
         fxmlLoader.setLocation(document.getLocation());
         fxmlLoader.setResources(new ResourceKeyCollector(document.getResources()));
         fxmlLoader.setClassLoader(new TransientClassLoader(classLoader));
-        fxmlLoader.setBuilderFactory(new FXOMBuilderFactory(classLoader));
+        fxmlLoader.setLoadListener(this);
         Deprecation.setStaticLoad(fxmlLoader, true);
-        Deprecation.setLoadListener(fxmlLoader, this);
 
         final Charset utf8 = Charset.forName("UTF-8");
         try (final InputStream is = new ByteArrayInputStream(fxmlText.getBytes(utf8))) {
