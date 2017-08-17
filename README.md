@@ -17,6 +17,7 @@ The best way to get started with Gluon Scene Builder is by downloading and insta
 
 See the [documentation](http://docs.gluonhq.com/scenebuilder/) about the new features recently included.
 
+For community support, go to [StackOverflow](https://stackoverflow.com/questions/tagged/scenebuilder).
 
 ## Issues and Contributions ##
 
