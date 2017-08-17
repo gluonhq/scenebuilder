@@ -67,10 +67,10 @@ public class StaticLoadTest {
     }
     
     @Test
-    public void testNonStaticLoad() throws IOException {
+    public void testStaticLoadWithoutEventHandler() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testNonStaticLoad.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoadWithoutEventHandler.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
