@@ -37,7 +37,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../../i18n/SceneBuilderKit.properties?>
 
 <GridPane vgap="3.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children><Region maxHeight="8.0" maxWidth="8.0" minHeight="8.0" minWidth="8.0" styleClass="insets-icon-top" GridPane.halignment="CENTER">

@@ -40,7 +40,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
-<?scenebuilder-preview-i18n-resource ../i18n/SceneBuilderApp.properties?>
 
 <GridPane hgap="6.0" maxWidth="1.7976931348623157E308" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
