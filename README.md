@@ -35,7 +35,6 @@ Gluon Scene Builder is frequently released, and this is only required in case yo
 These are the requisites:
 
 * A recent version of [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-* Gradle 2.14 or superior. 
 
 ### How to build Scene Builder ###
 
