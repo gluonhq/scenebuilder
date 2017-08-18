@@ -85,6 +85,9 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -113,7 +116,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private static String darkToolStylesheet;
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
-    private final List<DocumentWindowController> windowList = new ArrayList<>();
+    private final ObservableList<DocumentWindowController> windowList = FXCollections.observableArrayList();
     private UserLibrary userLibrary;
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
@@ -131,6 +134,18 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         // set design time flag
         java.beans.Beans.setDesignTime(true);
+        
+        // SB-270
+        windowList.addListener((ListChangeListener.Change<? extends DocumentWindowController> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    final String toolStylesheet = getToolStylesheet();
+                    for (DocumentWindowController dwc : c.getAddedSubList()) {
+                        dwc.setToolStylesheet(toolStylesheet);
+                    }
+                }
+            }
+        });
         
         /*
          * We spawn our two threads for handling background startup.
