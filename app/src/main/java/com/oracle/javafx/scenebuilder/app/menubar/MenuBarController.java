@@ -625,6 +625,13 @@ public class MenuBarController {
          */
         if (EditorPlatform.IS_MAC) {
             menuBar.setUseSystemMenuBar(true);
+            // SB-269
+            menuBar.useSystemMenuBarProperty().addListener((obs, ov, nv) -> {
+                if (! nv) {
+                    // Restore System MenuBar
+                    menuBar.setUseSystemMenuBar(true);
+                }
+            });
             exitMenuItem.getParentMenu().getItems().remove(exitMenuItem);
         }
 
