@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
@@ -88,7 +89,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -239,11 +239,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     private FileTime loadFileTime;
     private Job saveJob;
-
-    private static List<String> imageExtensions;
-    private static List<String> audioExtensions;
-    private static List<String> videoExtensions;
-    private static List<String> mediaExtensions;
 
     private final EventHandler<KeyEvent> mainKeyEventFilter = event -> {
         //------------------------------------------------------------------
@@ -1578,19 +1573,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             final TextInputControl tic = getTextInputControl(focusOwner);
             tic.deleteNextChar();
         } else {
-
-            // Collects all the selected objects
-            final List<FXOMObject> selectedObjects = new ArrayList<>();
-            final Selection selection = editorController.getSelection();
-            if (selection.getGroup() instanceof ObjectSelectionGroup) {
-                final ObjectSelectionGroup osg = (ObjectSelectionGroup) selection.getGroup();
-                selectedObjects.addAll(osg.getItems());
-            } else if (selection.getGroup() instanceof GridSelectionGroup) {
-                final GridSelectionGroup gsg = (GridSelectionGroup) selection.getGroup();
-                selectedObjects.addAll(gsg.collectSelectedObjects());
-            } else {
-                assert false;
-            }
+            final List<FXOMObject> selectedObjects = editorController.getSelectedObjects();
 
             // Collects fx:ids in selected objects and their descendants.
             // We filter out toggle groups because their fx:ids are managed automatically.
@@ -1664,16 +1647,16 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         final FileChooser fileChooser = new FileChooser();
         final ExtensionFilter imageFilter
                 = new ExtensionFilter(I18N.getString("file.filter.label.image"),
-                        getImageExtensions());
+                        ResourceUtils.getSupportedImageExtensions());
         final ExtensionFilter audioFilter
                 = new ExtensionFilter(I18N.getString("file.filter.label.audio"),
-                        getAudioExtensions());
+                        ResourceUtils.getSupportedAudioExtensions());
         final ExtensionFilter videoFilter
                 = new ExtensionFilter(I18N.getString("file.filter.label.video"),
-                        getVideoExtensions());
+                        ResourceUtils.getSupportedVideoExtensions());
         final ExtensionFilter mediaFilter
                 = new ExtensionFilter(I18N.getString("file.filter.label.media"),
-                        getMediaExtensions());
+                        ResourceUtils.getSupportedMediaExtensions());
         
         fileChooser.getExtensionFilters().add(mediaFilter);
         fileChooser.getExtensionFilters().add(imageFilter);
@@ -1691,57 +1674,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             this.getEditorController().performImportMedia(mediaFile);
         }
     }
-    
-    private static synchronized List<String> getImageExtensions() {
-        if (imageExtensions == null) {
-            imageExtensions = new ArrayList<>();
-            imageExtensions.add("*.jpg"); //NOI18N
-            imageExtensions.add("*.jpeg"); //NOI18N
-            imageExtensions.add("*.png"); //NOI18N
-            imageExtensions.add("*.gif"); //NOI18N
-            imageExtensions = Collections.unmodifiableList(imageExtensions);
-        }
-        return imageExtensions;
-    }
 
-    private static synchronized List<String> getAudioExtensions() {
-        if (audioExtensions == null) {
-            audioExtensions = new ArrayList<>();
-            audioExtensions.add("*.aif"); //NOI18N
-            audioExtensions.add("*.aiff"); //NOI18N
-            audioExtensions.add("*.mp3"); //NOI18N
-            audioExtensions.add("*.m4a"); //NOI18N
-            audioExtensions.add("*.wav"); //NOI18N
-            audioExtensions.add("*.m3u"); //NOI18N
-            audioExtensions.add("*.m3u8"); //NOI18N
-            audioExtensions = Collections.unmodifiableList(audioExtensions);
-        }
-        return audioExtensions;
-    }
-
-    private static synchronized List<String> getVideoExtensions() {
-        if (videoExtensions == null) {
-            videoExtensions = new ArrayList<>();
-            videoExtensions.add("*.flv"); //NOI18N
-            videoExtensions.add("*.fxm"); //NOI18N
-            videoExtensions.add("*.mp4"); //NOI18N
-            videoExtensions.add("*.m4v"); //NOI18N
-            videoExtensions = Collections.unmodifiableList(videoExtensions);
-        }
-        return videoExtensions;
-    }
-
-    private static synchronized List<String> getMediaExtensions() {
-        if (mediaExtensions == null) {
-            mediaExtensions = new ArrayList<>();
-            mediaExtensions.addAll(getImageExtensions());
-            mediaExtensions.addAll(getAudioExtensions());
-            mediaExtensions.addAll(getVideoExtensions());
-            mediaExtensions = Collections.unmodifiableList(mediaExtensions);
-        }
-        return mediaExtensions;
-    }
-    
     private void performIncludeFxml() {
 
         final FileChooser fileChooser = new FileChooser();
