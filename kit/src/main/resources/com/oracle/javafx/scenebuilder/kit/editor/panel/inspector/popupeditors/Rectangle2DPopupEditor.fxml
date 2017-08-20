@@ -36,7 +36,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-classpath-element ../../../../../../../../../../dist/SceneBuilderKit.jar?>
 
 <GridPane hgap="5.0" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>

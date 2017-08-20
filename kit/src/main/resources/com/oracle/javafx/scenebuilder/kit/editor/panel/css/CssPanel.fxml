@@ -38,8 +38,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
-<?scenebuilder-classpath-element ../../../../../../../../../../dist/SceneBuilderKit.jar?>
-<?scenebuilder-preview-i18n-resource ../../../i18n/SceneBuilderKit.properties?>
 
 <VBox fx:id="root" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
