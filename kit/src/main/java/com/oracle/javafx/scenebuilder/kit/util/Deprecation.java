@@ -134,8 +134,6 @@ public class Deprecation {
     // Deprecated stuff in FXMLLoader
     // RT-21226 : Promote setStaticLoad to public API
     public static void setStaticLoad(FXMLLoader loader, boolean staticLoad) {
-//        loader.impl_setStaticLoad(staticLoad);
-        // System.err.println("Error: impl_setStaticLoad is no longer publicly accessible");
         // See SB-266 and JDK-8186429
         ReflectionUtils.setStaticLoad(loader, staticLoad);
     }
