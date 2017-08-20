@@ -35,7 +35,7 @@ package com.oracle.javafx.scenebuilder.app;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
-import com.oracle.javafx.scenebuilder.kit.SBResources;
+import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
@@ -322,7 +322,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     public static synchronized String getDarkToolStylesheet() {
         if (darkToolStylesheet == null) {
-            darkToolStylesheet = SBResources.THEME_DARK_STYLESHEET;
+            darkToolStylesheet = ResourceUtils.THEME_DARK_STYLESHEET;
         }
         return darkToolStylesheet;
     }
@@ -813,7 +813,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
 
     private String getToolStylesheet() {
-        return SBResources.getToolStylesheet(toolTheme);
+        return ResourceUtils.getToolStylesheet(toolTheme);
     }
     
     

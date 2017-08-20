@@ -1,3 +1,5 @@
+package com;
+
 /*
  * Copyright (c) 2017 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
@@ -29,7 +31,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com;
+
 
 public class ControllerWithSimplePackage {
     // no-op

@@ -37,7 +37,6 @@
 <?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource i18n/SceneBuilderApp.properties?>
 
 <VBox id="DocumentWindow" alignment="CENTER" prefHeight="800.0" prefWidth="1240.0" spacing="0.0" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>

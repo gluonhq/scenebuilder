@@ -35,7 +35,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.FXCollections ?>
-<?scenebuilder-preview-i18n-resource ../../../i18n/SceneBuilderKit.properties?>
 
 <?import java.lang.String?>
 <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">

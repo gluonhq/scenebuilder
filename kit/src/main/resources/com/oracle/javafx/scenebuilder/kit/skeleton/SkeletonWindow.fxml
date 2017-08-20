@@ -62,7 +62,4 @@
             </StackPane.margin>
         </VBox>
     </children>
-  <stylesheets>
-    <URL value="@SkeletonWindow.css" />
-  </stylesheets>
 </StackPane>
