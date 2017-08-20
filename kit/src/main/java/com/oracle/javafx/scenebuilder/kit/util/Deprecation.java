@@ -169,16 +169,6 @@ public class Deprecation {
         return node;
     }
 
-    // RT-19857 : Keeping menu in the Mac menu bar when there is no more stage
-    public static void setDefaultSystemMenuBar(MenuBar menuBar) {
-        //MenuBarSkin.setDefaultSystemMenuBar(menuBar);
-    }
-
-//    // RT-21475 : Promote FXMLLoader.setLoadListener to public API
-//    public static ParseTraceElement[] getParseTrace(FXMLLoader loader) {
-//        return loader.getParseTrace();
-//    }
-
     public static int getGridPaneColumnCount(GridPane gridPane) {
         return gridPane.getColumnCount();
     }
