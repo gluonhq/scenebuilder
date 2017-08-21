@@ -327,11 +327,14 @@ public class PreferencesRecordDocument {
         }
     }
 
-    public void setTheme(EditorPlatform.Theme theme) {
+    private void setTheme(EditorPlatform.Theme theme) {
         this.theme = theme;
     }
 
-    public EditorPlatform.Theme getTheme() {
+    private EditorPlatform.Theme getTheme() {
+        if (theme == null) {
+            theme = documentWindowController.getEditorController().getTheme();
+        }
         return theme;
     }
 
@@ -340,6 +343,9 @@ public class PreferencesRecordDocument {
     }
 
     public EditorPlatform.GluonSwatch getGluonSwatch() {
+        if (gluonSwatch == null) {
+            return documentWindowController.getEditorController().getGluonSwatch();
+        }
         return gluonSwatch;
     }
 
@@ -348,6 +354,9 @@ public class PreferencesRecordDocument {
     }
 
     public EditorPlatform.GluonTheme getGluonTheme() {
+        if (gluonTheme == null) {
+            return documentWindowController.getEditorController().getGluonTheme();
+        }
         return gluonTheme;
     }
 
@@ -640,7 +649,7 @@ public class PreferencesRecordDocument {
         } else {
             setTheme(documentWindowController.getEditorController().getTheme());
         }
-
+        
         final String gluonSwatch = documentPreferences.get(GLUON_SWATCH, null);
         if (gluonSwatch != null) {
             setGluonSwatch(EditorPlatform.GluonSwatch.valueOf(gluonSwatch));
@@ -731,11 +740,17 @@ public class PreferencesRecordDocument {
         } else {
             documentPreferences.remove(I18N_RESOURCE);
         }
-
+        
         // Theme and Gluon Theme
-        documentPreferences.put(THEME, getTheme().name());
-        documentPreferences.put(GLUON_SWATCH, getGluonSwatch().name());
-        documentPreferences.put(GLUON_THEME, getGluonTheme().name());
+        final EditorPlatform.Theme docTheme = getTheme();
+        documentPreferences.put(THEME, docTheme.name());
+        if (docTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || docTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
+            documentPreferences.put(GLUON_SWATCH, getGluonSwatch().name());
+            documentPreferences.put(GLUON_THEME, getGluonTheme().name());
+        } else {
+            documentPreferences.remove(GLUON_SWATCH);
+            documentPreferences.remove(GLUON_THEME);
+        }
     }
 
     /**
