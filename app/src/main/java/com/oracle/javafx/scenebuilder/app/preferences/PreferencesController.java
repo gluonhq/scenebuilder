@@ -33,14 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordRepository;
-import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
 
 import java.util.HashMap;
 import java.util.Map;
