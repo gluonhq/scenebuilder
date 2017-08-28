@@ -1,26 +1,24 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
-// Scene Builder version and group
-allprojects {
-    group = 'com.gluonhq.scenebuilder'
-    version = '8.4.0-SNAPSHOT'
-}
+apply plugin: 'base'
 
-apply plugin: 'java'
-
-ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 ext.getStringProperty = { name, defaultValue ->
-    if (!hasProperty(name)) {
+    if (!project.hasProperty(name)) {
         return defaultValue
     }
 
-    def propertyValue = getProperty(name)
+    def propertyValue = project.getProperty(name)
     return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }
 
 subprojects {
     apply plugin: 'java'
-    
+
+    group = 'com.gluonhq.scenebuilder'
+    version = getStringProperty('VERSION', '8.4.0-SNAPSHOT')
+
+    ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
+
     repositories {
         mavenLocal()
         maven {
