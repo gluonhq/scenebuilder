@@ -30,6 +30,13 @@ subprojects {
         maven {
             url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
+        maven {
+            url "http://nexus.gluonhq.com/nexus/content/repositories/snapshots/"
+            credentials {
+                username gluonNexusUsername
+                password gluonNexusPassword
+            }
+        }
 
         jcenter()
         mavenCentral()
