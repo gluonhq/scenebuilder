@@ -64,7 +64,8 @@ public class SceneStyleSheetMenuController {
         
         // Open a file chooser for *.css & *.bss
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("scenestylesheet.filechooser.filter.msg"),
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                com.oracle.javafx.scenebuilder.kit.i18n.I18N.getString("scenestylesheet.filechooser.filter.msg"),
                 "*.css", "*.bss")); //NOI18N
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(documentWindowController.getStage());
