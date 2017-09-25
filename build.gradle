@@ -20,7 +20,6 @@ subprojects {
     ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
     repositories {
-        mavenLocal()
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
@@ -29,13 +28,6 @@ subprojects {
         }
         maven {
             url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
-        }
-        maven {
-            url "http://nexus.gluonhq.com/nexus/content/repositories/snapshots/"
-            credentials {
-                username gluonNexusUsername
-                password gluonNexusPassword
-            }
         }
 
         jcenter()
@@ -51,7 +43,7 @@ subprojects {
         compile 'org.eclipse.aether:aether-transport-http:1.1.0'
         compile 'org.apache.maven:maven-aether-provider:3.3.9'
 
-        compile 'com.gluonhq:charm-glisten:4.4.0-SNAPSHOT'
+        compile 'com.gluonhq:charm-glisten:4.4.0'
 
         // REST API
         compile 'org.apache.httpcomponents:httpclient:4.5.2'
