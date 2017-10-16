@@ -93,6 +93,10 @@ class ControllerClass {
     private static final String MAVEN_DIR_STRUCTURE = "src" + FILE_SEPARATOR + "main";
     private static final String MAVEN_JAVA_DIR_STRUCTURE = MAVEN_DIR_STRUCTURE + FILE_SEPARATOR + "java";
     private static final String MAVEN_RESOURCES_DIR_STRUCTURE = MAVEN_DIR_STRUCTURE + FILE_SEPARATOR + "resources";
+    private static final String MAVEN_RESOURCES_DIR_REGEX = FILE_SEPARATOR.equals("\\") ? MAVEN_RESOURCES_DIR_STRUCTURE.replace("\\", "\\\\")
+            : MAVEN_RESOURCES_DIR_STRUCTURE;
+    private static final String MAVEN_JAVA_DIR_STRUCTURE_REPLACEMENT = FILE_SEPARATOR.equals("\\") ? MAVEN_JAVA_DIR_STRUCTURE.replace("\\", "\\\\")
+            : MAVEN_JAVA_DIR_STRUCTURE;
     private static final boolean IGNORE_MAVEN_DIR_STRUCTURE = System.getProperty("ignore.maven.structure") != null;
 
     private ControllerClass(File file) throws IOException, JavaTokenizer.ParseException {
@@ -125,7 +129,7 @@ class ControllerClass {
         // Check if FXML file path contains the default Maven resources path as a sub-string.
         if (!IGNORE_MAVEN_DIR_STRUCTURE && fxmlFile.getAbsolutePath().contains(MAVEN_RESOURCES_DIR_STRUCTURE))
         {
-            parentFile = new File(fxmlFile.getParent().replaceFirst(MAVEN_RESOURCES_DIR_STRUCTURE, MAVEN_JAVA_DIR_STRUCTURE));
+            parentFile = new File(fxmlFile.getParent().replaceFirst(MAVEN_RESOURCES_DIR_REGEX, MAVEN_JAVA_DIR_STRUCTURE_REPLACEMENT));
         }
         else
         {
