@@ -13,7 +13,7 @@ subprojects {
     apply plugin: 'java'
 
     group = 'com.gluonhq.scenebuilder'
-    version = getStringProperty('VERSION', '9.0.0-SNAPSHOT')
+    version = getStringProperty('VERSION', '9.1.0-SNAPSHOT')
 
     ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
