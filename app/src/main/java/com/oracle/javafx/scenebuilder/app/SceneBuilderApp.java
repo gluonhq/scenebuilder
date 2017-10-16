@@ -403,14 +403,16 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
             }
             if (shouldShowImportGluonJarAlert) {
-                SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
-                DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
-                if (dwc == null) {
-                    dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
-                }
-                ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
-                AppSettings.setWindowIcon(alert);
-                alert.showAndWait();
+                Platform.runLater(() -> {
+                    SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
+                    DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
+                    if (dwc == null) {
+                        dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
+                    }
+                    ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
+                    AppSettings.setWindowIcon(alert);
+                    alert.showAndWait();
+                });
             }
             updateImportedGluonJars(jarReports);
         });
