@@ -66,6 +66,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javafx.fxml.FXMLLoader;
@@ -267,7 +268,7 @@ class MetadataIntrospector {
 //                        inspectorPath, FUNCTION);
             } else if (propertyType == javafx.collections.ObservableList.class) {
                 String propertyName = name.getName();
-                String methodName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+                String methodName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ROOT) + propertyName.substring(1);
                 result = null;
                 try {
                     Method method = sample.getClass().getMethod(methodName);
