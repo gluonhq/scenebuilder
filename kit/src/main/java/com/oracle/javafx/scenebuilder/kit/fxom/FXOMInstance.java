@@ -53,6 +53,7 @@ public class FXOMInstance extends FXOMObject {
     
     private final Map<PropertyName, FXOMProperty> properties = new LinkedHashMap<>();
     private Class<?> declaredClass;
+    private FXOMDocument fxomDocument;
     
     
     FXOMInstance(
@@ -69,7 +70,8 @@ public class FXOMInstance extends FXOMObject {
                 || glueElement.getTagName().equals(declaredClass.getCanonicalName());
         assert sceneGraphObject != null;
         assert properties != null;
-
+        
+        this.fxomDocument = fxomDocument;
         this.declaredClass = declaredClass;
         for (FXOMProperty p : properties) {
             this.properties.put(p.getName(), p);
@@ -232,6 +234,32 @@ public class FXOMInstance extends FXOMObject {
             if (p instanceof FXOMPropertyC) {
                 for (FXOMObject v : ((FXOMPropertyC)p).getValues()) {
                     v.collectDeclaredClasses(result);
+                }
+            } else if (p instanceof FXOMPropertyT) {
+                collectGlueElementPropertiesT(((FXOMPropertyT)p).getValueElement(), result);
+            }
+        }
+        
+    }
+
+    private void collectGlueElementPropertiesT(GlueElement element, Set<Class<?>> result) {
+        if (element == null) {
+            return;
+        }
+        if (! element.getChildren().isEmpty()) {
+            for (GlueElement e : element.getChildren()) {
+                collectGlueElementPropertiesT(e, result);
+            } 
+        } else {
+            String clazz = element.getTagName();
+            if (clazz != null) {
+                for (Class<?> c : fxomDocument.getInitialDeclaredClasses()) {
+                    if (c.getCanonicalName().equals(clazz) || c.getSimpleName().equals(clazz)) {
+                        if (! result.contains(c)) {
+                            result.add(c);
+                        }
+                        break;
+                    }
                 }
             }
         }

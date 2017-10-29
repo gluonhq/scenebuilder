@@ -146,6 +146,13 @@ class TransientObject extends TransientNode {
                                       properties);
         }
 
+        if (result instanceof FXOMInstance) {
+            final Class<?> declaredClassFromResult = ((FXOMInstance) result).getDeclaredClass();
+            if (fxomDocument.getInitialDeclaredClasses() != null && 
+                    ! fxomDocument.getInitialDeclaredClasses().contains(declaredClassFromResult)) {
+                fxomDocument.getInitialDeclaredClasses().add(declaredClassFromResult);
+            }
+        }
         return result;
     }
     
