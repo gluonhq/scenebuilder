@@ -382,6 +382,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void handleLaunch(List<String> files) {
+        boolean showWelcomeDialog = files.isEmpty();
+
         setApplicationUncaughtExceptionHandler();
 
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
@@ -411,6 +413,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     }
                     ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
                     AppSettings.setWindowIcon(alert);
+                    if (showWelcomeDialog) {
+                        alert.initOwner(WelcomeDialogWindowController.getInstance().getStage());
+                    }
                     alert.showAndWait();
                 });
             }
@@ -423,7 +428,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         sendTrackingStartupInfo();
 
-        if (files.isEmpty()) {
+        if (showWelcomeDialog) {
             // Creates an empty document
             final DocumentWindowController newWindow = makeNewWindow();
             newWindow.updateWithDefaultContent();
