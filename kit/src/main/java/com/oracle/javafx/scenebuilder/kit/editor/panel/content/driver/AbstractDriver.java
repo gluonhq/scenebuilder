@@ -33,6 +33,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.pring.AbstractPring;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.resizer.AbstractResizer;
@@ -57,6 +58,7 @@ public abstract class AbstractDriver {
     public abstract AbstractPring<?> makePring(FXOMObject fxomObject);
     public abstract AbstractTring<?> makeTring(AbstractDropTarget dropTarget);
     public abstract AbstractResizer<?> makeResizer(FXOMObject fxomObject);
+    public abstract AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject);
     public abstract FXOMObject refinePick(Node hitNode, double sceneX, double sceneY, FXOMObject fxomObject);
     public abstract AbstractDropTarget makeDropTarget(FXOMObject fxomObject, double sceneX, double sceneY);
     public abstract Node getInlineEditorBounds(FXOMObject fxomObject);

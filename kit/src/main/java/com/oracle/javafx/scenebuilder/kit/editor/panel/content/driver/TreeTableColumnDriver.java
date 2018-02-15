@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ContainerZDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.TreeTableColumnHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.pring.AbstractPring;
@@ -86,6 +87,11 @@ public class TreeTableColumnDriver extends AbstractDriver {
 
     @Override
     public AbstractResizer<?> makeResizer(FXOMObject fxomObject) {
+        return null;
+    }
+
+    @Override
+    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
         return null;
     }
     
