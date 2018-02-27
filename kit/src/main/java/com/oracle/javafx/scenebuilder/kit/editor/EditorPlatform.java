@@ -152,7 +152,7 @@ public class EditorPlatform {
 
         @Override
         public String toString() {
-            String lowerCaseName = name().toLowerCase();
+            String lowerCaseName = name().toLowerCase(Locale.ROOT);
             return I18N.getString("title.theme." + lowerCaseName);
         }
     }
@@ -187,13 +187,13 @@ public class EditorPlatform {
 
         @Override
         public String toString() {
-            String lowerCaseSwatch = "title.gluon.swatch." + name().toLowerCase();
+            String lowerCaseSwatch = "title.gluon.swatch." + name().toLowerCase(Locale.ROOT);
             return I18N.getString(lowerCaseSwatch);
         }
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase() + ".gls");
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".gls");
         }
 
         public Color getColor() {
@@ -239,13 +239,13 @@ public class EditorPlatform {
 
         @Override
         public String toString() {
-            String lowerCaseName = "title.gluon.theme." + name().toLowerCase();
+            String lowerCaseName = "title.gluon.theme." + name().toLowerCase(Locale.ROOT);
             return I18N.getString(lowerCaseName);
         }
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase() + ".gls");
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
         }
     }
     

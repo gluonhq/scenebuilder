@@ -27,6 +27,7 @@ subprojects {
         maven {
             url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
+
         jcenter()
         mavenCentral()
     }

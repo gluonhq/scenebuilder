@@ -381,6 +381,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void handleLaunch(List<String> files) {
+        boolean showWelcomeDialog = files.isEmpty();
+
         setApplicationUncaughtExceptionHandler();
 
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
@@ -402,14 +404,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
             }
             if (shouldShowImportGluonJarAlert) {
-                SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
-                DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
-                if (dwc == null) {
-                    dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
-                }
-                ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
-                AppSettings.setWindowIcon(alert);
-                alert.showAndWait();
+                Platform.runLater(() -> {
+                    SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
+                    DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
+                    if (dwc == null) {
+                        dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
+                    }
+                    ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
+                    AppSettings.setWindowIcon(alert);
+                    if (showWelcomeDialog) {
+                        alert.initOwner(WelcomeDialogWindowController.getInstance().getStage());
+                    }
+                    alert.showAndWait();
+                });
             }
             updateImportedGluonJars(jarReports);
         });
@@ -420,7 +427,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         sendTrackingStartupInfo();
 
-        if (files.isEmpty()) {
+        if (showWelcomeDialog) {
             // Creates an empty document
             final DocumentWindowController newWindow = makeNewWindow();
             newWindow.updateWithDefaultContent();
