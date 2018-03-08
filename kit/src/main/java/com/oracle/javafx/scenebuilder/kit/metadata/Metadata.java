@@ -55,6 +55,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPro
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPathComparator;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
+import javafx.scene.Scene;
 import javafx.scene.control.SelectionMode;
 
 import java.util.ArrayList;
@@ -400,6 +402,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.RadioButton.class, ToggleButtonMetadata);
     private final ComponentClassMetadata RadioMenuItemMetadata = 
             new ComponentClassMetadata(javafx.scene.control.RadioMenuItem.class, MenuItemMetadata);
+    private final ComponentClassMetadata SceneMetadata =
+            new ComponentClassMetadata(Scene.class, null);
     private final ComponentClassMetadata ScrollBarMetadata = 
             new ComponentClassMetadata(javafx.scene.control.ScrollBar.class, ControlMetadata);
     private final ComponentClassMetadata ScrollPaneMetadata = 
@@ -1058,6 +1062,8 @@ public class Metadata {
             new PropertyName("resizable");
     private final PropertyName rightName = 
             new PropertyName("right");
+    private final PropertyName rootName =
+            new PropertyName("root");
     private final PropertyName rotateName = 
             new PropertyName("rotate");
     private final PropertyName rotateGraphicName = 
@@ -2247,6 +2253,12 @@ public class Metadata {
                 fillName,
                 true, /* readWrite */
                 javafx.scene.paint.Color.BLACK, /* defaultValue */
+                new InspectorPath("Properties", "Specific", 20));
+    private final ValuePropertyMetadata fill_WHITE_PropertyMetadata =
+            new PaintPropertyMetadata(
+                fillName,
+                true, /* readWrite */
+                javafx.scene.paint.Color.WHITE, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 20));
     private final ValuePropertyMetadata fillHeightPropertyMetadata =
             new BooleanPropertyMetadata(
@@ -3461,6 +3473,11 @@ public class Metadata {
                 rightName,
                 NodeMetadata,
                 false); /* collection */
+    private final ComponentPropertyMetadata root_scene_PropertyMetadata =
+            new ComponentPropertyMetadata(
+                    rootName,
+                    NodeMetadata,
+                    false);
     private final ValuePropertyMetadata rotatePropertyMetadata =
             new DoublePropertyMetadata(
                 rotateName,
@@ -4869,6 +4886,7 @@ public class Metadata {
         componentClassMap.put(RowConstraintsMetadata.getKlass(), RowConstraintsMetadata);
         componentClassMap.put(SVGPathMetadata.getKlass(), SVGPathMetadata);
         componentClassMap.put(ScatterChartMetadata.getKlass(), ScatterChartMetadata);
+        componentClassMap.put(SceneMetadata.getKlass(), SceneMetadata);
         componentClassMap.put(ScrollBarMetadata.getKlass(), ScrollBarMetadata);
         componentClassMap.put(ScrollPaneMetadata.getKlass(), ScrollPaneMetadata);
         componentClassMap.put(SeparatorMetadata.getKlass(), SeparatorMetadata);
@@ -5593,6 +5611,49 @@ public class Metadata {
         SVGPathMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
 
         ScatterChartMetadata.getProperties().add(styleClass_c37_PropertyMetadata);
+
+        SceneMetadata.getProperties().add(fill_WHITE_PropertyMetadata);
+        SceneMetadata.getProperties().add(onContextMenuRequestedPropertyMetadata);
+        SceneMetadata.getProperties().add(onDragDetectedPropertyMetadata);
+        SceneMetadata.getProperties().add(onDragDonePropertyMetadata);
+        SceneMetadata.getProperties().add(onDragDroppedPropertyMetadata);
+        SceneMetadata.getProperties().add(onDragEnteredPropertyMetadata);
+        SceneMetadata.getProperties().add(onDragExitedPropertyMetadata);
+        SceneMetadata.getProperties().add(onDragOverPropertyMetadata);
+        SceneMetadata.getProperties().add(onInputMethodTextChangedPropertyMetadata);
+        SceneMetadata.getProperties().add(onKeyPressedPropertyMetadata);
+        SceneMetadata.getProperties().add(onKeyReleasedPropertyMetadata);
+        SceneMetadata.getProperties().add(onKeyTypedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseClickedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseDragEnteredPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseDragExitedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseDraggedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseDragOverPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseDragReleasedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseEnteredPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseExitedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseMovedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMousePressedPropertyMetadata);
+        SceneMetadata.getProperties().add(onMouseReleasedPropertyMetadata);
+        SceneMetadata.getProperties().add(onRotatePropertyMetadata);
+        SceneMetadata.getProperties().add(onRotationFinishedPropertyMetadata);
+        SceneMetadata.getProperties().add(onRotationStartedPropertyMetadata);
+        SceneMetadata.getProperties().add(onScrollFinishedPropertyMetadata);
+        SceneMetadata.getProperties().add(onScrollPropertyMetadata);
+        SceneMetadata.getProperties().add(onScrollStartedPropertyMetadata);
+        SceneMetadata.getProperties().add(onSwipeDownPropertyMetadata);
+        SceneMetadata.getProperties().add(onSwipeLeftPropertyMetadata);
+        SceneMetadata.getProperties().add(onSwipeRightPropertyMetadata);
+        SceneMetadata.getProperties().add(onSwipeUpPropertyMetadata);
+        SceneMetadata.getProperties().add(onTouchMovedPropertyMetadata);
+        SceneMetadata.getProperties().add(onTouchPressedPropertyMetadata);
+        SceneMetadata.getProperties().add(onTouchReleasedPropertyMetadata);
+        SceneMetadata.getProperties().add(onTouchStationaryPropertyMetadata);
+        SceneMetadata.getProperties().add(onZoomFinishedPropertyMetadata);
+        SceneMetadata.getProperties().add(onZoomPropertyMetadata);
+        SceneMetadata.getProperties().add(onZoomStartedPropertyMetadata);
+        SceneMetadata.getProperties().add(root_scene_PropertyMetadata);
+        SceneMetadata.getProperties().add(stylesheetsPropertyMetadata);
 
         ScrollBarMetadata.getProperties().add(accessibleRole_SCROLL_BAR_PropertyMetadata);
         ScrollBarMetadata.getProperties().add(blockIncrementPropertyMetadata);

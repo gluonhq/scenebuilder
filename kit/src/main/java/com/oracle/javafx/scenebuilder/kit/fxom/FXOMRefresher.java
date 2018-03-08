@@ -36,7 +36,10 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadat
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleArrayPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ListValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 
 import java.io.File;
@@ -113,10 +116,15 @@ class FXOMRefresher {
         // Transfers display node from newDocument to currentDocument
         currentDocument.setDisplayNode(newDocument.getDisplayNode());
         // Simulates Scene's behavior : automatically adds "root" styleclass if
-        // if the scene graph root is a Parent instance
+        // if the scene graph root is a Parent instance or wraps a Parent instance
         if (currentDocument.getSceneGraphRoot() instanceof Parent) {
             final Parent rootParent = (Parent) currentDocument.getSceneGraphRoot();
             rootParent.getStyleClass().add(0, "root");
+        } else if (currentDocument.getSceneGraphRoot() instanceof Scene) {
+            Node displayNode = currentDocument.getDisplayNode();
+            if (displayNode != null && displayNode instanceof Parent) {
+                displayNode.getStyleClass().add(0, "root");
+            }
         }
         // Recurses
         if (currentDocument.getFxomRoot() != null) {

@@ -101,6 +101,7 @@ public class DesignHierarchyMask {
         // Single-valued sub-components treated as accessories
         // TODO(elp) : verify that it is complete 
         CONTENT,
+        ROOT,
         TOP,
         BOTTOM,
         LEFT,
@@ -134,6 +135,7 @@ public class DesignHierarchyMask {
     }
     private static final PropertyName graphicName = new PropertyName("graphic");
     private static final PropertyName contentName = new PropertyName("content");
+    private static final PropertyName rootName = new PropertyName("root");
     private static final PropertyName expandableContentName = new PropertyName("expandableContent");
     private static final PropertyName headerName = new PropertyName("header");
     private static final PropertyName topName = new PropertyName("top");
@@ -484,6 +486,7 @@ public class DesignHierarchyMask {
             case PLACEHOLDER:
             case CLIP:
             case CONTENT:
+            case ROOT:
                 result = javafx.scene.Node.class;
                 break;
             case XAXIS:
@@ -695,6 +698,9 @@ public class DesignHierarchyMask {
             case DP_CONTENT:
             case EX_CONTENT:
                 result = contentName;
+                break;
+            case ROOT:
+                result = rootName;
                 break;
             case EXPANDABLE_CONTENT:
                 result = expandableContentName;
@@ -1055,6 +1061,7 @@ public class DesignHierarchyMask {
     public boolean needResizeWhenTopElement() {
         return (this.isAcceptingSubComponent()
                 || this.isAcceptingAccessory(Accessory.CONTENT)
+                || this.isAcceptingAccessory(Accessory.ROOT)
                 || this.isAcceptingAccessory(Accessory.CENTER)
                 || this.isAcceptingAccessory(Accessory.TOP)
                 || this.isAcceptingAccessory(Accessory.RIGHT)

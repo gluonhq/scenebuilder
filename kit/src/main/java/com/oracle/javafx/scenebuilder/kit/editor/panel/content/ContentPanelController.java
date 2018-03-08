@@ -48,6 +48,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -88,6 +89,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SceneDriver;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
@@ -1000,6 +1002,8 @@ public class ContentPanelController extends AbstractFxmlPanelController
             result = new TreeTableColumnDriver(this);
         } else if (sceneGraphObject instanceof Node) {
             result = new GenericDriver(this);
+        } else if (sceneGraphObject instanceof Scene) {
+            result = new SceneDriver(this);
         } else {
             result = null;
         }
