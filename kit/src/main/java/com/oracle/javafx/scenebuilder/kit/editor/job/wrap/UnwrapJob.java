@@ -127,6 +127,7 @@ public class UnwrapJob extends BatchSelectionJob {
                 assert parentContainerMask.isAcceptingAccessory(Accessory.CONTENT)
                         || parentContainerMask.isAcceptingAccessory(Accessory.GRAPHIC)
                         || parentContainerMask.isAcceptingAccessory(Accessory.ROOT)
+                        || parentContainerMask.isAcceptingAccessory(Accessory.SCENE)
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof BorderPane
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof DialogPane;
                 return childrenCount == 1;

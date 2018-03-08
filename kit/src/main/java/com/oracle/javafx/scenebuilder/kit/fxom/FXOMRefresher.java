@@ -41,6 +41,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,7 +121,8 @@ class FXOMRefresher {
         if (currentDocument.getSceneGraphRoot() instanceof Parent) {
             final Parent rootParent = (Parent) currentDocument.getSceneGraphRoot();
             rootParent.getStyleClass().add(0, "root");
-        } else if (currentDocument.getSceneGraphRoot() instanceof Scene) {
+        } else if (currentDocument.getSceneGraphRoot() instanceof Scene
+                || currentDocument.getSceneGraphRoot() instanceof Window) {
             Node displayNode = currentDocument.getDisplayNode();
             if (displayNode != null && displayNode instanceof Parent) {
                 displayNode.getStyleClass().add(0, "root");

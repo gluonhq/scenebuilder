@@ -903,6 +903,13 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
             }
         }
 
+        if (mask.isAcceptingAccessory(Accessory.SCENE)) {
+            final FXOMObject value = mask.getAccessory(Accessory.SCENE);
+            if (value != null) {
+                treeItem.getChildren().add(makeTreeItem(value));
+            }
+        }
+
         // Positionning
         //---------------------------------
         for (Accessory accessory : new Accessory[]{

@@ -83,6 +83,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
+import javafx.stage.Window;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -90,6 +91,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SceneDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.WindowDriver;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
@@ -1004,6 +1006,8 @@ public class ContentPanelController extends AbstractFxmlPanelController
             result = new GenericDriver(this);
         } else if (sceneGraphObject instanceof Scene) {
             result = new SceneDriver(this);
+        } else if (sceneGraphObject instanceof Window) {
+            result = new WindowDriver(this);
         } else {
             result = null;
         }
