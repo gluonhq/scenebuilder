@@ -450,14 +450,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         
         if (isContentDisplayable()) {
             final FXOMDocument fxomDocument = getEditorController().getFxomDocument();
-            assert fxomDocument != null;
-            if ((fxomDocument.getFxomRoot() == null) 
-                    || excludes.contains(fxomDocument.getFxomRoot())) {
-                result = null;
-            } else {
-                assert fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Node;
-                result = pick(fxomDocument.getFxomRoot(), sceneX, sceneY, excludes);
-            }
+            result = pick(fxomDocument, sceneX, sceneY, excludes);
         } else {
             result = null;
         }
@@ -465,6 +458,28 @@ public class ContentPanelController extends AbstractFxmlPanelController
         return result;
     }
     
+    public FXOMObject pick(FXOMDocument fxomDocument, double sceneX, double sceneY, Set<FXOMObject> excludes) {
+        assert fxomDocument != null;
+
+        if (fxomDocument.getFxomRoot() == null) {
+            return null;
+        }
+
+        Node displayNode = fxomDocument.getDisplayNode();
+        if (displayNode != null) {
+            FXOMObject startObject = fxomDocument.getFxomRoot().searchWithSceneGraphObject(displayNode);
+            if (startObject == null || excludes.contains(startObject)) {
+                return null;
+            }
+            return pick(startObject, sceneX, sceneY, excludes);
+        }
+
+        if (excludes.contains(fxomDocument.getFxomRoot())) {
+            return null;
+        }
+
+        return pick(fxomDocument.getFxomRoot(), sceneX, sceneY, excludes);
+    }
     
     /**
      * Returns the topmost FXOMObject at (sceneX, sceneY) but ignoring
@@ -721,7 +736,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         } else if (fxomDocument.getFxomRoot() == null) {
             result = true;
         } else {
-            result = fxomDocument.getFxomRoot().isNode()
+            result = fxomDocument.getDisplayNodeOrSceneGraphRoot() instanceof Node
                     && workspaceController.getLayoutException() == null;
         }
         

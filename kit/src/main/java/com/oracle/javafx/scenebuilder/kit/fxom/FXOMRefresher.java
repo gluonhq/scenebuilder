@@ -110,6 +110,8 @@ class FXOMRefresher {
     private void refreshDocument(FXOMDocument currentDocument, FXOMDocument newDocument) {
         // Transfers scene graph object from newDocument to currentDocument
         currentDocument.setSceneGraphRoot(newDocument.getSceneGraphRoot());
+        // Transfers display node from newDocument to currentDocument
+        currentDocument.setDisplayNode(newDocument.getDisplayNode());
         // Simulates Scene's behavior : automatically adds "root" styleclass if
         // if the scene graph root is a Parent instance
         if (currentDocument.getSceneGraphRoot() instanceof Parent) {

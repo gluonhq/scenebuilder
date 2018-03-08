@@ -69,6 +69,7 @@ public class FXOMDocument {
     private SampleDataGenerator sampleDataGenerator;
     private FXOMObject fxomRoot;
     private Object sceneGraphRoot;
+    private Node displayNode;
     private final SimpleIntegerProperty sceneGraphRevision = new SimpleIntegerProperty();
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
@@ -203,6 +204,7 @@ public class FXOMDocument {
             this.glue.setRootElement(this.fxomRoot.getGlueElement());
         }
         this.sceneGraphRoot = sceneGraphRoot;
+        this.displayNode = null;
     }
 
     public Object getSceneGraphRoot() {
@@ -211,6 +213,27 @@ public class FXOMDocument {
 
     void setSceneGraphRoot(Object sceneGraphRoot) {
         this.sceneGraphRoot = sceneGraphRoot;
+    }
+
+    /**
+     * Returns the Node that should be displayed in the editor instead of the scene graph root.
+     */
+    public Node getDisplayNode() {
+        return displayNode;
+    }
+
+    /**
+     * Sets the Node that should be displayed in the editor instead of the scene graph root.
+     */
+    void setDisplayNode(Node displayNode) {
+        this.displayNode = displayNode;
+    }
+
+    /**
+     * Returns the display node if one is set, otherwise returns the scene graph root.
+     */
+    public Object getDisplayNodeOrSceneGraphRoot() {
+        return displayNode != null ? displayNode : sceneGraphRoot;
     }
 
     public String getFxmlText() {

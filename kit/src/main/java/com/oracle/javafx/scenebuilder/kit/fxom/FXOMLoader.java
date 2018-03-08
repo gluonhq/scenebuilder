@@ -90,7 +90,7 @@ class FXOMLoader implements LoadListener {
             currentTransientNode = null;
             assert is.markSupported();
             is.reset();
-            document.setSceneGraphRoot(fxmlLoader.load(is));
+            setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
             if (x.getCause().getClass() == XMLStreamException.class) {
                 handleUnsupportedCharset(x);
@@ -106,6 +106,11 @@ class FXOMLoader implements LoadListener {
         errorDialog.setDebugInfo(x.getCause().toString());
         errorDialog.setTitle(I18N.getString("alert.title.open"));
         errorDialog.showAndWait();
+    }
+
+    private void setSceneGraphRoot(Object sceneGraphRoot) {
+        document.setSceneGraphRoot(sceneGraphRoot);
+        document.setDisplayNode(null);
     }
 
     public FXOMDocument getDocument() {
