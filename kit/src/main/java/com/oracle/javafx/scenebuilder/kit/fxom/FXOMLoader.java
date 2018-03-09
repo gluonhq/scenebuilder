@@ -47,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Collections;
 
 
 /**
@@ -114,15 +115,18 @@ class FXOMLoader implements LoadListener {
     private void setSceneGraphRoot(Object sceneGraphRoot) {
         document.setSceneGraphRoot(sceneGraphRoot);
         document.setDisplayNode(null);
+        document.setDisplayStylesheets(Collections.emptyList());
 
         if (sceneGraphRoot instanceof Scene) {
             Scene scene = (Scene) sceneGraphRoot;
             document.setDisplayNode(scene.getRoot());
+            document.setDisplayStylesheets(scene.getStylesheets());
             scene.setRoot(new Pane()); // ensure displayNode is only part of one scene
         } else if (sceneGraphRoot instanceof Window) {
             Window window = (Window) sceneGraphRoot;
             if (window.getScene() != null) {
                 document.setDisplayNode(window.getScene().getRoot());
+                document.setDisplayStylesheets(window.getScene().getStylesheets());
                 window.getScene().setRoot(new Pane()); // ensure displayNode is only part of one scene
             }
         }

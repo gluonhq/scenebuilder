@@ -46,6 +46,7 @@ import javafx.stage.Window;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -116,6 +117,8 @@ class FXOMRefresher {
         currentDocument.setSceneGraphRoot(newDocument.getSceneGraphRoot());
         // Transfers display node from newDocument to currentDocument
         currentDocument.setDisplayNode(newDocument.getDisplayNode());
+        // Transfers display stylesheets from newDocument to currentDocument
+        currentDocument.setDisplayStylesheets(newDocument.getDisplayStylesheets());
         // Simulates Scene's behavior : automatically adds "root" styleclass if
         // if the scene graph root is a Parent instance or wraps a Parent instance
         if (currentDocument.getSceneGraphRoot() instanceof Parent) {

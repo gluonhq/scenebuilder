@@ -39,7 +39,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -70,6 +72,7 @@ public class FXOMDocument {
     private FXOMObject fxomRoot;
     private Object sceneGraphRoot;
     private Node displayNode;
+    private ArrayList<String> displayStylesheets = new ArrayList<>();
     private final SimpleIntegerProperty sceneGraphRevision = new SimpleIntegerProperty();
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
@@ -205,6 +208,7 @@ public class FXOMDocument {
         }
         this.sceneGraphRoot = sceneGraphRoot;
         this.displayNode = null;
+        this.displayStylesheets.clear();
     }
 
     public Object getSceneGraphRoot() {
@@ -220,6 +224,15 @@ public class FXOMDocument {
      */
     public Node getDisplayNode() {
         return displayNode;
+    }
+
+    public List<String> getDisplayStylesheets() {
+        return Collections.unmodifiableList(displayStylesheets);
+    }
+
+    void setDisplayStylesheets(List<String> displayStylesheets) {
+        this.displayStylesheets.clear();
+        this.displayStylesheets.addAll(displayStylesheets);
     }
 
     /**
