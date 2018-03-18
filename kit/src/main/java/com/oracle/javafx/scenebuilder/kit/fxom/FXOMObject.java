@@ -736,7 +736,7 @@ public abstract class FXOMObject extends FXOMNode {
     }
     
     public boolean isGluon() {
-        return sceneGraphObject.getClass().getName().startsWith(EditorPlatform.GLUON_PACKAGE);
+        return sceneGraphObject != null && sceneGraphObject.getClass().getName().startsWith(EditorPlatform.GLUON_PACKAGE);
     }
 
     
