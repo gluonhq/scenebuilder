@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AccessoryDropTarget
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ContainerXYDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ContainerZDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.NodeHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.pring.AbstractPring;
@@ -143,6 +144,11 @@ public abstract class AbstractNodeDriver extends AbstractDriver {
         }
         
         return result;
+    }
+    
+    @Override
+    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
+        return null;
     }
     
     @Override

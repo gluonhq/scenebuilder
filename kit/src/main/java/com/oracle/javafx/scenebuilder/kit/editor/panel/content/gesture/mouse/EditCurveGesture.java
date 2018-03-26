@@ -31,14 +31,40 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides.EditCurveGuideController;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * 
  */
 public class EditCurveGesture extends AbstractMouseGesture {
+    
+    private final FXOMInstance fxomInstance;
+    
+    private AbstractCurveEditor<?> editor;
+    private EditCurveGuideController controller;
+
+    private boolean straightAnglesMode = false;
     
     public enum Tunable {
         START,
@@ -49,8 +75,11 @@ public class EditCurveGesture extends AbstractMouseGesture {
     
     private final Tunable tunable;
 
-    public EditCurveGesture(ContentPanelController contentPanelController, Tunable tunable) {
+    public EditCurveGesture(ContentPanelController contentPanelController, FXOMInstance fxomInstance, Tunable tunable) {
         super(contentPanelController);
+        assert contentPanelController.lookupDriver(fxomInstance) != null;
+        assert fxomInstance.getSceneGraphObject() instanceof Node;
+        this.fxomInstance = fxomInstance;
         this.tunable = tunable;
     }
 
@@ -64,37 +93,125 @@ public class EditCurveGesture extends AbstractMouseGesture {
     
     @Override
     protected void mousePressed() {
-        System.out.println("EditCurveGesture.mousePressed: tunable=" + tunable);
+        // Everthing is done in mouseDragStarted
     }
 
     @Override
     protected void mouseDragStarted() {
-        System.out.println("EditCurveGesture.mouseDragStarted: tunable=" + tunable);
+        editor = contentPanelController.lookupDriver(fxomInstance).makeCurveEditor(fxomInstance);
+        assert editor != null;
+        assert editor.getSceneGraphObject() == fxomInstance.getSceneGraphObject();
+
+        controller = editor.createController(tunable);
+
+        final double hitX = getLastMouseEvent().getSceneX();
+        final double hitY = getLastMouseEvent().getSceneY();
+        final Set<FXOMObject> pickExcludes = new HashSet<>();
+        pickExcludes.add(fxomInstance);
+
+        FXOMObject hitParent = contentPanelController.pick(hitX, hitY, pickExcludes);
+        if (hitParent == null) {
+            final FXOMDocument fxomDocument
+                    = contentPanelController.getEditorController().getFxomDocument();
+            hitParent = fxomDocument.getFxomRoot();
+        }
+
+        assert hitParent != null;
+
+        DesignHierarchyMask hitParentMask = new DesignHierarchyMask(hitParent);
+        assert hitParentMask.isFreeChildPositioning();
+
+        for (int i = 0, c = hitParentMask.getSubComponentCount(); i < c; i++) {
+            final FXOMObject child = hitParentMask.getSubComponentAtIndex(i);
+            final boolean isNode = child.getSceneGraphObject() instanceof Node;
+            if (isNode && child != fxomInstance) {
+                final Node childNode = (Node) child.getSceneGraphObject();
+                controller.addSampleBounds(childNode);
+            }
+        }
+
+        assert hitParent.getSceneGraphObject() instanceof Node;
+        final Node hitParentNode = (Node) hitParent.getSceneGraphObject();
+        controller.addSampleBounds(hitParentNode);
+
+        mouseDragged();
     }
 
     @Override
     protected void mouseDragged() {
-        System.out.println("EditCurveGesture.mouseDragged: tunable=" + tunable);
+        updateCurvePosition();
     }
 
     @Override
     protected void mouseDragEnded() {
-        System.out.println("EditCurveGesture.mouseDragEnded: tunable=" + tunable);
+        final Map<PropertyName, Object> changeMap = editor.getChangeMap();
+
+        userDidCancel();
+
+        final Metadata metadata = Metadata.getMetadata();
+        final Map<ValuePropertyMetadata, Object> metaValueMap = new HashMap<>();
+        for (Map.Entry<PropertyName,Object> e : changeMap.entrySet()) {
+            final ValuePropertyMetadata vpm = metadata.queryValueProperty(fxomInstance, e.getKey());
+            assert vpm != null;
+            metaValueMap.put(vpm, e.getValue());
+        }
+        if (!changeMap.isEmpty()) {
+            final EditorController editorController
+                    = contentPanelController.getEditorController();
+            for (Map.Entry<ValuePropertyMetadata, Object> e : metaValueMap.entrySet()) {
+                final ModifyObjectJob job = new ModifyObjectJob(
+                        fxomInstance,
+                        e.getKey(),
+                        e.getValue(),
+                        editorController,
+                        "Edit");
+                if (job.isExecutable()) {
+                    editorController.getJobManager().push(job);
+                }
+            }
+        }
     }
 
     @Override
     protected void mouseReleased() {
-        System.out.println("EditCurveGesture.mouseReleased: tunable=" + tunable);
+        // Everything is done in mouseDragEnded
     }
-
+    
     @Override
     protected void keyEvent(KeyEvent e) {
-         System.out.println("EditCurveGesture.keyEvent: tunable=" + tunable);
+        if (e.getCode() == KeyCode.SHIFT) {
+            if (e.getEventType() == KeyEvent.KEY_PRESSED) {
+                straightAnglesMode = true;
+            } else if (e.getEventType() == KeyEvent.KEY_RELEASED) {
+                straightAnglesMode = false;
+            }
+            mouseDragged();
+        }
    }
 
     @Override
     protected void userDidCancel() {
-         System.out.println("EditCurveGesture.keyEvent: tunable=" + tunable);
+        editor.revertToOriginalState();
+        editor.getSceneGraphObject().getParent().layout();
+    }
+    
+    private void updateCurvePosition() {
+        final Node sceneGraphObject = editor.getSceneGraphObject();
+        sceneGraphObject.getParent().layout();
+
+        final double currentSceneX = getLastMouseEvent().getSceneX();
+        final double currentSceneY = getLastMouseEvent().getSceneY();
+        Point2D current = new Point2D(currentSceneX, currentSceneY);
+        
+        if (straightAnglesMode) {
+            current = controller.makeStraightAngles(current);
+        } else {
+            current = controller.correct(current);
+        }
+
+        current = sceneGraphObject.sceneToLocal(current.getX(), current.getY(), true);
+        editor.moveTunable(tunable, current.getX(), current.getY());
+        sceneGraphObject.getParent().layout();
     }
     
 }

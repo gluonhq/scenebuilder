@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AccessoryDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.TabHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.pring.AbstractPring;
@@ -87,6 +88,11 @@ public class TabDriver extends AbstractDriver {
     @Override
     public AbstractResizer<?> makeResizer(FXOMObject fxomObject) {
         // Resize gesture does not apply to Tab objects
+        return null;
+    }
+
+    @Override
+    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
         return null;
     }
     
