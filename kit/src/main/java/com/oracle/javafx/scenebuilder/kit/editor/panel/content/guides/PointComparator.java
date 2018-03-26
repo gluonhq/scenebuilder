@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,44 +29,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.LineEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.LineHandles;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.shape.Line;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides;
 
-/**
- *
- */
-public class LineDriver extends AbstractNodeDriver {
+import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
+import javafx.geometry.Point2D;
 
-    public LineDriver(ContentPanelController contentPanelController) {
-        super(contentPanelController);
-    }
+import java.util.Comparator;
 
-    /*
-     * AbstractDriver
-     */
+class PointComparator implements Comparator<Point2D> {
     
     @Override
-    public AbstractHandles<?> makeHandles(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
-        return new LineHandles(contentPanelController, (FXOMInstance)fxomObject);
-    }
-    
-    @Override
-    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
+    public int compare(Point2D o1, Point2D o2) {
+        assert o1 != null;
+        assert o2 != null;
 
-        final Line line = (Line) fxomObject.getSceneGraphObject();
-        return new LineEditor(line);
+        final int result;
+
+        if (o1 == o2) {
+            result = 0;
+        } else if (MathUtils.equals(o1.getX(), o2.getX()) && MathUtils.equals(o1.getY(), o2.getY())) {
+            result = 0;
+        } else {
+            double r1 = Math.sqrt(o1.getX() * o1.getX() + o1.getY() * o1.getY());
+            double r2 = Math.sqrt(o2.getX() * o2.getX() + o2.getY() * o2.getY());
+            result = Double.compare(r1, r2);
+        }
+
+        return result;
     }
     
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,44 +29,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.LineEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.LineHandles;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.content.util;
+
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
 
-/**
- *
- */
-public class LineDriver extends AbstractNodeDriver {
+public class DistanceUtils {
 
-    public LineDriver(ContentPanelController contentPanelController) {
-        super(contentPanelController);
-    }
-
-    /*
-     * AbstractDriver
+    /**
+     * Calculates distance from point to line
+     * 
+     * @param point target point
+     * @param line target line
+     * @return distance
      */
-    
-    @Override
-    public AbstractHandles<?> makeHandles(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
-        return new LineHandles(contentPanelController, (FXOMInstance)fxomObject);
+    public static double getDistFromPointToLine(Point2D point, Line line) {
+        double x = point.getX();
+        double y = point.getY();
+        
+        double x0 = line.getStartX();
+        double y0 = line.getStartY();
+        double x1 = line.getEndX();
+        double y1 = line.getEndY();
+        
+        double dot0 = dot(x - x0, y - y0, x1 - x0, y1 - y0);
+        if (dot0 < 0) {
+            return dist(x, y, x0, y0);
+        }
+        
+        double dot1 = dot(x - x1, y - y1, x0 - x1, y0 - y1);
+        if (dot1 < 0) {
+            return dist(x, y, x1, y1);
+        }
+        
+        return Math.abs((y0 - y1) * x + (x1 - x0) * y + (x0 * y1 - x1 * y0)) / dist(x0, y0, x1, y1);
     }
     
-    @Override
-    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
-
-        final Line line = (Line) fxomObject.getSceneGraphObject();
-        return new LineEditor(line);
+    private static double dot(double x1, double y1, double x2, double y2) {
+        return x1 * x2 + y1 * y2;
+    }
+    
+    private static double dist(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
     
 }

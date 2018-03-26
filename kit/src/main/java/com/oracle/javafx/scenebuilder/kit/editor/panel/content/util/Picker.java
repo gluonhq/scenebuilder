@@ -37,9 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.shape.Line;
 
 /**
  * This class allows to pick objects at a given position in scene graph.
@@ -47,6 +49,8 @@ import javafx.scene.Parent;
  * 
  */
 public class Picker {
+
+    private final static double THRESHOLD = 3;
     
     private final Set<Node> excludes = new HashSet<>();
     private final List<Node> matches = new ArrayList<>();
@@ -90,7 +94,7 @@ public class Picker {
     private void performPick(Node startNode, double localX, double localY) {
 
         if ((excludes.contains(startNode) == false) && startNode.isVisible()){
-            if (startNode.getLayoutBounds().contains(localX, localY)) {
+            if (match(startNode, localX, localY)) {
                 matches.add(0, startNode);
             }
         
@@ -107,4 +111,23 @@ public class Picker {
             }
         }
     }
+
+    private boolean match(Node node, double x, double y) {
+        assert node != null;
+        
+        final Bounds bounds = node.getLayoutBounds();
+        if (bounds.isEmpty())
+            return false;
+        
+        final boolean result;
+        if (node instanceof Line) {
+            final Line line = (Line) node;
+            final Point2D point = new Point2D(x, y);          
+            result = DistanceUtils.getDistFromPointToLine(point, line) < THRESHOLD;
+        } else {
+            result = bounds.contains(x, y);
+        }
+        return result;
+    }
+    
 }
