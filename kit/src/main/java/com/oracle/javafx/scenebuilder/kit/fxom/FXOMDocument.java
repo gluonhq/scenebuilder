@@ -52,6 +52,8 @@ import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.sampledata.SampleDataGenerator;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.URLUtils;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Parent;
 
 /**
@@ -74,12 +76,14 @@ public class FXOMDocument {
 
     private boolean hasGluonControls;
     
+    private List<Class<?>> initialDeclaredClasses;
     
     public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, boolean normalize) throws IOException {
         this.glue = new GlueDocument(fxmlText);
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
+        initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
             final FXOMLoader loader = new FXOMLoader(this);
             loader.load(fxmlText);
@@ -135,6 +139,10 @@ public class FXOMDocument {
         this.classLoader = classLoader;
         endUpdate();
     }    
+    
+    public List<Class<?>> getInitialDeclaredClasses() {
+        return initialDeclaredClasses;
+    }
 
     public ResourceBundle getResources() {
         return resources;
