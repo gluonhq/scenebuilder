@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides.EditCurveGuideController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
@@ -43,6 +45,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import java.util.EnumMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -50,8 +53,13 @@ import javafx.scene.input.KeyEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import javafx.scene.Cursor;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
 
 /**
  *
@@ -61,48 +69,66 @@ public class EditCurveGesture extends AbstractMouseGesture {
     
     private final FXOMInstance fxomInstance;
     
-    private AbstractCurveEditor<?> editor;
+    private final AbstractCurveEditor<?> editor;
     private EditCurveGuideController controller;
 
     private boolean straightAnglesMode = false;
+    
+    private static final PropertyName POINTS_NAME = new PropertyName("points"); //NOI18N
     
     public enum Tunable {
         START,
         END,
         CONTROL1,
-        CONTROL2
+        CONTROL2,
+        VERTEX,
+        SIDE;
     }
     
-    private final Tunable tunable;
+    private final EnumMap<Tunable, Integer> tunableMap = new EnumMap<>(Tunable.class);
 
     public EditCurveGesture(ContentPanelController contentPanelController, FXOMInstance fxomInstance, Tunable tunable) {
         super(contentPanelController);
         assert contentPanelController.lookupDriver(fxomInstance) != null;
         assert fxomInstance.getSceneGraphObject() instanceof Node;
         this.fxomInstance = fxomInstance;
-        this.tunable = tunable;
+        tunableMap.put(tunable, -1);
+        editor = contentPanelController.lookupDriver(fxomInstance).makeCurveEditor(fxomInstance);
     }
 
-    public Tunable getTunable() {
-        return tunable;
+    public EnumMap<Tunable, Integer> getTunableMap() {
+        return tunableMap;
     }
     
     /*
      * AbstractMouseGesture
      */
     
+    private boolean inserted, removed;
+    private Point2D insertionPoint;
+    
     @Override
     protected void mousePressed() {
-        // Everthing is done in mouseDragStarted
+        final MouseEvent mousePressedEvent = getMousePressedEvent();
+        inserted = false;
+        removed = false;
+        if (tunableMap.containsKey(Tunable.SIDE) && mousePressedEvent.isShortcutDown()) {
+            final double hitX = mousePressedEvent.getSceneX();
+            final double hitY = mousePressedEvent.getSceneY();
+            insertionPoint = editor.getSceneGraphObject().sceneToLocal(hitX, hitY, true);
+            inserted = true;
+        } else if (tunableMap.containsKey(Tunable.VERTEX) && mousePressedEvent.isAltDown()) {
+            removed = true;
+        } 
+        updateHandle(true);
     }
 
     @Override
     protected void mouseDragStarted() {
-        editor = contentPanelController.lookupDriver(fxomInstance).makeCurveEditor(fxomInstance);
         assert editor != null;
         assert editor.getSceneGraphObject() == fxomInstance.getSceneGraphObject();
 
-        controller = editor.createController(tunable);
+        controller = editor.createController(tunableMap);
 
         final double hitX = getLastMouseEvent().getSceneX();
         final double hitY = getLastMouseEvent().getSceneY();
@@ -133,7 +159,7 @@ public class EditCurveGesture extends AbstractMouseGesture {
         assert hitParent.getSceneGraphObject() instanceof Node;
         final Node hitParentNode = (Node) hitParent.getSceneGraphObject();
         controller.addSampleBounds(hitParentNode);
-
+        
         mouseDragged();
     }
 
@@ -145,7 +171,10 @@ public class EditCurveGesture extends AbstractMouseGesture {
     @Override
     protected void mouseDragEnded() {
         final Map<PropertyName, Object> changeMap = editor.getChangeMap();
-
+        List<Double> points = null;
+        if (editor.getPoints() != null) {
+            points = editor.getPoints().stream().collect(Collectors.toList());
+        }
         userDidCancel();
 
         final Metadata metadata = Metadata.getMetadata();
@@ -170,11 +199,53 @@ public class EditCurveGesture extends AbstractMouseGesture {
                 }
             }
         }
+        
+        if (points != null) {
+            final EditorController editorController
+                    = contentPanelController.getEditorController();
+            final ValuePropertyMetadata pointsMeta 
+                = metadata.queryValueProperty(fxomInstance, POINTS_NAME);
+            final ModifyObjectJob job = new ModifyObjectJob(fxomInstance,
+                        pointsMeta,
+                        points,
+                        editorController);
+            if (job.isExecutable()) {
+                editorController.getJobManager().push(job);
+            }
+        }
     }
 
     @Override
     protected void mouseReleased() {
-        // Everything is done in mouseDragEnded
+        updateHandle(false);
+        if (removed || inserted) {
+            if (removed) {
+                editor.removePoint(tunableMap);
+            } else if (inserted) {
+                editor.addPoint(tunableMap, insertionPoint.getX(), insertionPoint.getY());
+            }
+
+            List<Double> points = null;
+            if (editor.getPoints() != null) {
+                points = editor.getPoints().stream().collect(Collectors.toList());
+            }
+            userDidCancel();
+            
+            final Metadata metadata = Metadata.getMetadata();
+            if (points != null) {
+                final EditorController editorController
+                        = contentPanelController.getEditorController();
+                final ValuePropertyMetadata pointsMeta 
+                    = metadata.queryValueProperty(fxomInstance, POINTS_NAME);
+                final ModifyObjectJob job = new ModifyObjectJob(fxomInstance,
+                            pointsMeta,
+                            points,
+                            editorController);
+                if (job.isExecutable()) {
+                    editorController.getJobManager().push(job);
+                }
+            }
+        }
     }
     
     @Override
@@ -196,6 +267,9 @@ public class EditCurveGesture extends AbstractMouseGesture {
     }
     
     private void updateCurvePosition() {
+        if (editor == null) {
+            return;
+        }
         final Node sceneGraphObject = editor.getSceneGraphObject();
         sceneGraphObject.getParent().layout();
 
@@ -210,8 +284,25 @@ public class EditCurveGesture extends AbstractMouseGesture {
         }
 
         current = sceneGraphObject.sceneToLocal(current.getX(), current.getY(), true);
-        editor.moveTunable(tunable, current.getX(), current.getY());
+        editor.moveTunable(tunableMap, current.getX(), current.getY());
         sceneGraphObject.getParent().layout();
+    }
+    
+    private void updateHandle(boolean value) {
+        final Node target = (Node) getMousePressedEvent().getTarget();
+        Node hitNode = target;
+        AbstractHandles<?> hitHandles = AbstractHandles.lookupHandles(hitNode);
+        while ((hitHandles == null) && (hitNode.getParent() != null)) {
+            hitNode = hitNode.getParent();
+            hitHandles = AbstractHandles.lookupHandles(hitNode);
+        }
+        if (hitNode instanceof Circle) {
+            if (removed) {
+                hitNode.setCursor(value ? Cursor.CROSSHAIR : Cursor.OPEN_HAND);
+            } else {
+                hitNode.setCursor(value ? Cursor.CLOSED_HAND : Cursor.OPEN_HAND);
+            }
+        } 
     }
     
 }

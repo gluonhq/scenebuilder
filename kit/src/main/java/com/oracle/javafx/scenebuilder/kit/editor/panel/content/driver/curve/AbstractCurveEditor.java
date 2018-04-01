@@ -35,6 +35,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse.EditCurveGesture;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides.EditCurveGuideController;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import java.util.EnumMap;
 import javafx.scene.Node;
 
 import java.util.List;
@@ -53,13 +54,16 @@ public abstract class AbstractCurveEditor<T extends Node> {
         return sceneGraphObject;
     }
     
-    public abstract EditCurveGuideController createController(EditCurveGesture.Tunable tunable);
-
-    public abstract void moveTunable(EditCurveGesture.Tunable tunable, double newX, double newY);
+    public abstract EditCurveGuideController createController(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap);
+    
+    public abstract void moveTunable(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap, double newX, double newY);
     public abstract void revertToOriginalState();
 
     public abstract List<PropertyName> getPropertyNames();
     public abstract Object getValue(PropertyName propertyName);
     public abstract Map<PropertyName, Object> getChangeMap();
-
+    
+    public abstract List<Double> getPoints();
+    public abstract void addPoint(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap, double newX, double newY);
+    public abstract void removePoint(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap);
 }
