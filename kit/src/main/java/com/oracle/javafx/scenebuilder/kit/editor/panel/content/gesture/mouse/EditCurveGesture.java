@@ -348,8 +348,10 @@ public class EditCurveGesture extends AbstractMouseGesture {
             final String value = String.valueOf(editor.getValue(pn));
             hudWindowController.setValueAtRowIndex(value, i);
         }
-        final int pointsCount = editor.getPoints() != null ? Math.min(MAX_POINTS_HUD, editor.getPoints().size()) : 0;
         
+        // Limit added points to grid
+        // TODO: Add another column to the grid
+        final int pointsCount = editor.getPoints() != null ? Math.min(MAX_POINTS_HUD, editor.getPoints().size()) : 0;
         if (pointsCount > 0) {
             for (int i = 0; i < pointsCount; i++) {
                 hudWindowController.setValueAtRowIndex(String.format("%.3f", editor.getPoints().get(i)), i + propertiesCount);
