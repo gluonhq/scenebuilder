@@ -35,9 +35,11 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyObjectJob;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.HudWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides.EditCurveGuideController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.util.CardinalPoint;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -76,6 +78,7 @@ public class EditCurveGesture extends AbstractMouseGesture {
     private boolean straightAnglesMode = false;
     
     private static final PropertyName POINTS_NAME = new PropertyName("points"); //NOI18N
+    private static final int MAX_POINTS_HUD = 24;
     
     public enum Tunable {
         START,
@@ -118,7 +121,7 @@ public class EditCurveGesture extends AbstractMouseGesture {
             final double hitY = mousePressedEvent.getSceneY();
             insertionPoint = editor.getSceneGraphObject().sceneToLocal(hitX, hitY, true);
             inserted = true;
-        } else if (tunableMap.containsKey(Tunable.VERTEX) && mousePressedEvent.isAltDown()) {
+        } else if (tunableMap.containsKey(Tunable.VERTEX) && mousePressedEvent.isShortcutDown()) {
             removed = true;
         } 
         updateHandle(true);
@@ -161,11 +164,14 @@ public class EditCurveGesture extends AbstractMouseGesture {
         final Node hitParentNode = (Node) hitParent.getSceneGraphObject();
         controller.addSampleBounds(hitParentNode);
         
+        setupAndOpenHudWindow();
+        
         mouseDragged();
     }
 
     @Override
     protected void mouseDragged() {
+        contentPanelController.getHudWindowController().updatePopupLocation();
         updateCurvePosition();
     }
 
@@ -265,10 +271,11 @@ public class EditCurveGesture extends AbstractMouseGesture {
     protected void userDidCancel() {
         editor.revertToOriginalState();
         editor.getSceneGraphObject().getParent().layout();
+        contentPanelController.getHudWindowController().closeWindow();
     }
     
     private void updateCurvePosition() {
-        if (editor == null) {
+        if (editor == null || controller == null) {
             return;
         }
         final Node sceneGraphObject = editor.getSceneGraphObject();
@@ -287,6 +294,8 @@ public class EditCurveGesture extends AbstractMouseGesture {
         current = sceneGraphObject.sceneToLocal(current.getX(), current.getY(), true);
         editor.moveTunable(tunableMap, current.getX(), current.getY());
         sceneGraphObject.getParent().layout();
+        
+        updateHudWindow();
     }
     
     private void updateHandle(boolean value) {
@@ -303,6 +312,50 @@ public class EditCurveGesture extends AbstractMouseGesture {
                 hitNode.setCursor(value ? Cursor.CLOSED_HAND : Cursor.OPEN_HAND);
             }
         } 
+    }
+    
+    private void setupAndOpenHudWindow() {
+        final HudWindowController hudWindowController = contentPanelController.getHudWindowController();
+        
+        final int propertiesCount = editor.getPropertyNames().size();
+        final int pointsCount = editor.getPoints() != null ? Math.min(MAX_POINTS_HUD, editor.getPoints().size()) : 0;
+        hudWindowController.setRowCount(propertiesCount + pointsCount);
+        
+        final List<PropertyName> sizePropertyNames = editor.getPropertyNames();
+        for (int i = 0; i < propertiesCount; i++) {
+            final PropertyName pn = sizePropertyNames.get(i);
+            hudWindowController.setNameAtRowIndex(pn.getName() + ":", i);
+        }
+        
+        for (int i = 0; i < pointsCount / 2; i++) {
+            hudWindowController.setNameAtRowIndex("" + (i + 1) + ".X:", 2 * i + propertiesCount);
+            hudWindowController.setNameAtRowIndex("" + (i + 1) + ".Y:", 2 * i + 1 + propertiesCount);
+        }
+        
+        updateHudWindow();
+        
+        hudWindowController.setRelativePosition(CardinalPoint.E);
+        hudWindowController.openWindow(editor.getSceneGraphObject());
+    }
+    
+    private void updateHudWindow() {
+        final HudWindowController hudWindowController = contentPanelController.getHudWindowController();
+        final List<PropertyName> sizePropertyNames = editor.getPropertyNames();
+        final int propertiesCount = sizePropertyNames.size();
+        
+        for (int i = 0; i < propertiesCount; i++) {
+            final PropertyName pn = sizePropertyNames.get(i);
+            final String value = String.valueOf(editor.getValue(pn));
+            hudWindowController.setValueAtRowIndex(value, i);
+        }
+        final int pointsCount = editor.getPoints() != null ? Math.min(MAX_POINTS_HUD, editor.getPoints().size()) : 0;
+        
+        if (pointsCount > 0) {
+            for (int i = 0; i < pointsCount; i++) {
+                hudWindowController.setValueAtRowIndex(String.format("%.3f", editor.getPoints().get(i)), i + propertiesCount);
+            }
+        }
+        
     }
     
 }

@@ -157,7 +157,7 @@ public class PolygonHandles extends AbstractCurveHandles<Polygon> {
                 .mapToObj(i -> new Line())
                 .forEach(line -> {
                     linesHandle.add(line);
-                    line.getStyleClass().add(SELECTION_WIRE);
+                    line.getStyleClass().add(SELECTION_PIPE);
                     line.setCursor(Cursor.CROSSHAIR);
                     setupHandles(line);
                     rootNodeChildren.add(line);

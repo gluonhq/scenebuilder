@@ -908,8 +908,9 @@ implements AbstractGesture.Observer {
     
     private void activateGesture(AbstractGesture gesture, InputEvent e) {
         assert activeGesture == null : "activeGesture=" + activeGesture;
-        assert gesture != null;
-        
+        if (gesture == null) {
+            return;
+        }
         /*
          * Before activating the gesture, we check:
          *   - that there is a document attached to the editor controller

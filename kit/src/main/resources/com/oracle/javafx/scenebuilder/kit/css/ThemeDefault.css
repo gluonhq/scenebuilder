@@ -496,6 +496,12 @@
     -fx-fill: null;
 }
 
+.theme-presets.SBKIT-content-panel .selection-pipe {
+    -fx-stroke: rgb(25, 164, 255);
+    -fx-stroke-width: 3;
+    -fx-fill: null;
+}
+
 .theme-presets.SBKIT-content-panel .selection-gap {
     -fx-stroke: null;
     -fx-fill: lightgrey;

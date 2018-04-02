@@ -43,6 +43,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 
 /**
  * This class allows to pick objects at a given position in scene graph.
@@ -119,12 +120,13 @@ public class Picker {
         final Bounds bounds = node.getLayoutBounds();
         if (bounds.isEmpty())
             return false;
-        
         final boolean result;
         if (node instanceof Line) {
             final Line line = (Line) node;
             final Point2D point = new Point2D(x, y);          
             result = DistanceUtils.getDistFromPointToLine(point, line) < THRESHOLD;
+        } else if (node instanceof Shape) {
+            result = ((Shape) node).contains(x, y);
         } else {
             result = bounds.contains(x, y);
         }
