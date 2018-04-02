@@ -42,7 +42,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.collections.ObservableList;
 
@@ -57,7 +56,7 @@ public class PolygonEditor extends AbstractCurveEditor<Polygon> {
     public PolygonEditor(Polygon sceneGraphObject) {
         super(sceneGraphObject);
 
-        originalPoints = sceneGraphObject.getPoints().stream().collect(Collectors.toList());
+        originalPoints = new ArrayList<>(sceneGraphObject.getPoints());
     }
     
     @Override

@@ -45,6 +45,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -173,7 +174,7 @@ public class EditCurveGesture extends AbstractMouseGesture {
         final Map<PropertyName, Object> changeMap = editor.getChangeMap();
         List<Double> points = null;
         if (editor.getPoints() != null) {
-            points = editor.getPoints().stream().collect(Collectors.toList());
+            points = new ArrayList<>(editor.getPoints());
         }
         userDidCancel();
 
@@ -289,10 +290,9 @@ public class EditCurveGesture extends AbstractMouseGesture {
     }
     
     private void updateHandle(boolean value) {
-        final Node target = (Node) getMousePressedEvent().getTarget();
-        Node hitNode = target;
+        Node hitNode = (Node) getMousePressedEvent().getTarget();
         AbstractHandles<?> hitHandles = AbstractHandles.lookupHandles(hitNode);
-        while ((hitHandles == null) && (hitNode.getParent() != null)) {
+        while (hitHandles == null && hitNode.getParent() != null) {
             hitNode = hitNode.getParent();
             hitHandles = AbstractHandles.lookupHandles(hitNode);
         }
