@@ -154,7 +154,7 @@ public class HudWindowController extends AbstractFxmlPopupController {
         // So this method can be invoked after the anchor has been removed the
         // scene. This looks like a bug in FX...
         // Anway we protect ourself by checking.
-        if (getAnchor().getScene() != null) {
+        if (getAnchor() != null && getAnchor().getScene() != null) {
             final Point2D popupLocation = computePopupLocation();
             getPopup().setX(popupLocation.getX());
             getPopup().setY(popupLocation.getY());

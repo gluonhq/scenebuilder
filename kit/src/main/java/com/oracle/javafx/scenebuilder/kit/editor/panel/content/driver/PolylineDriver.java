@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2018, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -34,19 +33,19 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.LineEditor;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.PolylineEditor;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.LineHandles;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.PolylineHandles;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
 
 /**
  *
  */
-public class LineDriver extends AbstractNodeDriver {
+public class PolylineDriver extends AbstractNodeDriver {
 
-    public LineDriver(ContentPanelController contentPanelController) {
+    public PolylineDriver(ContentPanelController contentPanelController) {
         super(contentPanelController);
     }
 
@@ -56,18 +55,18 @@ public class LineDriver extends AbstractNodeDriver {
     
     @Override
     public AbstractHandles<?> makeHandles(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
+        assert fxomObject.getSceneGraphObject() instanceof Polyline;
         assert fxomObject instanceof FXOMInstance;
-        return new LineHandles(contentPanelController, (FXOMInstance)fxomObject);
+        return new PolylineHandles(contentPanelController, (FXOMInstance)fxomObject);
     }
-    
+
     @Override
     public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
+        assert fxomObject.getSceneGraphObject() instanceof Polyline;
         assert fxomObject instanceof FXOMInstance;
 
-        final Line line = (Line) fxomObject.getSceneGraphObject();
-        return new LineEditor(line);
+        final Polyline polygon = (Polyline) fxomObject.getSceneGraphObject();
+        return new PolylineEditor(polygon);
     }
     
 }
