@@ -136,6 +136,19 @@ public class FXOMSaverUpdateImportInstructionsTest {
     }
 
     @Test
+    public void testWithGlueElements() {
+        setupTestCase(FxmlTestInfo.WITH_GLUE_ELEMENTS);
+
+        Set<String> imports = new TreeSet<>();
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> {
+            imports.add(dc.getName());
+        });
+
+        assertTrue("fxml import contains java.lang.String", imports.contains("java.lang.String"));
+        assertTrue("fxml import contains javafx.scene.paint.Color", imports.contains("javafx.scene.paint.Color"));
+    }
+
+    @Test
     public void testDuplicates() {
         setupTestCase(FxmlTestInfo.DUPLICATES);
 
@@ -297,6 +310,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         WILDCARDS_AND_STATIC_PROPERTIES("WildcardsAndStaticProperties"),
         WITH_MORE_WILDCARDS("WithMoreWildcards"),
         WITH_WILDCARD("WithWildcard"),
+        WITH_GLUE_ELEMENTS("WithGlueElements"),
         PUBLIC_STATIC_IMPORT("PublicStaticImport");
 
         private String filename;

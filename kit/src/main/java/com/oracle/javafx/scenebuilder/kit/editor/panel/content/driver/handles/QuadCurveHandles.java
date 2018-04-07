@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -37,35 +37,48 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.AbstractGesture;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse.EditCurveGesture;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.QuadCurve;
 
 /**
  *
  * 
  */
-public class LineHandles extends AbstractCurveHandles<Line> {
+public class QuadCurveHandles extends AbstractCurveHandles<QuadCurve> {
 
     private final Circle startHandle = new Circle(SELECTION_HANDLES_SIZE / 2.0);
+    private final Circle controlHandle = new Circle(SELECTION_HANDLES_SIZE / 3.0);
     private final Circle endHandle = new Circle(SELECTION_HANDLES_SIZE / 2.0);
+    private final Line leftHandle = new Line();
+    private final Line rightHandle = new Line();
 
     
-    public LineHandles(ContentPanelController contentPanelController,
+    public QuadCurveHandles(ContentPanelController contentPanelController,
             FXOMInstance fxomInstance) {
-        super(contentPanelController, fxomInstance, Line.class);
+        super(contentPanelController, fxomInstance, QuadCurve.class);
         
         setupHandleState(startHandle);
+        setupHandleState(controlHandle);
         setupHandleState(endHandle);
+        leftHandle.getStyleClass().add(SELECTION_WIRE);
+        rightHandle.getStyleClass().add(SELECTION_WIRE);
         
         setupHandles(startHandle);
+        setupHandles(controlHandle);
         setupHandles(endHandle);
+        setupHandles(leftHandle);
+        setupHandles(rightHandle);
         
         final List<Node> rootNodeChildren = getRootNode().getChildren();
+        rootNodeChildren.add(leftHandle);
+        rootNodeChildren.add(rightHandle);
         rootNodeChildren.add(startHandle);
+        rootNodeChildren.add(controlHandle);
         rootNodeChildren.add(endHandle);
     }
     
@@ -78,25 +91,39 @@ public class LineHandles extends AbstractCurveHandles<Line> {
      */
     @Override
     protected void layoutDecoration() {
-        final Line l = getSceneGraphObject();
+        final QuadCurve l = getSceneGraphObject();
         
         final boolean snapToPixel = true;
         final Point2D s = sceneGraphObjectToDecoration(l.getStartX(), l.getStartY(), snapToPixel);
+        final Point2D c = sceneGraphObjectToDecoration(l.getControlX(), l.getControlY(), snapToPixel);
         final Point2D e = sceneGraphObjectToDecoration(l.getEndX(), l.getEndY(), snapToPixel);
 
         startHandle.setCenterX(s.getX());
         startHandle.setCenterY(s.getY());
+        controlHandle.setCenterX(c.getX());
+        controlHandle.setCenterY(c.getY());
         endHandle.setCenterX(e.getX());
         endHandle.setCenterY(e.getY());
+        
+        leftHandle.setStartX(s.getX());
+        leftHandle.setStartY(s.getY());
+        leftHandle.setEndX(c.getX());
+        leftHandle.setEndY(c.getY());
+        rightHandle.setStartX(c.getX());
+        rightHandle.setStartY(c.getY());
+        rightHandle.setEndX(e.getX());
+        rightHandle.setEndY(e.getY());
     }
 
     @Override
     protected void startListeningToSceneGraphObject() {
         super.startListeningToSceneGraphObject();
         
-        final Line l = getSceneGraphObject();
+        final QuadCurve l = getSceneGraphObject();
         l.startXProperty().addListener(coordinateListener);
         l.startYProperty().addListener(coordinateListener);
+        l.controlXProperty().addListener(coordinateListener);
+        l.controlYProperty().addListener(coordinateListener);
         l.endXProperty().addListener(coordinateListener);
         l.endYProperty().addListener(coordinateListener);
     }
@@ -105,9 +132,11 @@ public class LineHandles extends AbstractCurveHandles<Line> {
     protected void stopListeningToSceneGraphObject() {
         super.stopListeningToSceneGraphObject();
         
-        final Line l = getSceneGraphObject();
+        final QuadCurve l = getSceneGraphObject();
         l.startXProperty().removeListener(coordinateListener);
         l.startYProperty().removeListener(coordinateListener);
+        l.controlXProperty().removeListener(coordinateListener);
+        l.controlYProperty().removeListener(coordinateListener);
         l.endXProperty().removeListener(coordinateListener);
         l.endYProperty().removeListener(coordinateListener);
     }
@@ -119,6 +148,9 @@ public class LineHandles extends AbstractCurveHandles<Line> {
         if (node == startHandle) {
             result = new EditCurveGesture(getContentPanelController(), 
                     getFxomInstance(), EditCurveGesture.Tunable.START);
+        } else if (node == controlHandle) {
+            result = new EditCurveGesture(getContentPanelController(), 
+                    getFxomInstance(), EditCurveGesture.Tunable.CONTROL1);
         } else if (node == endHandle) {
             result = new EditCurveGesture(getContentPanelController(), 
                     getFxomInstance(), EditCurveGesture.Tunable.END);
@@ -132,6 +164,7 @@ public class LineHandles extends AbstractCurveHandles<Line> {
     @Override
     public void enabledDidChange() {
         setupHandleState(startHandle);
+        setupHandleState(controlHandle);
         setupHandleState(endHandle);
     }
     

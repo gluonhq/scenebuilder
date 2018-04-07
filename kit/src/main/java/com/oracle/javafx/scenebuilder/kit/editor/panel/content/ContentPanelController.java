@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2018 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -92,11 +92,15 @@ import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.BorderPaneDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.CubicCurveDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.FlowPaneDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.GenericDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.GridPaneDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.HBoxDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.LineDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.PolygonDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.PolylineDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.QuadCurveDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SplitPaneDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TabDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TabPaneDriver;
@@ -124,6 +128,10 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import javafx.scene.SubScene;
+import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.QuadCurve;
 
 /**
  * This class creates and controls the <b>Content Panel</b> of Scene Builder Kit.
@@ -947,6 +955,14 @@ public class ContentPanelController extends AbstractFxmlPanelController
             result = new BorderPaneDriver(this);
         } else if (sceneGraphObject instanceof Line) {
             result = new LineDriver(this);
+        } else if (sceneGraphObject instanceof QuadCurve) {
+            result = new QuadCurveDriver(this);
+        } else if (sceneGraphObject instanceof CubicCurve) {
+            result = new CubicCurveDriver(this);
+        } else if (sceneGraphObject instanceof Polyline) {
+            result = new PolylineDriver(this);
+        } else if (sceneGraphObject instanceof Polygon) {
+            result = new PolygonDriver(this);
         } else if (sceneGraphObject instanceof FlowPane) {
             result = new FlowPaneDriver(this);
         } else if (sceneGraphObject instanceof TextFlow) {

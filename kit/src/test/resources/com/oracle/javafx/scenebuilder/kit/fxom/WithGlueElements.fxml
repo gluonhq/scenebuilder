@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button mnemonicParsing="false" text="Button">
+           <graphic>
+              <Circle radius="5">
+                  <style>
+                    <String fx:value="-fx-stroke: red" />
+                </style>
+                <fill>
+                    <Color fx:value="#00ff29" /> 
+                </fill>
+              </Circle>
+          </graphic>
+          <style>
+            <String fx:value="-fx-border-color: red;" />
+          </style>
+          <textFill>
+            <Color fx:value="#670fff" /> 
+          </textFill>
+          <layoutX>
+            <java.lang.String fx:value="302" /> 
+          </layoutX>
+          <layoutY>
+            <String fx:value="27" /> 
+          </layoutY>
+          <styleClass>
+            <String fx:value="style1" />
+         </styleClass>
+      </Button>
+   </children>
+</AnchorPane>
