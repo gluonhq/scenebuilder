@@ -2,11 +2,14 @@
 
 ## [8.5.0-SNAPSHOT] - Date TBD
 
-### Fixed
+### Bug Fixes
 
+- [#131](https://bitbucket.org/gluon-oss/scenebuilder/issues/131/) - Add required imports when using GlueElements ([PR #54](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/54/))
 - [#158](https://bitbucket.org/gluon-oss/scenebuilder/issues/158/) - NullPointerException when including FXML file ([PR #55](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/55/))
 - [#159](https://bitbucket.org/gluon-oss/scenebuilder/issues/159) - NullPointerException when dealing with StringListEditor, FunctionalInterfaceEditor and DurationEditor ([PR #60](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/60/))
 
-### New Feature
+### New Features
 
+- [#41](https://bitbucket.org/gluon-oss/scenebuilder/issues/41/) - Resize lines in content panel  ([PR #58](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/58/wip-issue-41-make-line-resizable))
+- Edit features for Quad, CubicCurve, Polyline and Polygon shapes ([PR #63](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/63/))
 - Japanese translations added ([PR #59](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/59/))
