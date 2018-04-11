@@ -7,7 +7,7 @@
 - [#131](https://bitbucket.org/gluon-oss/scenebuilder/issues/131/) - Add required imports when using GlueElements ([PR #54](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/54/))
 - [#158](https://bitbucket.org/gluon-oss/scenebuilder/issues/158/) - NullPointerException when including FXML file ([PR #55](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/55/))
 - [#159](https://bitbucket.org/gluon-oss/scenebuilder/issues/159) - NullPointerException when dealing with StringListEditor, FunctionalInterfaceEditor and DurationEditor ([PR #60](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/60/))
-- [JDK-8134249](https://bugs.openjdk.java.net/browse/JDK-8134249) - FXML LoadException in OSGi environments 
+- [JDK-8134249](https://bugs.openjdk.java.net/browse/JDK-8134249) - FXML LoadException in OSGi environments  ([PR #66](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/66/))
 
 ### New Features
 
