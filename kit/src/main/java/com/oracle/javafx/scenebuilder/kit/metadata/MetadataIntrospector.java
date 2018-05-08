@@ -45,6 +45,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPro
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FontPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
@@ -72,6 +73,7 @@ import java.util.Set;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 /**
@@ -236,6 +238,12 @@ class MetadataIntrospector {
                         name,
                         readWrite,
                         (Paint) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
+                        inspectorPath);
+            } else if (propertyType == javafx.scene.text.Font.class) {
+                result = new FontPropertyMetadata(
+                        name,
+                        readWrite,
+                        (Font) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.image.Image.class) {
                 result = new ImagePropertyMetadata(
