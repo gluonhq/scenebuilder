@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2018, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -30,44 +29,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.LineEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.LineHandles;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.shape.Line;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve;
 
-/**
- *
- */
-public class LineDriver extends AbstractNodeDriver {
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture.mouse.EditCurveGesture;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides.EditCurveGuideController;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import java.util.EnumMap;
+import javafx.scene.Node;
 
-    public LineDriver(ContentPanelController contentPanelController) {
-        super(contentPanelController);
+import java.util.List;
+import java.util.Map;
+
+public abstract class AbstractCurveEditor<T extends Node> {
+
+    protected final T sceneGraphObject;
+
+    public AbstractCurveEditor(T sceneGraphObject) {
+        assert sceneGraphObject != null;
+        this.sceneGraphObject = sceneGraphObject;
     }
 
-    /*
-     * AbstractDriver
-     */
-    
-    @Override
-    public AbstractHandles<?> makeHandles(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
-        return new LineHandles(contentPanelController, (FXOMInstance)fxomObject);
+    public T getSceneGraphObject() {
+        return sceneGraphObject;
     }
     
-    @Override
-    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
+    public abstract EditCurveGuideController createController(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap);
+    
+    public abstract void moveTunable(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap, double newX, double newY);
+    public abstract void revertToOriginalState();
 
-        final Line line = (Line) fxomObject.getSceneGraphObject();
-        return new LineEditor(line);
-    }
+    public abstract List<PropertyName> getPropertyNames();
+    public abstract Object getValue(PropertyName propertyName);
+    public abstract Map<PropertyName, Object> getChangeMap();
     
+    public abstract List<Double> getPoints();
+    public abstract void addPoint(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap, double newX, double newY);
+    public abstract void removePoint(EnumMap<EditCurveGesture.Tunable, Integer> tunableMap);
 }

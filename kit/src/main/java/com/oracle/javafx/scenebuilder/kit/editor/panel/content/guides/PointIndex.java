@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2018, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -30,44 +29,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.AbstractCurveEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.curve.LineEditor;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.LineHandles;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.shape.Line;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides;
 
-/**
- *
- */
-public class LineDriver extends AbstractNodeDriver {
+import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
+import javafx.geometry.Point2D;
 
-    public LineDriver(ContentPanelController contentPanelController) {
-        super(contentPanelController);
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+class PointIndex {
+
+    private static final PointComparator comparator = new PointComparator();
+
+    private final List<Point2D> points = new ArrayList<>();
+    private boolean sorted;
+
+
+    public void addPoint(Point2D point) {
+        points.add(point);
+        sorted = false;
     }
 
-    /*
-     * AbstractDriver
-     */
-    
-    @Override
-    public AbstractHandles<?> makeHandles(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
-        return new LineHandles(contentPanelController, (FXOMInstance)fxomObject);
+    public void clear() {
+        points.clear();
     }
-    
-    @Override
-    public AbstractCurveEditor<?> makeCurveEditor(FXOMObject fxomObject) {
-        assert fxomObject.getSceneGraphObject() instanceof Line;
-        assert fxomObject instanceof FXOMInstance;
 
-        final Line line = (Line) fxomObject.getSceneGraphObject();
-        return new LineEditor(line);
+    public boolean isEmpty() {
+        return points.isEmpty();
+    }
+
+    public List<Point2D> match(Point2D target, double threshold) {
+        assert threshold >= 0;
+
+        if (sorted == false) {
+            Collections.sort(points, comparator);
+        }
+        double bestDelta = Double.MAX_VALUE;
+        final List<Point2D> result = new ArrayList<>();
+        for (Point2D point : points) {
+            final double delta = Math.sqrt(Math.pow(target.getX() - point.getX(), 2) + Math.pow(target.getY() - point.getY(), 2));
+            if (delta < threshold) {
+                if (MathUtils.equals(delta, bestDelta)) {
+                    result.add(point);
+                } else if (delta < bestDelta) {
+                    bestDelta = delta;
+                    result.clear();
+                    result.add(point);
+                }
+            }
+        }
+
+        return result;
     }
     
 }

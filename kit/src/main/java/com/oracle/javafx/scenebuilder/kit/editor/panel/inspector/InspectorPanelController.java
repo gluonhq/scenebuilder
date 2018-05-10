@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2018 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -1842,10 +1842,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 createdPropertyEditor = new StylesheetEditor(propMeta, selectedClasses, getEditorController().getFxmlLocation());
             }
         } else if (editorClass == StringListEditor.class) {
-            if (propertyEditor != null) {
-                ((StringListEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((StringListEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new StringListEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new StringListEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == FxIdEditor.class) {
             String controllerClass = getControllerClass();
@@ -1867,14 +1867,14 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 createdPropertyEditor = new EventHandlerEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == FunctionalInterfaceEditor.class) {
-            if (propertyEditor != null) {
+            if (createdPropertyEditor != null) {
                 // "getSuggestedEventHandlers" (a method that already existed in SB code) isn't working right. It simply
                 // returns all the methods in the Controller class regardless of if they are good candidates for
                 // EventHandlers. We use if because at least this way we'll present all the methods available as
                 // auto-suggestions.
-                ((FunctionalInterfaceEditor) propertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+                ((FunctionalInterfaceEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             } else {
-                propertyEditor = new FunctionalInterfaceEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
+                createdPropertyEditor = new FunctionalInterfaceEditor(propMeta, selectedClasses, getSuggestedEventHandlers(getControllerClass()));
             }
         } else if (editorClass == EffectPopupEditor.class) {
             if (createdPropertyEditor != null) {
@@ -1955,10 +1955,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
                 createdPropertyEditor = new ButtonTypeEditor(propMeta, selectedClasses);
             }
         } else if (editorClass == DurationEditor.class) {
-            if (propertyEditor != null) {
-                ((DurationEditor) propertyEditor).reset(propMeta, selectedClasses);
+            if (createdPropertyEditor != null) {
+                ((DurationEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
-                propertyEditor = new DurationEditor(propMeta, selectedClasses);
+                createdPropertyEditor = new DurationEditor(propMeta, selectedClasses);
             }
         }
         else if(editorClass == IncludeFxmlEditor.class) {

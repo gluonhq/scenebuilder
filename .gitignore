@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+app/build/
+kit/build/
+
+# IDEA
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settinigs/
+bin/
+
+# Netbeans
+.nb-gradle/
+
+# Miscellaneous
+.DS_Store
+lib/
+scenicView.properties
+*.patch
+*.class

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 
 /**
  *
@@ -78,7 +80,11 @@ class HorizontalLineIndex {
         final double maxY = boundsInScene.getMaxY();
         return matchY((minY + maxY) / 2.0, threshold);
     }
-    
+
+    public List<HorizontalSegment> matchPoint(Point2D point, double threshold) {
+        assert point != null;
+        return matchXY(point.getX(), point.getY(), threshold);
+    }
     
     /*
      * Private
@@ -107,4 +113,29 @@ class HorizontalLineIndex {
         
         return result;
     }
+
+    private List<HorizontalSegment> matchXY(double targetX, double targetY, double threshold) {
+        assert threshold >= 0;
+
+        if (sorted == false) {
+            Collections.sort(lines, comparator);
+        }
+        double bestDelta = Double.MAX_VALUE;
+        final List<HorizontalSegment> result = new ArrayList<>();
+        for (HorizontalSegment l : lines) {
+            final double delta = Math.abs(l.getY1() - targetY);
+            if (delta < threshold && targetX >= l.getX1() && targetX <= l.getX2()) {
+                if (MathUtils.equals(delta, bestDelta)) {
+                    result.add(l);
+                } else if (delta < bestDelta) {
+                    bestDelta = delta;
+                    result.clear();
+                    result.add(l);
+                }
+            }
+        }
+
+        return result;
+    }
+    
 }

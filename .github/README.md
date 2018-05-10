@@ -21,9 +21,9 @@ For community support, go to [StackOverflow](https://stackoverflow.com/questions
 
 ## Issues and Contributions ##
 
-Issues can be reported to the [Issue tracker](https://bitbucket.org/gluon-oss/scenebuilder/issues?status=new&status=open)
+Issues can be reported to the [Issue tracker](https://github.com/gluonhq/scenebuilder/issues/)
 
-Contributions can be submitted via [Pull requests](https://bitbucket.org/gluon-oss/scenebuilder/pull-requests/)
+Contributions can be submitted via [Pull requests](https://github.com/gluonhq/scenebuilder/pulls/)
 
 
 ## Building Scene Builder ##

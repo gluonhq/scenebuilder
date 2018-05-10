@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 
 /**
  *
@@ -78,15 +80,19 @@ class VerticalLineIndex {
         final double maxX = boundsInScene.getMaxX();
         return matchX((minX + maxX) / 2.0, threshold);
     }
-    
+
+    public List<VerticalSegment> matchPoint(Point2D point, double threshold) {
+        assert point != null;
+        return matchXY(point.getX(), point.getY(), threshold);
+    }
     
     /*
      * Private
      */
-    
+
     private List<VerticalSegment> matchX(double targetX, double threshold) {
         assert threshold >= 0;
-        
+
         if (sorted == false) {
             Collections.sort(lines, comparator);
         }
@@ -104,7 +110,32 @@ class VerticalLineIndex {
                 }
             }
         }
-        
+
         return result;
     }
+
+    private List<VerticalSegment> matchXY(double targetX, double targetY, double threshold) {
+        assert threshold >= 0;
+
+        if (sorted == false) {
+            Collections.sort(lines, comparator);
+        }
+        double bestDelta = Double.MAX_VALUE;
+        final List<VerticalSegment> result = new ArrayList<>();
+        for (VerticalSegment l : lines) {
+            final double delta = Math.abs(l.getX1() - targetX);
+            if (delta < threshold && targetY >= l.getY1() && targetY <= l.getY2()) {
+                if (MathUtils.equals(delta, bestDelta)) {
+                    result.add(l);
+                } else if (delta < bestDelta) {
+                    bestDelta = delta;
+                    result.clear();
+                    result.add(l);
+                }
+            }
+        }
+
+        return result;
+    }
+    
 }

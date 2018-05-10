@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2018 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -468,10 +468,12 @@ public class EditorUtils {
     public static Parent loadFxml(URL fxmlURL, Object controller) {
         final FXMLLoader loader = new FXMLLoader();
         loader.setController(controller);
-        // Do we really need this?
-//        loader.setClassLoader(controller.getClass().getClassLoader());
         loader.setLocation(fxmlURL);
         loader.setResources(I18N.getBundle());
+
+        // setting ClassLoader for OSGi environments
+        loader.setClassLoader(controller.getClass().getClassLoader());
+
         Parent root;
         try {
             root = (Parent) loader.load();
