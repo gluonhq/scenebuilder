@@ -43,7 +43,7 @@ subprojects {
         compile 'org.eclipse.aether:aether-transport-http:1.1.0'
         compile 'org.apache.maven:maven-aether-provider:3.3.9'
 
-        compile 'com.gluonhq:charm-glisten:4.4.0'
+        compile 'com.gluonhq:charm-glisten:5.0.0'
 
         // REST API
         compile 'org.apache.httpcomponents:httpclient:4.5.2'
