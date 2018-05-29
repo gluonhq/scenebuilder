@@ -34,7 +34,8 @@ Gluon Scene Builder is frequently released, and this is only required in case yo
 
 These are the requisites:
 
-* A recent version of [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* A recent version of [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for building 'master' branch
+* A recent version of [JDK 9 or later](http://www.oracle.com/technetwork/java/javase/downloads/index.html) for building 'integration-9' branch
 
 ### How to build Scene Builder ###
 
