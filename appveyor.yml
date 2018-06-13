@@ -1,0 +1,29 @@
+# build version
+version: '{build}'
+
+# environment settings
+environment:
+  matrix:
+    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+    
+# install required tools
+install:
+  - cmd: echo %JAVA_HOME%
+  - cmd: choco install -y InnoSetup
+  
+# build and install artifacts
+build_script:
+  - cmd: .ci\build.bat
+
+artifacts:
+  - path: dist\bundles\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
+    name: windows-scenebuilder
+
+deploy:
+  - provider: GitHub
+    name: production
+    auth_token:
+        secure: 90W2MMGEXPRS62tHmCQn1lhJhYnM1yQ754ssBft0pSAe0Go1sFDZQ3Jp5JusSIxF
+    artifact: windows-scenebuilder
+    on:
+      appveyor_repo_tag: true

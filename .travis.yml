@@ -1,0 +1,51 @@
+# use java support.
+language: java
+
+# required to install tools on Linux
+sudo: required
+
+# skip install
+install: true
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+      
+matrix:
+  fast_finish: true
+  include:
+    - os: linux
+      dist: trusty
+      jdk: oraclejdk8
+    - os: osx
+      osx_image: xcode9
+
+# configure xvfb screen on linux 
+before_script:
+  if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    export DISPLAY=:99.0;
+    sh -e /etc/init.d/xvfb start;
+    sleep 3;
+  fi
+
+script:
+  - chmod +x .ci/build.sh;
+  - sh .ci/build.sh;
+            
+deploy:
+  provider: releases
+  api_key:
+    secure: "GdeRIB3FdguSiVIueE0N+y3D3+XE4wY9OCYnW13l0DxZxQuK9nTVl668Hek7w+jcmnYbaQ5Zn1Fl8H2Elx4uJnd6QOCFlPzaXdQoVtmKLYh95yLmECdsONHFdZmejIl5yk2c+D+Ln0/MXojo0wEW1356mPA10ixDfD2wVtrKgKcC2evH5d7vAMuOOUhBW18Y/kL7ZjYHkfj1kM0r1zczId2lELBYrURcexD3yoolSyfm6D7D/k1XY24INFT6bCGkzyp39npiIPpqhh6fSr0ljVBAn8ZUwcIpH09LK0pfJJxg4ZVb8G2l3yjo4TAmJwJFlKDyQY2NDQIDO11keJMBTqMwblSW6gKo8tApBsGeVNMoyMVw1vy0hyMPB6+NQPHuZPR2neSh8qx3o2NB+RFLn/WF6rKHtEfUxdU1kcwDLjsc35qEhz95/a2cbHkbIl4n0kDoNUlmwQULA97oICMoOeD/3Lqv+8RixE2OcqUOV224zOZp4FpPAYr36t4UZHSXQMYHE/k5tvlcENz/GOrHCs1wQOKBD040Wz7I/1k+zhS9jMaYMefNhj/l9tBmp/9CC6kn3HyG+APFl3cgSQNFhFaL0gmpRcDMsorDEo0pHibkCyoHNtXkZpWZBVxo14PfPOEClNn32ewIuuQrCYHStFXTZB8S1thcexnyXSw/OmU="
+  file: 
+    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.deb"
+    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.rpm"
+    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.dmg"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
+    repo: gluonhq/scenebuilder
