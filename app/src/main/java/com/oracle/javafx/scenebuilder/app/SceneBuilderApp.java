@@ -39,7 +39,7 @@ import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;

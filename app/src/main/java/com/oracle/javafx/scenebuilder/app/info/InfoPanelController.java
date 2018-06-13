@@ -31,7 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.app.info;
 
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ModifyFxControllerJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.atomic.ToggleFxRootJob;

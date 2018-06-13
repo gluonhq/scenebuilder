@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.about;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.sun.javafx.tk.Toolkit;

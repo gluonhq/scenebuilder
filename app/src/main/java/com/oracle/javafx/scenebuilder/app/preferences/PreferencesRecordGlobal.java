@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
 import java.io.File;
