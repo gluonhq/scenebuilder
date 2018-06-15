@@ -31,15 +31,15 @@ matrix:
 
 # configure xvfb screen on linux 
 before_script:
-  if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
     export DISPLAY=:99.0;
     sh -e /etc/init.d/xvfb start;
     sleep 3;
-  fi
-  if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -d -a -out app/assets/osx/codesign.cer
-    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -d -a -out app/assets/osx/codesign.p12
-  fi
+    fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -d -a -out app/assets/osx/codesign.cer;
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -d -a -out app/assets/osx/codesign.p12;
+    fi
 
 script:
   - chmod +x .ci/build.sh;
