@@ -16,9 +16,8 @@ cache:
   - "$HOME/.gradle/caches/"
 
 env:
-  global:
-    - secure: sklyWqZgaw+AkTfCoMrLjMbrMYO6wtu7Qu5AGNuFihvCisC7mClBHenPNpAqCyAF6p2gLQ4AxUUvUMoKQhFM8SroIi6baBKFCsNKIayWnyEEa6lfWHieP+TUV8en7Cp3Og7sUoG9SN+zWsaxX0qrb0PCJ9DbSnBw6wsph7ja3eaMWxKRYvUEOAhoe0L/EL7Vv3/gt3gFz+1DoKklrPDVJv2slNYBFqeTau//E6Lu8a++/j7JGbU3B709o1OtR9vZkB614C8JVFaucJ3jSvUKqqO7xiTYoXQOANVA0On2a17pkgQM9u/9k2PE3yKZjlftkYQb2L/q5jTUlJ0q1WgUNZwhhqq2zn5/QWooi3VnRCmJ1umZzktxMg8v9Qbj9xrzT/7nZNoJRE23IWTTlZmSffZltyx9ybxNEZZYgNl9fNfECgO2XFo55fvso4CeAnWzoQIxirjoDFHbhNJekuPiaRv1BT4ayjdQaaLJb/rcj0IIh1d3oFaUQexiWAgdMCpsvNbPfXNutDjWIDQ1xMrTjbHnh224WLQ/N9crushm8hezuV3E1xViKWQ6Aq06mtjkh18n5J1iCXQTNv8+HWCXUdmRh/v/ZMCg+5sXBtoEU4FluuVBFdVSQHtX6lzddwGGcQht0q9l+fl20RZYxMyyoIyfDmWk5sEgp2muUg4Nl2w=
-    - secure: vszhEUafZ+qkU5Z4wyaK0TzwL32xe3ZQRkRRM31QXpIiU3G62SFdN/fch3LNmaKI1QIEFdSErHKDRCuY8gRmVcoAPUxYMHIKIsrAI3KgvbML5CH2ZOvsaDhWKldsBFVo07N8WPui+/eOrIGjtKfenpTJH95n7MKRpP7Nttti5DmoPi5nD87Vem3nc9tj1s/JzBcn7z/zKo8GaesD+8xF1eU709TqXTy0RXdWIIe76z/LhHzGETXf46U2U+nvvpbs/41hn9+wiwAGibf4Z6u/szAvjjplBHeGQ2mJA+GQxC1KnxtpwEnXnjWZKEyOiJvdiCFChZXdMI0f3YY6Mqxl61obzG4sSvm/RvNQdoKYPbVt0OMrBlpz5c7SU3e4uF8ccWUw+g0TAERVCoT+inzYSMK8C7N0g/YR/miHntOG2VdSqxIrgTcOjrpnrij1jifqiQv78x3fGQR+2aDThW38m2OxamWYrVoi5LcsG1pD8kx8vT2CMOKsQOctQ8vWew97XYM+tH5JokaP/zYog+IAjhvAwic5tVjnjF1xBcSGC3uaIPXaEs23GFvaIgX7AalYxTJLM6vL7q4DuqdSrmjuJM9R++5WH4Ws0Iycdv06/k62RqYKRJMpg+gwbqpe0H19Dkz6yzWbEgc4Wtv7PxrECU2Qos2G5GIRO8K0k5K3r1E=
+  - secure: "v5zpVQPtKFqONZiilloJ7gI4c6I25rObDYUHssht48vIIQR3ivWULdApP5JBCqokevWHf4AgSKub1PY97QADxtEWNLvXyTHbXjwXLS6fNXLhSlqRCuVFn/YHGH4yNA/B+6Cd14pEeLnd1tvkuFbIgkOyDe9vl3USw1tDmiwopPNujIzJXJBwMMn7HwzNIjNiTFVKOMPUHI6uG2ehgkz/EXwz9gwyV0wjR8uZxRXAF5NMGq+qfvjGz0bw04rLkgOFd7q0+IpG8whxWHvnQkD1Zgla2DyIaYiVUL23swNz5F0gNBt4YMMlK1mQ08CxLWkPkLMox34GOTExMlE58PWgxHo7hKHk6tAQ4uG+u/2pal+Dpi98qwKtmyIq+WjXpRx/NxFbFAy1Q4jQ5i5UNDUd615cmPkwhaU8DAICu7Aup10DP+OUoncSmBasybFff9D6DV6t7HYQwlvFI2TC+WpGaJDhA1JkknT48qGQVZqxJfCzLxy6HYeIpaq+IGdGWJlWPBDFzL0nJvOlKTeo6+IKANPhCR5cs6sgbTfZ6US8D/X2mbqldUidYH9TyY+8oKafpxwLdu7Q48GUpty76C3gGSLqM9Etbuoc4xnCn1xKlinifHPLFAq5OPR/KJe5ExCuulTZz3NTVRfW4coqCk7KxkLLxdkPV8ai1B1zqTY/znA="
+  - secure: "CSYItVKlnNvO1iGD7XrP4nyBEK/DZbluzCbbYiXxxvZ9fzklLizBfRLS8vVO7C+Dvz5JP1/8UTm5i0LdjSY6jXm1UMhaaPStZvxroQSZnKkE7gQ1jdph2JJSyNVRxdRUO6xw/wwDG6xszlVMa2x92jMFU1jFXUG3oc06ogQ71oRrVVhVuQLXTTgfNzaO3r/c4bhf7dn984iVZ2LIpZcCngOSfKdQ6WmwpzngMewyiq9CGpsZNtJ3Rtlvd0yq7EJbalB5PG7/nyCNMEIdLphKp9rzwNWI4R2ZIJC19g7g6+OZvxIgSPSOvz0qOsCo5knPENDRrnmO9EUZvF5M5JnW3/manXQCHSH9OPQslqBSyWLBPX/Pc4ZqJzCvdnSxjBiGngs6NPSmgfiF1VEs727N8dZCs3YGfnbIj7D0zByGu5KAChpVrET+i9ewEyjJMw/aqSNNMXYiFJ0jKoGQgIDkwynxMpxmOKqvf9Y7i+afWzAzQqErhdJKAyAvxMSEFik/RxGmyzOSlSDQ1JfLoW4Ugmpg0gukJ1z3NNNyms5cf2+0CYH403pNACuJJWUh6jH603W9HYg15Ii7qIiJymZpSxDSTiqVv5GH72qDcV63wH5ALLoTMReXGxnNiH7JK3Jhkod5AZy+VV6CyL8LoX1JRZSm1NtnI2YLKLmn58ROpao="
 
 matrix:
   fast_finish: true
@@ -37,8 +36,8 @@ before_script:
     sleep 3;
     fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -d -a -out app/assets/osx/codesign.cer;
-    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -d -a -out app/assets/osx/codesign.p12;
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -out app/assets/osx/codesign.cer -d;
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -out app/assets/osx/codesign.p12 -d;
     fi
 
 script:
