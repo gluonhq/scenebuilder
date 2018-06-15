@@ -1,5 +1,7 @@
 #!/bin/bash
-security -v unlock-keychain -p jenkins /Users/jenkins/Library/Keychains/login.keychain 
+
+chmod +x .ci/osx-add-key.sh
+sh .ci/osx-add-key.sh
 
 export JAVA_HOME=$(/usr/libexec/java_home);
 echo $JAVA_HOME
@@ -31,8 +33,10 @@ ${JAVA_HOME}/bin/javapackager -deploy -v \
  -Bicon=app/assets/osx/icon-mac.icns \
  -BlicenseFile=LICENSE \
  -BlicenseType=BSD \
- -Bcopyright="Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2016, 2017, Gluon." \
+ -Bcopyright="Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2016, 2018, Gluon." \
  -Bmac.category=Education \
  -Bmac.CFBundleIdentifier=com.gluonhq.scenebuilder \
  -Bmac.CFBundleName="Scene Builder" \
- -Bmac.CFBundleVersion=${VERSION}
+ -Bmac.CFBundleVersion=${VERSION} \
+ -Bmac.signing-key-developer-id-app="Developer ID Application: Gluon Software BVBA (S7ZR395D8U)" \
+ -Bmac.bundle-id-signing-prefix=S7ZR395D8U

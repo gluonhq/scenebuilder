@@ -14,7 +14,12 @@ before_cache:
 cache:
   directories:
   - "$HOME/.gradle/caches/"
-      
+
+env:
+  global:
+  - secure: "BH3V2DJXwR3jO6mOVxAUyK90U4Hv/yWsSQZrr2Yt+yRK7CDoGvhiqGpcJX0zkWhkV+1L3xVpcA/6/SEXWDXMWbxVyowTsdLcDx4GML/SDgYVksp0gbO9jNaEbDtelzJYtDlLxmutlPndlDcA8PYasS5JjLyiQ/XtjMiBoJcqFMoax38SqxNTOWbktRkA9yfksHyQS8gEWbWEqcO6G3xClppk+UPtCLnuxg+BCAlYKxv7uNmhdEKSx8BxlQqCZ6Pc1vRStxttb7sEPouwyD6StawmiA/5mBeX3qVWu67FzPIxgnWc4nH8NjJW6a5JON8niLVX1c7AnqDAfQqPFW/wsZzEmdFVOt+CsPFyMoUdbUtwMmLaAwYgp95299hZmpvwpGMWG8H93CoZoVUq6NdFfhAOpPXfuBG/keWSLTgGb9dwyzjigJeeCnDkLKErWHMmduBZVksZIQyo/WeaL0UR7G5p0RQUzQuJFBB9BJDqhWjOf6dgWDppBAbFp2/+9oYPn6IeOoili7e9drG0LZZ0YlgG6QPLxmq1SHcYKURe+QkpLeFBZixelrJ2y5YSGM+4Zd2ZYaK7/SdfaxIfmqLF/mR9nkz0MeCy5ic3a29mxrEj78ZSAfAP4jsEyagjgN2+oxvosAlXYhvJ01s1iPSasgzqfmAsh+rbTWvjH30+KBE="
+  - secure: "rOB10gzlM3hC5rF8ezQH0p4PykMR02dsDS/kc+3qHPIoap5+dsKQbClTSgIBDgBmqYMlMogWLtEYjpdeJiGNWpValXPb/+9OpxlqtHCYIY3/jzK4gQz2lxxofUeYQPBerx25mi1jR37AWcsJrmyXPlAV0RlWFSyNmT9pmCTereTjs+M9aijn6jTPkV7Qp+BvQGQN3IL6qK2c/uHUFRhdSVXfj403Dvmq4m/oxruUICuk+CHXNB/gnF3h6/lU8nj2Ssr3fnS3ddOt4jYmJgh5JjR3zg0hiW7+WF6e/N+4Jc00NvH//x8xkYWydIdhC/WI9yGRYav552Rm8QpWRacTm6mGtk19GPYDgZ/7PaCzmEleXzvNmSPLZ535f0UYCQGiRLGASFsWX0bNb0lNDukGFITwsWFB/Xgi9x4hprrLQaBaEVbAOGFGUrFwIu7mOkrpOT10GbqvePGWUi3dVTlS/cqpNpr79Jh1hqbfLZVP7yOgcVIqQhWGDrtPt6uGCCIbAR88FyXQfT3YrxLc81Z9+HqjWn7xVsUSzn9K5AVtWwh9BHRHjgelKA893H/TyJdPLw9EhHtwH/o70fLnUXGhb2hP5nH+zte107YfajVoPgC7fOQM1TxIPeSCdqGq3VyCeMoV9VY46/kc0Je2rje1qoBHWooAg4SR7oL/HBml9ZA="
+
 matrix:
   fast_finish: true
   include:
@@ -30,6 +35,10 @@ before_script:
     export DISPLAY=:99.0;
     sh -e /etc/init.d/xvfb start;
     sleep 3;
+  fi
+  if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -d -a -out app/assets/osx/codesign.cer
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -d -a -out app/assets/osx/codesign.p12
   fi
 
 script:
