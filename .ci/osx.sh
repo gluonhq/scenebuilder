@@ -39,5 +39,5 @@ ${JAVA_HOME}/bin/javapackager -deploy -v \
  -Bmac.CFBundleIdentifier=com.gluonhq.scenebuilder \
  -Bmac.CFBundleName="Scene Builder" \
  -Bmac.CFBundleVersion=${VERSION} \
- -Bmac.signing-key-developer-id-app="Mac Developer ID Installer: Gluon Software BVBA (S7ZR395D8U)" \
+ -Bmac.signing-key-developer-id-app="Developer ID Installer: Gluon Software BVBA (S7ZR395D8U)" \
  -Bmac.bundle-id-signing-prefix=S7ZR395D8U
