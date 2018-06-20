@@ -3,7 +3,8 @@
 chmod +x .ci/osx-add-key.sh
 sh .ci/osx-add-key.sh
 
-export JAVA_HOME=$(/usr/libexec/java_home);
+export JAVA_HOME="$(find /Library/Java/JavaVirtualMachines/ -type d -name jdk1.8.0_* | tail -n 1)/Contents/Home"
+#export JAVA_HOME=$(/usr/libexec/java_home);
 echo $JAVA_HOME
 
 ${JAVA_HOME}/bin/java -version
