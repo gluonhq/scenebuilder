@@ -24,8 +24,7 @@ build_script:
   - cmd: .ci\build.bat
 
 artifacts:
-#  - path: install\windows\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
-  - path: install\windows\SceneBuilder-8.5.1.exe
+  - path: install\windows\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
     name: windows-scenebuilder
 
 deploy:
@@ -36,8 +35,7 @@ deploy:
     artifact: windows-scenebuilder
     bucket: download.gluonhq.com
     region: us-east-1
-#    folder: scenebuilder/%APPVEYOR_REPO_TAG_NAME%
-    folder: scenebuilder/8.5.1
+    folder: scenebuilder/%APPVEYOR_REPO_TAG_NAME%
     set_public: true
-#    on:
-#      appveyor_repo_tag: true
+    on:
+      appveyor_repo_tag: true
