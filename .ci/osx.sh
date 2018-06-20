@@ -6,7 +6,7 @@ sh .ci/osx-add-key.sh
 export JAVA_HOME=$(/usr/libexec/java_home);
 echo $JAVA_HOME
 
-java -version
+${JAVA_HOME}/bin/java -version
 
 ${JAVA_HOME}/bin/javapackager -createjar -v \
  -appclass com.oracle.javafx.scenebuilder.app.SceneBuilderApp \
