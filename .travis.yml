@@ -64,5 +64,5 @@ deploy:
   local-dir: deployment
   skip_cleanup: true
   on:
-#    tags: true
+    tags: true
     repo: tiainen/scenebuilder

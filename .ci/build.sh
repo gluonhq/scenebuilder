@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export TRAVIS_TAG=8.5.1
-
 if [ "${TRAVIS_OS_NAME}" = "linux" ]; then 
   ./gradlew check shadowJar -PVERSION=${TRAVIS_TAG};
 else
