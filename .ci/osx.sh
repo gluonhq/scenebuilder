@@ -4,7 +4,6 @@ chmod +x .ci/osx-add-key.sh
 sh .ci/osx-add-key.sh
 
 export JAVA_HOME="$(find /Library/Java/JavaVirtualMachines/ -type d -name jdk1.8.0_* | tail -n 1)/Contents/Home"
-#export JAVA_HOME=$(/usr/libexec/java_home);
 echo $JAVA_HOME
 
 ${JAVA_HOME}/bin/java -version
@@ -39,5 +38,5 @@ ${JAVA_HOME}/bin/javapackager -deploy -v \
  -Bmac.CFBundleIdentifier=com.gluonhq.scenebuilder \
  -Bmac.CFBundleName="Scene Builder" \
  -Bmac.CFBundleVersion=${VERSION} \
- -Bmac.signing-key-developer-id-app="Developer ID Installer: Gluon Software BVBA (S7ZR395D8U)" \
+ -Bmac.signing-key-developer-id-app="Developer ID Application: Gluon Software BVBA (S7ZR395D8U)" \
  -Bmac.bundle-id-signing-prefix=S7ZR395D8U
