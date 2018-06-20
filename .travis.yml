@@ -65,4 +65,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    repo: tiainen/scenebuilder
+    repo: gluonhq/scenebuilder

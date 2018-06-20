@@ -38,4 +38,4 @@ deploy:
     folder: scenebuilder/%APPVEYOR_REPO_TAG_NAME%
     set_public: true
     on:
-      appveyor_repo_tag: true
+      APPVEYOR_REPO_TAG: true
