@@ -15,4 +15,13 @@ if [ -n "${TRAVIS_TAG}" ]; then
   export VERSION=${TRAVIS_TAG};
   chmod +x .ci/${TRAVIS_OS_NAME}.sh;
   sh .ci/${TRAVIS_OS_NAME}.sh;
+
+  if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    mkdir -p deployment/${TRAVIS_TAG}/install/linux;
+    cp dist/bundles/*.deb deployment/${TRAVIS_TAG}/install/linux/;
+    cp dist/bundles/*.rpm deployment/${TRAVIS_TAG}/install/linux/;
+  else
+    mkdir -p deployment/${TRAVIS_TAG}/install/mac;
+    cp dist/bundles/*.dmg deployment/${TRAVIS_TAG}/install/mac/;
+  fi
 fi

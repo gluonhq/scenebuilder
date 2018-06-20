@@ -54,15 +54,15 @@ script:
   - sh .ci/build.sh;
             
 deploy:
-  provider: releases
-  api_key:
-    secure: "GdeRIB3FdguSiVIueE0N+y3D3+XE4wY9OCYnW13l0DxZxQuK9nTVl668Hek7w+jcmnYbaQ5Zn1Fl8H2Elx4uJnd6QOCFlPzaXdQoVtmKLYh95yLmECdsONHFdZmejIl5yk2c+D+Ln0/MXojo0wEW1356mPA10ixDfD2wVtrKgKcC2evH5d7vAMuOOUhBW18Y/kL7ZjYHkfj1kM0r1zczId2lELBYrURcexD3yoolSyfm6D7D/k1XY24INFT6bCGkzyp39npiIPpqhh6fSr0ljVBAn8ZUwcIpH09LK0pfJJxg4ZVb8G2l3yjo4TAmJwJFlKDyQY2NDQIDO11keJMBTqMwblSW6gKo8tApBsGeVNMoyMVw1vy0hyMPB6+NQPHuZPR2neSh8qx3o2NB+RFLn/WF6rKHtEfUxdU1kcwDLjsc35qEhz95/a2cbHkbIl4n0kDoNUlmwQULA97oICMoOeD/3Lqv+8RixE2OcqUOV224zOZp4FpPAYr36t4UZHSXQMYHE/k5tvlcENz/GOrHCs1wQOKBD040Wz7I/1k+zhS9jMaYMefNhj/l9tBmp/9CC6kn3HyG+APFl3cgSQNFhFaL0gmpRcDMsorDEo0pHibkCyoHNtXkZpWZBVxo14PfPOEClNn32ewIuuQrCYHStFXTZB8S1thcexnyXSw/OmU="
-  file: 
-    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.deb"
-    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.rpm"
-    - "dist/bundles/SceneBuilder-${TRAVIS_TAG}.dmg"
+  provider: s3
+  access_key_id: "AKIAJZWJVMZ7GGRNVQFA"
+  secret_access_key:
+    secure: "mGXBETBEGw8WudTd80V/YrKm6pqJcFhcxe7XHSrylKNOw437I7toCQa2DANColkiaqaplM5ZhXqUTGeoFExrrfTcaBR9J1IsiPQ7lLvQ0C7eLg8U5YCbqf2oI9xoY7i/K3vJjKmMtGUDBxpHa85+AIj0orLdvR1f4UpkqP4VBdU9nM7xojTjjfly7g9qsFSS8v6V1FG0h6EGkLdlRZBzuvetd4sK1j+81Eqbk97vDkP1yqaXzBUrLDhNmbh0R/7FKmhIqJZAnsbGMkn5Qd/2/AV5hmZDfx3Rj/KwokzoqKJd4dCAR4qsTnWTRqHwVOzvYgA0ShwYlSBv6HMZOB6YI7/nYKCdqDh3FgMhS5SSYoIOQsTm+rkJuXJ9viJFxxNsR92I5WzyozMUIr2BeSF4gJx33kXgXmbHHGjieQXfJrKlvk4OSgb0pTOJ/BaRAlNsFGi6VXo4X1w72XB4kTFG5JR3m1+ECK8sLShqA4KoBtc1uW5yimdwt8k71cQSWT77abf3l3yKXFXAoHJM7RwwhTDXxXE206XoJdzLQ9TTayw22qoeFd1/kz8qoW9Iy+YbqHMVYdh38yDNxMFvtRTadCpGnMnLG4E2BI3bwtM2IIYhb2Tkn5Nx0h4y380hHfP3L4WeZpfVNALdK0tDBRhPANJYH60XzWhIowUVys89yfM="
+  bucket: "download.gluonhq.com"
+  acl: public_read
+  upload-dir: scenebuilder
+  local-dir: deployment
   skip_cleanup: true
-  overwrite: true
   on:
-    tags: true
-    repo: gluonhq/scenebuilder
+#    tags: true
+    repo: tiainen/scenebuilder
