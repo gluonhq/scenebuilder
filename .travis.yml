@@ -55,7 +55,7 @@ script:
             
 deploy:
   provider: s3
-  access_key_id: "AKIAJZWJVMZ7GGRNVQFA"
+  access_key_id: "AKIAJN5VEQ6N4ELP664A"
   secret_access_key:
     secure: "MsC3d2xDiQEXAiRWwyWLu+kFlSymKIr3Z57UjrzTBDgeZE/K8V+tyZ3i8Vml+syvRpvwsGdAVIAbebY5c7YJPx3z2oTP602hRbrxVCkUkJBzkN39I3GQ49uXRLzDD4Eh7EYUtuDmYwPoJISA1f55Q9qn9g/FTm5bn3p6RNulq9Wk8U8ua4GM0/3YiWl338fTCAmh2UGzAGY9L8RubQozlSGYAY+ziPyt/mybeRpR77FnLl1oyIBwiW45MIqZZzn6VeoyiI5XWOS2cCM0bo0NdEoxFnnmpPVaMwCc5Qusb+LTtK5BS9Qdrw/xCpCN0q1Ps5r1gb9f5S/7GHKdo9hzlbSkjaVdzpeiWIJw/FQUMC11nIwYYyKoeciqexvjmFdR3A9jPIm4K/CYW/XAuC2MKzjDZA4sJmFxr8uPH/dMsh1ibvSn8pnWV3GjAZUbVBgLzddOCBY+GWKpLnQjjPnCQ/KKZNYH4sY1ej1HI6gH2ill69jGQ/ervpV7JbZwt8x07qf+VBg/t03wNMGRVOoatjvqF2PWNJblTFi+ISsPEMVkiF5RhOAfv/GM1BbCVdywdXN45aORBzsls60Hs/NTqwmZvQFIwsBcNw5HV1VF8q660nFhanXPlJiPSthLmjSGFTxIElKQPjQW3dSSyYZLJ2GVT15eK6ZbhiHqTtBWr5A="
   bucket: "download.gluonhq.com"
