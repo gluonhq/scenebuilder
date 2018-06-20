@@ -37,3 +37,6 @@ copy app\src\main\resources\LICENSE dist\LICENSE
 
 echo "Bundles directory contains..."
 dir dist\bundles\
+
+md install\windows
+copy dist\bundles\*.exe install\windows
