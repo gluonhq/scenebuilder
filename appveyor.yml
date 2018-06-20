@@ -24,14 +24,20 @@ build_script:
   - cmd: .ci\build.bat
 
 artifacts:
-  - path: dist\bundles\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
+#  - path: dist\bundles\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
+  - path: dist\bundles\SceneBuilder-8.5.1.exe
     name: windows-scenebuilder
 
 deploy:
-  - provider: GitHub
-    name: production
-    auth_token:
-        secure: 90W2MMGEXPRS62tHmCQn1lhJhYnM1yQ754ssBft0pSAe0Go1sFDZQ3Jp5JusSIxF
+  - provider: S3
+    access_key_id: AKIAJN5VEQ6N4ELP664A
+    secret_access_key:
+      secure: +NCVGlZV3+8RoyGJ8+w5hGmPWk/8NBQU+2t+pnvip5vlaTYZkgEuwhFVnleRzzfr
     artifact: windows-scenebuilder
-    on:
-      appveyor_repo_tag: true
+    bucket: download.gluonhq.com
+    region: us-east-1
+#    folder: scenebuilder/%APPVEYOR_REPO_TAG_NAME%
+    folder: scenebuilder/8.5.1/install/windows
+    set_public: true
+#    on:
+#      appveyor_repo_tag: true
