@@ -62,6 +62,7 @@ public class ButtonTypePropertyMetadata extends ComplexPropertyMetadata<ButtonTy
             buttonTypeMap.put(ButtonType.FINISH,  "FINISH"   ); //NOI18N
             buttonTypeMap.put(ButtonType.NEXT,    "NEXT"     ); //NOI18N
             buttonTypeMap.put(ButtonType.NO,      "NO"       ); //NOI18N
+            buttonTypeMap.put(ButtonType.OK,      "OK"       ); //NOI18N
             buttonTypeMap.put(ButtonType.PREVIOUS,"PREVIOUS" ); //NOI18N
             buttonTypeMap.put(ButtonType.YES,     "YES"      ); //NOI18N
             buttonTypeMap = Collections.unmodifiableMap(buttonTypeMap);
