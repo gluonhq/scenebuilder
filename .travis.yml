@@ -42,7 +42,6 @@ before_script:
     export DISPLAY=:99.0;
     sh -e /etc/init.d/xvfb start;
     sleep 3;
-    aws s3 ls s3://download.gluonhq.com/scenebuilder/8.5.1/install/linux/SceneBuilder-8.5.1.rpm;
     fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
     openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -out app/assets/osx/codesign.cer -d;
