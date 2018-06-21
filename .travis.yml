@@ -21,7 +21,10 @@ cache:
   - "$HOME/.gradle/caches/"
 
 before_install:
-  - sudo pip install awscli --upgrade --user
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    sudo -H pip install --upgrade pip;
+    sudo -H pip install awscli --upgrade --user;
+    fi
 
 env:
   global:
