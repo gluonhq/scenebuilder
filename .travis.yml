@@ -11,7 +11,6 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
-      - awscli
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -20,6 +19,9 @@ before_cache:
 cache:
   directories:
   - "$HOME/.gradle/caches/"
+
+before_install:
+  - sudo pip install awscli --upgrade --user
 
 env:
   global:
