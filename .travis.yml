@@ -37,17 +37,14 @@ matrix:
       osx_image: xcode9
 
 before_script:
-  # configure xvfb screen on linux 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
     export DISPLAY=:99.0;
     sh -e /etc/init.d/xvfb start;
     sleep 3;
     fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-    # decrypt code signing certificate
     openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -out app/assets/osx/codesign.cer -d;
     openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -out app/assets/osx/codesign.p12 -d;
-    # install latest java8
     brew update;
     brew tap homebrew/cask-versions;
     brew cask install java8;
@@ -70,8 +67,9 @@ deploy:
     tags: true
 #    repo: gluonhq/scenebuilder
 
+# deploy with S3 provider faulty sets content-type for rpm files to "audio/x-pn-realaudio-plugin" instead of "application/x-rpm"
 after_deploy:
-  # deploy with S3 provider faulty sets content-type for rpm files to "audio/x-pn-realaudio-plugin" instead of "application/x-rpm"
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-    aws s3 cp --content-type "application/x-rpm" --acl public-read --metadata-directive REPLACE s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm
+    aws s3 cp --content-type "application/x-rpm" --acl public-read --metadata-directive REPLACE s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm;
     fi
+
