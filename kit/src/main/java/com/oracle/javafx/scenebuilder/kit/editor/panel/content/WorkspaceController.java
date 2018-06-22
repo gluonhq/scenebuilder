@@ -49,6 +49,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -56,9 +57,15 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 /**
@@ -321,7 +328,8 @@ class WorkspaceController {
         
         final String statusMessageText, statusStyleClass;
         contentGroup.getChildren().clear();
-        
+
+        boolean canDisplayDocument = false;
         if (fxomDocument == null) {
             statusMessageText = "FXOMDocument is null"; //NOI18N
             statusStyleClass = "stage-prompt"; //NOI18N
@@ -338,6 +346,7 @@ class WorkspaceController {
                 if (layoutException == null) {
                     statusMessageText = ""; //NOI18N
                     statusStyleClass = "stage-prompt-default"; //NOI18N
+                    canDisplayDocument = true;
                 } else {
                     contentGroup.getChildren().clear();
                     statusMessageText = I18N.getString("content.label.status.cannot.display");
@@ -352,7 +361,32 @@ class WorkspaceController {
         backgroundPane.setText(statusMessageText);
         backgroundPane.getStyleClass().clear();
         backgroundPane.getStyleClass().add(statusStyleClass);
-        
+
+        // Display background fill of the Window/Scene
+        if (canDisplayDocument) {
+            assert fxomDocument != null;
+            assert fxomDocument.getFxomRoot() != null;
+
+            Paint backgroundPaneFillPaint = Color.WHITE;
+
+            if (fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Window) {
+                Window window = (Window) fxomDocument.getFxomRoot().getSceneGraphObject();
+                Scene scene = window.getScene();
+                if (scene != null && scene.getFill() != null) {
+                    backgroundPaneFillPaint = scene.getFill();
+                }
+            } else if (fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Scene) {
+                Scene scene = (Scene) fxomDocument.getFxomRoot().getSceneGraphObject();
+                if (scene.getFill() != null) {
+                    backgroundPaneFillPaint = scene.getFill();
+                }
+            }
+
+            BackgroundFill backgroundPaneFill = new BackgroundFill(backgroundPaneFillPaint,
+                    CornerRadii.EMPTY, Insets.EMPTY);
+            backgroundPane.setBackground(new Background(backgroundPaneFill));
+        }
+
         // If layoutException != null, then this layout call is required
         // so that backgroundPane updates its message... Strange...
         backgroundPane.layout();
