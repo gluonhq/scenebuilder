@@ -29,7 +29,8 @@ artifacts:
 
 deploy:
   - provider: S3
-    access_key_id: AKIAJN5VEQ6N4ELP664A
+    access_key_id:
+      secure: rlv2PJSU8m4Wkw7BvwwmhMpTkyiD1I2CKW88HymuXfI=
     secret_access_key:
       secure: +NCVGlZV3+8RoyGJ8+w5hGmPWk/8NBQU+2t+pnvip5vlaTYZkgEuwhFVnleRzzfr
     artifact: windows-scenebuilder
