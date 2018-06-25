@@ -54,6 +54,7 @@ before_script:
     brew update;
     brew tap homebrew/cask-versions;
     brew cask install java8;
+    /usr/libexec/java_home;
     fi
 
 script:
