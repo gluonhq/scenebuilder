@@ -40,9 +40,13 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 
@@ -76,7 +80,16 @@ public class UsePredefinedSizeJob extends Job {
         if (editorController.getFxomDocument() == null) {
             this.fxomObject = null;
         } else {
-            this.fxomObject = editorController.getFxomDocument().getFxomRoot();
+            FXOMObject fxomObject = editorController.getFxomDocument().getFxomRoot();
+
+            if (fxomObject != null && fxomObject.getSceneGraphObject() instanceof Scene) {
+                // Set the size of the scene's root
+                DesignHierarchyMask mask = new DesignHierarchyMask(fxomObject);
+                fxomObject = mask.getAccessory(DesignHierarchyMask.Accessory.ROOT);
+                assert fxomObject != null;
+            }
+
+            this.fxomObject = fxomObject;
         }
         buildSubJobs();
     }
