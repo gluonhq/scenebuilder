@@ -105,8 +105,9 @@ public class UnwrapJob extends BatchSelectionJob {
             return false;
         }
 
-        // Retrieve the num of children of the container to unwrap
-        int childrenCount = getChildren(containerInstance).size();
+        // Retrieve the children of the container to unwrap
+        final List<FXOMObject> children = getChildren(containerInstance);
+        int childrenCount = children.size();
         // If the container to unwrap has no childen, it cannot be unwrapped
         if (childrenCount == 0) {
             return false;
@@ -118,7 +119,7 @@ public class UnwrapJob extends BatchSelectionJob {
         if (parentContainer == null) {
             return childrenCount == 1;
         } else {
-            // Check that the num of children can be added to the parent container
+            // Check that the num and type of children can be added to the parent container
             final DesignHierarchyMask parentContainerMask
                     = new DesignHierarchyMask(parentContainer);
             if (parentContainerMask.isAcceptingSubComponent()) {
@@ -126,9 +127,20 @@ public class UnwrapJob extends BatchSelectionJob {
             } else {
                 assert parentContainerMask.isAcceptingAccessory(Accessory.CONTENT)
                         || parentContainerMask.isAcceptingAccessory(Accessory.GRAPHIC)
+                        || parentContainerMask.isAcceptingAccessory(Accessory.ROOT)
+                        || parentContainerMask.isAcceptingAccessory(Accessory.SCENE)
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof BorderPane
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof DialogPane;
-                return childrenCount == 1;
+                if (childrenCount != 1) {
+                    return false;
+                }
+
+                final FXOMObject child = children.iterator().next();
+                if (parentContainerMask.isAcceptingAccessory(Accessory.SCENE)) {
+                    return parentContainerMask.isAcceptingAccessory(Accessory.SCENE, child);
+                } else {
+                    return true;
+                }
             }
         }
     }
@@ -374,6 +386,14 @@ public class UnwrapJob extends BatchSelectionJob {
             else if (mask.isAcceptingAccessory(Accessory.CONTENT)
                     && mask.getAccessory(Accessory.CONTENT) != null) {
                 result.add(mask.getAccessory(Accessory.CONTENT));
+            } // Scene => unwrap ROOT accessory
+            else if (mask.isAcceptingAccessory(Accessory.ROOT)
+                    && mask.getAccessory(Accessory.ROOT) != null) {
+                result.add(mask.getAccessory(Accessory.ROOT));
+            } // Window => unwrap SCENE accessory
+            else if (mask.isAcceptingAccessory(Accessory.SCENE)
+                    && mask.getAccessory(Accessory.SCENE) != null) {
+                result.add(mask.getAccessory(Accessory.SCENE));
             }
         }
         return result;

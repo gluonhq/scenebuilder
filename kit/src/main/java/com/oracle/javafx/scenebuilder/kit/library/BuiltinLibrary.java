@@ -245,6 +245,8 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(javafx.scene.canvas.Canvas.class, TAG_MISCELLANEOUS);
         addDefaultItem(javafx.scene.Group.class, TAG_MISCELLANEOUS);
         addRegionItem200x200(javafx.scene.layout.Region.class, TAG_MISCELLANEOUS);
+        addCustomizedItem(javafx.scene.Scene.class, TAG_MISCELLANEOUS);
+        addCustomizedItem(javafx.stage.Stage.class, TAG_MISCELLANEOUS);
         addCustomizedItem(javafx.scene.SubScene.class, TAG_MISCELLANEOUS, FX8_QUALIFIER);
         addDefaultItem(javafx.embed.swing.SwingNode.class, TAG_MISCELLANEOUS, FX8_QUALIFIER);
         addCustomizedItem(javafx.scene.control.Tooltip.class, TAG_MISCELLANEOUS);

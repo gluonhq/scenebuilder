@@ -39,6 +39,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 
 /**
@@ -65,6 +66,10 @@ public class DeleteObjectJob extends InlineDocumentJob {
             result = true;
         } else if (targetFxomObject.getSceneGraphObject() instanceof Axis) {
             // Axis cannot be deleted from their parent Chart
+            result = false;
+        } else if (targetFxomObject.getParentObject() != null &&
+                targetFxomObject.getParentObject().getSceneGraphObject() instanceof Scene) {
+            // Scene root cannot be deleted
             result = false;
         } else {
             result = (targetFxomObject.getParentProperty() != null);

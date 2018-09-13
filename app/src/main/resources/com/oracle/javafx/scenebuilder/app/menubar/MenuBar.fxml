@@ -198,6 +198,9 @@
                 <MenuItem fx:id="wrapInTitledPaneMenuItem" mnemonicParsing="false" text="TitledPane" />
                 <MenuItem fx:id="wrapInToolBarMenuItem" mnemonicParsing="false" text="ToolBar" />
                 <MenuItem fx:id="wrapInVBoxMenuItem" mnemonicParsing="false" text="VBox" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem fx:id="wrapInSceneMenuItem" mnemonicParsing="false" text="Scene" />
+                <MenuItem fx:id="wrapInStageMenuItem" mnemonicParsing="false" text="Stage" />
               </items>
             </Menu>
             <MenuItem fx:id="unwrapMenuItem" mnemonicParsing="true" text="%menu.title.unwrap" />

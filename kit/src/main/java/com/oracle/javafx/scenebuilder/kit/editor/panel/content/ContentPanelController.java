@@ -48,6 +48,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -82,12 +83,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
+import javafx.stage.Window;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SceneDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.WindowDriver;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
@@ -450,14 +454,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         
         if (isContentDisplayable()) {
             final FXOMDocument fxomDocument = getEditorController().getFxomDocument();
-            assert fxomDocument != null;
-            if ((fxomDocument.getFxomRoot() == null) 
-                    || excludes.contains(fxomDocument.getFxomRoot())) {
-                result = null;
-            } else {
-                assert fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Node;
-                result = pick(fxomDocument.getFxomRoot(), sceneX, sceneY, excludes);
-            }
+            result = pick(fxomDocument, sceneX, sceneY, excludes);
         } else {
             result = null;
         }
@@ -465,6 +462,28 @@ public class ContentPanelController extends AbstractFxmlPanelController
         return result;
     }
     
+    public FXOMObject pick(FXOMDocument fxomDocument, double sceneX, double sceneY, Set<FXOMObject> excludes) {
+        assert fxomDocument != null;
+
+        if (fxomDocument.getFxomRoot() == null) {
+            return null;
+        }
+
+        Node displayNode = fxomDocument.getDisplayNode();
+        if (displayNode != null) {
+            FXOMObject startObject = fxomDocument.getFxomRoot().searchWithSceneGraphObject(displayNode);
+            if (startObject == null || excludes.contains(startObject)) {
+                return null;
+            }
+            return pick(startObject, sceneX, sceneY, excludes);
+        }
+
+        if (excludes.contains(fxomDocument.getFxomRoot())) {
+            return null;
+        }
+
+        return pick(fxomDocument.getFxomRoot(), sceneX, sceneY, excludes);
+    }
     
     /**
      * Returns the topmost FXOMObject at (sceneX, sceneY) but ignoring
@@ -721,7 +740,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
         } else if (fxomDocument.getFxomRoot() == null) {
             result = true;
         } else {
-            result = fxomDocument.getFxomRoot().isNode()
+            result = fxomDocument.getDisplayNodeOrSceneGraphRoot() instanceof Node
                     && workspaceController.getLayoutException() == null;
         }
         
@@ -985,6 +1004,10 @@ public class ContentPanelController extends AbstractFxmlPanelController
             result = new TreeTableColumnDriver(this);
         } else if (sceneGraphObject instanceof Node) {
             result = new GenericDriver(this);
+        } else if (sceneGraphObject instanceof Scene) {
+            result = new SceneDriver(this);
+        } else if (sceneGraphObject instanceof Window) {
+            result = new WindowDriver(this);
         } else {
             result = null;
         }

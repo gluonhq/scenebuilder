@@ -37,6 +37,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.animation.FadeTransition;
@@ -47,6 +49,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -54,9 +57,15 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 /**
@@ -76,6 +85,7 @@ class WorkspaceController {
     private double scaling = 1.0;
     private RuntimeException layoutException;
     private EditorController editorController;
+    private ArrayList<String> themeStylesheets = new ArrayList<String>();
 
     private FXOMDocument fxomDocument;
 
@@ -150,13 +160,7 @@ class WorkspaceController {
     }
     
     public List<String> getThemeStyleSheets() {
-        final List<String> result;
-        if (contentGroup.getStylesheets().isEmpty()) {
-            result = null;
-        } else {
-            result = contentGroup.getStylesheets();
-        }
-        return result;
+        return Collections.unmodifiableList(themeStylesheets);
     }
     
     public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme, EditorPlatform.GluonSwatch gluonSwatch, EditorPlatform.GluonTheme gluonTheme) {
@@ -186,18 +190,18 @@ class WorkspaceController {
             if (!currentStyleSheets.contains(gluonThemeStylesheet)) {
                 currentStyleSheets.add(gluonThemeStylesheet);
             }
-            contentGroup.getStylesheets().clear();
-            contentGroup.getStylesheets().setAll(currentStyleSheets);
-            contentGroup.applyCss();
+            themeStylesheets.clear();
+            themeStylesheets.addAll(currentStyleSheets);
+            contentGroupApplyCss();
 //            setPreviewStyleSheets(Arrays.asList(themeStyleSheet));
         } else {
             contentSubScene.setUserAgentStylesheet(themeStyleSheet);
 
             String gluonMobileStyleSheet = EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL(); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
-            contentGroup.getStylesheets().remove(gluonMobileStyleSheet);
-            contentGroup.getStylesheets().remove(gluonDocumentStylesheet);
-            contentGroup.getStylesheets().remove(previousGluonSwatchStylesheet);
-            contentGroup.getStylesheets().remove(previousGluonThemeStylesheet);
+            themeStylesheets.remove(gluonMobileStyleSheet);
+            themeStylesheets.remove(gluonDocumentStylesheet);
+            themeStylesheets.remove(previousGluonSwatchStylesheet);
+            themeStylesheets.remove(previousGluonThemeStylesheet);
         }
 
         // Update scenegraph layout, etc
@@ -209,22 +213,22 @@ class WorkspaceController {
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
         EditorPlatform.Theme currentTheme = editorController.getTheme();
-        contentGroup.getStylesheets().clear();
-        contentGroup.getStylesheets().addAll(previewStyleSheets);
+        themeStylesheets.clear();
+        themeStylesheets.addAll(previewStyleSheets);
         if (currentTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || currentTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-            contentGroup.getStylesheets().add(EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL()); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
-            contentGroup.getStylesheets().add(editorController.getGluonSwatch().getStylesheetURL());
-            contentGroup.getStylesheets().add(editorController.getGluonTheme().getStylesheetURL());
-            contentGroup.getStylesheets().add(EditorPlatform.getGluonDocumentStylesheetURL());
+            themeStylesheets.add(EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL()); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
+            themeStylesheets.add(editorController.getGluonSwatch().getStylesheetURL());
+            themeStylesheets.add(editorController.getGluonTheme().getStylesheetURL());
+            themeStylesheets.add(EditorPlatform.getGluonDocumentStylesheetURL());
         }
-        contentGroup.applyCss();
+        contentGroupApplyCss();
     }
     
     public void layoutContent(boolean applyCSS) {
         if (scrollPane != null) {
             try {
                 if (applyCSS) {
-                    contentSubScene.getRoot().applyCss();
+                    contentGroupApplyCss();
                 }
                 scrollPane.layout();
                 layoutException = null;
@@ -324,7 +328,8 @@ class WorkspaceController {
         
         final String statusMessageText, statusStyleClass;
         contentGroup.getChildren().clear();
-        
+
+        boolean canDisplayDocument = false;
         if (fxomDocument == null) {
             statusMessageText = "FXOMDocument is null"; //NOI18N
             statusStyleClass = "stage-prompt"; //NOI18N
@@ -332,7 +337,7 @@ class WorkspaceController {
             statusMessageText = I18N.getString("content.label.status.invitation");
             statusStyleClass = "stage-prompt"; //NOI18N
         } else {
-            final Object userSceneGraph = fxomDocument.getSceneGraphRoot();
+            final Object userSceneGraph = fxomDocument.getDisplayNodeOrSceneGraphRoot();
             if (userSceneGraph instanceof Node) {
                 final Node rootNode = (Node) userSceneGraph;
                 assert rootNode.getParent() == null;
@@ -341,6 +346,7 @@ class WorkspaceController {
                 if (layoutException == null) {
                     statusMessageText = ""; //NOI18N
                     statusStyleClass = "stage-prompt-default"; //NOI18N
+                    canDisplayDocument = true;
                 } else {
                     contentGroup.getChildren().clear();
                     statusMessageText = I18N.getString("content.label.status.cannot.display");
@@ -355,7 +361,32 @@ class WorkspaceController {
         backgroundPane.setText(statusMessageText);
         backgroundPane.getStyleClass().clear();
         backgroundPane.getStyleClass().add(statusStyleClass);
-        
+
+        // Display background fill of the Window/Scene
+        if (canDisplayDocument) {
+            assert fxomDocument != null;
+            assert fxomDocument.getFxomRoot() != null;
+
+            Paint backgroundPaneFillPaint = Color.WHITE;
+
+            if (fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Window) {
+                Window window = (Window) fxomDocument.getFxomRoot().getSceneGraphObject();
+                Scene scene = window.getScene();
+                if (scene != null && scene.getFill() != null) {
+                    backgroundPaneFillPaint = scene.getFill();
+                }
+            } else if (fxomDocument.getFxomRoot().getSceneGraphObject() instanceof Scene) {
+                Scene scene = (Scene) fxomDocument.getFxomRoot().getSceneGraphObject();
+                if (scene.getFill() != null) {
+                    backgroundPaneFillPaint = scene.getFill();
+                }
+            }
+
+            BackgroundFill backgroundPaneFill = new BackgroundFill(backgroundPaneFillPaint,
+                    CornerRadii.EMPTY, Insets.EMPTY);
+            backgroundPane.setBackground(new Background(backgroundPaneFill));
+        }
+
         // If layoutException != null, then this layout call is required
         // so that backgroundPane updates its message... Strange...
         backgroundPane.layout();
@@ -393,7 +424,7 @@ class WorkspaceController {
         if (fxomDocument == null) {
             userSceneGraph = null;
         } else {
-            userSceneGraph = fxomDocument.getSceneGraphRoot();
+            userSceneGraph = fxomDocument.getDisplayNodeOrSceneGraphRoot();
         }
         if ((userSceneGraph instanceof Node) && (layoutException == null)) {
             final Node rootNode = (Node) userSceneGraph;
@@ -551,5 +582,13 @@ class WorkspaceController {
         showHost.setFromValue(0.0);
         showHost.setToValue(1.0);
         showHost.play();
+    }
+
+    private void contentGroupApplyCss() {
+        contentGroup.getStylesheets().setAll(themeStylesheets);
+        if (fxomDocument != null) {
+            contentGroup.getStylesheets().addAll(fxomDocument.getDisplayStylesheets());
+        }
+        contentGroup.applyCss();
     }
 }

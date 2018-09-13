@@ -37,6 +37,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.drag.source.DocumentDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -196,9 +197,16 @@ public class SelectAndMoveGesture extends AbstractMouseDragGesture {
     private Point2D computeHitPoint(FXOMObject fxomObject) {
         
         final FXOMObject nodeObject = fxomObject.getClosestNode();
-        assert nodeObject != null; // At least the root is a Node
-        assert nodeObject.getSceneGraphObject() instanceof Node;
-        final Node sceneGraphNode = (Node) nodeObject.getSceneGraphObject();
+        final Node sceneGraphNode;
+        if (nodeObject == null) {
+            // Root object is not a node, there should be a display node
+            FXOMDocument document = fxomObject.getFxomDocument();
+            assert document.getDisplayNode() != null;
+            sceneGraphNode = document.getDisplayNode();
+        } else {
+            assert nodeObject.getSceneGraphObject() instanceof Node;
+            sceneGraphNode = (Node) nodeObject.getSceneGraphObject();
+        }
         return sceneGraphNode.sceneToLocal(hitSceneX, hitSceneY, true /* rootScene */);
     }
 
