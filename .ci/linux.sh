@@ -28,7 +28,7 @@ ${JAVA_HOME}/bin/javapackager -deploy -v \
  -BappVersion=${VERSION} \
  -Bcategory=Development \
  -Bemail=support@gluonhq.com \
- -Bicon=app/assests/linux/icon-linux.png \
+ -Bicon=app/assets/linux/icon-linux.png \
  -BlicenseFile=LICENSE \
  -BlicenseType=BSD \
  -Bcopyright="Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2016, Gluon."

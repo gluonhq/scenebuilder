@@ -32,7 +32,11 @@ copy app\src\main\resources\LICENSE dist\LICENSE
  -BappVersion=%VERSION%^
  -BlicenseFile=LICENSE^
  -Bicon=app\assets\windows\icon-windows.ico
- 
- 
+
+"%signtool%" sign /tr http://timestamp.comodoca.com /td sha256 /fd sha256 /f app\assets\windows\codesign.p12 /p %key_secret% dist\bundles\*.exe"
+
 echo "Bundles directory contains..."
 dir dist\bundles\
+
+md install\windows
+copy dist\bundles\*.exe install\windows
