@@ -38,12 +38,16 @@ import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import javafx.fxml.LoadListener;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Window;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Collections;
 
 
 /**
@@ -89,7 +93,7 @@ class FXOMLoader implements LoadListener {
             currentTransientNode = null;
             assert is.markSupported();
             is.reset();
-            document.setSceneGraphRoot(fxmlLoader.load(is));
+            setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
             if (x.getCause().getClass() == XMLStreamException.class) {
                 handleUnsupportedCharset(x);
@@ -105,6 +109,26 @@ class FXOMLoader implements LoadListener {
         errorDialog.setDebugInfo(x.getCause().toString());
         errorDialog.setTitle(I18N.getString("alert.title.open"));
         errorDialog.showAndWait();
+    }
+
+    private void setSceneGraphRoot(Object sceneGraphRoot) {
+        document.setSceneGraphRoot(sceneGraphRoot);
+        document.setDisplayNode(null);
+        document.setDisplayStylesheets(Collections.emptyList());
+
+        if (sceneGraphRoot instanceof Scene) {
+            Scene scene = (Scene) sceneGraphRoot;
+            document.setDisplayNode(scene.getRoot());
+            document.setDisplayStylesheets(scene.getStylesheets());
+            scene.setRoot(new Pane()); // ensure displayNode is only part of one scene
+        } else if (sceneGraphRoot instanceof Window) {
+            Window window = (Window) sceneGraphRoot;
+            if (window.getScene() != null) {
+                document.setDisplayNode(window.getScene().getRoot());
+                document.setDisplayStylesheets(window.getScene().getStylesheets());
+                window.getScene().setRoot(new Pane()); // ensure displayNode is only part of one scene
+            }
+        }
     }
 
     public FXOMDocument getDocument() {

@@ -84,6 +84,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  *
@@ -101,6 +102,8 @@ public class DesignHierarchyMask {
         // Single-valued sub-components treated as accessories
         // TODO(elp) : verify that it is complete 
         CONTENT,
+        ROOT,
+        SCENE,
         TOP,
         BOTTOM,
         LEFT,
@@ -134,6 +137,8 @@ public class DesignHierarchyMask {
     }
     private static final PropertyName graphicName = new PropertyName("graphic");
     private static final PropertyName contentName = new PropertyName("content");
+    private static final PropertyName rootName = new PropertyName("root");
+    private static final PropertyName sceneName = new PropertyName("scene");
     private static final PropertyName expandableContentName = new PropertyName("expandableContent");
     private static final PropertyName headerName = new PropertyName("header");
     private static final PropertyName topName = new PropertyName("top");
@@ -386,7 +391,8 @@ public class DesignHierarchyMask {
                 || sceneGraphObject instanceof TextInputControl
                 || sceneGraphObject instanceof TitledPane
                 || sceneGraphObject instanceof Tooltip
-                || sceneGraphObject instanceof TreeTableColumn;
+                || sceneGraphObject instanceof TreeTableColumn
+                || sceneGraphObject instanceof Stage;
     }
     
     public boolean isResourceKey() {
@@ -484,7 +490,11 @@ public class DesignHierarchyMask {
             case PLACEHOLDER:
             case CLIP:
             case CONTENT:
+            case ROOT:
                 result = javafx.scene.Node.class;
+                break;
+            case SCENE:
+                result = javafx.scene.Scene.class;
                 break;
             case XAXIS:
             case YAXIS:
@@ -679,6 +689,8 @@ public class DesignHierarchyMask {
                 || sceneGraphObject instanceof Tooltip
                 || sceneGraphObject instanceof TreeTableColumn) {
             propertyName = new PropertyName("text");
+        } else if (sceneGraphObject instanceof Stage) {
+            propertyName = new PropertyName("title");
         }
         return propertyName;
     }
@@ -695,6 +707,12 @@ public class DesignHierarchyMask {
             case DP_CONTENT:
             case EX_CONTENT:
                 result = contentName;
+                break;
+            case ROOT:
+                result = rootName;
+                break;
+            case SCENE:
+                result = sceneName;
                 break;
             case EXPANDABLE_CONTENT:
                 result = expandableContentName;
@@ -1055,6 +1073,8 @@ public class DesignHierarchyMask {
     public boolean needResizeWhenTopElement() {
         return (this.isAcceptingSubComponent()
                 || this.isAcceptingAccessory(Accessory.CONTENT)
+                || this.isAcceptingAccessory(Accessory.ROOT)
+                || this.isAcceptingAccessory(Accessory.SCENE)
                 || this.isAcceptingAccessory(Accessory.CENTER)
                 || this.isAcceptingAccessory(Accessory.TOP)
                 || this.isAcceptingAccessory(Accessory.RIGHT)

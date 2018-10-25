@@ -300,6 +300,10 @@ public class MenuBarController {
     @FXML
     private MenuItem wrapInGroupMenuItem;
     @FXML
+    private MenuItem wrapInSceneMenuItem;
+    @FXML
+    private MenuItem wrapInStageMenuItem;
+    @FXML
     private MenuItem unwrapMenuItem;
 
     // Preview
@@ -578,6 +582,8 @@ public class MenuBarController {
         assert wrapInToolBarMenuItem != null;
         assert wrapInVBoxMenuItem != null;
         assert wrapInGroupMenuItem != null;
+        assert wrapInSceneMenuItem != null;
+        assert wrapInStageMenuItem != null;
         assert unwrapMenuItem != null;
 
         assert showPreviewInWindowMenuItem != null;
@@ -988,6 +994,8 @@ public class MenuBarController {
         wrapInToolBarMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_TOOL_BAR));
         wrapInVBoxMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_VBOX));
         wrapInGroupMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_GROUP));
+        wrapInSceneMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_SCENE));
+        wrapInStageMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_STAGE));
         unwrapMenuItem.setUserData(new EditActionController(EditAction.UNWRAP));
         unwrapMenuItem.setAccelerator(
                 new KeyCodeCombination(KeyCode.U, modifier));

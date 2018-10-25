@@ -447,7 +447,8 @@ public class HierarchyDNDController {
                         Accessory.HEADER,
                         Accessory.DP_GRAPHIC,
                         Accessory.DP_CONTENT,
-                        Accessory.EXPANDABLE_CONTENT
+                        Accessory.EXPANDABLE_CONTENT,
+                        Accessory.SCENE
                     };
                     for (Accessory a : accessories) {
                         final AccessoryDropTarget dropTarget

@@ -39,7 +39,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -69,6 +71,8 @@ public class FXOMDocument {
     private SampleDataGenerator sampleDataGenerator;
     private FXOMObject fxomRoot;
     private Object sceneGraphRoot;
+    private Node displayNode;
+    private ArrayList<String> displayStylesheets = new ArrayList<>();
     private final SimpleIntegerProperty sceneGraphRevision = new SimpleIntegerProperty();
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
@@ -203,6 +207,8 @@ public class FXOMDocument {
             this.glue.setRootElement(this.fxomRoot.getGlueElement());
         }
         this.sceneGraphRoot = sceneGraphRoot;
+        this.displayNode = null;
+        this.displayStylesheets.clear();
     }
 
     public Object getSceneGraphRoot() {
@@ -211,6 +217,36 @@ public class FXOMDocument {
 
     void setSceneGraphRoot(Object sceneGraphRoot) {
         this.sceneGraphRoot = sceneGraphRoot;
+    }
+
+    /**
+     * Returns the Node that should be displayed in the editor instead of the scene graph root.
+     */
+    public Node getDisplayNode() {
+        return displayNode;
+    }
+
+    public List<String> getDisplayStylesheets() {
+        return Collections.unmodifiableList(displayStylesheets);
+    }
+
+    void setDisplayStylesheets(List<String> displayStylesheets) {
+        this.displayStylesheets.clear();
+        this.displayStylesheets.addAll(displayStylesheets);
+    }
+
+    /**
+     * Sets the Node that should be displayed in the editor instead of the scene graph root.
+     */
+    void setDisplayNode(Node displayNode) {
+        this.displayNode = displayNode;
+    }
+
+    /**
+     * Returns the display node if one is set, otherwise returns the scene graph root.
+     */
+    public Object getDisplayNodeOrSceneGraphRoot() {
+        return displayNode != null ? displayNode : sceneGraphRoot;
     }
 
     public String getFxmlText() {

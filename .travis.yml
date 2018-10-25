@@ -1,0 +1,81 @@
+# use java support.
+language: java
+
+# required to install tools on Linux
+sudo: required
+
+# skip install
+install: true
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+
+before_install:
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    sudo -H pip install --upgrade pip;
+    pip install awscli --upgrade --user;
+    fi
+
+env:
+  global:
+    - secure: "MZhhXBH49kGDBD6b85kNS53I61dNfUCYg2Q3H+1bmW5g7lDdoAG8wYsQ+a2u189MswnDfg/oFa7e1WlXu/AuKDZkM22ne/lfTKvHHzL9f611GsvpNpSUl4NOxYRdsxwdqKco+ypVasOzxQwghy4xx6ufdA6yIJhLrIVcIg58xKBO2fqu0G39QphTPxl+fi8kTtolQST68fT2WR3UOxLZJ/YDD5fkv/ZfMnRl/wG642ppfbRmpNzTvtU2GdxDiZJ4bCtBweUXimLe8LvSE1zuSvKaXb+dEwgjjv+Lufq96vajLX0jYnbEUan/Zp9h2OQNeco9QvaVEvQ/7SDNPoaX6b8t9IHW/pDmVVxMwfuv4T22f2K5OUp5GYtusCqoOonZWUJtnWbtIO+Q14JzLd7UHTCn2R+edi9Mz2iaP/B8AYHMqN2G3EZ+uPy/j8vxkeL8gCZuFVx0N53wkrjJ9D0PYCloQohDejEScBtnS3sV4/jhTazPoqgFi/EyG7Wmg3A+4DDANtE1fEMPBiHZ+OD+jFJAwV7HRTeQstc156hqDvb3JJt+QEh1cKzrpo8Ay/ewt9/SJD0WA5fcsXz4gGH2TyzKOmRWiwpbdyG4c3x2T8vdm7eL8cj/EnFV6MLwtOYEVzWnvqfZgT06LEGGmYw3WUadkFsVA/qJPxEzGergNtQ="
+    - secure: "d2jvdKutBjSIFaeaMPSkCO53+0tUq8qzlFrUOmKNyEyosoMnfh/GljoOkwmLzsyhI5fC841nJNuN+FQJmYobNZkgKV6ljNqaxe8k+Ug08sWFP1OLpiHyZ/C+ZvWRCdA4DUjv2rGQu8VK6rffLJaK58QAupQEkVWw4nBgbcEUSIaHTNM36b4AwyjNNmqPfL/Bds72GIjdizDjZ2ivASTVgj1gb3kFO/ubWnWjcOxEfKSxIw5KNW5/1b8kAu+LlKIWmoXQzSyansyOfFTFe67B7cmtU88IFoiDulQcSlKHAxnE6V92NK9iEaSUNYO37hCcCB3e8gDVQE1GHHaBi789B3ner6hbH9aKTDK345PHjtlWqVrC7/ya4aGfm6R9H2rGI63VS1EP194nUBC6hWYUC1GOWrwE38PvSn0W8MLjJ7ygV0kO7z5zcYg9klZKQUxeoNjceWykaFFGogCl7BdBxxazLrbac2zMwyA/hvTbi/qZQ13ihXxXTg8Srf7FDAcfHcvVx1s3hiJTpOV/xdvg9AA/6tf2a9jIvDCNd8giKQjfUdwUpwnN+fTQtHQYQE6PnYkgZOFQC7enYTdMxyw4nP7tNVJDRZbJvSw1fmHSfuEderQ3myMvJaSSyz4DXz4W2FZoo7u1LEsWpEJF33eG2zRzwuxZuirCIHNGUDfZVGQ="
+    - secure: "vWiTwEpeL/lwe9ul7s5TddKRNSQvB2KjPS95OQK4IT0rLyo7Uyl8VFA/k4pXzIKPayqei5OwBSDW+c+u3Mklr5rU6FPOU+rZa0ZMGUWGGPO1+9I/f9FzDOOTd5oZqXEYmUJC77anYuQwvVCRwjjPnuRi/05RsSlZFg8ozLKIjXnenTMyjRvYFh74VJpdVensfleOjJsK5267eCAZH9mlFsftsbMVkJTJ+hNVMUScE2fD9aMLYx4hwMpal24vteiWnpCmEwxyBiLm4CMbxq5z27dkhm/CLfiu1cDvV3Ei15wcwO3ZSz4R/O0U79I9A0/IBzEap8uTeZOqp9Z1FBJ9hz1XlCiXGjZhPT+k419OyUK7UKTejUelTSAKwWCgAvyZ52LAcAZAvj+0nEnpAGQNzskog4tc9nwETHjepSBkJzCkgOlEnBP/aflDlwyuXD/5q/oU0/UQ5paJx59dpDTBWP1hDAOVHSMMzdGv50sT18QmMxXsetu+dWpMxa9jjsp5jxCc1NNeqRd5SjYdTRMbW9R5k0v+TwwLSCy28OE7c3d1WI7X3GPAY4uPV/u3NgAEhjpRidCNTVxHeDD63DVcHUxfNEH1UcDbb88qHJaW2bSVWYYPZOwKE0HxV6fUFLRXPPwER9Qn6WKL9+WycSZ2N1+Pl3QrA2tAJ1m+9u48X+M="
+    - secure: "ouqfdutVk9LM7OxKnqrplBVLpT+wS2ABRORSfX2Y0lz+JRaNN0bq0HF0tu6fOpn2KG4xTTknlZKrFPAqBiilvLMF61vvEV4zlmEY+449uwqQnEGtv30c5E28tSLuibsmkLJ4a4vP8wqZR30y477ngUR4l2TzBXp+PjTqIBFhmEmViJMmR7q7SmPCY7/lUD1LqXlHegLJ/hrxRGHyaZcyPzb7/pJOYdMrYRyGhR4ADoYmm2fSFEkiyvferk8rD609vzM9vEBfix3KBNmDsaCZvZpyl9Y+LZE9z9xApgwog6Y7azBarJzVHnI5dEApgoZ1RYAg3Yn3cfG6p65TRGN3auXKK5ZRD+Fe9L6Br1uL5DLo7MJpHALlvl2D0oumOggHkXPsGZMOUKFK3K2FDgTcwekFxBZ1yJEjB8IVS2gzMxMW4qdaOM7ErLSz/IziGVnxgAUdfq0760XEKml+lgVCYkYioY29594vBKPUhzX8so+3JKX+7PLPgL40T1uALkLMz4fuWrsYrrvJK/l/WIuQ2Q9x+pTeOHdwUAhaU7bCXqwPicab3wzin+baAe6avG0+19e3wFFVPqA2Z8+vi6R+edc2U38Y6voiMqi2H4dCn8YvGqtiXy1Sav5znw77uoZRYKjRaaw3Hx6zffhVOYe+ivcO5i3zo1Lx4BkdCSRpu84="
+
+matrix:
+  fast_finish: true
+  include:
+    - os: linux
+      dist: trusty
+      jdk: oraclejdk8
+    - os: osx
+      osx_image: xcode9
+
+before_script:
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    export DISPLAY=:99.0;
+    sh -e /etc/init.d/xvfb start;
+    sleep 3;
+    fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.cer.enc -out app/assets/osx/codesign.cer -d;
+    openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -out app/assets/osx/codesign.p12 -d;
+    brew update;
+    brew tap homebrew/cask-versions;
+    brew cask install java8;
+    fi
+
+script:
+  - chmod +x .ci/build.sh;
+  - sh .ci/build.sh;
+
+deploy:
+  provider: s3
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  bucket: "download.gluonhq.com"
+  acl: public_read
+  upload-dir: scenebuilder
+  local-dir: deployment
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: gluonhq/scenebuilder
+
+# deploy with S3 provider faulty sets content-type for rpm files to "audio/x-pn-realaudio-plugin" instead of "application/x-rpm"
+after_deploy:
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    aws s3 cp --content-type "application/x-rpm" --acl public-read --metadata-directive REPLACE s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm s3://download.gluonhq.com/scenebuilder/$TRAVIS_TAG/install/linux/SceneBuilder-$TRAVIS_TAG.rpm;
+    fi
+

@@ -40,6 +40,8 @@ import java.util.ResourceBundle;
 public class I18N {
     
     private static ResourceBundle bundle;
+
+    private static ResourceBundle.Control utf8EncodingControl = new I18NControl();
     
     public static String getString(String key) {
         return getBundle().getString(key);
@@ -53,7 +55,7 @@ public class I18N {
     public static synchronized ResourceBundle getBundle() {
         if (bundle == null) {
             final String packageName = I18N.class.getPackage().getName();
-            bundle = ResourceBundle.getBundle(packageName + ".SceneBuilderKit"); //NOI18N
+            bundle = ResourceBundle.getBundle(packageName + ".SceneBuilderKit",utf8EncodingControl); //NOI18N
         }
         
         return bundle;

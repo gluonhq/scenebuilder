@@ -1,0 +1,42 @@
+# build version
+version: '{build}'
+
+# environment settings
+environment:
+  enc_secret:
+    secure: tE+SpkNSSGdCz8/esIC1r6Gw/NQWtdpwvG0TAMiuIrc=
+  key_secret:
+    secure: Qv/FKSDp3x4KntE+oVLa4Q==
+  signtool: C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
+  matrix:
+    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+    
+# install required tools
+install:
+  - cmd: echo %JAVA_HOME%
+  - cmd: choco install -y InnoSetup
+  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  - cmd: appveyor-tools\secure-file -decrypt app\assets\windows\codesign.p12.enc -secret %enc_secret%
+  - sh: ./appveyor-tools/secure-file -decrypt app/assets/windows/codesign.p12.enc -secret $enc_secret
+
+# build and install artifacts
+build_script:
+  - cmd: .ci\build.bat
+
+artifacts:
+  - path: install\windows\SceneBuilder-%APPVEYOR_REPO_TAG_NAME%.exe
+    name: windows-scenebuilder
+
+deploy:
+  - provider: S3
+    access_key_id:
+      secure: rlv2PJSU8m4Wkw7BvwwmhMpTkyiD1I2CKW88HymuXfI=
+    secret_access_key:
+      secure: +NCVGlZV3+8RoyGJ8+w5hGmPWk/8NBQU+2t+pnvip5vlaTYZkgEuwhFVnleRzzfr
+    artifact: windows-scenebuilder
+    bucket: download.gluonhq.com
+    region: us-east-1
+    folder: scenebuilder/%APPVEYOR_REPO_TAG_NAME%
+    set_public: true
+    on:
+      APPVEYOR_REPO_TAG: true

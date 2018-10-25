@@ -22,3 +22,5 @@ lib/
 scenicView.properties
 *.patch
 *.class
+dist/
+package/

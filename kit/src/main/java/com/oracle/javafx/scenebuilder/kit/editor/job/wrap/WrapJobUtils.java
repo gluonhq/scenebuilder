@@ -122,6 +122,10 @@ public class WrapJobUtils {
                 assert false;
                 result = null;
             }
+        } else if (mask.isAcceptingAccessory(Accessory.SCENE)) {
+            result = mask.getPropertyNameForAccessory(Accessory.SCENE);
+        } else if (mask.isAcceptingAccessory(Accessory.ROOT)) {
+            result = mask.getPropertyNameForAccessory(Accessory.ROOT);
         } else if (mask.isAcceptingSubComponent()) {
             result = mask.getSubComponentPropertyName();
         } else {

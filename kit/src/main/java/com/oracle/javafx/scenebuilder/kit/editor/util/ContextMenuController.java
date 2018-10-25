@@ -96,6 +96,9 @@ public class ContextMenuController {
     private MenuItem wrapInTitledPaneMenuItem;
     private MenuItem wrapInToolBarMenuItem;
     private MenuItem wrapInVBoxMenuItem;
+    private SeparatorMenuItem wrapInSeparatorMenuItem;
+    private MenuItem wrapInSceneMenuItem;
+    private MenuItem wrapInStageMenuItem;
     private MenuItem unwrapMenuItem;
     private Menu gridPaneMenu;
     private MenuItem moveRowAboveMenuItem;
@@ -439,6 +442,13 @@ public class ContextMenuController {
         wrapInGroupMenuItem = new MenuItem("Group");
         wrapInGroupMenuItem.setOnAction(onActionEventHandler);
         wrapInGroupMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_GROUP));
+        wrapInSeparatorMenuItem = new SeparatorMenuItem();
+        wrapInSceneMenuItem = new MenuItem("Scene");
+        wrapInSceneMenuItem.setOnAction(onActionEventHandler);
+        wrapInSceneMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_SCENE));
+        wrapInStageMenuItem = new MenuItem("Stage");
+        wrapInStageMenuItem.setOnAction(onActionEventHandler);
+        wrapInStageMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_STAGE));
         wrapInMenu.getItems().setAll(
                 wrapInAnchorPaneMenuItem,
                 wrapInBorderPaneMenuItem,
@@ -457,7 +467,10 @@ public class ContextMenuController {
                 wrapInTilePaneMenuItem,
                 wrapInTitledPaneMenuItem,
                 wrapInToolBarMenuItem,
-                wrapInVBoxMenuItem);
+                wrapInVBoxMenuItem,
+                wrapInSeparatorMenuItem,
+                wrapInSceneMenuItem,
+                wrapInStageMenuItem);
         unwrapMenuItem = new MenuItem(I18N.getString("menu.title.unwrap"));
         unwrapMenuItem.setOnAction(onActionEventHandler);
         unwrapMenuItem.setUserData(new EditActionController(EditAction.UNWRAP));

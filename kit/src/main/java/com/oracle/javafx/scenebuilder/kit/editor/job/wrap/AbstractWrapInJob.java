@@ -61,7 +61,6 @@ import java.util.List;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.chart.Axis;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.DialogPane;
@@ -82,7 +81,7 @@ public abstract class AbstractWrapInJob extends BatchSelectionJob {
 
     public static AbstractWrapInJob getWrapInJob(
             EditorController editorController,
-            Class<? extends Parent> wrappingClass) {
+            Class<?> wrappingClass) {
 
         assert EditorController.getClassesSupportingWrapping().contains(wrappingClass);
         final AbstractWrapInJob job;
@@ -120,6 +119,10 @@ public abstract class AbstractWrapInJob extends BatchSelectionJob {
             job = new WrapInTitledPaneJob(editorController);
         } else if (wrappingClass == javafx.scene.control.ToolBar.class) {
             job = new WrapInToolBarJob(editorController);
+        } else if (wrappingClass == javafx.scene.Scene.class) {
+            job = new WrapInSceneJob(editorController);
+        } else if (wrappingClass == javafx.stage.Stage.class) {
+            job = new WrapInStageJob(editorController);
         } else {
             assert wrappingClass == javafx.scene.layout.VBox.class; // Because of (1)
             job = new WrapInVBoxJob(editorController);

@@ -33,31 +33,30 @@ package com.oracle.javafx.scenebuilder.app.i18n;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
-/**
- *
- */
-
+import com.oracle.javafx.scenebuilder.kit.i18n.I18NControl;
 
 public class I18N {
-    
+
     private static ResourceBundle bundle;
-    
+
+    private static ResourceBundle.Control utf8EncodingControl = new I18NControl();
+
     public static String getString(String key) {
         return getBundle().getString(key);
     }
-    
+
     public static String getString(String key, Object... arguments) {
         final String pattern = getString(key);
         return MessageFormat.format(pattern, arguments);
     }
-    
+
     public static synchronized ResourceBundle getBundle() {
         if (bundle == null) {
             final String packageName = I18N.class.getPackage().getName();
-            bundle = ResourceBundle.getBundle(packageName + ".SceneBuilderApp"); //NOI18N
+            bundle = ResourceBundle.getBundle(packageName + ".SceneBuilderApp",utf8EncodingControl); //NOI18N
         }
-        
+
         return bundle;
     }
 }
+
