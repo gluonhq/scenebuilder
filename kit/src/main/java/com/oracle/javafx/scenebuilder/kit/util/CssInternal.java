@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -58,13 +59,13 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import com.sun.javafx.css.CompoundSelector;
-import com.sun.javafx.css.Rule;
-import com.sun.javafx.css.Selector;
-import com.sun.javafx.css.SimpleSelector;
-import com.sun.javafx.css.Style;
-import com.sun.javafx.css.Stylesheet;
-import com.sun.javafx.css.parser.CSSParser;
+import javafx.css.CompoundSelector;
+import javafx.css.Rule;
+import javafx.css.Selector;
+import javafx.css.SimpleSelector;
+import javafx.css.Style;
+import javafx.css.Stylesheet;
+import javafx.css.CssParser;
 
 /**
  *
@@ -76,7 +77,7 @@ public class CssInternal {
 
     private final static String[] themeUrls = {
         Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST.getStylesheetURL(),
-            Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylesheetURL(),
+        Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylesheetURL(),
         Theme.CASPIAN_EMBEDDED_QVGA.getStylesheetURL(),
         Theme.CASPIAN_EMBEDDED.getStylesheetURL(),
         Theme.CASPIAN_HIGH_CONTRAST.getStylesheetURL(),
@@ -236,7 +237,7 @@ public class CssInternal {
         Set<String> styleClasses = new HashSet<>();
         Stylesheet s;
         try {
-            s = new CSSParser().parse(url);
+            s = new CssParser().parse(url);
         } catch (IOException ex) {
             System.out.println("Warning: Invalid Stylesheet " + url); //NOI18N
             return styleClasses;
@@ -300,7 +301,7 @@ public class CssInternal {
         } else {
             Styleable styleable = fxObject instanceof Styleable ? (Styleable) fxObject : null;
             if (styleable != null) {
-                node = Deprecation.getNode(styleable);
+                node = styleable.getStyleableNode();
             }
         }
         if (node != null) {

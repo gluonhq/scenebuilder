@@ -59,7 +59,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker;
 
 import java.io.File;
@@ -458,12 +457,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
-        }
-
-        // On Mac, AppPlatform disables implicit exit.
-        // So we need to set a default system menu bar.
-        if (Platform.isImplicitExit() == false) {
-            Deprecation.setDefaultSystemMenuBar(MenuBarController.getSystemMenuBarController().getMenuBar());
         }
 
     }

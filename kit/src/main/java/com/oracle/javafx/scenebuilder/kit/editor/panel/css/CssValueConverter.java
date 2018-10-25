@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,16 +34,15 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.css;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.EditorUtils;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ColorEncoder;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
-import com.sun.javafx.css.Declaration;
-import com.sun.javafx.css.Rule;
-import com.sun.javafx.css.Size;
-import com.sun.javafx.css.converters.PaintConverter;
-import com.sun.javafx.css.converters.PaintConverter.LinearGradientConverter;
-import com.sun.javafx.css.parser.DeriveColorConverter;
-import com.sun.javafx.css.parser.DeriveSizeConverter;
-import com.sun.javafx.css.parser.LadderConverter;
+import javafx.css.Declaration;
+import javafx.css.Rule;
+import javafx.css.Size;
+import javafx.css.converter.PaintConverter;
+import javafx.css.converter.PaintConverter.LinearGradientConverter;
+import javafx.css.converter.DeriveColorConverter;
+import javafx.css.converter.DeriveSizeConverter;
+import javafx.css.converter.LadderConverter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -541,7 +541,7 @@ public class CssValueConverter {
         StringBuilder builder = new StringBuilder();
         if (property.equals("-fx-background-image")) { //NOI18N
             Image p = bi.getImage();
-            builder.append(Deprecation.getUrl(p));
+            builder.append(p.getUrl());
         } else {
             if (property.equals("-fx-background-position")) {             //NOI18N
                 double left = 0, right = 0, top = 0, bottom = 0;
@@ -609,7 +609,7 @@ public class CssValueConverter {
         StringBuilder builder = new StringBuilder();
         if (property.equals("-fx-border-image")) { //NOI18N
             Image p = bi.getImage();
-            builder.append(Deprecation.getUrl(p));
+            builder.append(p.getUrl());
         } else {
             if (property.equals("-fx-background-position")) {             //NOI18N
 

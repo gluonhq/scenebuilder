@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,43 +29,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.fxom;
+package com.oracle.javafx.scenebuilder.kit.util;
 
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.image.Image;
-import javafx.util.Builder;
-import javafx.util.BuilderFactory;
-
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.fxml.FXMLLoader;
 
 /**
- *
+ * A temporary class created to reflectively call private and protected methods
+ * from classes in JDK 9 unless we come up with a permanent solution.
  */
-class FXOMBuilderFactory implements BuilderFactory {
+public class ReflectionUtils {
 
-    final JavaFXBuilderFactory delegate;
-    
-    public FXOMBuilderFactory(ClassLoader classLoader) {
-        assert classLoader != null;
-        
-        this.delegate = Deprecation.newJavaFXBuilderFactory(classLoader);
-    }
-    
-    /*
-     * BuilderFactory
-     */
-    
-    @Override
-    public Builder<?> getBuilder(Class<?> type) {
-        final Builder<?> result;
-        
-        if (Image.class == type) {
-           result = new FXOMImageBuilder();
-        } else {
-           result = delegate.getBuilder(type);
+    private static final Map<String, Method> methodMap = new HashMap<>();
+
+    private ReflectionUtils() {}
+
+    public static void setStaticLoad(FXMLLoader loader, boolean staticLoad) {
+        Class<?> clazz = loader.getClass();
+        Method setStaticLoadMethod = methodMap.computeIfAbsent(clazz.getName(), s -> {
+            try {
+                Method method = clazz.getDeclaredMethod("setStaticLoad", boolean.class);
+                method.setAccessible(true);
+                return method;
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+        if (setStaticLoadMethod != null) {
+            try {
+                setStaticLoadMethod.invoke(loader, staticLoad);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
-        
-        return result;
     }
-    
+
 }

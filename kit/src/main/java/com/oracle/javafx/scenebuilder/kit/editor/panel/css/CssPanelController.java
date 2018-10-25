@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -54,10 +55,6 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.css.ParsedValueImpl;
-import com.sun.javafx.css.Rule;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -76,6 +73,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.css.ParsedValue;
 import javafx.css.PseudoClass;
+import javafx.css.Rule;
 import javafx.css.StyleOrigin;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -835,7 +833,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
 
     private void disableColumnReordering() {
         for (TableColumn<CssProperty, ?> column : table.getColumns()) {
-            Deprecation.setTableColumnReordable(column, false);
+            column.setReorderable(false);
         }
     }
 
@@ -1981,7 +1979,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
                     boolean lookup = false;
                     if (parsedValues != null) {
                         ParsedValue<?, ?> pv = parsedValues[i];
-                        lookup = ((ParsedValueImpl<?, ?>) pv).isContainsLookups();
+                        lookup = pv.isContainsLookups();
                     }
                     if (lookup) {
                         assert style != null;
@@ -2034,7 +2032,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
                         boolean lookup = false;
                         if (parsedValues != null) {
                             ParsedValue<?, ?> pv = parsedValues[index];
-                            lookup = ((ParsedValueImpl<?, ?>) pv).isContainsLookups();
+                            lookup = pv.isContainsLookups();
                         }
                         if (lookup) {
                             CssStyle lookupRoot = null;

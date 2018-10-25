@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,26 +32,19 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util;
 
-import com.sun.glass.ui.Application;
-import com.sun.glass.ui.Application.EventHandler;
-import com.sun.javafx.css.Style;
-import com.sun.javafx.geom.PickRay;
-import com.sun.javafx.scene.control.skin.MenuBarSkin;
-import com.sun.javafx.scene.input.PickResultChooser;
+import javafx.css.Style;
+import javafx.scene.control.skin.MenuBarSkin;
 import javafx.collections.ObservableMap;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 
 import java.net.MalformedURLException;
@@ -62,6 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 
 @SuppressWarnings("deprecation")
 public class Deprecation {
@@ -74,22 +70,26 @@ public class Deprecation {
     // Deprecated stuff in Node
 //    // RT-21247 : Promote impl_getAllParentStylesheets to public API
     public static Group createGroupWithNullParentStylesheets() {
+//        System.err.println("Error: impl_getAllParentStylesheets is no longer publicly accessible");
         return new Group() {
-            @Override
-            public List<String> impl_getAllParentStylesheets() {
-                return null;
-            }
+//            @Override
+//            public List<String> impl_getAllParentStylesheets() {
+//                return null;
+//            }
         };
     }
 
 //    // RT-21096 : Promote impl_getStyleMap / impl_setStyleMap to public API
-    public static void setStyleMap(Node node, ObservableMap<StyleableProperty<?>, List<com.sun.javafx.css.Style>> map) {
-        node.impl_setStyleMap(map);
+    public static void setStyleMap(Node node, ObservableMap<StyleableProperty<?>, List<javafx.css.Style>> map) {
+        // node.impl_setStyleMap(map);
+//        System.err.println("Error: impl_setStyleMap is no longer publicly accessible");
     }
 
 //    // RT-21096 : Promote impl_getStyleMap / impl_setStyleMap to public API
     public static Map<StyleableProperty<?>, List<Style>> getStyleMap(Node node) {
-        return node.impl_findStyles(null);
+//        return node.impl_findStyles(null);
+//        System.err.println("Error: findStyles is no longer publicly accessible");
+        return null;
     }
 
     public static void reapplyCSS(Parent parent, URI stylesheetPath) {
@@ -122,108 +122,63 @@ public class Deprecation {
         }
     }
 
-    // Retrieve the node of the Styleable.
-    public static Node getNode(Styleable styleable) {
-        // Nodes are styleable treated differently.
-        try {
-            if (styleable instanceof MenuItem) {
-                return ((MenuItem) styleable).impl_styleableGetNode();
-            } else if (styleable instanceof PopupControl) {
-                return ((PopupControl) styleable).impl_styleableGetNode();
-            } else if (styleable instanceof TableColumn) {
-                return ((TableColumn<?,?>) styleable).impl_styleableGetNode();
-            } else if (styleable instanceof TreeTableColumn) {
-                return ((TreeTableColumn<?,?>) styleable).impl_styleableGetNode();
-            }
-        } catch (Exception ex) {
-            // May happen, e.g if TableColumn as root
-            return null;
-        }
+    @SuppressWarnings("rawtypes")
+    public static List<Style> getMatchingStyles(CssMetaData cssMetaData, Styleable styleable) {
+//        return Node.impl_getMatchingStyles(cssMetaData, styleable);
+//        System.err.println("Error: impl_getMatchingStyles is no longer publicly accessible");
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
-    public static List<Style> getMatchingStyles(CssMetaData cssMetaData, Styleable styleable) {
-        return Node.impl_getMatchingStyles(cssMetaData, styleable);
-    }
-
     // Deprecated stuff in Parent
-//    // RT-21209 : Promote setImpl_traversalEngine to public API
-//    public static void setTraversalEngine(Parent parent, TraversalEngine engine) {
-//        parent.setImpl_traversalEngine(engine);
-//    }
-    // Deprecated stuff in Image
-    // RT-21216 : Promote impl_getUrl to public API
-    public static String getUrl(Image image) {
-        return image.impl_getUrl();
-    }
 
-//    // RT-21217 : Promote impl_fromPlatformImage to public API
-//    public static Image fromPlatformImage(Object platformImage) {
-//        return Image.impl_fromPlatformImage(platformImage);
-//    }
-//    // RT-21219 : Promote impl_getPlatformImage to public API
-//    public static Object getPlatformImage(Image image) {
-//        return image.impl_getPlatformImage();
-//    }
     // Deprecated stuff in FXMLLoader
     // RT-21226 : Promote setStaticLoad to public API
     public static void setStaticLoad(FXMLLoader loader, boolean staticLoad) {
-        loader.impl_setStaticLoad(staticLoad);
-    }
-
-    // RT-21228 : Promote setLoadListener to public API
-    public static void setLoadListener(FXMLLoader loader, com.sun.javafx.fxml.LoadListener loadListener) {
-        loader.impl_setLoadListener(loadListener);
+        // See SB-266 and JDK-8186429
+        ReflectionUtils.setStaticLoad(loader, staticLoad);
     }
 
     // RT-20184 : FX should provide a Parent.pick() routine
     public static Node pick(Node node, double sceneX, double sceneY) {
-        final Point2D p = node.sceneToLocal(sceneX, sceneY, true /* rootScene */);
-        final PickRay pickRay = new PickRay(p.getX(), p.getY(), 1.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        final PickResultChooser prc = new PickResultChooser();
-        node.impl_pickNode(pickRay, prc);
-        return prc.getIntersectedNode();
-    }
+        Point2D p = node.sceneToLocal(sceneX, sceneY, true /* rootScene */);
 
-    // RT-19857 : Keeping menu in the Mac menu bar when there is no more stage
-    public static void setDefaultSystemMenuBar(MenuBar menuBar) {
-        MenuBarSkin.setDefaultSystemMenuBar(menuBar);
-    }
+        // check if the given node has the point inside it, or else we drop out
+        if (!node.contains(p)) return null;
 
-//    // RT-21475 : Promote FXMLLoader.setLoadListener to public API
-//    public static ParseTraceElement[] getParseTrace(FXMLLoader loader) {
-//        return loader.getParseTrace();
-//    }
-    // Deprecated stuff in JavaFXBuilderFactory
-//    // RT-21230 : Promote JavaFXBuilderFactory(ClassLoader classLoader, boolean alwaysUseBuilders) constructor to public API
-//    public static JavaFXBuilderFactory getJavaFXBuilderFactory(boolean alwaysUseBuilders) {
-//        return new JavaFXBuilderFactory(Thread.currentThread().getContextClassLoader(), alwaysUseBuilders);
-//    }
-    public static void setPlatformEventHandler(EventHandler eventHandler) {
-        Application.GetApplication().setEventHandler(eventHandler);
-    }
+        // at this point we know that _at least_ the given node is a valid
+        // answer to the given point, so we will return that if we don't find
+        // a better child option
+        if (node instanceof Parent) {
+            // we iterate through all children (recursively). We don't stop
+            // iteration when we hit the first child that also contains the bounds,
+            // as we know that later nodes have a higher z-ordering, so they
+            // should be picked before the earlier nodes.
+            Node bestMatchingChild = null;
+            for (Node child : ((Parent)node).getChildrenUnmodifiable()) {
+                p = child.sceneToLocal(sceneX, sceneY, true /* rootScene */);
+                if (child.contains(p)) {
+                    bestMatchingChild = child;
+                }
+            }
 
-    public static EventHandler getPlatformEventHandler() {
-        return Application.GetApplication().getEventHandler();
+            if (bestMatchingChild != null) {
+                return pick(bestMatchingChild, sceneX, sceneY);
+            }
+        }
+
+        return node;
     }
 
     public static int getGridPaneColumnCount(GridPane gridPane) {
-        return gridPane.impl_getColumnCount();
+        return gridPane.getColumnCount();
     }
 
     public static int getGridPaneRowCount(GridPane gridPane) {
-        return gridPane.impl_getRowCount();
+        return gridPane.getRowCount();
     }
 
     public static Bounds getGridPaneCellBounds(GridPane gridPane, int c, int r) {
-        return gridPane.impl_getCellBounds(c, r);
-    }
-
-    // RT-33675 : Promote TableColumn.impl_setReorderable() to public API
-    @SuppressWarnings("rawtypes")
-    public static void setTableColumnReordable(TableColumn tableColumn, boolean reordable) {
-        tableColumn.impl_setReorderable(reordable);
+        return gridPane.getCellBounds(c, r);
     }
 
     // Returns the corresponding text css (.css) from a binary css (.bss)
@@ -235,11 +190,6 @@ public class Deprecation {
             // should never happen
             return null;
         }
-    }
-
-    // RT-21230 : Promote JavaFXBuilderFactory(ClassLoader classLoader, boolean alwaysUseBuilders) constructor to public API
-    public static JavaFXBuilderFactory newJavaFXBuilderFactory(ClassLoader classLoader) {
-        return new JavaFXBuilderFactory(classLoader, false /* alwaysUseBuilders */);
     }
 
     // Deprecated as of FX 8 u20, and replaced by new method getTreeItemLevel:

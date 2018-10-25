@@ -76,7 +76,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.util.Utils;
-import com.sun.javafx.scene.control.behavior.KeyBinding;
 
 import java.io.File;
 import java.io.IOException;
@@ -262,19 +261,21 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         final KeyCombination accelerator = getAccelerator(event);
         if (isTextInputControlEditing(focusOwner) == true 
                 && accelerator != null) {
-            for (KeyBinding binding : SBTextInputControlBindings.getBindings()) {
-                // The event is handled natively
-                if (binding.getSpecificity(null, event) > 0) {
-                    // 
-                    // When using system menu bar, the event is handled natively 
-                    // before the application receives it : we just consume the event 
-                    // so the editing action is not performed a second time by the app.
-                    if (menuBarController.getMenuBar().isUseSystemMenuBar()) {
-                        event.consume();
-                    }
-                    break;
-                }
-            }
+
+//            focusOwner.getInputMap()
+//                      .lookupMapping(KeyBinding.toKeyBinding(event))
+//                      .ifPresent(mapping -> {
+//                          // The event is handled natively
+//                          if (mapping.getSpecificity(event) > 0) {
+//                              // When using system menu bar, the event is handled natively
+//                              // before the application receives it : we just consume the event
+//                              // so the editing action is not performed a second time by the app.
+//                              if (menuBarController.getMenuBar().isUseSystemMenuBar()) {
+//                                  event.consume();
+//                              }
+//                          }
+//                      });
+
         }
 
         //------------------------------------------------------------------
@@ -2214,17 +2215,17 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     }
 }
 
-/**
- * This class setup key bindings for the TextInputControl type classes and
- * provide a way to access the key binding list.
- */
-class SBTextInputControlBindings extends com.sun.javafx.scene.control.behavior.TextInputControlBindings {
-
-    private SBTextInputControlBindings() {
-        assert false;
-    }
-
-    public static List<KeyBinding> getBindings() {
-        return BINDINGS;
-    }
-}
+///**
+// * This class setup key bindings for the TextInputControl type classes and
+// * provide a way to access the key binding list.
+// */
+//class SBTextInputControlBindings extends TextInputControlBindings {
+//
+//    private SBTextInputControlBindings() {
+//        assert false;
+//    }
+//
+//    public static List<KeyBinding> getBindings() {
+//        return BINDINGS;
+//    }
+//}

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -410,7 +411,6 @@ public class SceneBuilderTest {
      * @param args arguments to SceneBuilderApp.main()
      */
     public static void startApplication(String[] args) {
-        AppPlatform.setStartingFromTestBed(true);
         SceneBuilderApp.main(args);
     }
     

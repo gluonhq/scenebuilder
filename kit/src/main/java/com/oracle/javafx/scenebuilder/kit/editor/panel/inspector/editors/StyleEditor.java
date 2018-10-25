@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -36,9 +36,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
-import com.sun.javafx.css.CssError;
-import com.sun.javafx.css.StyleManager;
-import com.sun.javafx.css.parser.CSSParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +49,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.css.CssMetaData;
+import javafx.css.CssParser;
 import javafx.css.PseudoClass;
 import javafx.css.Styleable;
 import javafx.event.ActionEvent;
@@ -236,7 +234,7 @@ public class StyleEditor extends InlineListEditor {
         private String currentValue;
         private EditorItemDelegate editor;
         private boolean parsingError = false;
-        private ListChangeListener<CssError> errorListener;
+        private ListChangeListener<CssParser.ParseError> errorListener;
 
         public StyleItem(EditorItemDelegate editor, List<String> suggestedList) {
 //            System.out.println("New StyleItem.");
@@ -310,8 +308,8 @@ public class StyleEditor extends InlineListEditor {
             errorListener = change -> {
                 while (change.next()) {
                     if (change.wasAdded()) {
-                        for (CssError error : change.getAddedSubList()) {
-                            if (error instanceof CssError.InlineStyleParsingError) {
+                        for (CssParser.ParseError error : change.getAddedSubList()) {
+                            if ("InlineStyleParsingError".equals(error.getClass().getSimpleName())) {
                                 parsingError = true;
                                 break;
                             }
@@ -349,9 +347,9 @@ public class StyleEditor extends InlineListEditor {
 
             // Parse the style, and set the parsingError boolean if any error
             parsingError = false;
-            StyleManager.errorsProperty().addListener(errorListener);
-            new CSSParser().parseInlineStyle(new StyleableStub(value));
-            StyleManager.errorsProperty().removeListener(errorListener);
+            CssParser.errorsProperty().addListener(errorListener);
+            new CssParser().parseInlineStyle(new StyleableStub(value));
+            CssParser.errorsProperty().removeListener(errorListener);
 
             return value;
         }
