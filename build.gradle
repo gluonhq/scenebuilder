@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+    }
+}
+
 apply plugin: 'base'
+apply plugin: 'com.google.osdetector'
 
 ext.getStringProperty = { name, defaultValue ->
     if (!project.hasProperty(name)) {
@@ -9,11 +19,13 @@ ext.getStringProperty = { name, defaultValue ->
     return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }
 
+ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+
 subprojects {
     apply plugin: 'java'
 
     group = 'com.gluonhq.scenebuilder'
-    version = project.findProperty('VERSION') ?: '9.0.0-SNAPSHOT'
+    version = project.findProperty('VERSION') ?: '11.0.0-SNAPSHOT'
 
     ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
@@ -43,11 +55,19 @@ subprojects {
 
         compile 'com.gluonhq:charm-glisten:5.0.0-jdk9'
 
+        compile "org.openjfx:javafx-base:11:$platform"
+        compile "org.openjfx:javafx-controls:11:$platform"
+        compile "org.openjfx:javafx-fxml:11:$platform"
+        compile "org.openjfx:javafx-graphics:11:$platform"
+        compile "org.openjfx:javafx-media:11:$platform"
+        compile "org.openjfx:javafx-swing:11:$platform"
+        compile "org.openjfx:javafx-web:11:$platform"
+
         // REST API
         compile 'org.apache.httpcomponents:httpclient:4.5.2'
         compile 'javax.json:javax.json-api:1.0'
         runtime 'org.glassfish:javax.json:1.0.4'
-        
+
         testCompile 'junit:junit:4.12'
         testCompile 'org.assertj:assertj-core:3.2.0'
     }
