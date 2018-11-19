@@ -1,35 +1,50 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
-apply plugin: 'application'
-apply plugin: 'com.github.johnrengelman.shadow'
-
 buildscript {
     repositories { jcenter() }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     }
 }
 
+apply plugin: 'application'
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
+
+apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     compile project(':kit')
 }
 
-shadowJar {
-    baseName = 'scenebuilder'
-    manifest {
-        attributes 'Main-Class': mainClassName
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.fxml,javafx.swing,javafx.web,java.logging,java.scripting',
+                '--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED'
+        ]
+        if (platform == 'linux') jvmArgs += '-Djdk.gtk.version=2'
     }
 }
 
-task run (dependsOn: assemble, overwrite: true) {
-    doLast {
-        String jarPath = relativePath(new File(libsDir, shadowJar.baseName + "-" + version + "-all.jar"))
-        javaexec
-                { main = '-jar'; args jarPath }
+shadowJar {
+    baseName = 'scenebuilder'
+
+    manifest {
+        attributes 'Main-Class': mainClassName
     }
+
+    dependencies {
+        exclude(dependency("org.openjfx:javafx-base:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-controls:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-fxml:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-graphics:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-media:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-swing:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-web:11:$platform"))
+    }
+    exclude 'module-info.class'
 }
 
 processResources {
