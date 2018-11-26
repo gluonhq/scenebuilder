@@ -93,7 +93,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         assert getRoot().getScene().getWindow() != null;
 
         getStage().setTitle(I18N.getString("welcome.title"));
-        getStage().initModality(Modality.APPLICATION_MODAL);
+        // getStage().initModality(Modality.APPLICATION_MODAL);
     }
 
     @Override
