@@ -116,15 +116,16 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     final List<File> jarAndFxmlFiles = new ArrayList<>();
     private String userLibraryPathString = null;
     private final MavenPreferences mavenPreferences;
+    private boolean animateAccordion;
 
     @FXML
     private Accordion libAccordion;
     @FXML
     Label noSearchResults;
     @FXML ListView<LibraryListItem> libSearchList;
-    
+
     @FXML ListView<LibraryListItem> libList = null;
-    
+
     @FXML StackPane libPane;
 
     /*
@@ -180,7 +181,11 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     public void performImportSelection(List<FXOMObject> objects) {
         processInternalImport(objects);
     }
-    
+
+    public void animateAccordion(boolean animate) {
+        this.animateAccordion = animate;
+        libAccordion.getPanes().forEach(tp -> tp.setAnimated(animate));
+    }
     /*
      * AbstractPanelController
      */
@@ -374,7 +379,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
             populateLibraryPanel();
         }
     }
-    
+
     private String getExpandedSectionName() {
         String sectionName = null;
         
@@ -471,6 +476,8 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
             libSearchList.addEventHandler(KeyEvent.KEY_RELEASED, keyEventHandler);
             getLibList().addEventHandler(KeyEvent.KEY_RELEASED, keyEventHandler);
         }
+        // Update animation for all TitledPane
+        libAccordion.getPanes().forEach(tp -> tp.setAnimated(animateAccordion));
     }
     
     private void expandPaneWithName(String paneName) {

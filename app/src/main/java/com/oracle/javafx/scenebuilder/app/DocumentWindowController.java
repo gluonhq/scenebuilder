@@ -67,9 +67,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.search.SearchController;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
-import com.oracle.javafx.scenebuilder.kit.editor.selection.GridSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
-import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -477,6 +475,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         cpc.setGuidesColor(preferences.getAlignmentGuidesColor());
     }
 
+    public void animateAccordion(boolean animate) {
+        libraryPanelController.animateAccordion(animate);
+        inspectorPanelController.animateAccordion(animate);
+        documentAccordion.getPanes().forEach(tp -> tp.setAnimated(animate));
+    }
+
     public void refreshBackgroundImage(PreferencesRecordGlobal preferences) {
         // Background images
         getContentPanelController().setWorkspaceBackground(preferences.getBackgroundImageImage());
@@ -539,6 +543,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void refreshGluonTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
         final EditorController ec = getEditorController();
         ec.setGluonTheme(preferencesRecordGlobal.getGluonTheme());
+    }
+
+    public void refreshAccordionAnimation(PreferencesRecordGlobal preferencesRecordGlobal) {
+        animateAccordion(preferencesRecordGlobal.isAccordionAnimation());
     }
 
     public boolean canPerformControlAction(DocumentControlAction controlAction) {
@@ -1812,6 +1820,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             refreshSwatch(recordGlobal);
             refreshGluonTheme(recordGlobal);
         }
+        refreshAccordionAnimation(recordGlobal);
     }
 
     private void resetDocumentPreferences() {

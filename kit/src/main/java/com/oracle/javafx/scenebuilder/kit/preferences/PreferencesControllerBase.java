@@ -29,6 +29,7 @@ public abstract class PreferencesControllerBase {
     public static final String PARENT_RING_COLOR = "PARENT_RING_COLOR"; //NOI18N
     public static final String LIBRARY_DISPLAY_OPTION = "LIBRARY_DISPLAY_OPTION"; //NOI18N
     public static final String HIERARCHY_DISPLAY_OPTION = "HIERARCHY_DISPLAY_OPTION"; //NOI18N
+    public static final String ACCORDION_ANIMATION = "ACCORDION_ANIMATION"; //NOI18N
 
     // DOCUMENT SPECIFIC PREFERENCES
     public static final String PATH = "path"; //NOI18N
