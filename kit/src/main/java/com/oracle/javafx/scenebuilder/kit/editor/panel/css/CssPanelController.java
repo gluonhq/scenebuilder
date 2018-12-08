@@ -963,7 +963,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
                 // XXX jfdenise, for now can't do better than opening the file, no Anchor per property...
                 // Retrieve defining class
                 EditorPlatform.open(EditorPlatform.JAVADOC_HOME
-                        + "javafx/scene/doc-files/cssref.html#" + //NOI18N
+                        + "javafx.graphics/javafx/scene/doc-files/cssref.html#" + //NOI18N
                         item.getTarget().getClass().getSimpleName().toLowerCase(Locale.ROOT));
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
