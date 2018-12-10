@@ -85,9 +85,8 @@ public class EditorPlatform {
 
     /**
      * Javadoc home (for Inspector and CSS Analyzer properties)
-     * // TODO: Update to 9
      */
-    public final static String JAVADOC_HOME = "https://docs.oracle.com/javase/8/javafx/api/"; //NOI18N
+    public final static String JAVADOC_HOME = "https://openjfx.io/javadoc/11/"; //NOI18N
 
     /**
      * Gluon javadoc home (for Inspector and CSS Analyzer properties)

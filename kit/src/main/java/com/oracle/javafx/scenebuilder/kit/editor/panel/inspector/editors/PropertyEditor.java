@@ -155,7 +155,7 @@ public abstract class PropertyEditor extends Editor {
                 } else {
                     // Special case for non-properties (fx:id, ...)
                     EditorPlatform.open(EditorPlatform.JAVADOC_HOME
-                            + "javafx/2/api/javafx/fxml/doc-files/introduction_to_fxml.html"); //NOI18N
+                            + "javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"); //NOI18N
                 }
                 // Selection of multiple different classes ==> no link
             } catch (IOException ex) {
