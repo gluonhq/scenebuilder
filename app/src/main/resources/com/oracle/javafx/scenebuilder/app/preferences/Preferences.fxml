@@ -112,7 +112,12 @@
 
     <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="16" />
 
-    <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="17" />
+    <Label text="%prefs.animate.accordion" GridPane.columnIndex="0" GridPane.rowIndex="17" />
+    <CheckBox fx:id="animateAccordion" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="17"/>
+
+    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="18" />
+
+    <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="19" />
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
