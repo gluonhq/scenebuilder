@@ -454,10 +454,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         }
 
         // Accordion animation
-        String accordionAnimationString = applicationRootPreferences.get(ACCORDION_ANIMATION, null);
-        if (accordionAnimationString != null) {
-            setAccordionAnimation(Boolean.parseBoolean(accordionAnimationString));
-        }
+        setAccordionAnimation(applicationRootPreferences.getBoolean(ACCORDION_ANIMATION, true));
 
     }
 
@@ -520,7 +517,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
                 }
                 break;
             case ACCORDION_ANIMATION:
-                applicationRootPreferences.put(ACCORDION_ANIMATION, String.valueOf(isAccordionAnimation()));
+                applicationRootPreferences.putBoolean(ACCORDION_ANIMATION, isAccordionAnimation());
                 break;
             default:
                 super.writeToJavaPreferences(key);
