@@ -54,8 +54,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.sampledata.SampleDataGenerator;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import com.oracle.javafx.scenebuilder.kit.util.URLUtils;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.scene.Parent;
 
 /**
@@ -249,7 +247,12 @@ public class FXOMDocument {
         return displayNode != null ? displayNode : sceneGraphRoot;
     }
 
-    public String getFxmlText() {
+    /**
+     * Returns the FXML string representation of the FXOMDocument.
+     * @param wildcardImports If the FXML should have wildcards in its imports.
+     * @return The FXML string representation. This can be empty if current root is null.
+     */
+    public String getFxmlText(boolean wildcardImports) {
         final String result;
         if (fxomRoot == null) {
             assert glue.getRootElement() == null;
@@ -260,7 +263,7 @@ public class FXOMDocument {
             // Note that sceneGraphRoot might be null if fxomRoot is unresolved
             glue.updateIndent();
             final FXOMSaver saver = new FXOMSaver();
-            result = saver.save(this);
+            result = saver.save(this, wildcardImports);
         }
         return result;
     }

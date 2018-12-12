@@ -32,12 +32,11 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueAuxiliary;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,14 +51,14 @@ import javafx.fxml.FXMLLoader;
 class FXOMSaver {
     
     
-    public String save(FXOMDocument fxomDocument) {
+    public String save(FXOMDocument fxomDocument, boolean wildcardImports) {
         
         assert fxomDocument != null;
         assert fxomDocument.getGlue() != null;
         
         if (fxomDocument.getFxomRoot() != null) {
             updateNameSpace(fxomDocument);
-            updateImportInstructions(fxomDocument);
+            updateImportInstructions(fxomDocument, wildcardImports);
         }
 
         return fxomDocument.getGlue().toString();
@@ -81,62 +80,62 @@ class FXOMSaver {
         final String currentNameSpaceFXML = fxomRoot.getNameSpaceFXML();
         
         if ((currentNameSpaceFX == null) 
-                || (currentNameSpaceFX.equals(NAME_SPACE_FX) == false)) {
+                || (!currentNameSpaceFX.equals(NAME_SPACE_FX))) {
             fxomRoot.setNameSpaceFX(NAME_SPACE_FX);
         }
         
         if ((currentNameSpaceFXML == null) 
-                || (currentNameSpaceFXML.equals(NAME_SPACE_FXML) == false)) {
+                || (!currentNameSpaceFXML.equals(NAME_SPACE_FXML))) {
             fxomRoot.setNameSpaceFXML(NAME_SPACE_FXML);
         }
         
         
     }
         
-    private void updateImportInstructions(FXOMDocument fxomDocument) {
+    private void updateImportInstructions(FXOMDocument fxomDocument, boolean wildcardImports) {
         assert fxomDocument.getFxomRoot() != null;
 
         // gets list of the imports to be added to the FXML document.
-        List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
+        List<GlueInstruction> importList = getHeaderIncludes(fxomDocument, wildcardImports);
 
         // synchronizes the glue with the list of glue instructions
         synchronizeHeader(fxomDocument.getGlue(), importList);
     }
 
-    private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
+    private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument, boolean wildcardImports) {
+        // TODO: When wildcardImport is true, add package name only when no of classes
+        //  which belong to the same package exceed 3
+
         // constructs the set of classes to be imported. No duplicates allowed.
         final Set<String> imports = new TreeSet<>(); // Sorted
 
         //gets list of declared classes, declared classes are the ones directly used as a Node.
         //Example: <Button/> ; classname = javafx.scene.control.Button
-        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(dc.getCanonicalName()));
+        fxomDocument.getFxomRoot().collectDeclaredClasses().forEach(dc -> imports.add(wildcardImports ? dc.getPackageName() + ".*" : dc.getCanonicalName()));
 
         FXOMObject root = fxomDocument.getFxomRoot();
 
-        Set<String> foundClasses = root.getChildObjects().stream()
-            .map(fxomObject -> fxomObject.collectPropertiesT()) //list of lists containing FXOMProperties
-            .flatMap(list -> list.stream()) // add all to one list of FXOMProperties
-            .map(property -> property.getName()) // list of all PropertyNames
-            .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
-            .map(prop -> prop.getResidenceClass().getName()) // list of classes
-            .collect(Collectors.toSet()); // transform to set to not include duplicates
-
-        foundClasses.addAll(root.collectPropertiesT().stream() //same as above but for the root node
-                .map(p-> p.getName())
-                .filter(prop -> prop.getResidenceClass() != null)
-                .map(prop -> prop.getResidenceClass().getName())
-                .collect(Collectors.toSet()));
-
-        imports.addAll(foundClasses); //adds all found classes, if nothing is found nothing will be added
+        imports.addAll(findPropertyClasses(wildcardImports, root.getChildObjects().toArray(FXOMObject[]::new)));
+        imports.addAll(findPropertyClasses(wildcardImports, root));
 
         return createGlueInstructionsForImports(fxomDocument, imports);
+    }
+
+    private Set<String> findPropertyClasses(boolean wildcardImports, FXOMObject... fxomObjects) {
+        return Arrays.stream(fxomObjects)
+            .map(FXOMObject::collectPropertiesT) //list of lists containing FXOMProperties
+            .flatMap(List::stream) // add all to one list of FXOMProperties
+            .map(FXOMProperty::getName) // list of all PropertyNames
+            .filter(prop -> prop.getResidenceClass() != null) // filter for ResidenceClass (used for static methods example: HBox.hgrow="..")
+            .map(prop -> wildcardImports ? prop.getResidenceClass().getPackageName() + ".*" : prop.getResidenceClass().getName()) // list of classes
+            .collect(Collectors.toSet());
     }
 
     // Creates a List of glue instruction for all imported classes.
     private List<GlueInstruction> createGlueInstructionsForImports(FXOMDocument fxomDocument, Set<String> imports) {
         List<GlueInstruction> importsList = new ArrayList<>();
-        imports.forEach(className -> {
-            final GlueInstruction instruction = new GlueInstruction(fxomDocument.getGlue(), "import", className);
+        imports.forEach(name -> {
+            final GlueInstruction instruction = new GlueInstruction(fxomDocument.getGlue(), "import", name);
             importsList.add(instruction);
         });
         return importsList;
@@ -155,17 +154,13 @@ class FXOMSaver {
             }
 
             // remove previously defined imports and leave all other things (like comments and such) intact
-            for (Iterator<GlueAuxiliary> it = glue.getHeader().iterator(); it.hasNext();) {
-                GlueAuxiliary glueAuxiliary = it.next();
-                if (glueAuxiliary instanceof GlueInstruction && "import".equals(((GlueInstruction) glueAuxiliary).getTarget())) {
-                    it.remove();
-                }
-            }
+            glue.getHeader().removeIf(glueAuxiliary ->
+                    glueAuxiliary instanceof GlueInstruction &&
+                    "import".equals(((GlueInstruction) glueAuxiliary).getTarget())
+            );
 
             // insert the import instructions at the first import index
             glue.getHeader().addAll(firstImportIndex, importList);
         }
-
     }
-
 }

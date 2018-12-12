@@ -46,7 +46,6 @@ import javafx.stage.Window;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +58,7 @@ class FXOMRefresher {
     public void refresh(FXOMDocument document) {
         String fxmlText = null;
         try {
-            fxmlText = document.getFxmlText();
+            fxmlText = document.getFxmlText(false);
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),

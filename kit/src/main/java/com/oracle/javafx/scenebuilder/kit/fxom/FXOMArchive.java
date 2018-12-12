@@ -52,7 +52,7 @@ public class FXOMArchive implements Serializable {
         
         for (FXOMObject o : fxomObjects) {
             final URL location = o.getFxomDocument().getLocation();
-            final String fxmlText = FXOMNodes.newDocument(o).getFxmlText();
+            final String fxmlText = FXOMNodes.newDocument(o).getFxmlText(false);
             entries.add(new Entry(fxmlText, location));
         }
     }

@@ -70,7 +70,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     public void testEmptyFXML() throws IOException {
         setupTestCase(FxmlTestInfo.EMPTY);
 
-        assertTrue("fxml is empty", fxomDocument.getFxmlText().isEmpty());
+        assertTrue("fxml is empty", fxomDocument.getFxmlText(false).isEmpty());
     }
 
     @Test
@@ -249,7 +249,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     }
 
     private String callService() {
-        return serviceUnderTest.save(fxomDocument);
+        return serviceUnderTest.save(fxomDocument, false);
     }
 
     private void setupTestCase(FxmlTestInfo n) {

@@ -52,6 +52,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
@@ -67,6 +68,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGl
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_WIDTH;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ACCORDION_ANIMATION;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_WILDCARD_IMPORTS;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
@@ -135,6 +137,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
     @FXML
     private CheckBox animateAccordion;
+    @FXML
+    private CheckBox wildcardImports;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -251,6 +255,10 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Accordion Animation
         animateAccordion.setSelected(recordGlobal.isAccordionAnimation());
         animateAccordion.selectedProperty().addListener(new AnimationListener());
+
+        // Wildcard Imports
+        wildcardImports.setSelected(recordGlobal.isWildcardImports());
+        wildcardImports.selectedProperty().addListener(new WildcardImportListener());
     }
 
     /*
@@ -318,6 +326,9 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
 
         // Default Accordion Animation
         animateAccordion.setSelected(DEFAULT_ACCORDION_ANIMATION);
+
+        // Default Wildcard import
+        wildcardImports.setSelected(DEFAULT_WILDCARD_IMPORTS);
     }
 
     /**
@@ -549,6 +560,20 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             recordGlobal.writeToJavaPreferences(ACCORDION_ANIMATION);
             // Update UI
             SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.animateAccordion(newValue));
+        }
+    }
+
+    private static class WildcardImportListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setWildcardImports(newValue);
+            recordGlobal.writeToJavaPreferences(WILDCARD_IMPORT);
         }
     }
 }

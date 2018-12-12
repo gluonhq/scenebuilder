@@ -97,6 +97,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
 
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
     static final boolean DEFAULT_ACCORDION_ANIMATION = true;
+    static final boolean DEFAULT_WILDCARD_IMPORTS = false;
 
     /***************************************************************************
      *                                                                         *
@@ -111,6 +112,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     private boolean cssTableColumnsOrderingReversed = DEFAULT_CSS_TABLE_COLUMNS_ORDERING_REVERSED;
     private int recentItemsSize = DEFAULT_RECENT_ITEMS_SIZE;
     private boolean accordionAnimation = DEFAULT_ACCORDION_ANIMATION;
+    private boolean wildcardImports = DEFAULT_WILDCARD_IMPORTS;
     private final List<String> recentItems = new ArrayList<>();
 
     private LocalDate showUpdateDialogDate = null;
@@ -372,6 +374,14 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         this.accordionAnimation = accordionAnimation;
     }
 
+    public boolean isWildcardImports() {
+        return wildcardImports;
+    }
+
+    public void setWildcardImports(boolean wildcardImports) {
+        this.wildcardImports = wildcardImports;
+    }
+
     /**
      * Read data from the java preferences DB and initialize properties.
      */
@@ -456,6 +466,9 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         // Accordion animation
         setAccordionAnimation(applicationRootPreferences.getBoolean(ACCORDION_ANIMATION, true));
 
+        // Wildcard imports
+        setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, false));
+
     }
 
     public void writeToJavaPreferences(String key) {
@@ -518,6 +531,9 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
                 break;
             case ACCORDION_ANIMATION:
                 applicationRootPreferences.putBoolean(ACCORDION_ANIMATION, isAccordionAnimation());
+                break;
+            case WILDCARD_IMPORT:
+                applicationRootPreferences.putBoolean(WILDCARD_IMPORT, isWildcardImports());
                 break;
             default:
                 super.writeToJavaPreferences(key);
