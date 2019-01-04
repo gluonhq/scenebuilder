@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,17 +33,18 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 
-
-    <MenuButton fx:id="cursorMb" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-      <items>
-        <SeparatorMenuItem mnemonicParsing="false" />
-        <CheckMenuItem fx:id="inheritedMi" mnemonicParsing="false" onAction="#inherited" text="">
-          <graphic>
-            <Label fx:id="inheritedLb" text="" />
-          </graphic>
-        </CheckMenuItem>
-      </items>
-    </MenuButton>
+<MenuButton fx:id="cursorMb" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <items>
+    <SeparatorMenuItem mnemonicParsing="false" />
+    <CheckMenuItem fx:id="inheritedMi" mnemonicParsing="false" onAction="#inherited" text="">
+      <graphic>
+        <Label fx:id="inheritedLb" text="" />
+      </graphic>
+    </CheckMenuItem>
+  </items>
+</MenuButton>

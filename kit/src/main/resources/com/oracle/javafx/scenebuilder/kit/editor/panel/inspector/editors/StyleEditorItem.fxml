@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,30 +33,35 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 
 <HBox spacing="1.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <StackPane fx:id="propertySp" prefWidth="150.0">
-<opaqueInsets>
-<Insets />
-</opaqueInsets></StackPane>
+      <opaqueInsets>
+        <Insets />
+      </opaqueInsets>
+    </StackPane>
     <TextField fx:id="valueTf" prefWidth="50.0">
-<HBox.margin>
-<Insets />
-</HBox.margin></TextField>
-        <Button fx:id="plusBt" mnemonicParsing="false" onAction="#add" onKeyReleased="#plusBtTyped" styleClass="multi-row-plus-button" text="+" />
-        <MenuButton mnemonicParsing="false" prefWidth="-1.0" styleClass="multi-row-menubutton" text="">
-          <items>
-            <MenuItem fx:id="removeMi" disable="true" mnemonicParsing="false" onAction="#remove" text="Remove (i18n)" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="moveUpMi" mnemonicParsing="false" onAction="#up" text="Move Up (i18n)" />
-            <MenuItem fx:id="moveDownMi" mnemonicParsing="false" onAction="#down" text="Move Down (i18n)" />
-          </items>
-        </MenuButton>
+      <HBox.margin>
+        <Insets />
+      </HBox.margin>
+    </TextField>
+      <Button fx:id="plusBt" mnemonicParsing="false" onAction="#add" onKeyReleased="#plusBtTyped" styleClass="multi-row-plus-button" text="+" />
+      <MenuButton mnemonicParsing="false" prefWidth="-1.0" styleClass="multi-row-menubutton" text="">
+        <items>
+          <MenuItem fx:id="removeMi" disable="true" mnemonicParsing="false" onAction="#remove" text="Remove (i18n)" />
+          <SeparatorMenuItem mnemonicParsing="false" />
+          <MenuItem fx:id="moveUpMi" mnemonicParsing="false" onAction="#up" text="Move Up (i18n)" />
+          <MenuItem fx:id="moveDownMi" mnemonicParsing="false" onAction="#down" text="Move Down (i18n)" />
+        </items>
+      </MenuButton>
   </children>
   <padding>
     <Insets />
