@@ -54,6 +54,6 @@
     <Insets left="5.0" />
   </padding>
   <stylesheets>
-    <URL value="@../../app/css/SelectionBar.css" />
+    <URL value="@SelectionBar.css" />
   </stylesheets>
 </HBox>
