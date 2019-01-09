@@ -43,23 +43,23 @@
 
 <GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-     <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" VBox.vgrow="NEVER">
-       <image>
-         <Image preserveRatio="true" smooth="true" url="@../gluon_scene_builder.png" />
-       </image>
-     </ImageView>
-     <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" VBox.vgrow="NEVER">
-       <image>
-         <Image preserveRatio="true" smooth="true" url="@scenebuilder-logo.png" />
-       </image>
-      </ImageView>
-    <TextArea fx:id="textArea" editable="false" focusTraversable="false" text="" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" VBox.vgrow="ALWAYS" />
+    <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.vgrow="NEVER">
+      <image>
+        <Image preserveRatio="true" smooth="true" url="@../SB_Logo.png" />
+      </image>
+    </ImageView>
+    <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" GridPane.vgrow="NEVER">
+      <image>
+        <Image preserveRatio="true" smooth="true" url="@scenebuilder-logo.png" />
+      </image>
+    </ImageView>
+    <TextArea fx:id="textArea" editable="false" focusTraversable="false" text="" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
   </children>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
    <columnConstraints>
-      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="80.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="ALWAYS" />
    </columnConstraints>
    <rowConstraints>

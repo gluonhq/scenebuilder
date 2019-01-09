@@ -44,11 +44,13 @@
 <?import javafx.scene.layout.HBox?>
 
 <HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-  <children><Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
-<styleClass>
-<String fx:value="label" />
-<String fx:value="symbol-prefix" />
-</styleClass></Label>
+  <children>
+    <Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
+      <styleClass>
+        <String fx:value="label" />
+        <String fx:value="symbol-prefix" />
+      </styleClass>
+    </Label>
     <TextField fx:id="stylesheetTf">
 <HBox.margin>
 <Insets right="1.0" />
