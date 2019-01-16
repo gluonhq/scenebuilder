@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,44 +33,55 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import com.oracle.javafx.scenebuilder.kit.editor.panel.css.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.web.*?>
+<?import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <VBox fx:id="root" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-        <HBox fx:id="header" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" styleClass="styleable-path">
-          <children>
-            <Label text="%csspanel.styleable.path" />
-            <SelectionPath fx:id="selectionPath" alignment="BOTTOM_LEFT" styleClass="selection-path" HBox.hgrow="ALWAYS" />
-            <ToggleButton fx:id="edit" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" styleClass="css-toggle-left" textAlignment="JUSTIFY">
-              <tooltip>
-                <Tooltip text="%csspanel.selection.tooltip" />
-              </tooltip>
-              <toggleGroup>
-                <ToggleGroup fx:id="modes" />
-              </toggleGroup>
-<graphic><Region prefHeight="10.0" prefWidth="10.0" styleClass="cursor-shape" />
-</graphic>
-            </ToggleButton>
-            <ToggleButton fx:id="pick" contentDisplay="GRAPHIC_ONLY" graphicTextGap="2.0" mnemonicParsing="false" toggleGroup="$modes">
-              <tooltip>
-                <Tooltip text="%csspanel.picking.tooltip" />
-              </tooltip>
-              <HBox.margin>
-                <Insets />
-              </HBox.margin>
-<graphic><Region prefHeight="10.0" prefWidth="10.0" styleClass="css-cursor-shape" />
-</graphic>
-            </ToggleButton>
-          </children>
-<VBox.margin>
-<Insets />
-</VBox.margin>
-        </HBox>
+    <HBox fx:id="header" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" styleClass="styleable-path">
+      <children>
+        <Label text="%csspanel.styleable.path" />
+        <SelectionPath fx:id="selectionPath" alignment="BOTTOM_LEFT" styleClass="selection-path" HBox.hgrow="ALWAYS" />
+        <ToggleButton fx:id="edit" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" styleClass="css-toggle-left" textAlignment="JUSTIFY">
+          <tooltip>
+            <Tooltip text="%csspanel.selection.tooltip" />
+          </tooltip>
+          <toggleGroup>
+            <ToggleGroup fx:id="modes" />
+          </toggleGroup>
+        <graphic>
+            <Region prefHeight="10.0" prefWidth="10.0" styleClass="cursor-shape" />
+        </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="pick" contentDisplay="GRAPHIC_ONLY" graphicTextGap="2.0" mnemonicParsing="false" toggleGroup="$modes">
+          <tooltip>
+            <Tooltip text="%csspanel.picking.tooltip" />
+          </tooltip>
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        <graphic>
+            <Region prefHeight="10.0" prefWidth="10.0" styleClass="css-cursor-shape" />
+        </graphic>
+        </ToggleButton>
+      </children>
+      <VBox.margin>
+        <Insets />
+      </VBox.margin>
+    </HBox>
     <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <columns>
         <TableColumn fx:id="propertiesColumn" editable="false" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" resizable="false" sortable="false" text="%csspanel.col.properties" />
@@ -89,12 +101,15 @@
         <VBox fx:id="rulesBox" prefHeight="-1.0" prefWidth="-1.0" />
       </content>
     </ScrollPane>
-    <WebView fx:id="textPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" /><StackPane fx:id="messagePane" prefHeight="150.0" prefWidth="200.0" styleClass="css-panel-background" VBox.vgrow="ALWAYS">
-<children><Label fx:id="messageLabel" styleClass="css-panel-message" text="Label" />
-</children></StackPane>
-  </children>
-<styleClass>
-<String fx:value="theme-presets" />
-<String fx:value="SBKIT-css-panel" />
-</styleClass>
+      <WebView fx:id="textPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+      <StackPane fx:id="messagePane" prefHeight="150.0" prefWidth="200.0" styleClass="css-panel-background" VBox.vgrow="ALWAYS">
+        <children>
+          <Label fx:id="messageLabel" styleClass="css-panel-message" text="Label" />
+        </children>
+      </StackPane>
+    </children>
+    <styleClass>
+      <String fx:value="theme-presets" />
+      <String fx:value="SBKIT-css-panel" />
+    </styleClass>
 </VBox>

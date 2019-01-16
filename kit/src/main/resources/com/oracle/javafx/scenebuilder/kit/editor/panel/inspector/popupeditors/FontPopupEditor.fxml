@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,9 +33,11 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
 <GridPane hgap="7.0" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
@@ -46,6 +49,10 @@
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
-<children><Label text="Family" /><Label text="Style" GridPane.rowIndex="1" /><Label text="Size" GridPane.rowIndex="2" /><StackPane fx:id="familySp" prefWidth="200.0" GridPane.columnIndex="1" /><StackPane fx:id="styleSp" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" /><StackPane fx:id="sizeSp" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-</children>
+  <children>
+    <Label text="Family" /><Label text="Style" GridPane.rowIndex="1" /><Label text="Size" GridPane.rowIndex="2" />
+    <StackPane fx:id="familySp" prefWidth="200.0" GridPane.columnIndex="1" />
+    <StackPane fx:id="styleSp" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+    <StackPane fx:id="sizeSp" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+  </children>
 </GridPane>
