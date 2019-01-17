@@ -7,11 +7,6 @@ sudo: required
 # skip install
 install: true
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -38,7 +33,7 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      jdk: oraclejdk8
+      jdk: oraclejdk11
     - os: osx
       osx_image: xcode9
 
@@ -53,7 +48,7 @@ before_script:
     openssl aes-256-cbc -k "$ENC_SECRET" -in app/assets/osx/codesign.p12.enc -out app/assets/osx/codesign.p12 -d;
     brew update;
     brew tap homebrew/cask-versions;
-    brew cask install java8;
+    brew cask install java;
     fi
 
 script:

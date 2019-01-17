@@ -9,7 +9,7 @@ environment:
     secure: Qv/FKSDp3x4KntE+oVLa4Q==
   signtool: C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
   matrix:
-    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+    - JAVA_HOME: C:\Program Files\Java\jdk11
     
 # install required tools
 install:

@@ -3,7 +3,7 @@
 if [ "${TRAVIS_OS_NAME}" = "linux" ]; then 
   ./gradlew check shadowJar -PVERSION=${TRAVIS_TAG};
 else
-  export JAVA_HOME="$(find /Library/Java/JavaVirtualMachines/ -type d -name jdk1.8.0_* | tail -n 1)/Contents/Home"
+  export JAVA_HOME="$(find /Library/Java/JavaVirtualMachines/ -type d -name jdk-11* | tail -n 1)/Contents/Home"
   # Skip tests that fail on osx without xvfb
   ./gradlew check shadowJar -PVERSION=${TRAVIS_TAG} -PexcludeTests="FXOMSaverUpdateImportInstructionsTest,StaticLoadTest,SkeletonBufferTest";  
 fi
