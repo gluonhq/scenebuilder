@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2016, Gluon and/or its affiliates.
+  Copyright (c) 2016, 2019, Gluon and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
   This file is available and licensed under the following license:
@@ -32,39 +32,46 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.HBox?>
 
 <HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <children><Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
-        <styleClass>
-            <String fx:value="label" />
-            <String fx:value="symbol-prefix" />
-        </styleClass></Label>
-        <TextField fx:id="textTextfield">
-            <HBox.margin>
-                <Insets right="1.0" />
-            </HBox.margin></TextField>
-        <HBox spacing="1.0">
-            <children>
-                <Button fx:id="plusBt" mnemonicParsing="false" onAction="#add" onKeyReleased="#plusBtTyped" styleClass="multi-row-plus-button" text="+" />
-                <MenuButton mnemonicParsing="false" prefWidth="-1.0" styleClass="multi-row-menubutton" text="">
-                    <items>
-                        <MenuItem fx:id="removeMi" disable="true" mnemonicParsing="false" onAction="#remove" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="moveUpMi" mnemonicParsing="false" onAction="#up"  />
-                        <MenuItem fx:id="moveDownMi" mnemonicParsing="false" onAction="#down"  />
-                    </items>
-                </MenuButton>
-            </children>
-            <HBox.margin>
-                <Insets />
-            </HBox.margin>
-        </HBox>
+  <children>
+    <Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
+      <styleClass>
+        <String fx:value="label" />
+        <String fx:value="symbol-prefix" />
+      </styleClass>
+    </Label>
+    <TextField fx:id="textTextfield">
+      <HBox.margin>
+        <Insets right="1.0" />
+      </HBox.margin></TextField>
+      <HBox spacing="1.0">
+        <children>
+          <Button fx:id="plusBt" mnemonicParsing="false" onAction="#add" onKeyReleased="#plusBtTyped" styleClass="multi-row-plus-button" text="+" />
+          <MenuButton mnemonicParsing="false" prefWidth="-1.0" styleClass="multi-row-menubutton" text="">
+            <items>
+              <MenuItem fx:id="removeMi" disable="true" mnemonicParsing="false" onAction="#remove" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem fx:id="moveUpMi" mnemonicParsing="false" onAction="#up"  />
+              <MenuItem fx:id="moveDownMi" mnemonicParsing="false" onAction="#down"  />
+            </items>
+          </MenuButton>
+        </children>
+        <HBox.margin>
+          <Insets />
+        </HBox.margin>
+      </HBox>
     </children>
     <padding>
-        <Insets />
+      <Insets />
     </padding>
 </HBox>

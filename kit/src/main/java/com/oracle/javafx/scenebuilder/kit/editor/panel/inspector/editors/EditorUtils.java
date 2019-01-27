@@ -77,7 +77,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EditorUtils {
 
     static final String[] FXML_RESERVED_KEYWORDS = {"null"}; //NOI18N
-    private static final String FXINCLUDE_JAVADOC_URL = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html#include_elements";
+    private static final String FXINCLUDE_JAVADOC_URL = "https://openjfx.io/javadoc/11/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html#include_elements";
 
     public static void makeWidthStretchable(final Node node) {
         Parent p = node.getParent();
@@ -424,19 +424,25 @@ public class EditorUtils {
         // First char in uppercase
         propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
         String methodName;
-        if (propMeta.getValueClass() == Boolean.class) {
-            methodName = "is" + propNameStr + "--"; //NOI18N
-        } else if (propMeta.isStaticProperty()) {
-            methodName = "get" + propNameStr + "-" + Node.class.getName() + "-"; //NOI18N
+        String posfix;
+        if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
+            posfix = "--";
         } else {
-            methodName = "get" + propNameStr + "--"; //NOI18N
+            posfix = "()";
+        }
+        if (propMeta.getValueClass() == Boolean.class) {
+            methodName = "is" + propNameStr + posfix; //NOI18N
+        } else if (propMeta.isStaticProperty()) {
+            methodName = "get" + propNameStr + "(" + Node.class.getName() + ")"; //NOI18N
+        } else {
+            methodName = "get" + propNameStr + posfix; //NOI18N
         }
 
         String url;
         if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
             url = EditorPlatform.GLUON_JAVADOC_HOME;
         } else {
-            url = EditorPlatform.JAVADOC_HOME;
+            url = EditorPlatform.JAVADOC_HOME + clazz.getModule().getName() + "/";
         }
         url += clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
         url += "#" + methodName; //NOI18N

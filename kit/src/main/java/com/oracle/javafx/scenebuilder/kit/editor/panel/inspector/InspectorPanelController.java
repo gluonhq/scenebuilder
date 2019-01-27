@@ -427,6 +427,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         searchPatternDidChange();
     }
 
+    public void animateAccordion(boolean animate) {
+        accordion.getPanes().forEach(tp -> tp.setAnimated(animate));
+    }
+
     /*
      * AbstractPanelController
      */

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,13 +33,18 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 
 <HBox maxWidth="1.7976931348623157E308" spacing="1.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-<children>
+  <children>
     <TextField fx:id="textField" onKeyReleased="#textFieldKeyReleased" onMouseClicked="#textFieldMouseClicked" prefWidth="-1.0">
       <contextMenu>
         <ContextMenu maxHeight="-1.0">
@@ -49,25 +55,26 @@
               </content>
             </CustomMenuItem>
           </items>
-               <styleClass>
-                  <String fx:value="theme-presets" />
-                  <String fx:value="property-sheet" />
-                  <String fx:value="auto-suggest-popup" />
-               </styleClass>
+            <styleClass>
+              <String fx:value="theme-presets" />
+              <String fx:value="property-sheet" />
+              <String fx:value="auto-suggest-popup" />
+            </styleClass>
         </ContextMenu>
       </contextMenu>
-<HBox.margin>
-<Insets />
-</HBox.margin>
-    </TextField><MenuButton fx:id="menuButton" mnemonicParsing="false" HBox.hgrow="NEVER" xmlns:fx="http://javafx.com/fxml">
-  <items>
-    <MenuItem mnemonicParsing="false" text="Action 1" />
-    <MenuItem mnemonicParsing="false" text="Action 2" />
-  </items>
-<styleClass>
-<String fx:value="menu-button" />
-<String fx:value="multi-row-menubutton" />
-</styleClass>
-</MenuButton>
-</children>
+      <HBox.margin>
+        <Insets />
+      </HBox.margin>
+      </TextField>
+      <MenuButton fx:id="menuButton" mnemonicParsing="false" HBox.hgrow="NEVER" xmlns:fx="http://javafx.com/fxml">
+      <items>
+        <MenuItem mnemonicParsing="false" text="Action 1" />
+        <MenuItem mnemonicParsing="false" text="Action 2" />
+      </items>
+      <styleClass>
+        <String fx:value="menu-button" />
+        <String fx:value="multi-row-menubutton" />
+      </styleClass>
+    </MenuButton>
+  </children>
 </HBox>
