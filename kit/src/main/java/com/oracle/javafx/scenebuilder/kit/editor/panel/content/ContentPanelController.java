@@ -777,10 +777,6 @@ public class ContentPanelController extends AbstractFxmlPanelController
                     "log.warning.layout.failed", newLayoutException.getMessage());
         }
         
-        if (fxomDocument != null) {
-            fxomDocument.refreshSceneGraph();
-        }
-        
         if (isOutlinesVisible()) {
             updateOutlines();
         }
