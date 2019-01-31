@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,10 +52,17 @@ class FXOMSaver {
 
     private boolean wildcardImports;
 
+    /**
+     * Creates a new instance of FXOMSaver
+     */
     FXOMSaver() {
 
     }
 
+    /**
+     * Creates a new instance of FXOMSaver
+     * @param wildcardImports If set to true, uses wildcard imports while saving FXML
+     */
     FXOMSaver(boolean wildcardImports) {
         this.wildcardImports = wildcardImports;
     }
