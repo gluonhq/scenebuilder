@@ -434,9 +434,9 @@ public class ColorPicker extends VBox {
         alpha = PaintPickerController.clamp(0, alpha, 1);
         // make an rgb color from the hsb
         final Color color = Color.hsb(hue, saturation, brightness, alpha);
-        int red = (int) (color.getRed() * 255);
-        int green = (int) (color.getGreen() * 255);
-        int blue = (int) (color.getBlue() * 255);
+        int red   = (int) Math.round(color.getRed() * 255);
+        int green = (int) Math.round(color.getGreen() * 255);
+        int blue  = (int) Math.round(color.getBlue() * 255);
         final String hexa = String.format("#%02x%02x%02x", red, green, blue); //NOI18N
 
         // Set TextFields value

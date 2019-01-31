@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,35 +32,66 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint;
 
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.TextEncodablePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ComplexPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ColorEncoder;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * ColorPropertyMetadata helps resolve Color as a combination of red, green, blue, opacity using
+ * the constructor {@link Color#Color(double, double, double, double)}.
+ * 
+ * The FXML representation of the same is:
+ * 
+ * <pre>
+ * {@code
+ * <Color blue="0.5" green="0.3" opacity="0.8" red="0.6" />
+ * }</pre>
  */
-public class ColorPropertyMetadata extends TextEncodablePropertyMetadata<Color> {
+public class ColorPropertyMetadata extends ComplexPropertyMetadata<Color> {
+
+    private final DoublePropertyMetadata redMetadata
+            = new DoublePropertyMetadata(new PropertyName("red"),
+            DoublePropertyMetadata.DoubleKind.OPACITY, true, 0.0, InspectorPath.UNUSED);
+    private final DoublePropertyMetadata greenMetadata
+            = new DoublePropertyMetadata(new PropertyName("green"),
+            DoublePropertyMetadata.DoubleKind.OPACITY, true, 0.0, InspectorPath.UNUSED);
+    private final DoublePropertyMetadata blueMetadata
+            = new DoublePropertyMetadata(new PropertyName("blue"),
+            DoublePropertyMetadata.DoubleKind.OPACITY, true, 0.0, InspectorPath.UNUSED);
+    private final DoublePropertyMetadata opacityMetadata
+            = new DoublePropertyMetadata(new PropertyName("opacity"),
+            DoublePropertyMetadata.DoubleKind.OPACITY, true, 1.0, InspectorPath.UNUSED);
 
     public ColorPropertyMetadata(PropertyName name, boolean readWrite, 
             Color defaultValue, InspectorPath inspectorPath) {
         super(name, Color.class, readWrite, defaultValue, inspectorPath);
     }
 
-    /*
-     * ValuePropertyMetadata
-     */
-    
+    @Override
+    public FXOMInstance makeFxomInstanceFromValue(Color value, FXOMDocument fxomDocument) {
+        final FXOMInstance result = new FXOMInstance(fxomDocument, Color.class);
+
+        redMetadata.setValue(result, value.getRed());
+        greenMetadata.setValue(result, value.getGreen());
+        blueMetadata.setValue(result, value.getBlue());
+        opacityMetadata.setValue(result, value.getOpacity());
+
+        return result;
+    }
+
     @Override
     public Color makeValueFromString(String string) {
         return Color.valueOf(string);
     }
-    
+
     @Override
     public String makeStringFromValue(Color value) {
         assert value != null;
         return ColorEncoder.encodeColor(value);
     }
-
 }
