@@ -16,8 +16,8 @@ install:
   - cmd: echo %JAVA_HOME%
   - cmd: choco install -y InnoSetup
   - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
-  - cmd: appveyor-tools\secure-file -decrypt app\assets\windows\codesign.p12.enc -secret %enc_secret%
-  - sh: ./appveyor-tools/secure-file -decrypt app/assets/windows/codesign.p12.enc -secret $enc_secret
+  - cmd: if NOT "%APPVEYOR_REPO_TAG_NAME%" == "" ( appveyor-tools\secure-file -decrypt app\assets\windows\codesign.p12.enc -secret %enc_secret% )
+  - sh: if [ -n "${APPVEYOR_REPO_TAG_NAME}" ]; then ./appveyor-tools/secure-file -decrypt app/assets/windows/codesign.p12.enc -secret $enc_secret; fi
 
 # build and install artifacts
 build_script:
