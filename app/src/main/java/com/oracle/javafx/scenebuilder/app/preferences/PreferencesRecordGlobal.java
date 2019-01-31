@@ -464,10 +464,10 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         }
 
         // Accordion animation
-        setAccordionAnimation(applicationRootPreferences.getBoolean(ACCORDION_ANIMATION, true));
+        setAccordionAnimation(applicationRootPreferences.getBoolean(ACCORDION_ANIMATION, DEFAULT_ACCORDION_ANIMATION));
 
         // Wildcard imports
-        setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, false));
+        setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, DEFAULT_WILDCARD_IMPORTS));
 
     }
 

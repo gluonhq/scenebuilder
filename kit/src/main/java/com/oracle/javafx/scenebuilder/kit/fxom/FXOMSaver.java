@@ -49,16 +49,25 @@ import javafx.fxml.FXMLLoader;
  * 
  */
 class FXOMSaver {
+
+    private boolean wildcardImports;
+
+    FXOMSaver() {
+
+    }
+
+    FXOMSaver(boolean wildcardImports) {
+        this.wildcardImports = wildcardImports;
+    }
     
-    
-    public String save(FXOMDocument fxomDocument, boolean wildcardImports) {
+    public String save(FXOMDocument fxomDocument) {
         
         assert fxomDocument != null;
         assert fxomDocument.getGlue() != null;
         
         if (fxomDocument.getFxomRoot() != null) {
             updateNameSpace(fxomDocument);
-            updateImportInstructions(fxomDocument, wildcardImports);
+            updateImportInstructions(fxomDocument);
         }
 
         return fxomDocument.getGlue().toString();
@@ -92,17 +101,17 @@ class FXOMSaver {
         
     }
         
-    private void updateImportInstructions(FXOMDocument fxomDocument, boolean wildcardImports) {
+    private void updateImportInstructions(FXOMDocument fxomDocument) {
         assert fxomDocument.getFxomRoot() != null;
 
         // gets list of the imports to be added to the FXML document.
-        List<GlueInstruction> importList = getHeaderIncludes(fxomDocument, wildcardImports);
+        List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
 
         // synchronizes the glue with the list of glue instructions
         synchronizeHeader(fxomDocument.getGlue(), importList);
     }
 
-    private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument, boolean wildcardImports) {
+    private List<GlueInstruction> getHeaderIncludes(FXOMDocument fxomDocument) {
         // TODO: When wildcardImport is true, add package name only when no of classes
         //  which belong to the same package exceed 3
 
@@ -115,13 +124,13 @@ class FXOMSaver {
 
         FXOMObject root = fxomDocument.getFxomRoot();
 
-        imports.addAll(findPropertyClasses(wildcardImports, root.getChildObjects().toArray(FXOMObject[]::new)));
-        imports.addAll(findPropertyClasses(wildcardImports, root));
+        imports.addAll(findPropertyClasses(root.getChildObjects().toArray(FXOMObject[]::new)));
+        imports.addAll(findPropertyClasses(root));
 
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
 
-    private Set<String> findPropertyClasses(boolean wildcardImports, FXOMObject... fxomObjects) {
+    private Set<String> findPropertyClasses(FXOMObject... fxomObjects) {
         return Arrays.stream(fxomObjects)
             .map(FXOMObject::collectPropertiesT) //list of lists containing FXOMProperties
             .flatMap(List::stream) // add all to one list of FXOMProperties

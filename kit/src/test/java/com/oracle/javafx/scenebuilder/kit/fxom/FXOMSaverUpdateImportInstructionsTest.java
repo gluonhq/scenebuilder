@@ -249,7 +249,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     }
 
     private String callService() {
-        return serviceUnderTest.save(fxomDocument, false);
+        return serviceUnderTest.save(fxomDocument);
     }
 
     private void setupTestCase(FxmlTestInfo n) {
