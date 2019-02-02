@@ -27,11 +27,11 @@ uploadArchives {
             }
         }
     }
-    
-    def installer = install.repositories.mavenInstaller
-    def deployer = uploadArchives.repositories.mavenDeployer
+}
 
-    [installer, deployer]*.pom*.whenConfigured { pom ->
-        pom.dependencies.findAll{ it.groupId == 'org.openjfx' }.collect { it.classifier = null }
-    }
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.mavenDeployer
+
+[installer, deployer]*.pom*.whenConfigured { pom ->
+    pom.dependencies.findAll{ it.groupId == 'org.openjfx' }.collect { it.classifier = null }
 }
