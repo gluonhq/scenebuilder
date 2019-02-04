@@ -24,3 +24,4 @@ scenicView.properties
 *.class
 dist/
 package/
+/build/

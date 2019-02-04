@@ -43,4 +43,33 @@ To build the Scene Builder services, on the project's root, run:
 
 `./gradlew clean build`
 
-It will create an executable jar under `app/build/libs/scenebuilder-$version-all.jar`.
+It will create a partial shadow cross-platform jar under `app/build/libs/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
+
+### How to run Scene Builder ###
+
+You can run it with Gradle:
+
+`./gradlew run`
+
+or you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
+
+`java --module-path /path/to/javafx-sdk-$javafxVersion/lib --add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media --add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED -cp app/build/libs/scenebuilder-$version.jar com.oracle.javafx.scenebuilder.app.SceneBuilderApp                                                           
+
+## Scene Builder Kit ##
+
+To build and install the Scene Builder Kit in your local repository, run:
+
+`./gradlew clean :kit:install`
+
+The custom controls of the Scene Builder kit can be used in your project. 
+You can add it as a regular dependency to the build of your app:
+
+```
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    implementation ('com.gluonhq.scenebuilder:scenebuilder-kit:$version') { transitive = false }
+}
+```

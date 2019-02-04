@@ -1,30 +1,20 @@
 import org.apache.tools.ant.filters.EscapeUnicode
 
-buildscript {
-    repositories { jcenter() }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
-    }
+plugins {
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "4.0.3"
 }
-
-apply plugin: 'application'
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 
-apply plugin: 'com.github.johnrengelman.shadow'
-
 dependencies {
-    compile project(':kit')
+    implementation project(':kit')
 }
 
 run {
     doFirst {
-        jvmArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'javafx.fxml,javafx.swing,javafx.web,java.logging,java.scripting',
-                '--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED'
-        ]
-        if (platform == 'linux') jvmArgs += '-Djdk.gtk.version=2'
+        jvmArgs += ['--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED' ]
+        if (javafx.platform == 'linux') jvmArgs += '-Djdk.gtk.version=2'
     }
 }
 
@@ -36,13 +26,13 @@ shadowJar {
     }
 
     dependencies {
-        exclude(dependency("org.openjfx:javafx-base:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-controls:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-fxml:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-graphics:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-media:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-swing:11:$platform"))
-        exclude(dependency("org.openjfx:javafx-web:11:$platform"))
+        exclude(dependency("org.openjfx:javafx-base:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-fxml:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-graphics:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-media:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-swing:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-web:$javafx.version:$javafx.platform"))
     }
     exclude 'module-info.class'
 }
