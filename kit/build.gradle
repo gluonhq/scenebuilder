@@ -1,7 +1,7 @@
 jar {
     baseName = 'scenebuilder-kit'
     manifest {
-        attributes('Automatic-Module-Name': 'scenebuilder.kit')
+        attributes('Automatic-Module-Name': 'com.gluonhq.scenebuilder.kit')
     }
 }
 
