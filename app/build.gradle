@@ -14,7 +14,7 @@ dependencies {
 run {
     doFirst {
         jvmArgs += ['--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED' ]
-        if (javafx.platform == 'linux') jvmArgs += '-Djdk.gtk.version=2'
+        if (javafx.platform.classifier == 'linux') jvmArgs += '-Djdk.gtk.version=2'
     }
 }
 
@@ -26,13 +26,13 @@ shadowJar {
     }
 
     dependencies {
-        exclude(dependency("org.openjfx:javafx-base:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-fxml:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-graphics:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-media:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-swing:$javafx.version:$javafx.platform"))
-        exclude(dependency("org.openjfx:javafx-web:$javafx.version:$javafx.platform"))
+        exclude(dependency("org.openjfx:javafx-base:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-fxml:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-graphics:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-media:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-swing:$javafx.version:$javafx.platform.classifier"))
+        exclude(dependency("org.openjfx:javafx-web:$javafx.version:$javafx.platform.classifier"))
     }
     exclude 'module-info.class'
 }
