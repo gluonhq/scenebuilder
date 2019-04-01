@@ -30,41 +30,77 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.info;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import java.util.Objects;
 
 /**
  *
  */
-class LeftCell extends TableCell<IndexEntry, String> {
+public class IndexEntry {
     
+    public enum Type {
+        FX_ID,
+        HANDLER,
+        RESOURCE_KEY,
+        STYLECLASS
+    }
     
+    private final String key;
+    private final Type type;
+    private final FXOMObject fxomObject;
+
+    public IndexEntry(String key, Type type, FXOMObject fxomObject) {
+        this.key = key;
+        this.type = type;
+        this.fxomObject = fxomObject;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Type getType() {
+        return type;
+    }
+    
+    public FXOMObject getFxomObject() {
+        return fxomObject;
+    }
+
     /*
-     * TableCell
+     * Object
      */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.key);
+        hash = 79 * hash + Objects.hashCode(this.type);
+        hash = 79 * hash + Objects.hashCode(this.fxomObject);
+        return hash;
+    }
 
     @Override
-    protected void updateItem(String leftValue, boolean empty) {
-        super.updateItem(leftValue, empty);
-        setText(empty ? "" : leftValue); //NOI18N
-    }
-    
-    
-    
-    
-    public static class Factory 
-    implements Callback<TableColumn<IndexEntry, String>, TableCell<IndexEntry, String>> {
-
-        /*
-         * Callback<TableView<IndexEntry, String>, TableCell<IndexEntry, String>>
-         */
-
-        @Override
-        public TableCell<IndexEntry, String> call(TableColumn<IndexEntry, String> tc) {
-            return new LeftCell();
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final IndexEntry other = (IndexEntry) obj;
+        if (!Objects.equals(this.key, other.key)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        if (this.fxomObject != other.fxomObject) {
+            return false;
+        }
+        return true;
     }
+    
+    
 }

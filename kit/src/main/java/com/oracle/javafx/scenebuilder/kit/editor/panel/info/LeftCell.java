@@ -30,9 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.info;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
@@ -40,7 +39,7 @@ import javafx.util.Callback;
 /**
  *
  */
-class RightCell extends TableCell<IndexEntry, FXOMObject> {
+class LeftCell extends TableCell<IndexEntry, String> {
     
     
     /*
@@ -48,35 +47,24 @@ class RightCell extends TableCell<IndexEntry, FXOMObject> {
      */
 
     @Override
-    protected void updateItem(FXOMObject rightValue, boolean empty) {
-        super.updateItem(rightValue, empty);
-        
-        final String text;
-        if (empty) {
-            text = ""; //NOI18N
-        } else {
-            if (rightValue == null) {
-                text = "null"; //NOI18N
-            } else {
-                text = rightValue.getGlueElement().getTagName();
-            }
-        }
-        setText(text);
+    protected void updateItem(String leftValue, boolean empty) {
+        super.updateItem(leftValue, empty);
+        setText(empty ? "" : leftValue); //NOI18N
     }
     
     
     
     
     public static class Factory 
-    implements Callback<TableColumn<IndexEntry, FXOMObject>, TableCell<IndexEntry, FXOMObject>> {
+    implements Callback<TableColumn<IndexEntry, String>, TableCell<IndexEntry, String>> {
 
         /*
-         * Callback<TableView<IndexEntry>, TableCell<IndexEntry, FXOMObject>>
+         * Callback<TableView<IndexEntry, String>, TableCell<IndexEntry, String>>
          */
 
         @Override
-        public TableCell<IndexEntry, FXOMObject> call(TableColumn<IndexEntry, FXOMObject> tc) {
-            return new RightCell();
+        public TableCell<IndexEntry, String> call(TableColumn<IndexEntry, String> tc) {
+            return new LeftCell();
         }
     }
 }

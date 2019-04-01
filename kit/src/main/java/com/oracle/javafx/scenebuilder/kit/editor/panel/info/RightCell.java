@@ -30,77 +30,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.info;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import java.util.Objects;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 
 /**
  *
  */
-public class IndexEntry {
+class RightCell extends TableCell<IndexEntry, FXOMObject> {
     
-    public enum Type {
-        FX_ID,
-        HANDLER,
-        RESOURCE_KEY,
-        STYLECLASS
-    }
     
-    private final String key;
-    private final Type type;
-    private final FXOMObject fxomObject;
-
-    public IndexEntry(String key, Type type, FXOMObject fxomObject) {
-        this.key = key;
-        this.type = type;
-        this.fxomObject = fxomObject;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public Type getType() {
-        return type;
-    }
-    
-    public FXOMObject getFxomObject() {
-        return fxomObject;
-    }
-
     /*
-     * Object
+     * TableCell
      */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.key);
-        hash = 79 * hash + Objects.hashCode(this.type);
-        hash = 79 * hash + Objects.hashCode(this.fxomObject);
-        return hash;
-    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    protected void updateItem(FXOMObject rightValue, boolean empty) {
+        super.updateItem(rightValue, empty);
+        
+        final String text;
+        if (empty) {
+            text = ""; //NOI18N
+        } else {
+            if (rightValue == null) {
+                text = "null"; //NOI18N
+            } else {
+                text = rightValue.getGlueElement().getTagName();
+            }
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final IndexEntry other = (IndexEntry) obj;
-        if (!Objects.equals(this.key, other.key)) {
-            return false;
-        }
-        if (this.type != other.type) {
-            return false;
-        }
-        if (this.fxomObject != other.fxomObject) {
-            return false;
-        }
-        return true;
+        setText(text);
     }
     
     
+    
+    
+    public static class Factory 
+    implements Callback<TableColumn<IndexEntry, FXOMObject>, TableCell<IndexEntry, FXOMObject>> {
+
+        /*
+         * Callback<TableView<IndexEntry>, TableCell<IndexEntry, FXOMObject>>
+         */
+
+        @Override
+        public TableCell<IndexEntry, FXOMObject> call(TableColumn<IndexEntry, FXOMObject> tc) {
+            return new RightCell();
+        }
+    }
 }
