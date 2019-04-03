@@ -191,6 +191,11 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         }
         loadLibraryList();
     }
+    
+    @FXML
+    private void addFolder() {
+    	
+    }
 
     @FXML
     private void addRelease() {
