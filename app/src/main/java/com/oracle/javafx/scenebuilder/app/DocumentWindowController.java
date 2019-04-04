@@ -32,49 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import com.oracle.javafx.scenebuilder.app.i18n.I18N;
-import com.oracle.javafx.scenebuilder.app.info.InfoPanelController;
-import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
-import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
-import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
-import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
-import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
-import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
-import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonWindowController;
-import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager.LibraryDialogController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.search.SearchController;
-import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
-import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import com.oracle.javafx.scenebuilder.kit.library.Library;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.util.Utils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -92,7 +49,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.info.InfoPanelController;
+import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
+import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
+import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager.LibraryDialogController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.search.SearchController;
+import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
+import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.library.Library;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
+import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
+import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonWindowController;
+import com.oracle.javafx.scenebuilder.kit.util.Utils;
+
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -102,6 +103,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -214,6 +216,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     @FXML private SplitPane mainSplitPane;
     @FXML private SplitPane leftRightSplitPane;
     @FXML private SplitPane libraryDocumentSplitPane;
+    @FXML private Label libraryLabel;
     
     @FXML private MenuButton libraryMenuButton;
     @FXML private MenuItem libraryImportSelection;
@@ -1142,6 +1145,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 }
             }
         });
+        
+        libraryLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+        	
+        	return SceneBuilderApp.getSingleton().getUserLibrary().isExploring() ? I18N.getString("library.exploring") : I18N.getString("library");
+        	
+        }, SceneBuilderApp.getSingleton().getUserLibrary().exploringProperty()));
     }
 
     @Override
@@ -1344,6 +1353,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     SceneBuilderApp.getSingleton().performOpenRecent(this,
                             fxmlPath.toFile());
             });
+            libraryDialogController.setOnAddFolder(() -> onImportFromFolder(libraryDialogController.getStage()));
         }
 
         libraryDialogController.openWindow();
@@ -1351,6 +1361,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     public void onImportJarFxml(Window owner) {
         libraryPanelController.performImportJarFxml(owner);
+    }
+    
+    public void onImportFromFolder(Window owner) {
+    	libraryPanelController.performImportFromFolder(owner);
     }
     
     @FXML

@@ -83,7 +83,7 @@
                </GridPane.margin></Hyperlink>
             <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addManually" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.manually" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addJar" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.jar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Hyperlink onAction="#addFolder" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="Add Library/FXML from folder" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Hyperlink onAction="#addFolder" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.folder" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Hyperlink layoutX="30.0" layoutY="316.0" onAction="#manage" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.repositories" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>
          <padding>

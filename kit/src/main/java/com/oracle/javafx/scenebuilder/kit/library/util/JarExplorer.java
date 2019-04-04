@@ -42,6 +42,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
@@ -67,7 +69,9 @@ public class JarExplorer {
             final Enumeration<JarEntry> e = jarFile.entries();
             while (e.hasMoreElements()) {
                 final JarEntry entry = e.nextElement();
-                result.getEntries().add(exploreEntry(entry, classLoader));
+                JarReportEntry explored = exploreEntry(entry, classLoader);
+                if (explored.getStatus() != Status.IGNORED)
+                	result.getEntries().add(explored);
             }
         }
         

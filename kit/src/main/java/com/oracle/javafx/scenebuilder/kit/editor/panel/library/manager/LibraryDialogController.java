@@ -32,27 +32,6 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenDialogController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchMavenDialogController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.RepositoryManagerController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -60,16 +39,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenDialogController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.RepositoryManagerController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchMavenDialogController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Controller for the JAR/FXML Library dialog.
@@ -89,6 +91,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     private ObservableList<DialogListItem> listItems;
 
     private Runnable onAddJar;
+    private Runnable onAddFolder;
     private Consumer<Path> onEditFXML;
 
     private String userM2Repository;
@@ -144,8 +147,15 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         if (folder != null && folder.toFile().exists()) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
                 for (Path entry : stream) {
-                    if (isJarPath(entry) || isFxmlPath(entry)) {
+                    if (LibraryUtil.isJarPath(entry) || LibraryUtil.isFxmlPath(entry)) {
                         listItems.add(new LibraryDialogListItem(this, entry));
+                    } else if (LibraryUtil.isFolderMarkerPath(entry)) {
+                    	// open folders marker file: every line should be a single folder entry
+                    	// we scan the file and add the path to currentJarsOrFolders
+                    	List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
+                    	for (Path f : folderPaths) {
+                    		listItems.add(new LibraryDialogListItem(this, f));
+						}
                     }
                 }
             } catch (IOException x) {
@@ -158,16 +168,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .stream()
                 .map(c -> new ArtifactDialogListItem(this, c))
                 .collect(Collectors.toList()));
-    }
-
-    private static boolean isJarPath(Path path) {
-        final String pathString = path.toString().toLowerCase(Locale.ROOT);
-        return pathString.endsWith(".jar"); //NOI18N
-    }
-
-    private static boolean isFxmlPath(Path path) {
-        final String pathString = path.toString().toLowerCase(Locale.ROOT);
-        return pathString.endsWith(".fxml"); //NOI18N
     }
 
     @FXML
@@ -194,7 +194,10 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void addFolder() {
-    	
+    	if (onAddFolder != null) {
+    		onAddFolder.run();
+    	}
+    	loadLibraryList();
     }
 
     @FXML
@@ -236,9 +239,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     2) Then, if the file exists, the jar or fxml file will be deleted from the library.
     3) After the jar or fxml is removed, the library watcher is started again.
      */
-    public void processJarFXMLDelete(DialogListItem dialogListItem) {
+    public void processJarFXMLFolderDelete(DialogListItem dialogListItem) {
         if (dialogListItem instanceof LibraryDialogListItem &&
-            isFxmlPath(((LibraryDialogListItem) dialogListItem).getFilePath())) {
+            LibraryUtil.isFxmlPath(((LibraryDialogListItem) dialogListItem).getFilePath())) {
             deleteFile(dialogListItem);
         } else {
             //1)
@@ -256,9 +259,31 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         try {
             if (dialogListItem instanceof LibraryDialogListItem) {
                 LibraryDialogListItem item = (LibraryDialogListItem) dialogListItem;
-                if (Files.exists(item.getFilePath())) {
-                    Files.delete(item.getFilePath());
-                    listItems.remove(item);
+                Path path = item.getFilePath();
+                
+				if (Files.exists(path)) {
+                	if (Files.isDirectory(path)) {
+                		// we need to remove the entry from the folder list in the placeholder marker
+                		String libraryPath = ((UserLibrary) editorController.getLibrary()).getPath();
+                		
+                		Path foldersPath = Paths.get(libraryPath, LibraryUtil.FOLDERS_LIBRARY_FILENAME);
+                		if (Files.exists(foldersPath)) {
+                			
+                			List<String> lines = Files.readAllLines(foldersPath);
+                			
+                			for (Iterator<String> it = lines.iterator(); it.hasNext();) {
+								String line = (String) it.next();
+								if (line.equals(path.toString()))
+									it.remove();
+							}
+                			
+                			Files.write(foldersPath, lines);
+                		}
+                	}
+                	else {
+                		Files.delete(path);
+                		listItems.remove(item);
+                	}
                 }
             } else if (dialogListItem instanceof ArtifactDialogListItem) {
                 preferencesControllerBase.removeArtifact(((ArtifactDialogListItem) dialogListItem).getCoordinates());
@@ -270,11 +295,11 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         loadLibraryList();
     }
     
-    public void processJarFXMLEdit(DialogListItem dialogListItem) {
+    public void processJarFXMLFolderEdit(DialogListItem dialogListItem) {
         if (dialogListItem instanceof LibraryDialogListItem) {
             LibraryDialogListItem item = (LibraryDialogListItem) dialogListItem;
             if (Files.exists(item.getFilePath())) {
-                if (isJarPath(item.getFilePath())) {
+                if (LibraryUtil.isJarPath(item.getFilePath()) || Files.isDirectory(item.getFilePath())) {
                     final ImportWindowController iwc = new ImportWindowController(
                             new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
                             Arrays.asList(item.getFilePath().toFile()), preferencesControllerBase.getMavenPreferences(),
@@ -344,5 +369,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     public void setOnEditFXML(Consumer<Path> onEditFXML) {
         this.onEditFXML = onEditFXML;
+    }
+    
+    public void setOnAddFolder(Runnable onAddFolder) {
+    	this.onAddFolder = onAddFolder;
     }
 }

@@ -42,6 +42,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -66,7 +67,9 @@ public class FolderExplorer {
         
         try (Stream<Path> stream = Files.walk(rootFolderPath).filter(p -> !p.toFile().isDirectory())) {
         	stream.forEach(p -> {
-        		result.getEntries().add(exploreEntry(rootFolderPath, p, classLoader));
+        		JarReportEntry explored = exploreEntry(rootFolderPath, p, classLoader);
+        		if (explored.getStatus() != Status.IGNORED)
+        			result.getEntries().add(explored);
         	});
         };
         
