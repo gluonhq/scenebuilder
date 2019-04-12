@@ -1006,7 +1006,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         else {
             // Check if the static property class is the common parent of the selection
             if (getCommonParent() == null) return false;
-            isRelevant =  getCommonParent() == propName.getResidenceClass();
+            // Superclass properties are valid for extended classes! Example: Pane1 extends AnchorPane => Pane1 childs must have AnchorPane layout props.
+            isRelevant = propName.getResidenceClass().isAssignableFrom(getCommonParent());
         }
         return isRelevant;
     }

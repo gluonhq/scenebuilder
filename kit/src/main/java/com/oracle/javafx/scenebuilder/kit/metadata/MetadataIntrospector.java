@@ -35,6 +35,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.util.SBDuration;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.ComponentPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
@@ -298,6 +299,12 @@ class MetadataIntrospector {
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
+            } else if (javafx.scene.Node.class.isAssignableFrom(propertyType)) {
+                // Add a Node based properies (ex: context on Region extended component)!
+                result = new ComponentPropertyMetadata(
+                        name,
+                        Metadata.getMetadata().queryComponentMetadata(javafx.scene.Node.class),
+                        false);
             } else {
                 result = null;
             }

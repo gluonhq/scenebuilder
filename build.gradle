@@ -33,6 +33,10 @@ subprojects {
     }
 
     dependencies {
+        // MigPane integration.
+        compile 'com.miglayout:miglayout-core:5.2'
+        compile 'com.miglayout:miglayout-javafx:5.2'
+
         // maven dependencies
         compile 'org.eclipse.aether:aether-api:1.1.0'
         compile 'org.eclipse.aether:aether-impl:1.1.0'

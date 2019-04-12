@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import javafx.scene.layout.Region;
+import org.tbee.javafx.scene.layout.fxml.MigPane;
 
 /**
  *
@@ -187,6 +188,7 @@ public class BuiltinLibrary extends Library {
         addRegionItem200x200(javafx.scene.control.TitledPane.class, TAG_CONTAINERS, EMPTY_QUALIFIER);
         addCustomizedItem(javafx.scene.control.ToolBar.class, TAG_CONTAINERS);
         addRegionItem100x200(javafx.scene.layout.VBox.class, TAG_CONTAINERS);
+        addRegionItem200x200(org.tbee.javafx.scene.layout.fxml.MigPane.class, TAG_CONTAINERS); // MigPane integration.
         
         // Controls
         addCustomizedItem(javafx.scene.control.Button.class, TAG_CONTROLS);

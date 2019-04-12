@@ -4885,6 +4885,44 @@ public class Metadata {
                     new InspectorPath("Properties", "Include FXML file", 2));
 
 
+    // MigPane integration.
+    private final ComponentClassMetadata MigPaneMetadata =
+            new ComponentClassMetadata(org.tbee.javafx.scene.layout.fxml.MigPane.class, PaneMetadata);
+
+    private final PropertyName MigPane_layoutName =
+            new PropertyName("layout");
+    private final PropertyName MigPane_colsName =
+            new PropertyName("cols");
+    private final PropertyName MigPane_rowsName =
+            new PropertyName("rows");
+    private final PropertyName MigPane_ccName =
+            new PropertyName("cc", org.tbee.javafx.scene.layout.fxml.MigPane.class);
+
+    private final ValuePropertyMetadata MigPane_layoutPropertyMetadata =
+            new StringPropertyMetadata(
+                    MigPane_layoutName,
+                    true, /* readWrite */
+                    null, /* defaultValue */
+                    new InspectorPath("Properties", "Layout", 0));
+    private final ValuePropertyMetadata MigPane_colsPropertyMetadata =
+            new StringPropertyMetadata(
+                    MigPane_colsName,
+                    true, /* readWrite */
+                    null, /* defaultValue */
+                    new InspectorPath("Properties", "Layout", 1));
+    private final ValuePropertyMetadata MigPane_rowsPropertyMetadata =
+            new StringPropertyMetadata(
+                    MigPane_rowsName,
+                    true, /* readWrite */
+                    null, /* defaultValue */
+                    new InspectorPath("Properties", "Layout", 2));
+    private final ValuePropertyMetadata MigPane_ccPropertyMetadata =
+            new StringPropertyMetadata(
+                    MigPane_ccName,
+                    true, /* readWrite */
+                    null, /* defaultValue */
+                    new InspectorPath("Layout", "Mig Pane Constraints", 0));
+
 
     private Metadata() {
 
@@ -6301,6 +6339,14 @@ public class Metadata {
         sectionNames.add("Layout");
         sectionNames.add("Code");
 
+        // MigPane integration.
+        MigPaneMetadata.getProperties().add(MigPane_layoutPropertyMetadata);
+        MigPaneMetadata.getProperties().add(MigPane_colsPropertyMetadata);
+        MigPaneMetadata.getProperties().add(MigPane_rowsPropertyMetadata);
+        componentClassMap.put(MigPaneMetadata.getKlass(), MigPaneMetadata);
+        NodeMetadata.getProperties().add(MigPane_ccPropertyMetadata);
+        IncludeElementMetadata.getProperties().add(MigPane_ccPropertyMetadata);
+
         // Populates subSectionMap
         final List<String> ss0 = new ArrayList<>();
         ss0.add("Custom");
@@ -6325,6 +6371,7 @@ public class Metadata {
         ss1.add("Stack Pane Constraints");
         ss1.add("Tile Pane Constraints");
         ss1.add("VBox Constraints");
+        ss1.add("Mig Pane Constraints"); // MigPane integration.
         ss1.add("Internal");
         ss1.add("Specific");
         ss1.add("Size");
