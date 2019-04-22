@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation and Gluon nor the names of its
+ *  - Neither the name of Oracle Corporation nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,29 +29,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset;
+package com.oracle.javafx.scenebuilder.kit.fxom.glue;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-public class MavenPresets {
-    
-    public static final String MAVEN = "Maven Central";
-    public static final String JCENTER = "Jcenter";
-    public static final String SONATYPE = "Sonatype";
-    public static final String GLUON_NEXUS = "Gluon Nexus";
-    public static final String LOCAL = "Local";
-    
-    private static final List<Repository> REPOSITORIES = Arrays.asList(
-            new Repository(MAVEN, "default", "https://repo1.maven.org/maven2/"),
-            new Repository(JCENTER, "default", "https://jcenter.bintray.com"),
-            new Repository(SONATYPE + " (snapshots)", "default", "https://oss.sonatype.org/content/repositories/snapshots"),
-            new Repository(SONATYPE + " (releases)", "default", "https://oss.sonatype.org/content/repositories/releases"),
-            new Repository(GLUON_NEXUS + " (releases)", "default", "https://nexus.gluonhq.com/nexus/content/repositories/releases"));
-    
-    public static List<Repository> getPresetRepositories() {
-        return REPOSITORIES;
+/**
+ * Compares attributes of {@link javafx.scene.paint.Color} element.
+ *
+ * The comparator follows the following order:
+ * red < green < blue < opacity < other attributes
+ */
+class XMLColorAttrComparator extends XMLAttrComparator {
+
+    protected int getAttrOrderIndex(Map.Entry<String,String> attr) {
+        assert attr != null;
+
+        final int result;
+        switch (attr.getKey()) {
+            case "red"     : result = 0; break;
+            case "green"   : result = 1; break;
+            case "blue"    : result = 2; break;
+            case "opacity" : result = 3; break;
+            default        : result = 4; break;
+        }
+        return result;
     }
-    
 }

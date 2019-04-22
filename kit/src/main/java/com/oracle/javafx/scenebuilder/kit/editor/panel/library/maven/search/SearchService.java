@@ -112,7 +112,7 @@ public class SearchService extends Service<Void> {
                     createSearchTask(new MavenSearch()),
                     createSearchTask(new NexusSearch(MavenPresets.SONATYPE, "http://oss.sonatype.org", "", "")),
                     createSearchTask(new JcenterSearch("", "")),
-                    createSearchTask(new NexusSearch(MavenPresets.GLUON_NEXUS, "http://nexus.gluonhq.com/nexus", "", "")),
+                    createSearchTask(new NexusSearch(MavenPresets.GLUON_NEXUS, "https://nexus.gluonhq.com/nexus", "", "")),
                     createSearchTask(new LocalSearch(userM2Repository)));
                 
                 AtomicInteger count = new AtomicInteger();

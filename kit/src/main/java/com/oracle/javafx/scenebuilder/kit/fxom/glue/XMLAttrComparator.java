@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,8 +36,10 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
+ * A Comparator for comparing the indices of the attributes of an element.
+ * These indices decides the location of each attribute in the FXML document.
  *
- * 
+ * This class can be extended to create a customized comparator for each attribute.
  */
 class XMLAttrComparator implements Comparator<Map.Entry<String,String>> {
 
@@ -59,19 +62,18 @@ class XMLAttrComparator implements Comparator<Map.Entry<String,String>> {
         
         return result;
     }
-    
-    
-    /*
-     * Private
+
+    /**
+     * Returns attribute index for a particular attribute
+     * @param attr Attribute of an element whose index is to be found out
+     * @return The index of the attribute in the FXML attribute list
      */
-    
-    private int getAttrOrderIndex(Map.Entry<String,String> attr) {
+    protected int getAttrOrderIndex(Map.Entry<String,String> attr) {
         assert attr != null;
         
         /*
          * fx:id < id < other-attr < fx:controller
          */
-        
         final int result;
         switch(attr.getKey()) {
             case "id": //NOI18N

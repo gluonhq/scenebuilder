@@ -1,14 +1,8 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
-    }
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
 }
 
 apply plugin: 'base'
-apply plugin: 'com.google.osdetector'
 
 ext.getStringProperty = { name, defaultValue ->
     if (!project.hasProperty(name)) {
@@ -19,10 +13,9 @@ ext.getStringProperty = { name, defaultValue ->
     return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }
 
-ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
-
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
 
     group = 'com.gluonhq.scenebuilder'
     version = project.findProperty('VERSION') ?: '11.0.0-SNAPSHOT'
@@ -37,7 +30,7 @@ subprojects {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
         maven {
-            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+            url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
 
         jcenter()
@@ -46,30 +39,26 @@ subprojects {
 
     dependencies {
         // maven dependencies
-        compile 'org.eclipse.aether:aether-api:1.1.0'
-        compile 'org.eclipse.aether:aether-impl:1.1.0'
-        compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
-        compile 'org.eclipse.aether:aether-transport-file:1.1.0'
-        compile 'org.eclipse.aether:aether-transport-http:1.1.0'
-        compile 'org.apache.maven:maven-aether-provider:3.3.9'
+        implementation 'org.eclipse.aether:aether-api:1.1.0'
+        implementation 'org.eclipse.aether:aether-impl:1.1.0'
+        implementation 'org.eclipse.aether:aether-connector-basic:1.1.0'
+        implementation 'org.eclipse.aether:aether-transport-file:1.1.0'
+        implementation 'org.eclipse.aether:aether-transport-http:1.1.0'
+        implementation 'org.apache.maven:maven-aether-provider:3.3.9'
 
-        compile 'com.gluonhq:charm-glisten:5.0.0-jdk9'
-
-        compile "org.openjfx:javafx-base:11:$platform"
-        compile "org.openjfx:javafx-controls:11:$platform"
-        compile "org.openjfx:javafx-fxml:11:$platform"
-        compile "org.openjfx:javafx-graphics:11:$platform"
-        compile "org.openjfx:javafx-media:11:$platform"
-        compile "org.openjfx:javafx-swing:11:$platform"
-        compile "org.openjfx:javafx-web:11:$platform"
+        implementation 'com.gluonhq:charm-glisten:5.0.0-jdk9'
 
         // REST API
-        compile 'org.apache.httpcomponents:httpclient:4.5.2'
-        compile 'javax.json:javax.json-api:1.0'
-        runtime 'org.glassfish:javax.json:1.0.4'
+        implementation 'org.apache.httpcomponents:httpclient:4.5.2'
+        implementation 'javax.json:javax.json-api:1.0'
+        runtimeOnly 'org.glassfish:javax.json:1.0.4'
 
-        testCompile 'junit:junit:4.12'
-        testCompile 'org.assertj:assertj-core:3.2.0'
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.assertj:assertj-core:3.2.0'
+    }
+
+    javafx {
+        modules = [ 'javafx.web', 'javafx.fxml', 'javafx.swing', 'javafx.media' ]
     }
 
     test {
@@ -91,10 +80,10 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'https://nexus.gluonhq.com/nexus/content/repositories/releases/');
             def repoUser = getStringProperty('publishRepositoryUser', '');
             def repoPassword = getStringProperty('publishRepositoryPassword', '');
-            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+            snapshotRepository(url: 'https://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
             repository(url: repoUrl) {
