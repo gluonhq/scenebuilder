@@ -30,7 +30,7 @@ subprojects {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
         maven {
-            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+            url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
 
         jcenter()
@@ -80,10 +80,10 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'https://nexus.gluonhq.com/nexus/content/repositories/releases/');
             def repoUser = getStringProperty('publishRepositoryUser', '');
             def repoPassword = getStringProperty('publishRepositoryPassword', '');
-            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+            snapshotRepository(url: 'https://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
             repository(url: repoUrl) {

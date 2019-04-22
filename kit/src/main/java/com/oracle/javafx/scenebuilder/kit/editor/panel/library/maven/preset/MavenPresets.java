@@ -48,7 +48,7 @@ public class MavenPresets {
             new Repository(JCENTER, "default", "https://jcenter.bintray.com"),
             new Repository(SONATYPE + " (snapshots)", "default", "https://oss.sonatype.org/content/repositories/snapshots"),
             new Repository(SONATYPE + " (releases)", "default", "https://oss.sonatype.org/content/repositories/releases"),
-            new Repository(GLUON_NEXUS + " (releases)", "default", "http://nexus.gluonhq.com/nexus/content/repositories/releases"));
+            new Repository(GLUON_NEXUS + " (releases)", "default", "https://nexus.gluonhq.com/nexus/content/repositories/releases"));
     
     public static List<Repository> getPresetRepositories() {
         return REPOSITORIES;
