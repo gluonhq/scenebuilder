@@ -115,7 +115,7 @@ class WorkspaceController {
         
         // Make scalingGroup invisible.
         // We'll turn it visible once content panel is displayed in a Scene
-        this.scalingGroup.setOpacity(0.0);
+        this.scalingGroup.setVisible(false);
         
         // Remove sample content from contentGroup
         this.contentGroup.getChildren().clear();
@@ -292,7 +292,7 @@ class WorkspaceController {
         assert this.scrollPane != null;
         
         if (scrollPane.getScene() != null) {
-           assert scalingGroup.getOpacity() == 0.0;
+            assert scalingGroup.isVisible() == false;
             
             // Here we'd like to layout the user scene graph immediately
             // i.e. invoke:
@@ -313,8 +313,8 @@ class WorkspaceController {
                 revealScalingGroup();
             });
         } else {
-            assert scalingGroup.getOpacity() > 0.0;
-            scalingGroup.setOpacity(0.0);
+            assert scalingGroup.isVisible();
+            scalingGroup.setVisible(false);
         }
     }
     
@@ -573,7 +573,10 @@ class WorkspaceController {
     
     
     private void revealScalingGroup() {
-        assert scalingGroup.getOpacity() == 0.0;
+        assert scalingGroup.isVisible() == false;
+        
+        scalingGroup.setVisible(true);
+        scalingGroup.setOpacity(0.0);
 
         FadeTransition showHost = new FadeTransition(Duration.millis(300), scalingGroup);
         showHost.setFromValue(0.0);
