@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,7 +53,7 @@ public class FXOMArchive implements Serializable {
         
         for (FXOMObject o : fxomObjects) {
             final URL location = o.getFxomDocument().getLocation();
-            final String fxmlText = FXOMNodes.newDocument(o).getFxmlText();
+            final String fxmlText = FXOMNodes.newDocument(o).getFxmlText(false);
             entries.add(new Entry(fxmlText, location));
         }
     }
