@@ -233,34 +233,34 @@ public class ImportWindowController extends AbstractModalDialog {
             closeClassLoader();
             
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
-            
+
             if (copyFilesToUserLibraryDir) {
-            	// collect directories from importFiles and add to library.folders file
-            	// for other filex (jar, fxml) copy them directly
-            	List<File> folders = new ArrayList<>(importFiles.size());
-            	List<File> files = new ArrayList<>(importFiles.size());
-            	
-            	for (File file : importFiles) {
-					if (file.isDirectory())
-						folders.add(file);
-					else
-						files.add(file);
-				}
-            	
-            	if (!files.isEmpty())
-            		libPanelController.copyFilesToUserLibraryDir(files);
-                
+                // collect directories from importFiles and add to library.folders file
+                // for other filex (jar, fxml) copy them directly
+                List<File> folders = new ArrayList<>(importFiles.size());
+                List<File> files = new ArrayList<>(importFiles.size());
+
+                for (File file : importFiles) {
+                    if (file.isDirectory())
+                        folders.add(file);
+                    else
+                        files.add(file);
+                }
+
+                if (!files.isEmpty())
+                    libPanelController.copyFilesToUserLibraryDir(files);
+
                 Path foldersMarkerPath = Paths.get(userLib.getPath().toString(), LibraryUtil.FOLDERS_LIBRARY_FILENAME);
-            	
-				if (!Files.exists(foldersMarkerPath))
-					Files.createFile(foldersMarkerPath);
-				
-				Set<String> lines = new TreeSet<>(Files.readAllLines(foldersMarkerPath));
-				lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
-				
-				Files.write(foldersMarkerPath, lines);
+
+                if (!Files.exists(foldersMarkerPath))
+                    Files.createFile(foldersMarkerPath);
+
+                Set<String> lines = new TreeSet<>(Files.readAllLines(foldersMarkerPath));
+                lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
+
+                Files.write(foldersMarkerPath, lines);
             }
-            
+
             if (copyFilesToUserLibraryDir) {
                 userLib.setFilter(getExcludedItems());
             }
@@ -403,14 +403,14 @@ public class ImportWindowController extends AbstractModalDialog {
                     updateMessage(I18N.getString("import.work.exploring", file.getName()));
 //                    System.out.println("[" + index + "/" + max + "] Exploring file " + file.getName()); //NOI18N
                     if (file.isDirectory()) {
-                   		final FolderExplorer explorer = new FolderExplorer(file.toPath());
-                   		final JarReport jarReport = explorer.explore(classLoader);
-                   		res.add(jarReport);
+                        final FolderExplorer explorer = new FolderExplorer(file.toPath());
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
                     }
                     else {
-                    	final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
-                    	final JarReport jarReport = explorer.explore(classLoader);
-                    	res.add(jarReport);
+                        final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
                     }
                     updateProgress(index, numOfImportedJar);
                     index++;
@@ -566,11 +566,11 @@ public class ImportWindowController extends AbstractModalDialog {
             }
             
             if (builtinPrefWidth == 0 || builtinPrefHeight == 0) {
-            	if (zeNode instanceof Region) { // must check instanceof: custom components are not necessarily regions..
-            		((Region) zeNode).setPrefSize(200, 200);
-            		setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
-            		defSizeChoice.getSelectionModel().select(2);
-            	}
+                if (zeNode instanceof Region) { // must check instanceof: custom components are not necessarily regions..
+                    ((Region) zeNode).setPrefSize(200, 200);
+                    setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
+                    defSizeChoice.getSelectionModel().select(2);
+                }
             } else {
                 setSizeLabel(PrefSize.DEFAULT);
                 defSizeChoice.getSelectionModel().selectFirst();

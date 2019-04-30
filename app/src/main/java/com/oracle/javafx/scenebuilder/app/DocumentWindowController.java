@@ -1147,9 +1147,9 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         });
         
         libraryLabel.textProperty().bind(Bindings.createStringBinding(() -> {
-        	
-        	return SceneBuilderApp.getSingleton().getUserLibrary().isExploring() ? I18N.getString("library.exploring") : I18N.getString("library");
-        	
+
+            return SceneBuilderApp.getSingleton().getUserLibrary().isExploring() ? I18N.getString("library.exploring") : I18N.getString("library");
+
         }, SceneBuilderApp.getSingleton().getUserLibrary().exploringProperty()));
     }
 
@@ -1364,7 +1364,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     }
     
     public void onImportFromFolder(Window owner) {
-    	libraryPanelController.performImportFromFolder(owner);
+        libraryPanelController.performImportFromFolder(owner);
     }
     
     @FXML

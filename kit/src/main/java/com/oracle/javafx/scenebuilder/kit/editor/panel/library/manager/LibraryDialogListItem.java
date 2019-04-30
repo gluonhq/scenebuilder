@@ -59,9 +59,9 @@ public class LibraryDialogListItem implements DialogListItem {
     
     @Override
     public String toString() {
-    	if (Files.isDirectory(filePath))
-    		return filePath.toAbsolutePath().toString();
-    	else
-    		return filePath.getFileName().toString();
+        if (Files.isDirectory(filePath))
+            return filePath.toAbsolutePath().toString();
+        else
+            return filePath.getFileName().toString();
     }
 }

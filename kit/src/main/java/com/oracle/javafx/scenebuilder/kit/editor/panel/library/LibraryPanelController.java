@@ -788,9 +788,9 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     }
     
     private void processImportFolder(File folder) {
-		if (folder != null && folder.exists() && folder.isDirectory()) {
-			Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
-			if (createUserLibraryDir(libPath)) {
+        if (folder != null && folder.exists() && folder.isDirectory()) {
+            Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
+            if (createUserLibraryDir(libPath)) {
                 // From here we know we will initiate the import dialog.
                 // This is why we put application window on the front.
                 // From there the import dialog window, which is application modal,
@@ -801,8 +801,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                     stage.toFront();
                 }
 
-                final ImportWindowController iwc
-                        = new ImportWindowController(this, Arrays.asList(folder), mavenPreferences, (Stage) window);
+                final ImportWindowController iwc = new ImportWindowController(this, Arrays.asList(folder), mavenPreferences, (Stage) window);
                 iwc.setToolStylesheet(getEditorController().getToolStylesheet());
                 // See comment in OnDragDropped handle set in method startListeningToDrop.
                 ButtonID userChoice = iwc.showAndWait();
@@ -810,9 +809,9 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
                     sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
     
     private List<File> getSubsetOfFiles(String pattern, List<File> files) {
         final List<File> res = new ArrayList<>();
@@ -940,17 +939,17 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
      * @return the selected folder or null
      */
     private File performSelectFolder(Window owner) {
-    	DirectoryChooser dirChooser = new DirectoryChooser();
-    	dirChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
-    	
-    	File folder = dirChooser.showDialog(owner);
-    	if (folder != null) {
-    		// Keep track of the user choice for next time
-    		EditorController.updateNextInitialDirectory(folder);
-    	}
-    	
-		return folder;
-	}
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        File folder = dirChooser.showDialog(owner);
+        if (folder != null) {
+            // Keep track of the user choice for next time
+            EditorController.updateNextInitialDirectory(folder);
+        }
+
+        return folder;
+    }
     
     private void userLibraryUpdateRejected() {
         final AlertDialog dialog = new AlertDialog(null);

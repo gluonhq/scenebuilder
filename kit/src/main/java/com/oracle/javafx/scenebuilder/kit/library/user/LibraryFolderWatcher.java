@@ -123,12 +123,12 @@ class LibraryFolderWatcher implements Runnable {
                         } else if (LibraryUtil.isFxmlPath(entry)) {
                             currentFxmls.add(entry);
                         } else if (LibraryUtil.isFolderMarkerPath(entry)) {
-                        	// open folders marker file: every line should be a single folder entry
-                        	// we scan the file and add the path to currentJarsOrFolders
-                        	List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
-                        	for (Path f : folderPaths) {
-                        		currentJarsOrFolders.add(f);
-							}
+                            // open folders marker file: every line should be a single folder entry
+                            // we scan the file and add the path to currentJarsOrFolders
+                            List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
+                            for (Path f : folderPaths) {
+                                currentJarsOrFolders.add(f);
+                            }
                         }
                     }
                     retry = false;
@@ -142,14 +142,14 @@ class LibraryFolderWatcher implements Runnable {
             while (retry && library.getExplorationCount() < 10);
         }
         try {
-        	library.setExploring(true);
-        	try {
-	            updateLibrary(currentFxmls);
-	            exploreAndUpdateLibrary(currentJarsOrFolders);
-        	}
-        	finally {
-        		library.setExploring(false);
-        	}
+            library.setExploring(true);
+            try {
+                updateLibrary(currentFxmls);
+                exploreAndUpdateLibrary(currentJarsOrFolders);
+            }
+            finally {
+                library.setExploring(false);
+            }
         } catch(IOException x) { }
     }
     
@@ -210,31 +210,31 @@ class LibraryFolderWatcher implements Runnable {
                             // First put the builtin items in the library
                         	library.setExploring(true);
                         	try {
-	                            library.setItems(BuiltinLibrary.getLibrary().getItems());
-	                            
-	                            // Now attempts to add the maven jars
-	                            List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
-	                            
-	                            final Set<Path> fxmls = new HashSet<>();
-	                            fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
-	                            updateLibrary(fxmls);
-	                            
-	                            final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
-	                            jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
-	                            
-	                            Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
-	                            for (Path path : foldersMarkers) {
-	                            	// open folders marker file: every line should be a single folder entry
-	                            	// we scan the file and add the path to currentJarsOrFolders
-	                            	List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
-	                            	for (Path f : folderPaths) {
-	                            		jarsAndFolders.add(f);
-									}
-								}
-	                            
-	                            exploreAndUpdateLibrary(jarsAndFolders);
-	                            
-	                            library.updateExplorationCount(library.getExplorationCount()+1);
+                        	    library.setItems(BuiltinLibrary.getLibrary().getItems());
+
+                        	    // Now attempts to add the maven jars
+                        	    List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
+
+                        	    final Set<Path> fxmls = new HashSet<>();
+                        	    fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
+                        	    updateLibrary(fxmls);
+
+                        	    final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
+                        	    jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
+
+                        	    Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
+                        	    for (Path path : foldersMarkers) {
+                        	        // open folders marker file: every line should be a single folder entry
+                        	        // we scan the file and add the path to currentJarsOrFolders
+                        	        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
+                        	        for (Path f : folderPaths) {
+                        	            jarsAndFolders.add(f);
+                        	        }
+                        	    }
+
+                        	    exploreAndUpdateLibrary(jarsAndFolders);
+
+                        	    library.updateExplorationCount(library.getExplorationCount()+1);
                         	}
                         	finally {
                         		library.setExploring(false);
@@ -267,10 +267,10 @@ class LibraryFolderWatcher implements Runnable {
                         }
                         break;
                     case FOLDER_MARKER:
-                    	if (LibraryUtil.isFolderMarkerPath(p)) {
-                    		res.add(p);
-                    	}
-                    	break;
+                        if (LibraryUtil.isFolderMarkerPath(p)) {
+                            res.add(p);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -348,20 +348,20 @@ class LibraryFolderWatcher implements Runnable {
 //        boolean shouldShowImportGluonJarAlert = false;
         for (Path currentJarOrFolder : jarsOrFolders) {
             if (LibraryUtil.isJarPath(currentJarOrFolder)) {
-            	Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.jar", currentJarOrFolder));
-	            final JarExplorer explorer = new JarExplorer(currentJarOrFolder);
-	            JarReport jarReport = explorer.explore(classLoader);
-	            jarOrFolderReports.add(jarReport);
+                Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.jar", currentJarOrFolder));
+                final JarExplorer explorer = new JarExplorer(currentJarOrFolder);
+                JarReport jarReport = explorer.explore(classLoader);
+                jarOrFolderReports.add(jarReport);
             }
             else if (Files.isDirectory(currentJarOrFolder)) {
-            	Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.folder", currentJarOrFolder));
-	            final FolderExplorer explorer = new FolderExplorer(currentJarOrFolder);
-	            JarReport jarReport = explorer.explore(classLoader);
-	            jarOrFolderReports.add(jarReport);
+                Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.folder", currentJarOrFolder));
+                final FolderExplorer explorer = new FolderExplorer(currentJarOrFolder);
+                JarReport jarReport = explorer.explore(classLoader);
+                jarOrFolderReports.add(jarReport);
             }
-            
-            Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.end", currentJarOrFolder));
 
+            Logger.getLogger(this.getClass().getSimpleName()).info(I18N.getString("log.info.explore.end", currentJarOrFolder));
+            
             //            if (jarReport.hasGluonControls()) {
 //                // We check if the jar has already been imported to avoid showing the import gluon jar
 //                // alert every time Scene Builder starts for jars that have already been imported
@@ -427,7 +427,7 @@ class LibraryFolderWatcher implements Runnable {
         int i = 0;
         for (Path p : paths) {
             try {
-            	URL url = p.toUri().toURL();
+                URL url = p.toUri().toURL();
                 if (url.toString().endsWith(".jar")) {
                     result[i++] = new URL("jar", "", url + "!/"); // <-- jar:file/path/to/jar!/
                 } else {

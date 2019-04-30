@@ -283,20 +283,20 @@ public class UserLibrary extends Library {
         return firstExplorationCompleted.get();
     }
 
-	public SimpleBooleanProperty exploringProperty() {
-		return exploring;
-	}
+    public SimpleBooleanProperty exploringProperty() {
+        return exploring;
+    }
 
-	public boolean isExploring() {
-		return exploringProperty().get();
-	}
+    public boolean isExploring() {
+        return exploringProperty().get();
+    }
 
-	public void setExploring(boolean value) {
-		if (Platform.isFxApplicationThread())
-			exploringProperty().set(value);
-		else
-			Platform.runLater(() -> setExploring(value));
-	}
+    public void setExploring(boolean value) {
+        if (Platform.isFxApplicationThread())
+            exploringProperty().set(value);
+        else
+            Platform.runLater(() -> setExploring(value));
+    }
 
 
     /*

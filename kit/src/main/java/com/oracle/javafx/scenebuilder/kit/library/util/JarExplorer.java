@@ -71,7 +71,7 @@ public class JarExplorer {
                 final JarEntry entry = e.nextElement();
                 JarReportEntry explored = exploreEntry(entry, classLoader);
                 if (explored.getStatus() != Status.IGNORED)
-                	result.getEntries().add(explored);
+                    result.getEntries().add(explored);
             }
         }
         

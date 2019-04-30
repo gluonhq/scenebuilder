@@ -112,9 +112,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @Override
     protected void controllerDidLoadFxml() {
-    	super.controllerDidLoadFxml();
-    	
-    	this.classesLink.setTooltip(new Tooltip(I18N.getString("library.dialog.hyperlink.tooltip")));
+        super.controllerDidLoadFxml();
+
+        this.classesLink.setTooltip(new Tooltip(I18N.getString("library.dialog.hyperlink.tooltip")));
     }
     
     @Override
@@ -157,12 +157,12 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                     if (LibraryUtil.isJarPath(entry) || LibraryUtil.isFxmlPath(entry)) {
                         listItems.add(new LibraryDialogListItem(this, entry));
                     } else if (LibraryUtil.isFolderMarkerPath(entry)) {
-                    	// open folders marker file: every line should be a single folder entry
-                    	// we scan the file and add the path to currentJarsOrFolders
-                    	List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
-                    	for (Path f : folderPaths) {
-                    		listItems.add(new LibraryDialogListItem(this, f));
-						}
+                        // open folders marker file: every line should be a single folder entry
+                        // we scan the file and add the path to currentJarsOrFolders
+                        List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
+                        for (Path f : folderPaths) {
+                            listItems.add(new LibraryDialogListItem(this, f));
+                        }
                     }
                 }
             } catch (IOException x) {
@@ -201,10 +201,10 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     @FXML
     private void addFolder() {
-    	if (onAddFolder != null) {
-    		onAddFolder.run();
-    	}
-    	loadLibraryList();
+        if (onAddFolder != null) {
+            onAddFolder.run();
+        }
+        loadLibraryList();
     }
 
     @FXML
@@ -267,30 +267,30 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             if (dialogListItem instanceof LibraryDialogListItem) {
                 LibraryDialogListItem item = (LibraryDialogListItem) dialogListItem;
                 Path path = item.getFilePath();
-                
-				if (Files.exists(path)) {
-                	if (Files.isDirectory(path)) {
-                		// we need to remove the entry from the folder list in the placeholder marker
-                		String libraryPath = ((UserLibrary) editorController.getLibrary()).getPath();
-                		
-                		Path foldersPath = Paths.get(libraryPath, LibraryUtil.FOLDERS_LIBRARY_FILENAME);
-                		if (Files.exists(foldersPath)) {
-                			
-                			List<String> lines = Files.readAllLines(foldersPath);
-                			
-                			for (Iterator<String> it = lines.iterator(); it.hasNext();) {
-								String line = (String) it.next();
-								if (line.equals(path.toString()))
-									it.remove();
-							}
-                			
-                			Files.write(foldersPath, lines);
-                		}
-                	}
-                	else {
-                		Files.delete(path);
-                		listItems.remove(item);
-                	}
+
+                if (Files.exists(path)) {
+                    if (Files.isDirectory(path)) {
+                        // we need to remove the entry from the folder list in the placeholder marker
+                        String libraryPath = ((UserLibrary) editorController.getLibrary()).getPath();
+
+                        Path foldersPath = Paths.get(libraryPath, LibraryUtil.FOLDERS_LIBRARY_FILENAME);
+                        if (Files.exists(foldersPath)) {
+
+                            List<String> lines = Files.readAllLines(foldersPath);
+
+                            for (Iterator<String> it = lines.iterator(); it.hasNext();) {
+                                String line = (String) it.next();
+                                if (line.equals(path.toString()))
+                                    it.remove();
+                            }
+
+                            Files.write(foldersPath, lines);
+                        }
+                    }
+                    else {
+                        Files.delete(path);
+                        listItems.remove(item);
+                    }
                 }
             } else if (dialogListItem instanceof ArtifactDialogListItem) {
                 preferencesControllerBase.removeArtifact(((ArtifactDialogListItem) dialogListItem).getCoordinates());
@@ -379,6 +379,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     }
     
     public void setOnAddFolder(Runnable onAddFolder) {
-    	this.onAddFolder = onAddFolder;
+        this.onAddFolder = onAddFolder;
     }
 }
