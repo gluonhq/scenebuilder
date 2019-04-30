@@ -181,9 +181,9 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
      * @treatAsPrivate Perform the import jar action.
      */
     public void performImportFromFolder(Window owner) {
-    	File folder = performSelectFolder(owner);
-    	processImportFolder(folder);
-	}
+        File folder = performSelectFolder(owner);
+        processImportFolder(folder);
+    }
     
 	/**
      * @treatAsPrivate Perform the import of the selection
