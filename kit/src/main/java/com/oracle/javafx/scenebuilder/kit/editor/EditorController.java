@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -120,7 +120,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.Clipboard;
@@ -347,8 +346,9 @@ public class EditorController {
      * Returns null or the fxml content being edited by this editor.
      * 
      * @return null or the fxml content being edited by this editor.
+     * @param wildcardImports If the FXML should have wildcards in its imports.
      */
-    public String getFxmlText() {
+    public String getFxmlText(boolean wildcardImports) {
         final String result;
         
         final FXOMDocument fxomDocument = getFxomDocument();
@@ -359,7 +359,7 @@ public class EditorController {
             if (sampleDataEnabled) {
                 fxomDocument.setSampleDataEnabled(false);
             }
-            result = fxomDocument.getFxmlText();
+            result = fxomDocument.getFxmlText(wildcardImports);
             if (sampleDataEnabled) {
                 fxomDocument.setSampleDataEnabled(true);
             }
@@ -543,7 +543,7 @@ public class EditorController {
 
     // -- Theme property
     private final ObjectProperty<Theme> themeProperty
-            = new SimpleObjectProperty<Theme>(EditorPlatform.DEFAULT_THEME) {
+            = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_THEME) {
         @Override
         protected void invalidated() {
             FXOMDocument fxomDocument = getFxomDocument();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -70,7 +70,6 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -212,7 +211,7 @@ public final class PreviewWindowController extends AbstractWindowController {
         // We clone the FXOMDocument
         FXOMDocument clone;
         try {
-            clone = new FXOMDocument(fxomDocument.getFxmlText(),
+            clone = new FXOMDocument(fxomDocument.getFxmlText(false),
                     fxomDocument.getLocation(),
                     fxomDocument.getClassLoader(),
                     fxomDocument.getResources());
@@ -278,7 +277,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     FXOMDocument clone;
 
                     try {
-                        clone = new FXOMDocument(fxomDocument.getFxmlText(),
+                        clone = new FXOMDocument(fxomDocument.getFxmlText(false),
                                 fxomDocument.getLocation(),
                                 fxomDocument.getClassLoader(),
                                 fxomDocument.getResources());
