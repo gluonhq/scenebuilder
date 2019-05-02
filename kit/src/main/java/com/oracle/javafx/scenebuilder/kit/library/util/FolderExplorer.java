@@ -33,13 +33,13 @@
 package com.oracle.javafx.scenebuilder.kit.library.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
@@ -47,40 +47,34 @@ import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
-/**
- *
- * 
- */
-public class JarExplorer {
-    
-    private final Path jar;
-    
-    public JarExplorer(Path jar) {
-        assert jar != null;
-        assert jar.isAbsolute();
-        
-        this.jar = jar;
+public class FolderExplorer {
+
+    private final Path rootFolderPath;
+
+    public FolderExplorer(Path folderPath) {
+        assert folderPath != null;
+        assert folderPath.isAbsolute();
+
+        this.rootFolderPath = folderPath;
     }
-    
+
     public JarReport explore(ClassLoader classLoader) throws IOException {
-        final JarReport result = new JarReport(jar);
-        
-        try (JarFile jarFile = new JarFile(jar.toFile())) {
-            final Enumeration<JarEntry> e = jarFile.entries();
-            while (e.hasMoreElements()) {
-                final JarEntry entry = e.nextElement();
-                JarReportEntry explored = exploreEntry(entry, classLoader);
+        final JarReport result = new JarReport(rootFolderPath);
+
+        try (Stream<Path> stream = Files.walk(rootFolderPath).filter(p -> !p.toFile().isDirectory())) {
+            stream.forEach(p -> {
+                JarReportEntry explored = exploreEntry(rootFolderPath, p, classLoader);
                 if (explored.getStatus() != Status.IGNORED)
                     result.getEntries().add(explored);
-            }
-        }
-        
+            });
+        };
+
         return result;
     }
-    
+
     public static String makeFxmlText(Class<?> klass) {
         final StringBuilder result = new StringBuilder();
-        
+
         /*
          * <?xml version="1.0" encoding="UTF-8"?> //NOI18N
          * 
@@ -88,23 +82,23 @@ public class JarExplorer {
          * 
          * <C/>
          */
-        
+
         result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //NOI18N
-        
+
         result.append("<?import "); //NOI18N
         result.append(klass.getCanonicalName());
         result.append("?>"); //NOI18N
         result.append("<"); //NOI18N
         result.append(klass.getSimpleName());
         result.append("/>\n"); //NOI18N
-        
+
         return result.toString();
     }
-    
-    
+
+
     public static Object instantiateWithFXMLLoader(Class<?> klass, ClassLoader classLoader) throws IOException {
         Object result;
-        
+
         final String fxmlText = makeFxmlText(klass);
         final byte[] fxmlBytes = fxmlText.getBytes(Charset.forName("UTF-8")); //NOI18N
 
@@ -117,27 +111,31 @@ public class JarExplorer {
         } catch(RuntimeException|Error x) {
             throw new IOException(x);
         }
-        
+
         return result;
     }
-    
+
     /*
      * Private
      */
-    
-    private JarReportEntry exploreEntry(JarEntry entry, ClassLoader classLoader) {
+
+    private JarReportEntry exploreEntry(Path rootpath, Path path, ClassLoader classLoader) {
         JarReportEntry.Status status;
         Throwable entryException;
         Class<?> entryClass = null;
         String className;
-        
-        if (entry.isDirectory()) {
+
+        File file = path.toFile();
+
+        if (file.isDirectory()) {
             status = JarReportEntry.Status.IGNORED;
             entryClass = null;
             entryException = null;
             className = null;
         } else {
-            className = makeClassName(entry.getName());
+            Path relativepath = rootpath.relativize(path);
+
+            className = makeClassName(relativepath.toString());
             // Filtering out what starts with com.javafx. is bound to DTL-6378.
             if (className == null || className.startsWith("java.") //NOI18N
                     || className.startsWith("javax.") || className.startsWith("javafx.") //NOI18N
@@ -175,24 +173,24 @@ public class JarExplorer {
                 }
             }
         }
-        
-        return new JarReportEntry(entry.getName(), status, entryException, entryClass, className);
+
+        return new JarReportEntry(file.getName(), status, entryException, entryClass, className);
     }
-    
-    
-    private String makeClassName(String entryName) {
+
+
+    private String makeClassName(String filename) {
         final String result;
-        
-        if (entryName.endsWith(".class") == false) { //NOI18N
+
+        if (filename.endsWith(".class") == false) { //NOI18N
             result = null;
-        } else if (entryName.contains("$")) { //NOI18N
+        } else if (filename.contains("$")) { //NOI18N
             // We skip inner classes for now
             result = null;
         } else {
-            final int endIndex = entryName.length()-6; // ".class" -> 6 //NOI18N
-            result = entryName.substring(0, endIndex).replace("/", "."); //NOI18N
+            final int endIndex = filename.length()-6; // ".class" -> 6 //NOI18N
+            result = filename.substring(0, endIndex).replace(File.separator, "."); //NOI18N
         }
-        
+
         return result;
     }
 }

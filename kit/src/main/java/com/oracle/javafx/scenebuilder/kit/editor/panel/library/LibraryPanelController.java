@@ -32,28 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.source.DocumentDragSource;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMArchive;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMProperty;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.Library;
-import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
-import com.oracle.javafx.scenebuilder.kit.library.LibraryItemNameComparator;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,6 +45,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -75,7 +54,29 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
+import com.oracle.javafx.scenebuilder.kit.editor.drag.source.DocumentDragSource;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMArchive;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMProperty;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.Library;
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItemNameComparator;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -91,6 +92,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -175,6 +177,15 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     }
     
     /**
+     * @param owner
+     * @treatAsPrivate Perform the import jar action.
+     */
+    public void performImportFromFolder(Window owner) {
+        File folder = performSelectFolder(owner);
+        processImportFolder(folder);
+    }
+    
+	/**
      * @treatAsPrivate Perform the import of the selection
      * @param objects the FXOM objects to import to customize the Library content.
      */
@@ -776,6 +787,32 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         }
     }
     
+    private void processImportFolder(File folder) {
+        if (folder != null && folder.exists() && folder.isDirectory()) {
+            Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
+            if (createUserLibraryDir(libPath)) {
+                // From here we know we will initiate the import dialog.
+                // This is why we put application window on the front.
+                // From there the import dialog window, which is application modal,
+                // should come on top of it.
+                final Window window = getPanelRoot().getScene().getWindow();
+                if (window instanceof Stage) {
+                    final Stage stage = (Stage) window;
+                    stage.toFront();
+                }
+
+                final ImportWindowController iwc = new ImportWindowController(this, Arrays.asList(folder), mavenPreferences, (Stage) window);
+                iwc.setToolStylesheet(getEditorController().getToolStylesheet());
+                // See comment in OnDragDropped handle set in method startListeningToDrop.
+                ButtonID userChoice = iwc.showAndWait();
+
+                if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
+                    sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
+                }
+            }
+        }
+    }
+    
     private List<File> getSubsetOfFiles(String pattern, List<File> files) {
         final List<File> res = new ArrayList<>();
         
@@ -897,6 +934,23 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         return selectedFiles;
     }
 
+    /**
+     * Open a file chooser that allows to select one folder
+     * @return the selected folder or null
+     */
+    private File performSelectFolder(Window owner) {
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        File folder = dirChooser.showDialog(owner);
+        if (folder != null) {
+            // Keep track of the user choice for next time
+            EditorController.updateNextInitialDirectory(folder);
+        }
+
+        return folder;
+    }
+    
     private void userLibraryUpdateRejected() {
         final AlertDialog dialog = new AlertDialog(null);
         dialog.setTitle(I18N.getString("alert.import.reject.dependencies.title"));

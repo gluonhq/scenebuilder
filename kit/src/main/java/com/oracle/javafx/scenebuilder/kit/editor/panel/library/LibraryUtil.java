@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +14,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation and Gluon nor the names of its
+ *  - Neither the name of Oracle Corporation nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,39 +30,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
-package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-/**
- * List cell item in the JAR/FXML Library dialog.
- */
-public class LibraryDialogListItem implements DialogListItem {
+public class LibraryUtil {
 
-    private final LibraryDialogController libraryDialogController;
-    private final Path filePath;
+    public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
 
-    public LibraryDialogListItem(LibraryDialogController libraryDialogController, Path filePath) {
-        this.libraryDialogController = libraryDialogController;
-        this.filePath = filePath;
+    public static boolean isJarPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".jar"); //NOI18N
     }
 
-    @Override
-    public LibraryDialogController getLibraryDialogController() {
-        return libraryDialogController;
+    public static boolean isFxmlPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".fxml"); //NOI18N
     }
 
-    public Path getFilePath() {
-        return filePath;
+    public static boolean isFolderMarkerPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".folders"); //NOI18N
     }
-    
-    @Override
-    public String toString() {
-        if (Files.isDirectory(filePath))
-            return filePath.toAbsolutePath().toString();
-        else
-            return filePath.getFileName().toString();
+
+    public static List<Path> getFolderPaths(Path libraryFile) throws FileNotFoundException, IOException {
+        return Files.readAllLines(libraryFile).stream()
+                .map(line -> {
+                    File f = new File(line);
+                    if (f.exists() && f.isDirectory())
+                        return f.toPath();
+                    else
+                        return null;
+                })
+                .filter(p -> p != null)
+                .collect(Collectors.toList());
     }
 }

@@ -32,10 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
-import com.oracle.javafx.scenebuilder.kit.library.Library;
-import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,11 +53,17 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
+import com.oracle.javafx.scenebuilder.kit.library.Library;
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -88,7 +90,8 @@ public class UserLibrary extends Library {
     private final SimpleIntegerProperty explorationCountProperty = new SimpleIntegerProperty();
     private final SimpleObjectProperty<Date> explorationDateProperty = new SimpleObjectProperty<>();
     private final ReadOnlyBooleanWrapper firstExplorationCompleted = new ReadOnlyBooleanWrapper(false);
-    
+    private SimpleBooleanProperty exploring = new SimpleBooleanProperty();
+
     private State state = State.READY;
     private Exception exception;
     private LibraryFolderWatcher watcher;
@@ -209,7 +212,7 @@ public class UserLibrary extends Library {
     }
     
     public void setFilter(List<String> classnames) throws FileNotFoundException, IOException {
-        if (classnames != null && classnames.size() > 0) {
+//        if (classnames != null && classnames.size() > 0) { // empty classnames means "no filter", so we need to clear filters.txt file
             File filterFile = new File(getFilterFileName());
             // TreeSet to get natural order sorting and no duplicates
             TreeSet<String> allClassnames = new TreeSet<>();
@@ -249,7 +252,7 @@ public class UserLibrary extends Library {
                 }
                 throw (ioe);
             }
-        }
+//        }
     }
     
     public List<String> getFilter() throws FileNotFoundException, IOException {
@@ -279,6 +282,22 @@ public class UserLibrary extends Library {
     public final boolean isFirstExplorationCompleted() {
         return firstExplorationCompleted.get();
     }
+
+    public SimpleBooleanProperty exploringProperty() {
+        return exploring;
+    }
+
+    public boolean isExploring() {
+        return exploringProperty().get();
+    }
+
+    public void setExploring(boolean value) {
+        if (Platform.isFxApplicationThread())
+            exploringProperty().set(value);
+        else
+            Platform.runLater(() -> setExploring(value));
+    }
+
 
     /*
      * Package

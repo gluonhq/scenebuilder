@@ -62,7 +62,7 @@
                   <children>
                     <HBox id="HBox" alignment="CENTER" spacing="0.0" styleClass="panel-header">
                       <children>
-                        <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="%library" HBox.hgrow="NEVER" />
+                        <Label fx:id="libraryLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="%library" HBox.hgrow="NEVER" />
                         <StackPane fx:id="librarySearchPanelHost" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="" HBox.hgrow="ALWAYS" />
                         <MenuButton fx:id="libraryMenuButton" mnemonicParsing="false" text="" HBox.hgrow="NEVER">
                           <items>

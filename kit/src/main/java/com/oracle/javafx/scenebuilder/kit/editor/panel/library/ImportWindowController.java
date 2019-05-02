@@ -32,16 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
-import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,10 +44,23 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -228,10 +231,36 @@ public class ImportWindowController extends AbstractModalDialog {
         
         try {
             closeClassLoader();
-            if (copyFilesToUserLibraryDir) {
-                libPanelController.copyFilesToUserLibraryDir(importFiles);
-            }
+            
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
+
+            if (copyFilesToUserLibraryDir) {
+                // collect directories from importFiles and add to library.folders file
+                // for other filex (jar, fxml) copy them directly
+                List<File> folders = new ArrayList<>(importFiles.size());
+                List<File> files = new ArrayList<>(importFiles.size());
+
+                for (File file : importFiles) {
+                    if (file.isDirectory())
+                        folders.add(file);
+                    else
+                        files.add(file);
+                }
+
+                if (!files.isEmpty())
+                    libPanelController.copyFilesToUserLibraryDir(files);
+
+                Path foldersMarkerPath = Paths.get(userLib.getPath().toString(), LibraryUtil.FOLDERS_LIBRARY_FILENAME);
+
+                if (!Files.exists(foldersMarkerPath))
+                    Files.createFile(foldersMarkerPath);
+
+                Set<String> lines = new TreeSet<>(Files.readAllLines(foldersMarkerPath));
+                lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
+
+                Files.write(foldersMarkerPath, lines);
+            }
+
             if (copyFilesToUserLibraryDir) {
                 userLib.setFilter(getExcludedItems());
             }
@@ -373,9 +402,16 @@ public class ImportWindowController extends AbstractModalDialog {
                     }
                     updateMessage(I18N.getString("import.work.exploring", file.getName()));
 //                    System.out.println("[" + index + "/" + max + "] Exploring file " + file.getName()); //NOI18N
-                    final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
-                    final JarReport jarReport = explorer.explore(classLoader);
-                    res.add(jarReport);
+                    if (file.isDirectory()) {
+                        final FolderExplorer explorer = new FolderExplorer(file.toPath());
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
+                    }
+                    else {
+                        final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
+                    }
                     updateProgress(index, numOfImportedJar);
                     index++;
                 }
@@ -530,9 +566,11 @@ public class ImportWindowController extends AbstractModalDialog {
             }
             
             if (builtinPrefWidth == 0 || builtinPrefHeight == 0) {
-                ((Region) zeNode).setPrefSize(200, 200);
-                setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
-                defSizeChoice.getSelectionModel().select(2);
+                if (zeNode instanceof Region) { // must check instanceof: custom components are not necessarily regions..
+                    ((Region) zeNode).setPrefSize(200, 200);
+                    setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
+                    defSizeChoice.getSelectionModel().select(2);
+                }
             } else {
                 setSizeLabel(PrefSize.DEFAULT);
                 defSizeChoice.getSelectionModel().selectFirst();
@@ -557,7 +595,13 @@ public class ImportWindowController extends AbstractModalDialog {
         try {
             int index = 0;
             for (File file : files) {
-                result[index] = new URL("jar","",file.toURI().toURL()+"!/");
+                URL url = file.toURI().toURL();
+                if (url.toString().endsWith(".jar")) {
+                    result[index] = new URL("jar", "", url + "!/"); // <-- jar:file/path/to/jar!/
+                } else {
+                    result[index] = url; // <-- file:/path/to/folder/
+                }
+
                 index++;
             }
         } catch (MalformedURLException x) {
