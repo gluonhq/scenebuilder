@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -382,7 +382,7 @@ public class BuiltinLibrary extends Library {
     }
     
     
-    private static String makeFxmlText(Class<?> componentClass) {
+    public static String makeFxmlText(Class<?> componentClass) {
         final StringBuilder sb = new StringBuilder();
         
         /*
