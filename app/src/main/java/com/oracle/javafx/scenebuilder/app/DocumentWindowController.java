@@ -1356,6 +1356,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                             fxmlPath.toFile());
             });
             libraryDialogController.setOnAddFolder(() -> onImportFromFolder(libraryDialogController.getStage()));
+            libraryDialogController.setOnLinkFolder(() -> onLinkFolderToWorkspace(libraryDialogController.getStage()));
+            libraryDialogController.setOnLinkJar(() -> onLinkJarToWorkspace(libraryDialogController.getStage()));
         }
 
         libraryDialogController.openWindow();
@@ -1367,6 +1369,14 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     public void onImportFromFolder(Window owner) {
         libraryPanelController.performImportFromFolder(owner);
+    }
+    
+    public void onLinkJarToWorkspace(Window owner) {
+        libraryPanelController.performLinkJarToWorkspace(owner);
+    }
+    
+    public void onLinkFolderToWorkspace(Window owner) {
+        libraryPanelController.performLinkFolderToWorkspace(owner);
     }
     
     @FXML
@@ -1409,6 +1419,15 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             List<FXOMObject> selection = new ArrayList<>(osg.getItems());
             libraryPanelController.performImportSelection(selection);
         }
+    }
+    
+    @FXML
+    void onLibraryRefresh(ActionEvent event) {
+        
+        UserLibrary userLibrary = SceneBuilderApp.getSingleton().getUserLibrary();
+        
+        userLibrary.stopWatching();
+        userLibrary.startWatching();
     }
     
     @FXML
@@ -2110,9 +2129,24 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             closeConfirmed = true;
         }
         
+        SceneBuilderApp app = SceneBuilderApp.getSingleton();
+        
+        if (closeConfirmed) {
+            // check if this is the last window with a non empty document: in that case, we reopen a new empty window after closing this
+            if (app.isLastWindowOpened()) {
+                
+                if (getEditorController().getFxomDocument().getSceneGraphRoot() != null) {
+                    
+                    DocumentWindowController newWindow = app.makeNewWindow();
+                    newWindow.updateWithDefaultContent();
+                    newWindow.openWindow();
+                }
+            }
+        }
+        
         // Closes if confirmed
         if (closeConfirmed) {
-            SceneBuilderApp.getSingleton().documentWindowRequestClose(this);
+            app.documentWindowRequestClose(this);
             
             // Write java preferences at close time
             updatePreferences();

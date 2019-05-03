@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -61,10 +62,13 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryWorkspace;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserWorkspaceLibraryItem;
 import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
+import com.thoughtworks.xstream.XStreamException;
 
 /**
  *
@@ -129,6 +133,21 @@ class LibraryFolderWatcher implements Runnable {
                             for (Path f : folderPaths) {
                                 currentJarsOrFolders.add(f);
                             }
+                        } else if (LibraryUtil.isWorkspacePath(entry)) {
+
+                            UserLibraryWorkspace workspace = library.getUserWorkspace();
+
+                            for (UserWorkspaceLibraryItem item : workspace.getItems()) {
+
+                                String path = item.getPath();
+                                Path p = Paths.get(path);
+
+                                if (LibraryUtil.isJarPath(p) || Files.isDirectory(p)) {
+                                    currentJarsOrFolders.add(p);
+                                } else if (LibraryUtil.isFxmlPath(p)) {
+                                    currentFxmls.add(p);
+                                }
+                            }
                         }
                     }
                     retry = false;
@@ -154,98 +173,136 @@ class LibraryFolderWatcher implements Runnable {
     }
     
     private void runWatching() throws InterruptedException {
-        while (true) {
-            final Path folder = Paths.get(library.getPath());
+        WatchService watchService = null;
+        try {
+            while (true) {
+                final Path folder = Paths.get(library.getPath());
 
-            WatchService watchService = null;
-            while (watchService == null) {
-                try {
-                    watchService = folder.getFileSystem().newWatchService();
-                } catch(IOException x) {
-                    System.out.println("FileSystem.newWatchService() failed"); //NOI18N
-                    System.out.println("Sleeping..."); //NOI18N
-                    Thread.sleep(1000 /* ms */);
+                while (watchService == null) {
+                    try {
+                        watchService = folder.getFileSystem().newWatchService();
+                    } catch(IOException x) {
+                        System.out.println("FileSystem.newWatchService() failed"); //NOI18N
+                        System.out.println("Sleeping..."); //NOI18N
+                        Thread.sleep(1000 /* ms */);
+                    }
                 }
-            }
 
-            WatchKey watchKey = null;
-            while ((watchKey == null) || (watchKey.isValid() == false)) {
-                try {
-                    watchKey = folder.register(watchService, 
-                    StandardWatchEventKinds.ENTRY_CREATE, 
-                    StandardWatchEventKinds.ENTRY_DELETE, 
-                    StandardWatchEventKinds.ENTRY_MODIFY);
+                WatchKey watchKey = null;
+                while ((watchKey == null) || (watchKey.isValid() == false)) {
+                    try {
+                        watchKey = folder.register(watchService, 
+                                StandardWatchEventKinds.ENTRY_CREATE, 
+                                StandardWatchEventKinds.ENTRY_DELETE, 
+                                StandardWatchEventKinds.ENTRY_MODIFY);
 
-                    WatchKey wk;
-                    do {
-                        wk = watchService.take();
-                        assert wk == watchKey;
-                        
-                        boolean isDirty = false;
-                        for (WatchEvent<?> e: wk.pollEvents()) {
-                            final WatchEvent.Kind<?> kind = e.kind();
-                            final Object context = e.context();
+                        WatchKey wk;
+                        do {
+                            wk = watchService.take();
+                            assert wk == watchKey;
 
-                            if (kind == StandardWatchEventKinds.ENTRY_CREATE
-                                    || kind == StandardWatchEventKinds.ENTRY_DELETE
-                                    || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                                assert context instanceof Path;
-                                if (LibraryUtil.isJarPath((Path) context)) {
-                                    if (!hasJarBeenAdded((Path) context)) {
+                            boolean isDirty = false;
+                            for (WatchEvent<?> e: wk.pollEvents()) {
+                                final WatchEvent.Kind<?> kind = e.kind();
+                                final Object context = e.context();
+
+                                if (kind == StandardWatchEventKinds.ENTRY_CREATE
+                                        || kind == StandardWatchEventKinds.ENTRY_DELETE
+                                        || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                                    assert context instanceof Path;
+                                    if (LibraryUtil.isJarPath((Path) context)) {
+                                        if (!hasJarBeenAdded((Path) context)) {
+                                            isDirty = true;
+                                        }
+                                    } else if (LibraryUtil.isFxmlPath((Path)context)){
+                                        isDirty = true;
+                                    } else if (LibraryUtil.isFolderMarkerPath((Path)context)) {
+                                        isDirty = true;
+                                    } else if (LibraryUtil.isWorkspacePath((Path)context)) {
                                         isDirty = true;
                                     }
-                                } else if (LibraryUtil.isFxmlPath((Path)context)){
-                                    isDirty = true;
-                                } else if (LibraryUtil.isFolderMarkerPath((Path)context)) {
-                               		isDirty = true;
+                                } else {
+                                    assert kind == StandardWatchEventKinds.OVERFLOW;
                                 }
-                            } else {
-                                assert kind == StandardWatchEventKinds.OVERFLOW;
                             }
-                        }
-                                                
-                        // We reconstruct a full set from scratch as soon as the
-                        // dirty flag is set.
-                        if (isDirty) {
-                            // First put the builtin items in the library
-                        	library.setExploring(true);
-                        	try {
-                        	    library.setItems(BuiltinLibrary.getLibrary().getItems());
 
-                        	    // Now attempts to add the maven jars
-                        	    List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
+                            // We reconstruct a full set from scratch as soon as the
+                            // dirty flag is set.
+                            if (isDirty) {
+                                // First put the builtin items in the library
+                                library.setExploring(true);
+                                try {
+                                    library.setItems(BuiltinLibrary.getLibrary().getItems());
 
-                        	    final Set<Path> fxmls = new HashSet<>();
-                        	    fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
-                        	    updateLibrary(fxmls);
+                                    // Now attempts to add the maven jars
+                                    List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
 
-                        	    final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
-                        	    jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
+                                    final Set<Path> fxmls = new HashSet<>();
+                                    fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
 
-                        	    Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
-                        	    for (Path path : foldersMarkers) {
-                        	        // open folders marker file: every line should be a single folder entry
-                        	        // we scan the file and add the path to currentJarsOrFolders
-                        	        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
-                        	        for (Path f : folderPaths) {
-                        	            jarsAndFolders.add(f);
-                        	        }
-                        	    }
+                                    final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
+                                    jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
 
-                        	    exploreAndUpdateLibrary(jarsAndFolders);
+                                    Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
+                                    for (Path path : foldersMarkers) {
+                                        // open folders marker file: every line should be a single folder entry
+                                        // we scan the file and add the path to currentJarsOrFolders
+                                        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
+                                        for (Path f : folderPaths) {
+                                            jarsAndFolders.add(f);
+                                        }
+                                    }
 
-                        	    library.updateExplorationCount(library.getExplorationCount()+1);
-                        	}
-                        	finally {
-                        		library.setExploring(false);
-                        	}
-                        }
-                    } while (wk.reset());
-                } catch(IOException x) {
-                    Thread.sleep(1000 /* ms */);
+                                    try {
+                                        Path workspacePath = Paths.get(library.getPath(), LibraryUtil.WORKSPACE_LIBRARY_FILENAME);
+                                        UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(workspacePath.toUri().toURL());
+                                        library.setUserWorkspace(workspace);
+
+                                        for (UserWorkspaceLibraryItem item : workspace.getItems()) {
+
+                                            String path = item.getPath();
+                                            Path p = Paths.get(path);
+
+                                            if (LibraryUtil.isJarPath(p) || Files.isDirectory(p)) {
+                                                jarsAndFolders.add(p);
+                                            } else if (LibraryUtil.isFxmlPath(p)) {
+                                                fxmls.add(p);
+                                            }
+                                        }
+
+                                    } catch (XStreamException ex) {
+                                        // not a valid xml file, nor a valid workspace file
+                                        Logger.getLogger(LibraryFolderWatcher.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+
+                                        library.setUserWorkspace(new UserLibraryWorkspace());
+                                    }
+
+                                    updateLibrary(fxmls);
+                                    exploreAndUpdateLibrary(jarsAndFolders);
+
+                                    library.updateExplorationCount(library.getExplorationCount()+1);
+                                }
+                                finally {
+                                    library.setExploring(false);
+                                }
+                            }
+                        } while (wk.reset());
+                    } catch(IOException x) {
+                        Thread.sleep(1000 /* ms */);
+                    }
+                }
+
+            }
+        }
+        finally {
+            if (watchService != null) {
+                // we need to close the filesystem watcher here, otherwise it remains active and locking jars on library folder
+                try {
+                    watchService.close();
+                } catch (IOException e) {
+                    Logger.getLogger(LibraryFolderWatcher.class.getName()).log(Level.SEVERE, e.getMessage(), e);
                 }
             }
-
         }
     }
 
@@ -403,6 +460,7 @@ class LibraryFolderWatcher implements Runnable {
         final List<LibraryItem> result = new ArrayList<>();
         final URL iconURL = ImageUtils.getNodeIconURL(null);
         final List<String> excludedItems = library.getFilter();
+        final List<String> excludedWorkspaceItems = library.getWorkspaceFilter();
         final List<String> artifactsFilter = library.getAdditionalFilter().get();
                 
         for (JarReportEntry e : jarOrFolderReport.getEntries()) {
@@ -410,7 +468,8 @@ class LibraryFolderWatcher implements Runnable {
                 // We filter out items listed in the excluded list, based on canonical name of the class.
                 final String canonicalName = e.getKlass().getCanonicalName();
                 if (!excludedItems.contains(canonicalName) && 
-                    !artifactsFilter.contains(canonicalName)) {
+                    !artifactsFilter.contains(canonicalName) &&
+                    !excludedWorkspaceItems.contains(canonicalName)) {
                     final String name = e.getKlass().getSimpleName();
                     final String fxmlText = JarExplorer.makeFxmlText(e.getKlass());
                     result.add(new LibraryItem(name, UserLibrary.TAG_USER_DEFINED, fxmlText, iconURL, library));

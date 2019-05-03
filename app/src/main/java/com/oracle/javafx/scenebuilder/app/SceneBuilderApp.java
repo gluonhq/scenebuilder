@@ -58,11 +58,14 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryWorkspace;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker;
+import com.thoughtworks.xstream.XStreamException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -380,7 +383,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * AppPlatform.AppNotificationHandler
      */
     @Override
-    public void handleLaunch(List<String> files) {
+    public void handleLaunch(List<String> files, Map<String, String> namedParameters) {
         boolean showWelcomeDialog = files.isEmpty();
 
         setApplicationUncaughtExceptionHandler();
@@ -423,6 +426,18 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
 
+        String workspaceXmlPath = namedParameters.get("ws");
+        if (workspaceXmlPath != null && !workspaceXmlPath.isEmpty()) {
+            
+            try {
+                UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(Paths.get(workspaceXmlPath).toUri().toURL());
+                userLibrary.setUserWorkspace(workspace);
+            }
+            catch (MalformedURLException | XStreamException e) {
+                Logger.getLogger(SceneBuilderApp.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
+        
         userLibrary.startWatching();
 
         sendTrackingStartupInfo();
@@ -553,6 +568,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             logTimestamp(ACTION.STOP);
             Platform.exit();
         }
+    }
+    
+    public boolean isLastWindowOpened() {
+        return windowList.size() == 1;
     }
 
     /**

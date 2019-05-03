@@ -44,20 +44,34 @@ import java.util.stream.Collectors;
 public class LibraryUtil {
 
     public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
+    public static final String WORKSPACE_LIBRARY_FILENAME = "library-workspace.xml"; //NOI18N
 
     public static boolean isJarPath(Path path) {
+        if (!Files.isRegularFile(path))
+            return false;
+        
         final String pathString = path.toString().toLowerCase(Locale.ROOT);
         return pathString.endsWith(".jar"); //NOI18N
     }
 
     public static boolean isFxmlPath(Path path) {
+        if (!Files.isRegularFile(path))
+            return false;
+        
         final String pathString = path.toString().toLowerCase(Locale.ROOT);
         return pathString.endsWith(".fxml"); //NOI18N
     }
 
     public static boolean isFolderMarkerPath(Path path) {
+        if (!Files.isRegularFile(path))
+            return false;
+        
         final String pathString = path.toString().toLowerCase(Locale.ROOT);
         return pathString.endsWith(".folders"); //NOI18N
+    }
+    
+    public static boolean isWorkspacePath(Path path) {
+        return path.toFile().getName().equals(WORKSPACE_LIBRARY_FILENAME);
     }
 
     public static List<Path> getFolderPaths(Path libraryFile) throws FileNotFoundException, IOException {

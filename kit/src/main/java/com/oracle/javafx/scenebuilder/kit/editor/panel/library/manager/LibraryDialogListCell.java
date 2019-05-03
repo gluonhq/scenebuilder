@@ -32,12 +32,13 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -53,9 +54,12 @@ import javafx.scene.layout.Priority;
 public class LibraryDialogListCell extends ListCell<DialogListItem> {
 
     private DialogListItem dialogListItem;
+    private boolean itemOnWorkspace;
 
-    public LibraryDialogListCell() {
+    public LibraryDialogListCell(boolean itemOnWorkspace) {
         super();
+        
+        this.itemOnWorkspace = itemOnWorkspace;
     }
 
     @Override
@@ -94,10 +98,29 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         buttonContent.setSpacing(5);
         Button editButton = new Button("", new ImageView(ImageUtils.getEditIconImage()));
         editButton.getStyleClass().add("image-view-button");
-        editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderEdit(dialogListItem));
+        if (itemOnWorkspace)
+            editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processWorkspaceJarFXMLFolderEdit(dialogListItem));
+        else
+            editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderEdit(dialogListItem));
         editButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.edit.tooltip")));
         Button deleteButton = new Button("", new ImageView(ImageUtils.getDeleteIconImage()));
-        deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderDelete(dialogListItem));
+        if (itemOnWorkspace)
+            deleteButton.setOnMouseClicked(event -> {
+                try {
+                    dialogListItem.getLibraryDialogController().processWorkspaceJarFXMLFolderDelete(dialogListItem);
+                } catch (Exception ex) {
+                    Logger.getLogger(LibraryDialogListCell.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                    
+                    ErrorDialog errorDialog = new ErrorDialog(null);
+                    errorDialog.setTitle(I18N.getString("library.dialog.button.deletefail.title"));
+                    errorDialog.setMessage(ex.getLocalizedMessage());
+                    errorDialog.setDetails(ex.getLocalizedMessage());
+                    errorDialog.setDebugInfoWithThrowable(ex);
+                    errorDialog.showAndWait();
+                }
+            });
+        else
+            deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderDelete(dialogListItem));
         deleteButton.getStyleClass().add("image-view-button");
         deleteButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.delete.tooltip")));
         buttonContent.getChildren().addAll(editButton, deleteButton);

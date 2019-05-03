@@ -53,6 +53,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
@@ -73,6 +74,8 @@ import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
 import com.oracle.javafx.scenebuilder.kit.library.LibraryItemNameComparator;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryWorkspace;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserWorkspaceLibraryItem;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
@@ -183,6 +186,25 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
     public void performImportFromFolder(Window owner) {
         File folder = performSelectFolder(owner);
         processImportFolder(folder);
+    }
+    
+    /**
+     * @param owner
+     * @treatAsPrivate Perform the link of a folder to the workspace.
+     */
+    public void performLinkJarToWorkspace(Window owner) {
+        // Open file chooser and get user selection
+        final List<File> importedFiles = performSelectJarOrFxmlFile(owner);
+        processLinkJarToWorkspace(importedFiles);
+    }
+    
+    /**
+     * @param owner
+     * @treatAsPrivate Perform the link of a folder to the workspace.
+     */
+    public void performLinkFolderToWorkspace(Window owner) {
+        File folder = performSelectFolder(owner);
+        processLinkFolderToWorkspace(folder);
     }
     
 	/**
@@ -787,6 +809,73 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         }
     }
     
+    private void processLinkJarToWorkspace(List<File> importedFiles) {
+        if (importedFiles != null && !importedFiles.isEmpty()) {
+            sectionNameToKeepOpened = getExpandedSectionName();
+            Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
+            // Create UserLibrary dir if missing
+            if (createUserLibraryDir(libPath)) {
+                
+                boolean importConfirmed = true;
+                
+                final List<File> jarFiles = getSubsetOfFiles(".jar", importedFiles); //NOI18N
+                // For jar files we delegate to the import dialog.
+                if (!jarFiles.isEmpty()) {
+                    // From here we know we will initiate the import dialog.
+                    // This is why we put application window on the front.
+                    // From there the import dialog window, which is application modal,
+                    // should come on top of it.
+                    final Window window = getPanelRoot().getScene().getWindow();
+                    if (window instanceof Stage) {
+                        final Stage stage = (Stage) window;
+                        stage.toFront();
+                    }
+                    
+                    final ImportWindowController iwc
+                            = new ImportWindowController(this, jarFiles, mavenPreferences, (Stage) window, LibraryLocationEnum.WORKSPACE_LIBRARY, new ArrayList<>());
+                    iwc.setToolStylesheet(getEditorController().getToolStylesheet());
+                    // See comment in OnDragDropped handle set in method startListeningToDrop.
+                    ButtonID userChoice = iwc.showAndWait();
+                    
+                    if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
+                        sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
+                    }
+                    else {
+                        importConfirmed = false;
+                    }
+                }
+                
+                if (importConfirmed) {
+                    
+                    final List<File> fxmlFiles = getSubsetOfFiles(".fxml", importedFiles); //NOI18N
+
+                    if (!fxmlFiles.isEmpty() && !hasDependencies(fxmlFiles)) {
+
+                        if (currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
+                            sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
+                        }
+                        
+                        UserLibrary userLib = ((UserLibrary) getEditorController().getLibrary());
+                        UserLibraryWorkspace workspace = userLib.getUserWorkspace();
+                        
+                        workspace.getItems().addAll(fxmlFiles.stream().map(f -> new UserWorkspaceLibraryItem(f.getAbsolutePath())).collect(Collectors.toList()));
+                        try {
+                            userLib.saveWorkspace();
+                        }
+                        catch (IOException e) {
+                            final ErrorDialog errorDialog = new ErrorDialog(null);
+                            errorDialog.setTitle(I18N.getString("import.error.title"));
+                            errorDialog.setMessage(I18N.getString("import.error.message"));
+                            errorDialog.setDetails(I18N.getString("import.error.details"));
+                            errorDialog.setDebugInfoWithThrowable(e);
+                            errorDialog.showAndWait();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private void processImportFolder(File folder) {
         if (folder != null && folder.exists() && folder.isDirectory()) {
             Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
@@ -806,6 +895,32 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 // See comment in OnDragDropped handle set in method startListeningToDrop.
                 ButtonID userChoice = iwc.showAndWait();
 
+                if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
+                    sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
+                }
+            }
+        }
+    }
+    
+    private void processLinkFolderToWorkspace(File folder) {
+        if (folder != null && folder.exists() && folder.isDirectory()) {
+            Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
+            if (createUserLibraryDir(libPath)) {
+                // From here we know we will initiate the import dialog.
+                // This is why we put application window on the front.
+                // From there the import dialog window, which is application modal,
+                // should come on top of it.
+                final Window window = getPanelRoot().getScene().getWindow();
+                if (window instanceof Stage) {
+                    final Stage stage = (Stage) window;
+                    stage.toFront();
+                }
+                
+                final ImportWindowController iwc = new ImportWindowController(this, Arrays.asList(folder), mavenPreferences, (Stage) window, LibraryLocationEnum.WORKSPACE_LIBRARY, new ArrayList<>());
+                iwc.setToolStylesheet(getEditorController().getToolStylesheet());
+                // See comment in OnDragDropped handle set in method startListeningToDrop.
+                ButtonID userChoice = iwc.showAndWait();
+                
                 if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
                     sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
                 }
@@ -879,13 +994,19 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         ((UserLibrary) getEditorController().getLibrary()).stopWatching();
         
         try {
+            String userLibraryAbsolutePath = new File(userLibraryPathString).getAbsolutePath();
+            
             for (File file : files) {
-                savedFileName = file.getName();
-                tempTargetPath = Paths.get(userLibraryPathString, file.getName() + TEMP_FILE_EXTENSION);
-                Path ultimateTargetPath = Paths.get(userLibraryPathString, file.getName());
-                Files.deleteIfExists(tempTargetPath);
-                Files.copy(file.toPath(), tempTargetPath, StandardCopyOption.REPLACE_EXISTING);
-                Files.move(tempTargetPath, ultimateTargetPath, StandardCopyOption.ATOMIC_MOVE);
+                // do not copy file if it is already in the library folder
+                File folder = file.getParentFile();
+                if (!folder.getAbsolutePath().equals(userLibraryAbsolutePath)) {
+                    savedFileName = file.getName();
+                    tempTargetPath = Paths.get(userLibraryPathString, file.getName() + TEMP_FILE_EXTENSION);
+                    Path ultimateTargetPath = Paths.get(userLibraryPathString, file.getName());
+                    Files.deleteIfExists(tempTargetPath);
+                    Files.copy(file.toPath(), tempTargetPath, StandardCopyOption.REPLACE_EXISTING);
+                    Files.move(tempTargetPath, ultimateTargetPath, StandardCopyOption.ATOMIC_MOVE);
+                }
             }
         } catch (IOException ioe) {
             errorCount++;

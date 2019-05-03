@@ -41,12 +41,14 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 class ImportRow {
 
+    private final boolean originalImportRequired;
     private final BooleanProperty importRequired;
     private final JarReportEntry jre;
     private PrefSize prefSize;
     private final String canonicalClassName;
 
     public ImportRow(boolean importRequired, JarReportEntry jre, PrefSize prefSize) {
+        this.originalImportRequired = importRequired;
         this.importRequired = new SimpleBooleanProperty(importRequired);
         this.jre = jre;
         this.canonicalClassName = jre.getKlass().getCanonicalName();
@@ -68,6 +70,10 @@ class ImportRow {
 
     public void setImportRequired(boolean v) {
         importRequired().set(v);
+    }
+    
+    public boolean isImportRequiredChanged() {
+        return isImportRequired() != originalImportRequired;
     }
 
     public JarReportEntry getJarReportEntry() {

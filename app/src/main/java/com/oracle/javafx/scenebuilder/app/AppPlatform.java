@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -95,7 +97,7 @@ public class AppPlatform {
     throws IOException {
         if (EditorPlatform.isAssertionEnabled()) {
             // Development mode : we do not delegate to the existing instance
-            notificationHandler.handleLaunch(parameters.getUnnamed());
+            notificationHandler.handleLaunch(parameters.getUnnamed(), parameters.getNamed());
             return true;
         } else {
             return requestStartGeneric(notificationHandler, parameters);
@@ -103,7 +105,7 @@ public class AppPlatform {
     }
     
     public interface AppNotificationHandler {
-        public void handleLaunch(List<String> files);
+        public void handleLaunch(List<String> files, Map<String, String> namedParameters);
         public void handleOpenFilesAction(List<String> files);
         public void handleMessageBoxFailure(Exception x);
         public void handleQuitAction();
@@ -130,7 +132,7 @@ public class AppPlatform {
         final boolean result;
         messageBox = new MessageBox<>(getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
         if (messageBox.grab(new MessageBoxDelegate(notificationHandler))) {
-            notificationHandler.handleLaunch(parameters.getUnnamed());
+            notificationHandler.handleLaunch(parameters.getUnnamed(), parameters.getNamed());
             result = true;
         } else {
             result = false;
