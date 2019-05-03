@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -30,8 +31,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.info;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
@@ -39,7 +41,7 @@ import javafx.util.Callback;
 /**
  *
  */
-class LeftCell extends TableCell<IndexEntry, String> {
+class RightCell extends TableCell<IndexEntry, FXOMObject> {
     
     
     /*
@@ -47,24 +49,35 @@ class LeftCell extends TableCell<IndexEntry, String> {
      */
 
     @Override
-    protected void updateItem(String leftValue, boolean empty) {
-        super.updateItem(leftValue, empty);
-        setText(empty ? "" : leftValue); //NOI18N
+    protected void updateItem(FXOMObject rightValue, boolean empty) {
+        super.updateItem(rightValue, empty);
+        
+        final String text;
+        if (empty) {
+            text = ""; //NOI18N
+        } else {
+            if (rightValue == null) {
+                text = "null"; //NOI18N
+            } else {
+                text = rightValue.getGlueElement().getTagName();
+            }
+        }
+        setText(text);
     }
     
     
     
     
     public static class Factory 
-    implements Callback<TableColumn<IndexEntry, String>, TableCell<IndexEntry, String>> {
+    implements Callback<TableColumn<IndexEntry, FXOMObject>, TableCell<IndexEntry, FXOMObject>> {
 
         /*
-         * Callback<TableView<IndexEntry, String>, TableCell<IndexEntry, String>>
+         * Callback<TableView<IndexEntry>, TableCell<IndexEntry, FXOMObject>>
          */
 
         @Override
-        public TableCell<IndexEntry, String> call(TableColumn<IndexEntry, String> tc) {
-            return new LeftCell();
+        public TableCell<IndexEntry, FXOMObject> call(TableColumn<IndexEntry, FXOMObject> tc) {
+            return new RightCell();
         }
     }
 }
