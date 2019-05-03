@@ -46,11 +46,14 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Control;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.scene.input.KeyCode;
 
 /**
  * Hierarchy panel controller based on the TreeView control.
@@ -85,6 +88,22 @@ public class HierarchyTreeViewController extends AbstractHierarchyPanelControlle
         // We do not use the platform editing feature because 
         // editing is started on selection + simple click instead of double click
         treeView.setEditable(false);
+        
+        treeView.setOnKeyPressed(event -> {
+            // on ESC we select the parent of current selected item
+            if (event.getCode() == KeyCode.ESCAPE) {
+                
+                MultipleSelectionModel<TreeItem<HierarchyItem>> selectionModel = treeView.getSelectionModel();
+                TreeItem<HierarchyItem> item = selectionModel.getSelectedItem();
+                if (item != null) {
+                    TreeItem<HierarchyItem> parent = item.getParent();
+                    if (parent != null) {
+                        selectionModel.clearSelection();
+                        selectionModel.select(parent);
+                    }
+                }
+            }
+        });
     }
 
     @Override

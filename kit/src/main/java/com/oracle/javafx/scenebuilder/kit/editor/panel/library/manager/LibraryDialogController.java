@@ -38,6 +38,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryLocationEnum;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
@@ -56,8 +58,11 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchMavenDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryWorkspace;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserWorkspaceLibraryItem;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
@@ -66,10 +71,14 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -82,16 +91,26 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private ListView<DialogListItem> libraryListView;
     @FXML
+    private ListView<DialogListItem> workspaceLibraryListView;
+    @FXML
     private Hyperlink classesLink;
+    @FXML
+    private Hyperlink workspaceFolderLink;
+    @FXML
+    private Label actionsForWorkspaceLabel;
+
     
     private final EditorController editorController;
     private final UserLibrary userLibrary;
     private final Stage owner;
     
     private ObservableList<DialogListItem> listItems;
+    private ObservableList<DialogListItem> workspaceListItems;
 
     private Runnable onAddJar;
     private Runnable onAddFolder;
+    private Runnable onLinkJar;
+    private Runnable onLinkFolder;
     private Consumer<Path> onEditFXML;
 
     private String userM2Repository;
@@ -115,6 +134,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         super.controllerDidLoadFxml();
 
         this.classesLink.setTooltip(new Tooltip(I18N.getString("library.dialog.hyperlink.tooltip")));
+        
+        this.workspaceFolderLink.setTooltip(new Tooltip(I18N.getString("library.dialog.hyperlink.tooltipworkspace")));
+        this.actionsForWorkspaceLabel.setTooltip(new Tooltip(I18N.getString("library.dialog.label.installworkspace.tooltip")));
     }
     
     @Override
@@ -139,7 +161,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         super.openWindow();
         super.getStage().setTitle(I18N.getString("library.dialog.title"));
         loadLibraryList();
-        
+        loadWorkspaceLibraryList();
     }
 
     void loadLibraryList() {
@@ -148,7 +170,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         }
         listItems.clear();
         libraryListView.setItems(listItems);
-        libraryListView.setCellFactory(param -> new LibraryDialogListCell());
+        libraryListView.setCellFactory(param -> new LibraryDialogListCell(false));
         
         final Path folder = Paths.get(this.userLibrary.getPath());
         if (folder != null && folder.toFile().exists()) {
@@ -176,10 +198,36 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .map(c -> new ArtifactDialogListItem(this, c))
                 .collect(Collectors.toList()));
     }
+    
+    void loadWorkspaceLibraryList() {
+        if (workspaceListItems == null) {
+            workspaceListItems = FXCollections.observableArrayList();
+        }
+        workspaceListItems.clear();
+        workspaceLibraryListView.setItems(workspaceListItems);
+        workspaceLibraryListView.setCellFactory(param -> new LibraryDialogListCell(true));
+        
+        Path workspacePath = Paths.get(userLibrary.getPath(), LibraryUtil.WORKSPACE_LIBRARY_FILENAME);
+        if (Files.exists(workspacePath)) {
+            UserLibraryWorkspace workspace = userLibrary.getUserWorkspace();
+
+            for (UserWorkspaceLibraryItem item : workspace.getItems()) {
+
+                Path entry = Paths.get(item.getPath());
+
+                if (LibraryUtil.isJarPath(entry) || LibraryUtil.isFxmlPath(entry)) {
+                    workspaceListItems.add(new LibraryDialogListItem(this, entry));
+                } else if (Files.isDirectory(entry)) {
+                    workspaceListItems.add(new LibraryDialogListItem(this, entry));
+                }
+            }
+        }
+    }
 
     @FXML
     private void close() {
         libraryListView.getItems().clear();
+        workspaceLibraryListView.getItems().clear();
         closeWindow();
     }
 
@@ -238,7 +286,107 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             }
         });
     }
-     
+
+    @FXML
+    private void exportWorkspace(ActionEvent event) {
+
+        final FileChooser fileChooser = new FileChooser();
+        final ExtensionFilter f = new ExtensionFilter(I18N.getString("file.filter.label.xml"), "*.xml"); //NOI18N
+        fileChooser.getExtensionFilters().add(f);
+        fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        File xmlFile = fileChooser.showSaveDialog(getStage());
+        
+        if (xmlFile != null) {
+            UserLibraryWorkspace workspace = userLibrary.getUserWorkspace();
+            
+            try {
+                Files.write(xmlFile.toPath(), workspace.toXml().getBytes());
+            }
+            catch (IOException e) {
+                Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+                
+                ErrorDialog errorDialog = new ErrorDialog(null);
+                errorDialog.setTitle(I18N.getString("library.dialog.exportfail"));
+                errorDialog.setMessage(e.getLocalizedMessage());
+                errorDialog.setDetails(e.getLocalizedMessage());
+                errorDialog.setDebugInfoWithThrowable(e);
+                errorDialog.showAndWait();
+            }
+        }
+    }
+
+    @FXML
+    private void importReplaceWorkspace(ActionEvent event) {
+        importWorkspace(false);
+    }
+    @FXML
+    private void importMergeWorkspace(ActionEvent event) {
+        importWorkspace(true);
+    }
+
+    protected void importWorkspace(boolean merge) {
+        
+        final FileChooser fileChooser = new FileChooser();
+        final ExtensionFilter f = new ExtensionFilter(I18N.getString("file.filter.label.xml"), "*.xml"); //NOI18N
+        fileChooser.getExtensionFilters().add(f);
+        fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        File xmlFile = fileChooser.showOpenDialog(getStage());
+        
+        if (xmlFile != null) {
+            try {
+                UserLibrary library = (UserLibrary) editorController.getLibrary();
+                UserLibraryWorkspace userWorkspace = library.getUserWorkspace();
+                
+                // first we verify that the workspace is ok, by reading as an xml
+                UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(xmlFile.toURI().toURL());
+                
+                if (merge) {
+                    // in case of merging, we need to copy current entries to the workspace
+                    userWorkspace.mergeWith(workspace);
+                }
+                else {
+                    // in case of replacing, just replace it
+                    library.setUserWorkspace(workspace);
+                }
+                
+                // refresh the itemList
+                loadWorkspaceLibraryList();
+                
+                // Importing a workspace does write the current workspace xml content to the library-workspace.xml file inside userlib folder.
+                // By doing just that, the watchservice on that folder will act as a refresher on the library.
+                Files.write(Paths.get(userLibrary.getPath(), LibraryUtil.WORKSPACE_LIBRARY_FILENAME), library.getUserWorkspace().toXml().getBytes());
+            }
+            catch (IOException e) {
+                Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+                
+                ErrorDialog errorDialog = new ErrorDialog(null);
+                errorDialog.setTitle(I18N.getString("library.dialog.importfail"));
+                errorDialog.setMessage(e.getLocalizedMessage());
+                errorDialog.setDetails(e.getLocalizedMessage());
+                errorDialog.setDebugInfoWithThrowable(e);
+                errorDialog.showAndWait();
+            }
+        }
+    }
+
+    @FXML
+    private void linkFolder(ActionEvent event) {
+        if (onLinkFolder != null) {
+            onLinkFolder.run();
+        }
+        loadWorkspaceLibraryList();
+    }
+
+    @FXML
+    private void linkJar(ActionEvent event) {
+        if (onLinkJar != null) {
+            onLinkJar.run();
+        }
+        loadWorkspaceLibraryList();
+    }
+
     /*
     If the file is an fxml, we don't need to stop the library watcher.
     Else we have to stop it first:
@@ -262,6 +410,33 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         }
     }
 
+    /*
+    1) We stop the library watcher, so that all related class loaders will be closed and the workspace can be edited for deletion.
+    2) Then, we update the workspace, removing the entry.
+    3) After the workspace update, the library watcher is started again.
+     */
+    public void processWorkspaceJarFXMLFolderDelete(DialogListItem dialogListItem) throws IOException {
+        
+        //1)
+        userLibrary.stopWatching();
+        
+        //2)
+        LibraryDialogListItem item = ((LibraryDialogListItem) dialogListItem);
+        Path path = item.getFilePath();
+        
+        userLibrary.getUserWorkspace().removeItem(path);
+        
+        try {
+            // saving the workspace to disk can fail: in that case, we restart the watcher anyway and let the exception go to the caller
+            userLibrary.saveWorkspace();
+
+            workspaceListItems.remove(dialogListItem);
+        } finally {
+            //3)
+            userLibrary.startWatching();
+        }
+    }
+    
     private void deleteFile(DialogListItem dialogListItem) {
         try {
             if (dialogListItem instanceof LibraryDialogListItem) {
@@ -339,7 +514,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             final ImportWindowController iwc = new ImportWindowController(
                         new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
                                 files, preferencesControllerBase.getMavenPreferences(), getStage(),
-                    false, filter);
+                                LibraryLocationEnum.MAVEN_ARTIFACT, filter);
             iwc.setToolStylesheet(editorController.getToolStylesheet());
             AbstractModalDialog.ButtonID userChoice = iwc.showAndWait();
             if (userChoice == AbstractModalDialog.ButtonID.OK) {
@@ -347,6 +522,33 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 updatePreferences(mavenArtifact);
                 logInfoMessage("log.user.maven.updated", mavenArtifact.getCoordinates());
             }
+        }
+    }
+    
+    public void processWorkspaceJarFXMLFolderEdit(DialogListItem dialogListItem) {
+        LibraryDialogListItem item = (LibraryDialogListItem) dialogListItem;
+        if (Files.exists(item.getFilePath())) {
+            if (LibraryUtil.isJarPath(item.getFilePath()) || Files.isDirectory(item.getFilePath())) {
+                final ImportWindowController iwc = new ImportWindowController(
+                        new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
+                        Arrays.asList(item.getFilePath().toFile()), preferencesControllerBase.getMavenPreferences(),
+                        getStage(), LibraryLocationEnum.WORKSPACE_LIBRARY, new ArrayList<>());
+                iwc.setToolStylesheet(editorController.getToolStylesheet());
+                // See comment in OnDragDropped handle set in method startListeningToDrop.
+                AbstractModalDialog.ButtonID userChoice = iwc.showAndWait();
+                if (userChoice == AbstractModalDialog.ButtonID.OK) {
+                    logInfoMessage("log.user.maven.updated", item);
+                }
+            } else {
+//                if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
+//                    closeWindow();
+//                }
+//                SceneBuilderApp.getSingleton().performOpenRecent(documentWindowController,
+//                        item.getFilePath().toFile());
+                if (onEditFXML != null) {
+                    onEditFXML.accept(item.getFilePath());
+                }
+            } 
         }
     }
     
@@ -380,5 +582,13 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     
     public void setOnAddFolder(Runnable onAddFolder) {
         this.onAddFolder = onAddFolder;
+    }
+    
+    public void setOnLinkFolder(Runnable onLinkFolder) {
+        this.onLinkFolder = onLinkFolder;
+    }
+    
+    public void setOnLinkJar(Runnable onLinkJar) {
+        this.onLinkJar = onLinkJar;
     }
 }

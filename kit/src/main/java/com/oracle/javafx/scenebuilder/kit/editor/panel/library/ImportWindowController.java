@@ -55,6 +55,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryFilter;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserWorkspaceLibraryItem;
 import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
@@ -102,7 +104,7 @@ public class ImportWindowController extends AbstractModalDialog {
     double builtinPrefWidth;
     double builtinPrefHeight;
     private int numOfImportedJar;
-    private boolean copyFilesToUserLibraryDir;
+    private LibraryLocationEnum libraryLocation;
     private Stage owner;
     
     // At first we put in this collection the items which are already excluded,
@@ -154,15 +156,15 @@ public class ImportWindowController extends AbstractModalDialog {
 
     
     public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner) {
-        this(lpc, files, mavenPreferences, owner, true, new ArrayList<>());
+        this(lpc, files, mavenPreferences, owner, LibraryLocationEnum.LOCAL_LIBRARY, new ArrayList<>());
     }
     
     public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner,
-            boolean copyFilesToUserLibraryDir, List<String> artifactsFilter) {
+            LibraryLocationEnum libraryLocation, List<String> artifactsFilter) {
         super(ImportWindowController.class.getResource("ImportDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         libPanelController = lpc;
         importFiles = new ArrayList<>(files);
-        this.copyFilesToUserLibraryDir = copyFilesToUserLibraryDir;
+        this.libraryLocation = libraryLocation;
         this.artifactsFilter = artifactsFilter;
         this.owner = owner;
         this.mavenPreferences = mavenPreferences;
@@ -234,7 +236,7 @@ public class ImportWindowController extends AbstractModalDialog {
             
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
 
-            if (copyFilesToUserLibraryDir) {
+            if (libraryLocation == LibraryLocationEnum.LOCAL_LIBRARY) {
                 // collect directories from importFiles and add to library.folders file
                 // for other filex (jar, fxml) copy them directly
                 List<File> folders = new ArrayList<>(importFiles.size());
@@ -259,12 +261,27 @@ public class ImportWindowController extends AbstractModalDialog {
                 lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
 
                 Files.write(foldersMarkerPath, lines);
-            }
-
-            if (copyFilesToUserLibraryDir) {
+                
                 userLib.setFilter(getExcludedItems());
             }
-        } catch (IOException ex) {
+            else if (libraryLocation == LibraryLocationEnum.WORKSPACE_LIBRARY) {
+                // collect selected entries and add them to workspace, saving to disk (the watcher on the workspace will update the library again..)
+                for (File file : importFiles) {
+                    userLib.getUserWorkspace().getItems().add(new UserWorkspaceLibraryItem(file.getAbsolutePath()));
+                }
+                
+                for (ImportRow row : importList.getItems()) {
+                    if (row.isImportRequiredChanged()) {
+                        if (row.isImportRequired())
+                            userLib.getUserWorkspace().getFilters().remove(new UserLibraryFilter(row.getCanonicalClassName()));
+                        else
+                            userLib.getUserWorkspace().getFilters().add(new UserLibraryFilter(row.getCanonicalClassName()));
+                    }
+                }
+                
+                userLib.saveWorkspace();
+            }
+        } catch (Exception ex) {
             showErrorDialog(ex);
         } finally {
             alreadyExcludedItems.clear();
@@ -454,6 +471,7 @@ public class ImportWindowController extends AbstractModalDialog {
                 // We get the set of items which are already excluded prior to the current import.
                 UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
                 alreadyExcludedItems = userLib.getFilter();
+                List<String> workspaceExcludedItems = userLib.getWorkspaceFilter();
                 
                 List<JarReport> jarReportList = exploringTask.get(); // blocking call
                 final Callback<ImportRow, ObservableValue<Boolean>> importRequired
@@ -469,7 +487,8 @@ public class ImportWindowController extends AbstractModalDialog {
                             // If the class we import is already listed as an excluded one
                             // then it must appear unchecked in the list.
                             if (alreadyExcludedItems.contains(canonicalName) || 
-                                    artifactsFilter.contains(canonicalName)) {
+                                    artifactsFilter.contains(canonicalName) ||
+                                    workspaceExcludedItems.contains(canonicalName)) {
                                 checked = false;
                                 if (alreadyExcludedItems.contains(canonicalName)) {
                                     alreadyExcludedItems.remove(canonicalName);

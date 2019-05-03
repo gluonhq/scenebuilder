@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryLocationEnum;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
@@ -166,7 +167,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
                                     new LibraryPanelController(editorController,
                                             preferencesControllerBase.getMavenPreferences()),
                                     files, preferencesControllerBase.getMavenPreferences(),
-                                    (Stage) installButton.getScene().getWindow(), false,
+                                    (Stage) installButton.getScene().getWindow(), LibraryLocationEnum.MAVEN_ARTIFACT,
                                     preferencesControllerBase.getMavenPreferences().getArtifactsFilter());
                         iwc.setToolStylesheet(editorController.getToolStylesheet());
                         ButtonID userChoice = iwc.showAndWait();

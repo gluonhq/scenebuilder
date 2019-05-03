@@ -75,6 +75,7 @@
                             <SeparatorMenuItem mnemonicParsing="false" />
                             <MenuItem mnemonicParsing="false" onAction="#onManageJarFxml" text="%library.panel.menu.manage.jar.fxml" />
                             <MenuItem fx:id="libraryImportSelection" mnemonicParsing="false" onAction="#onLibraryImportSelection" text="%library.panel.menu.import.selection" />
+                            <MenuItem mnemonicParsing="false" onAction="#onLibraryRefresh" text="%library.panel.menu.refresh" />
                             <SeparatorMenuItem mnemonicParsing="false" />
                             <Menu fx:id="customLibraryMenu" mnemonicParsing="false" text="%library.panel.menu.custom">
                               <items>

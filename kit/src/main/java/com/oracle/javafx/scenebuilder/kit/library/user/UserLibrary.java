@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,11 +53,17 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
 import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.user.ws.UserLibraryWorkspace;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+import com.thoughtworks.xstream.XStreamException;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -104,6 +111,8 @@ public class UserLibrary extends Library {
     private Supplier<List<Path>> additionalJarPaths;
     private Supplier<List<String>> additionalFilter;
     private Consumer<List<JarReport>> onFinishedUpdatingJarReports;
+    
+    private UserLibraryWorkspace userWorkspace = new UserLibraryWorkspace();
 
     /*
      * Public
@@ -117,6 +126,13 @@ public class UserLibrary extends Library {
         this.path = path;
         this.additionalJarPaths = additionalJarPaths;
         this.additionalFilter = additionalFilter;
+        try {
+            this.userWorkspace = UserLibraryWorkspace.fromXml(Paths.get(path, LibraryUtil.WORKSPACE_LIBRARY_FILENAME).toUri().toURL());
+        } catch (MalformedURLException | XStreamException e) {
+            Logger.getLogger(UserLibrary.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+            
+            this.userWorkspace = new UserLibraryWorkspace();
+        }
     }
 
     public void setAdditionalJarPaths(Supplier<List<Path>> additionalJarPaths)
@@ -130,6 +146,13 @@ public class UserLibrary extends Library {
     
     public String getPath() {
         return path;
+    }
+    
+    public UserLibraryWorkspace getUserWorkspace() {
+        return userWorkspace;
+    }
+    public void setUserWorkspace(UserLibraryWorkspace workspace) {
+        this.userWorkspace = workspace;
     }
     
     public ObservableList<JarReport> getJarReports() {
@@ -239,6 +262,7 @@ public class UserLibrary extends Library {
                     for (String classname : allClassnames) {
                         writer.write(classname + "\n"); //NOI18N
                     }
+                    writer.flush();
                 }
 
                 // Delete the former filter file
@@ -270,6 +294,12 @@ public class UserLibrary extends Library {
 
         return res;
     }
+    
+    public List<String> getWorkspaceFilter() {
+        return userWorkspace.getFilters().stream()
+            .map(f -> f.getClassName())
+            .collect(Collectors.toList());
+    }
 
     public void setOnUpdatedJarReports(Consumer<List<JarReport>> onFinishedUpdatingJarReports) {
         this.onFinishedUpdatingJarReports = onFinishedUpdatingJarReports;
@@ -298,6 +328,9 @@ public class UserLibrary extends Library {
             Platform.runLater(() -> setExploring(value));
     }
 
+    public void saveWorkspace() throws IOException {
+        Files.writeString(Paths.get(getPath(), LibraryUtil.WORKSPACE_LIBRARY_FILENAME), userWorkspace.toXml());
+    }
 
     /*
      * Package
