@@ -262,7 +262,6 @@ public class UserLibrary extends Library {
                     for (String classname : allClassnames) {
                         writer.write(classname + "\n"); //NOI18N
                     }
-                    writer.flush();
                 }
 
                 // Delete the former filter file

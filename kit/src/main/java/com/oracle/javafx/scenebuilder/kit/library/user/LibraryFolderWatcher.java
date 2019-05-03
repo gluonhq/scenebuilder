@@ -57,8 +57,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
@@ -302,7 +300,7 @@ class LibraryFolderWatcher implements Runnable {
                 try {
                     watchService.close();
                 } catch (IOException e) {
-                    Logger.getLogger(LibraryFolderWatcher.class.getName()).severe(ExceptionUtils.getStackTrace(e));
+                    Logger.getLogger(LibraryFolderWatcher.class.getName()).log(Level.SEVERE, e.getMessage(), e);
                 }
             }
         }

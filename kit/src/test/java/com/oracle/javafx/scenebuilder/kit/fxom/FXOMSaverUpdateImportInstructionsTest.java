@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -70,7 +70,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     public void testEmptyFXML() throws IOException {
         setupTestCase(FxmlTestInfo.EMPTY);
 
-        assertTrue("fxml is empty", fxomDocument.getFxmlText().isEmpty());
+        assertTrue("fxml is empty", fxomDocument.getFxmlText(false).isEmpty());
     }
 
     @Test

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -30,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.app.info;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import java.util.Objects;
