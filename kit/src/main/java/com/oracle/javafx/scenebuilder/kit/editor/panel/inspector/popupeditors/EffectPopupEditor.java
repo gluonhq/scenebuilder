@@ -88,6 +88,12 @@ public class EffectPopupEditor extends PopupEditor {
         this.editorController = editorController;
     }
 
+    public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses,
+    		EditorController editorController) {
+    	super.reset(propMeta, selectedClasses);
+    	this.editorController = editorController;
+    }
+
     @Override
     public void setPopupContentValue(Object value) {
         assert value == null || value instanceof Effect;
