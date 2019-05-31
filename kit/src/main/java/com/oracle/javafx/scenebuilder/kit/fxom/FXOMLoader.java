@@ -85,7 +85,7 @@ class FXOMLoader implements LoadListener {
         fxmlLoader.setResources(new ResourceKeyCollector(document.getResources()));
         fxmlLoader.setClassLoader(new TransientClassLoader(classLoader));
         fxmlLoader.setLoadListener(this);
-//        Deprecation.setStaticLoad(fxmlLoader, true);
+        Deprecation.setStaticLoad(fxmlLoader, true);
 
         final Charset utf8 = Charset.forName("UTF-8");
         try (final InputStream is = new ByteArrayInputStream(fxmlText.getBytes(utf8))) {

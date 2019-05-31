@@ -125,3 +125,4 @@ Import-Package: javax.json;version="1.0.0",
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: com.oracle.javafx.scenebuilder.kit
+Java-Module-AddOpens: javafx.fxml/javafx.fxml=.
