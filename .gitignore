@@ -10,7 +10,7 @@ kit/build/
 # Eclipse
 .classpath
 .project
-.settinigs/
+.settings/
 bin/
 
 # Netbeans
