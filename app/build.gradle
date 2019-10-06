@@ -9,6 +9,7 @@ mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
 
 dependencies {
     implementation project(':kit')
+    implementation project(':components')
 }
 
 run {
