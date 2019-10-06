@@ -29,35 +29,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.library;
+package com.oracle.javafx.scenebuilder.kit.metadata;
+
+
+import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 
 import java.util.List;
 
-public interface ExternalSectionProvider {
+public interface ExternalMetadataProvider {
 
-	/**
-	 * Position within the built-in library of the external section
-	 * 0 will be on top, -1 at the bottom
-	 * @return an integer with the expected position
-	 */
-	int getSectionPosition();
-
-	/**
-	 * Name of the section
-	 * @return a String with the section's name
-	 */
-	String getSectionName();
-
-	/**
-	 * Name of the package name
-	 * @return a String with the common package name for all the items in the section
-	 */
-	String getSectionPackageName();
-
-	/**
-	 * list of items added to the section
-	 * @return a List of classes for this section
-	 */
-	List<Class<?>> getItems();
-
+    /**
+     * list of items added to the metadata
+     * @return a List of classes
+     */
+    List<ComponentClassMetadata> getItems();
 }
