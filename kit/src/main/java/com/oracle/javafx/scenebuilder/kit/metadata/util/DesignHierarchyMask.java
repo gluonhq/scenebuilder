@@ -240,9 +240,6 @@ public class DesignHierarchyMask {
             // Default
             Class componentClass = sceneGraphObject.getClass();
             String fileName = componentClass.getSimpleName();
-            if (componentClass.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-                fileName = BuiltinLibrary.GLUON_FILE_PREFIX + fileName;
-            }
             url = ImageUtils.getNodeIconURL(fileName + ".png"); //NOI18N
         }
         return url;
