@@ -270,7 +270,7 @@ class LibraryFolderWatcher implements Runnable {
                                             }
                                         }
 
-                                    } catch (XStreamException ex) {
+                                    } catch (MalformedURLException | XStreamException ex) {
                                         // not a valid xml file, nor a valid workspace file
                                         Logger.getLogger(LibraryFolderWatcher.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 
