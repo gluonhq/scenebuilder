@@ -255,19 +255,25 @@ class LibraryFolderWatcher implements Runnable {
 
                                     try {
                                         Path workspacePath = Paths.get(library.getPath(), LibraryUtil.WORKSPACE_LIBRARY_FILENAME);
-                                        UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(workspacePath.toUri().toURL());
-                                        library.setUserWorkspace(workspace);
-
-                                        for (UserWorkspaceLibraryItem item : workspace.getItems()) {
-
-                                            String path = item.getPath();
-                                            Path p = Paths.get(path);
-
-                                            if (LibraryUtil.isJarPath(p) || Files.isDirectory(p)) {
-                                                jarsAndFolders.add(p);
-                                            } else if (LibraryUtil.isFxmlPath(p)) {
-                                                fxmls.add(p);
+                                        if (workspacePath.toFile().exists()) {
+                                            UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(workspacePath.toUri().toURL());
+                                            library.setUserWorkspace(workspace);
+    
+                                            for (UserWorkspaceLibraryItem item : workspace.getItems()) {
+    
+                                                String path = item.getPath();
+                                                Path p = Paths.get(path);
+    
+                                                if (LibraryUtil.isJarPath(p) || Files.isDirectory(p)) {
+                                                    jarsAndFolders.add(p);
+                                                } else if (LibraryUtil.isFxmlPath(p)) {
+                                                    fxmls.add(p);
+                                                }
                                             }
+                                        }
+                                        else {
+                                            Logger.getLogger(LibraryFolderWatcher.class.getName()).fine("workspace file does not exists: " + workspacePath + ". Will retry..");
+                                            library.setUserWorkspace(new UserLibraryWorkspace());
                                         }
 
                                     } catch (XStreamException ex) {

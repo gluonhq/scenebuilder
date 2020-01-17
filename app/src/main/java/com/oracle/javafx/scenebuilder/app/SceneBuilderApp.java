@@ -430,8 +430,15 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (workspaceXmlPath != null && !workspaceXmlPath.isEmpty()) {
             
             try {
-                UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(Paths.get(workspaceXmlPath).toUri().toURL());
-                userLibrary.setUserWorkspace(workspace);
+                Path path = Paths.get(workspaceXmlPath);
+                if (path.toFile().exists()) {
+                    UserLibraryWorkspace workspace = UserLibraryWorkspace.fromXml(path.toUri().toURL());
+                    userLibrary.setUserWorkspace(workspace);
+                }
+                else {
+                    Logger.getLogger(SceneBuilderApp.class.getName()).warning("workspace file does not exists: " + path);
+                    userLibrary.setUserWorkspace(new UserLibraryWorkspace());
+                }
             }
             catch (MalformedURLException | XStreamException e) {
                 Logger.getLogger(SceneBuilderApp.class.getName()).log(Level.SEVERE, e.getMessage(), e);

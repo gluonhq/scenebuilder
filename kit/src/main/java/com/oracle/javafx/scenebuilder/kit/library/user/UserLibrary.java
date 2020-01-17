@@ -112,7 +112,7 @@ public class UserLibrary extends Library {
     private Supplier<List<String>> additionalFilter;
     private Consumer<List<JarReport>> onFinishedUpdatingJarReports;
     
-    private UserLibraryWorkspace userWorkspace = new UserLibraryWorkspace();
+    private UserLibraryWorkspace userWorkspace;
 
     /*
      * Public
@@ -127,7 +127,11 @@ public class UserLibrary extends Library {
         this.additionalJarPaths = additionalJarPaths;
         this.additionalFilter = additionalFilter;
         try {
-            this.userWorkspace = UserLibraryWorkspace.fromXml(Paths.get(path, LibraryUtil.WORKSPACE_LIBRARY_FILENAME).toUri().toURL());
+            Path p = Paths.get(path, LibraryUtil.WORKSPACE_LIBRARY_FILENAME);
+            if (p.toFile().exists())
+                this.userWorkspace = UserLibraryWorkspace.fromXml(p.toUri().toURL());
+            else
+                this.userWorkspace = new UserLibraryWorkspace();
         } catch (MalformedURLException | XStreamException e) {
             Logger.getLogger(UserLibrary.class.getName()).log(Level.SEVERE, e.getMessage(), e);
             
