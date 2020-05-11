@@ -2,7 +2,7 @@ import org.apache.tools.ant.filters.EscapeUnicode
 
 plugins {
     id 'application'
-    id "com.github.johnrengelman.shadow" version "4.0.3"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
