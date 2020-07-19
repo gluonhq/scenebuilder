@@ -68,7 +68,13 @@ public class BindingExpressionDisabler {
                 	if (property instanceof FXOMPropertyT) {
                 		FXOMPropertyT propertyT = (FXOMPropertyT)property;
                 		if (propertyT.getValue().startsWith(FXMLLoader.BINDING_EXPRESSION_PREFIX)) {
-                			propertyName.setValue(sceneGraphObject, propertyT.getValue());
+                			try {
+								propertyName.setValue(sceneGraphObject, propertyT.getValue());
+							} catch (Exception ex) {
+								// Let the exception be, the binding expression can't be escaped 
+								// due to the property type not accepting string value
+								// catching the exception allow the process to go on
+							}
                 		}
                 	}
                 }
