@@ -120,7 +120,7 @@ class LibraryFolderWatcher implements Runnable {
                 
         // Now attempts to discover the user library folder
         final Path folder = Paths.get(library.getPath());
-        if (folder != null && folder.toFile().exists()) {
+        if (folder.toFile().exists()) {
             boolean retry;
             do {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
@@ -133,14 +133,13 @@ class LibraryFolderWatcher implements Runnable {
                             // open folders marker file: every line should be a single folder entry
                             // we scan the file and add the path to currentJarsOrFolders
                             List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
-                            for (Path f : folderPaths) {
-                                currentJarsOrFolders.add(f);
-                            }
+                            currentJarsOrFolders.addAll(folderPaths);
                         }
                     }
                     retry = false;
                 } catch(IOException x) {
-                    Thread.sleep(2000 /* ms */);
+                    Thread.sleep(2000 );
+                    /* ms */
                     retry = true;
                 } finally {
                     library.updateExplorationCount(library.getExplorationCount()+1);
@@ -169,14 +168,17 @@ class LibraryFolderWatcher implements Runnable {
                 try {
                     watchService = folder.getFileSystem().newWatchService();
                 } catch(IOException x) {
-                    System.out.println("FileSystem.newWatchService() failed"); //NOI18N
-                    System.out.println("Sleeping..."); //NOI18N
-                    Thread.sleep(1000 /* ms */);
+                    System.out.println("FileSystem.newWatchService() failed");
+                    //NOI18N
+                    System.out.println("Sleeping...");
+                    //NOI18N
+                    Thread.sleep(1000 );
+                    /* ms */
                 }
             }
 
             WatchKey watchKey = null;
-            while ((watchKey == null) || (watchKey.isValid() == false)) {
+            while ((watchKey == null) || (!watchKey.isValid())) {
                 try {
                     watchKey = folder.register(watchService, 
                     StandardWatchEventKinds.ENTRY_CREATE, 
@@ -314,23 +316,23 @@ class LibraryFolderWatcher implements Runnable {
     
     
     private LibraryItem makeLibraryItem(Path path) throws IOException {
-        final URL iconURL = ImageUtils.getNodeIconURL(null);
+        final URL iconurl = ImageUtils.getNodeIconURL(null);
         String fileName = path.getFileName().toString();
-        String itemName = fileName.substring(0, fileName.indexOf(".fxml")); //NOI18N
-        String fxmlText = ""; //NOI18N
+        String itemName = fileName.substring(0, fileName.indexOf(".fxml"));
+        String fxmlText = "";
         StringBuilder buf = new StringBuilder();
 
-        try (LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(path.toFile()), "UTF-8"))) { //NOI18N
+        try (LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(path.toFile()), "UTF-8"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                buf.append(line).append("\n"); //NOI18N
+                buf.append(line).append("\n");
+                //NOI18N
             }
             
             fxmlText = buf.toString();
         }
 
-        final LibraryItem res = new LibraryItem(itemName, UserLibrary.TAG_USER_DEFINED, fxmlText, iconURL, library);
-        return res;
+        return new LibraryItem(itemName, UserLibrary.TAG_USER_DEFINED, fxmlText, iconurl, library);
     }
     
     
@@ -425,7 +427,7 @@ class LibraryFolderWatcher implements Runnable {
     
     private Collection<LibraryItem> makeLibraryItems(JarReport jarOrFolderReport) throws IOException {
         final List<LibraryItem> result = new ArrayList<>();
-        final URL iconURL = ImageUtils.getNodeIconURL(null);
+        final URL iconUrl = ImageUtils.getNodeIconURL(null);
         final List<String> excludedItems = library.getFilter();
         final List<String> artifactsFilter = library.getAdditionalFilter().get();
                 
@@ -435,9 +437,23 @@ class LibraryFolderWatcher implements Runnable {
                 final String canonicalName = e.getKlass().getCanonicalName();
                 if (!excludedItems.contains(canonicalName) && 
                     !artifactsFilter.contains(canonicalName)) {
+//                    final String name = e.getKlass().getSimpleName();
+//                    final String fxmlText = BuiltinLibrary.makeFxmlText(e.getKlass());
+//                    result.add(new LibraryItem(name, UserLibrary.TAG_USER_DEFINED, fxmlText, iconURL, library));
+
                     final String name = e.getKlass().getSimpleName();
+                    String sectionName =jarOrFolderReport.getJar().toString();
+
+                    // if some os don't use '/' for folder path (don't know if there is)
+                    if (sectionName.lastIndexOf("\\")==-1) {
+                        sectionName=UserLibrary.TAG_USER_DEFINED;
+                    } else {
+                        sectionName=sectionName.substring(sectionName.lastIndexOf("\\")+1,
+                                sectionName.lastIndexOf("."));
+                    }
+
                     final String fxmlText = BuiltinLibrary.makeFxmlText(e.getKlass());
-                    result.add(new LibraryItem(name, UserLibrary.TAG_USER_DEFINED, fxmlText, iconURL, library));
+                    result.add(new LibraryItem(name, sectionName, fxmlText, iconUrl, library));
                 }
             }
         }
