@@ -25,3 +25,4 @@ scenicView.properties
 dist/
 package/
 /build/
+/components/build/
