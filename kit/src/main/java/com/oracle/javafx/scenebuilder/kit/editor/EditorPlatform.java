@@ -32,7 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-//import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -121,8 +121,8 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT(null),
-        GLUON_MOBILE_DARK(null),
+        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
         MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
         MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
@@ -192,8 +192,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-        	return null;
-//            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".gls");
         }
 
         public Color getColor() {
@@ -245,8 +244,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-        	return null;
-//            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
         }
     }
     

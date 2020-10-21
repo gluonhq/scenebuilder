@@ -497,7 +497,7 @@ public class EditorController {
      * 
      * @param glossary the glossary to be used by this editor (never null).
      */
-    public void setGlossary(Glossary glossary) {
+    public void setLibrary(Glossary glossary) {
         assert glossary != null;
         glossaryProperty.setValue(glossary);
     }

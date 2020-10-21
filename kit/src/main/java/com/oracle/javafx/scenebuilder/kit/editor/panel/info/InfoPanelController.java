@@ -217,10 +217,6 @@ public class InfoPanelController extends AbstractFxmlPanelController {
             }
         });
 
-        getEditorController().getGlossary().revisionProperty().addListener((ov, t, t1) -> {
-        	resetSuggestedControllerClasses(getEditorController().getFxmlLocation());
-        });
-
         leftTableColumn.setCellValueFactory(new PropertyValueFactory<>("key")); //NOI18N
         rightTableColumn.setCellValueFactory(new PropertyValueFactory<>("fxomObject")); //NOI18N
         leftTableColumn.setCellFactory(new LeftCell.Factory());

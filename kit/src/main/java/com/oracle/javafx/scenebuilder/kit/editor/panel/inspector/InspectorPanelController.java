@@ -220,21 +220,19 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
 
     // Inspector state
     private SelectionState selectionState;
+    private final EditorController editorController;
 
     private double searchResultDividerPosition;
 
     // Charsets for the properties of included elements
     private Map<String, Charset> availableCharsets;
 
-    private ChangeListener<Number> glossaryRevisionListener = (ov, t, t1) -> {
-    	updateInspector();
-    };
-
     /*
      * Public
      */
     public InspectorPanelController(EditorController editorController) {
         super(InspectorPanelController.class.getResource(fxmlFile), I18N.getBundle(), editorController);
+        this.editorController = editorController;
         this.availableCharsets = CharsetEditor.getStandardCharsets();
         viewModeProperty.setValue(ViewMode.SECTION);
         viewModeProperty.addListener((obv, previousMode, mode) -> viewModeChanged(previousMode, mode));
@@ -512,8 +510,6 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         // Listen the Scene stylesheets changes
         getEditorController().sceneStyleSheetProperty().addListener((ChangeListener<ObservableList<File>>) (ov, t, t1) -> updateInspector());
         
-        getEditorController().getGlossary().revisionProperty().addListener(glossaryRevisionListener);
-        
         selectionState = new SelectionState(editorController);
         viewModeChanged(null, getViewMode());
         expandedSectionChanged();
@@ -529,17 +525,11 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         searchPatternDidChange();
     }
 
-    @Override
-    protected void editorControllerChanged(EditorController oldController, EditorController newController) {
-		oldController.getGlossary().revisionProperty().removeListener(glossaryRevisionListener);
-    	newController.getGlossary().revisionProperty().addListener(glossaryRevisionListener);
-    }
-
     /*
      * Private
      */
     private void updateInspector() {
-        if (isInspectorLoaded()) {
+        if (isInspectorLoaded() && hasFxomDocument()) {
             SelectionState newSelectionState = new SelectionState(editorController);
             if (isInspectorStateChanged(newSelectionState) || isEditedMode()) {
                 selectionState = newSelectionState;
@@ -1879,7 +1869,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
         } else if (editorClass == EffectPopupEditor.class) {
             if (createdPropertyEditor != null) {
-                ((EffectPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
+                ((EffectPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new EffectPopupEditor(propMeta, selectedClasses, getEditorController());
             }
@@ -1891,7 +1881,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             }
         } else if (editorClass == PaintPopupEditor.class) {
             if (createdPropertyEditor != null) {
-                ((PaintPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses, getEditorController());
+                ((PaintPopupEditor) createdPropertyEditor).reset(propMeta, selectedClasses);
             } else {
                 createdPropertyEditor = new PaintPopupEditor(propMeta, selectedClasses, getEditorController());
             }
