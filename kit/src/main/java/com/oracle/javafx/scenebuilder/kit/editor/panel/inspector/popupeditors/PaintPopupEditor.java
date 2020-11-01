@@ -93,12 +93,6 @@ public class PaintPopupEditor extends PopupEditor {
         paintPicker = new PaintPicker(delegate);
     }
 
-    public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses,
-    		EditorController editorController) {
-    	super.reset(propMeta, selectedClasses);
-    	this.editorController = editorController;
-    }
-
     @Override
     public String getPreviewString(Object value) {
         if (value == null) {

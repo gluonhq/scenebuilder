@@ -78,10 +78,6 @@ public class StyleClassEditor extends InlineListEditor {
     private List<String> themeClasses;
     private EditorController editorController;
 
-    private ChangeListener<Theme> themeListener = (ov, t, t1) -> {
-    	themeClasses = CssInternal.getThemeStyleClasses(editorController.getTheme());
-    };
-
     public StyleClassEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses,
             Set<FXOMInstance> selectedInstances, EditorController editorController) {
         super(propMeta, selectedClasses);
@@ -96,7 +92,7 @@ public class StyleClassEditor extends InlineListEditor {
         addItem(getNewStyleClassItem());
 
         // On Theme change, update the themeClasses
-        editorController.themeProperty().addListener(themeListener);
+        editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> themeClasses = CssInternal.getThemeStyleClasses(StyleClassEditor.this.editorController.getTheme()));
     }
 
     private StyleClassItem getNewStyleClassItem() {
@@ -182,12 +178,7 @@ public class StyleClassEditor extends InlineListEditor {
             Set<FXOMInstance> selectedInstances, EditorController editorController) {
         super.reset(propMeta, selectedClasses);
         this.selectedInstances = selectedInstances;
-        EditorController oldEditorController = this.editorController;
-        if (oldEditorController != editorController) {
-        	oldEditorController.themeProperty().removeListener(themeListener);
         this.editorController = editorController;
-        	editorController.themeProperty().addListener(themeListener);
-        }
         cssClassesMap = null;
         // add an empty item
         addItem(getNewStyleClassItem());

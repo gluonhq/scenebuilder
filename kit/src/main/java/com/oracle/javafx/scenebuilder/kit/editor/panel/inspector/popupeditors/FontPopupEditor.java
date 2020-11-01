@@ -126,12 +126,6 @@ public class FontPopupEditor extends PopupEditor {
     public void reset(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses, EditorController editorController) {
         super.reset(propMeta, selectedClasses);
         this.editorController = editorController;
-        if (familyEditor != null) {
-        	familyEditor.setEditorController(editorController);
-        }
-        if (styleEditor != null) {
-        	styleEditor.setEditorController(editorController);
-        }
     }
 
     //
@@ -215,8 +209,14 @@ public class FontPopupEditor extends PopupEditor {
 
         private List<String> families;
         private String family = null;
-        private EditorController editorController;
 
+        public FamilyEditor(String name, String defaultValue, List<String> families, EditorController editorController) {
+            super(name, defaultValue, families);
+            initialize(families, editorController);
+        }
+        
+        private void initialize(List<String> families, EditorController editorController) {
+            this.families = families;
             EventHandler<ActionEvent> onActionListener = event -> {
                 if (Objects.equals(family, getTextField().getText())) {
                     // no change
@@ -232,20 +232,8 @@ public class FontPopupEditor extends PopupEditor {
                 valueProperty().setValue(family);
             };
 
-        public FamilyEditor(String name, String defaultValue, List<String> families, EditorController editorController) {
-            super(name, defaultValue, families);
-            initialize(families, editorController);
-        }
-        
-        private void initialize(List<String> families, EditorController editorController) {
-            this.families = families;
-            this.editorController = editorController;
             setTextEditorBehavior(this, getTextField(), onActionListener);
             commitOnFocusLost(this);
-        }
-
-        public void setEditorController(EditorController editorController) {
-        	this.editorController = editorController;
         }
 
         @Override
@@ -262,8 +250,13 @@ public class FontPopupEditor extends PopupEditor {
     private static class StyleEditor extends AutoSuggestEditor {
         
         private String style = null;
-        private EditorController editorController;
 
+        public StyleEditor(String name, String defaultValue, List<String> suggestedList, EditorController editorController) {
+            super(name, defaultValue, suggestedList);
+            initialize(editorController);
+        }
+        
+        private void initialize(EditorController editorController) {
             EventHandler<ActionEvent> onActionListener = event -> {
                 if (Objects.equals(style, getTextField().getText())) {
                     // no change
@@ -278,20 +271,9 @@ public class FontPopupEditor extends PopupEditor {
                 valueProperty().setValue(style);
             };
 
-        public StyleEditor(String name, String defaultValue, List<String> suggestedList, EditorController editorController) {
-            super(name, defaultValue, suggestedList);
-            initialize(editorController);
-        }
-        
-        private void initialize(EditorController editorController) {
-        	this.editorController = editorController;
             setTextEditorBehavior(this, getTextField(), onActionListener);
             commitOnFocusLost(this);
         }
-
-        public void setEditorController(EditorController editorController) {
-			this.editorController = editorController;
-		}
 
         @Override
         public Object getValue() {
