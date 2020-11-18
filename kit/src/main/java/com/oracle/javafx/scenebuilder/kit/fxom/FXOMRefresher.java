@@ -74,6 +74,9 @@ class FXOMRefresher {
                 refreshDocument(document, newDocument);
             }
             backup.restore();
+            
+            BindingExpressionDisabler.disable(document);
+            
             synchronizeDividerPositions(document);
         } catch (RuntimeException | IOException x) {
             final StringBuilder sb = new StringBuilder();

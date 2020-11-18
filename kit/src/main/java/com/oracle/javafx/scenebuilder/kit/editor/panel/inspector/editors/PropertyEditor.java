@@ -364,7 +364,7 @@ public abstract class PropertyEditor extends Editor {
     }
 
     protected boolean isSetValueDone() {
-        boolean done = !isHandlingError() && (isBinding() || isEditing());
+    	boolean done = !isHandlingError() && isEditing();
         return done;
     }
 
