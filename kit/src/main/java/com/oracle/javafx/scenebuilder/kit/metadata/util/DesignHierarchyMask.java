@@ -32,12 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
-import com.gluonhq.charm.glisten.control.BottomNavigation;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.gluonhq.charm.glisten.control.DropdownButton;
 import com.gluonhq.charm.glisten.control.ExpansionPanel;
-import com.gluonhq.charm.glisten.control.ToggleButtonGroup;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMCollection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
@@ -45,7 +40,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMProperty;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyC;
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ComponentPropertyMetadata;
@@ -58,6 +52,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
+
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -240,9 +236,6 @@ public class DesignHierarchyMask {
             // Default
             Class componentClass = sceneGraphObject.getClass();
             String fileName = componentClass.getSimpleName();
-            if (componentClass.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-                fileName = BuiltinLibrary.GLUON_FILE_PREFIX + fileName;
-            }
             url = ImageUtils.getNodeIconURL(fileName + ".png"); //NOI18N
         }
         return url;
@@ -1071,6 +1064,7 @@ public class DesignHierarchyMask {
      * the layout.
      */
     public boolean needResizeWhenTopElement() {
+        Object sceneGraphObject = fxomObject.getSceneGraphObject();
         return (this.isAcceptingSubComponent()
                 || this.isAcceptingAccessory(Accessory.CONTENT)
                 || this.isAcceptingAccessory(Accessory.ROOT)
@@ -1080,13 +1074,28 @@ public class DesignHierarchyMask {
                 || this.isAcceptingAccessory(Accessory.RIGHT)
                 || this.isAcceptingAccessory(Accessory.BOTTOM)
                 || this.isAcceptingAccessory(Accessory.LEFT))
-                && ! (fxomObject.getSceneGraphObject() instanceof MenuButton
-                        || fxomObject.getSceneGraphObject() instanceof MenuBar
-                        || fxomObject.getSceneGraphObject() instanceof ToolBar
-                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.ExpandedPanel
-                        || fxomObject.getSceneGraphObject() instanceof DropdownButton
-                        || fxomObject.getSceneGraphObject() instanceof BottomNavigation
-                        || fxomObject.getSceneGraphObject() instanceof ExpansionPanel.CollapsedPanel
-                        || fxomObject.getSceneGraphObject() instanceof ToggleButtonGroup); // Jerome
+                && ! (sceneGraphObject instanceof MenuButton
+                        || sceneGraphObject instanceof MenuBar
+                        || sceneGraphObject instanceof ToolBar
+                        || isExternalResizable(sceneGraphObject));
+    }
+
+    private boolean isExternalResizable(Object object) {
+        Collection<ExternalDesignHierarchyMaskProvider> providers = getExternalDesignHierarchyMaskProviders();
+        for (ExternalDesignHierarchyMaskProvider provider : providers) {
+            for (Class<?> item : provider.getResizableItems()) {
+                if (item.isInstance(object)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Collection<ExternalDesignHierarchyMaskProvider> getExternalDesignHierarchyMaskProviders() {
+        ServiceLoader<ExternalDesignHierarchyMaskProvider> loader = ServiceLoader.load(ExternalDesignHierarchyMaskProvider.class);
+        Collection<ExternalDesignHierarchyMaskProvider> providers = new ArrayList<>();
+        loader.iterator().forEachRemaining(providers::add);
+        return providers;
     }
 }

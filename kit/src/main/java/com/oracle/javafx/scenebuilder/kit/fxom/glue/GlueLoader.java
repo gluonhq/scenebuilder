@@ -48,8 +48,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 /**
  *
  * 
@@ -71,7 +73,8 @@ class GlueLoader implements ContentHandler, ErrorHandler, LexicalHandler {
         assert xmlText != null;
         assert GlueDocument.isEmptyXmlText(xmlText) == false;
         
-        final Charset utf8 = Charset.forName("UTF-8"); //NOI18N
+        final Charset utf8 = Charset.forName("UTF-8");
+        //NOI18N
         try (final InputStream is = new ByteArrayInputStream(xmlText.getBytes(utf8))) {
             load(is);
         }
@@ -84,15 +87,24 @@ class GlueLoader implements ContentHandler, ErrorHandler, LexicalHandler {
         assert prefixMappings.isEmpty();
         
         try {
-            XMLReader xr = XMLReaderFactory.createXMLReader();
+            // create the XML reader and set content handler
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setNamespaceAware(true);
+            SAXParser saxParser = saxParserFactory.newSAXParser();
+            XMLReader xr = saxParser.getXMLReader();
+            // https://github.com/BrightSpots/rcv/commit/c94cae953678c6a7bfa54acefa210c300cb37dc1
+
             xr.setContentHandler(this);
             xr.setErrorHandler(this);
-            xr.setProperty("http://xml.org/sax/properties/lexical-handler", this); //NOI18N
+            xr.setProperty("http://xml.org/sax/properties/lexical-handler", this);
+            //NOI18N
             xr.parse(new InputSource(is));
         } catch(SAXException x) {
             throw new IOException(x);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
         }
-        
+
         assert currentElement == null;
         assert currentElementDepth == -1;
         assert auxiliaries.isEmpty();
