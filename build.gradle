@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.8' apply false
+    id 'org.openjfx.javafxplugin' version '0.0.9' apply false
 }
 
 apply plugin: 'base'
@@ -58,6 +58,7 @@ subprojects {
     }
 
     javafx {
+        version = '16-ea+4'
         modules = [ 'javafx.web', 'javafx.fxml', 'javafx.swing', 'javafx.media' ]
     }
 
