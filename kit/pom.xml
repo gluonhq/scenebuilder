@@ -14,5 +14,18 @@
         <version>15.0.1</version>
         <relativePath>..</relativePath>
     </parent>
-
+    <repositories>
+        <repository>
+            <id>gluon</id>
+            <name>gluon</name>
+            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>charm-glisten</artifactId>
+            <version>6.0.5</version>          
+        </dependency>
+    </dependencies>
 </project>
