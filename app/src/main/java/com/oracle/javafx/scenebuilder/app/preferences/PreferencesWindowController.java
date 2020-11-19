@@ -1,34 +1,8 @@
 /*
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
  * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Check license.txt for license
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
@@ -38,8 +12,6 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.BACKGROUND_IMAGE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_SWATCH;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_WIDTH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION;
@@ -57,7 +29,6 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_PARENT_RING_COLOR;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_SWATCH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_THEME;
 
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
@@ -133,8 +104,6 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private ChoiceBox<Integer> recentItemsSize;
     @FXML
     private ChoiceBox<EditorPlatform.Theme> themes;
-    @FXML
-    private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
     @FXML
     private CheckBox animateAccordion;
     @FXML
@@ -240,13 +209,6 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         themes.setValue(recordGlobal.getTheme());
         themes.getSelectionModel().selectedItemProperty().addListener(new ThemesListener());
 
-        List<EditorPlatform.GluonSwatch> gluonSwatches = Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants());
-        // Sort alphabetically
-        gluonSwatches.sort((s1, s2) -> s1.toString().compareTo(s2.toString()));
-        gluonSwatch.getItems().setAll(gluonSwatches);
-        gluonSwatch.setValue(recordGlobal.getSwatch());
-        gluonSwatch.getSelectionModel().selectedItemProperty().addListener(new SwatchListener());
-        
         // Number of open recent items
         recentItemsSize.getItems().setAll(recentItemsSizes);
         recentItemsSize.setValue(recordGlobal.getRecentItemsSize());
@@ -320,9 +282,6 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
 
         // Default theme
         themes.setValue(DEFAULT_THEME);
-
-        // Default Gluon swatch
-        gluonSwatch.setValue(DEFAULT_SWATCH);
 
         // Default Accordion Animation
         animateAccordion.setSelected(DEFAULT_ACCORDION_ANIMATION);
@@ -438,38 +397,6 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             // Update UI
 //            recordGlobal.refreshTheme();
             SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshTheme(recordGlobal));
-        }
-    }
-
-    private static class SwatchListener implements ChangeListener<EditorPlatform.GluonSwatch> {
-        @Override
-        public void changed(ObservableValue<? extends EditorPlatform.GluonSwatch> observable, EditorPlatform.GluonSwatch oldValue, EditorPlatform.GluonSwatch newValue) {
-            final PreferencesController preferencesController
-                    = PreferencesController.getSingleton();
-            final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
-            // Update preferences
-            recordGlobal.setSwatch(newValue);
-            recordGlobal.writeToJavaPreferences(GLUON_SWATCH);
-            // Update UI
-//            recordGlobal.refreshSwatch();
-            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshSwatch(recordGlobal));
-        }
-    }
-
-    private static class GluonThemeListener implements ChangeListener<EditorPlatform.GluonTheme> {
-        @Override
-        public void changed(ObservableValue<? extends EditorPlatform.GluonTheme> observable, EditorPlatform.GluonTheme oldValue, EditorPlatform.GluonTheme newValue) {
-            final PreferencesController preferencesController
-                    = PreferencesController.getSingleton();
-            final PreferencesRecordGlobal recordGlobal
-                    = preferencesController.getRecordGlobal();
-            // Update preferences
-            recordGlobal.setGluonTheme(newValue);
-            recordGlobal.writeToJavaPreferences(GLUON_THEME);
-            // Update UI
-//            recordGlobal.refreshGluonTheme();
-            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.refreshGluonTheme(recordGlobal));
         }
     }
 

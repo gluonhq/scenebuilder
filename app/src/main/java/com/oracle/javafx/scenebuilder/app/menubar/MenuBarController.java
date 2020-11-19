@@ -1,34 +1,8 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Check license.txt for license
  */
 package com.oracle.javafx.scenebuilder.app.menubar;
 
@@ -1011,52 +985,11 @@ public class MenuBarController {
         caspianEmbeddedThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED));
         caspianEmbeddedQVGAThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA));
 
-        gluonMobileLightThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_LIGHT));
-        gluonMobileDarkThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_DARK));
         modenaThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA));
         modenaTouchThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_TOUCH));
         modenaHighContrastBlackonwhiteThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE));
         modenaHighContrastWhiteonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK));
         modenaHighContrastYellowonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK));
-
-        blueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE));
-        addSwatchGraphic(blueSwatch);
-        cyanSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.CYAN));
-        addSwatchGraphic(cyanSwatch);
-        deepOrangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_ORANGE));
-        addSwatchGraphic(deepOrangeSwatch);
-        deepPurpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_PURPLE));
-        addSwatchGraphic(deepPurpleSwatch);
-        greenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREEN));
-        addSwatchGraphic(greenSwatch);
-        indigoSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.INDIGO));
-        addSwatchGraphic(indigoSwatch);
-        lightBlueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_BLUE));
-        addSwatchGraphic(lightBlueSwatch);
-        pinkSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PINK));
-        addSwatchGraphic(pinkSwatch);
-        purpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PURPLE));
-        addSwatchGraphic(purpleSwatch);
-        redSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.RED));
-        addSwatchGraphic(redSwatch);
-        tealSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.TEAL));
-        addSwatchGraphic(tealSwatch);
-        lightGreenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_GREEN));
-        addSwatchGraphic(lightGreenSwatch);
-        limeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIME));
-        addSwatchGraphic(limeSwatch);
-        yellowSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.YELLOW));
-        addSwatchGraphic(yellowSwatch);
-        amberSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.AMBER));
-        addSwatchGraphic(amberSwatch);
-        orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
-        addSwatchGraphic(orangeSwatch);
-        brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
-        addSwatchGraphic(brownSwatch);
-        greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
-        addSwatchGraphic(greySwatch);
-        blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
-        addSwatchGraphic(blueGreySwatch);
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
@@ -1136,10 +1069,6 @@ public class MenuBarController {
         insertMenu.setOnMenuValidation(onCustomPartOfInsertMenuValidationHandler);
         
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
-    }
-
-    private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
-        swatchMenuItem.setGraphic(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().createGraphic());
     }
 
     /*
@@ -2231,11 +2160,6 @@ public class MenuBarController {
             }
 
             documentWindowController.getEditorController().setTheme(overridingTheme);
-            if (overridingTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT) {
-                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.LIGHT);
-            } else if (overridingTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.DARK);
-            }
         }
 
         @Override
@@ -2249,12 +2173,6 @@ public class MenuBarController {
                         = documentWindowController.getEditorController().getTheme();
 
                 switch (theme) {
-                    case GLUON_MOBILE_LIGHT:
-                        res = EditorPlatform.isGluonMobileLight(currentTheme);
-                        break;
-                    case GLUON_MOBILE_DARK:
-                        res = EditorPlatform.isGluonMobileDark(currentTheme);
-                        break;
                     // CASPIAN_HIGH_CONTRAST can be selected only if another CASPIAN
                     // theme is active.
                     case CASPIAN_HIGH_CONTRAST:
@@ -2296,42 +2214,6 @@ public class MenuBarController {
                 }
             }
 
-            return res;
-        }
-    }
-
-    class GluonActionController extends MenuItemController {
-
-        private EditorPlatform.GluonSwatch gluonSwatch;
-
-        public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
-            this.gluonSwatch = gluonSwatch;
-        }
-
-        public EditorPlatform.GluonSwatch getSwatch() {
-            return gluonSwatch;
-        }
-
-        @Override
-        public boolean canPerform() {
-            EditorPlatform.Theme currentTheme
-                    = documentWindowController.getEditorController().getTheme();
-            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_LIGHT) || currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_DARK);
-        }
-
-        @Override
-        public void perform() {
-            documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
-        }
-
-        @Override
-        public boolean isSelected() {
-            boolean res = false;
-            if (documentWindowController == null) {
-                res = false;
-            } else if (gluonSwatch != null) {
-                res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
-            }
             return res;
         }
     }

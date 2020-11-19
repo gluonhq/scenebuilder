@@ -102,8 +102,6 @@
 
     <Label text="%prefs.document.theme" GridPane.rowIndex="12" />
     <ChoiceBox fx:id="themes" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-    <Label text="%prefs.document.gluonswatch" GridPane.rowIndex="13" />
-    <ChoiceBox fx:id="gluonSwatch" GridPane.columnIndex="1" GridPane.rowIndex="13" />
 
     <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="14" />
 
