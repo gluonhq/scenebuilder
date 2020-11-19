@@ -26,3 +26,4 @@ dist/
 package/
 /build/
 /components/build/
+/kit/target/
