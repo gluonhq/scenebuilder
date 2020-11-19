@@ -1,2 +1,0 @@
-rootProject.name = 'SceneBuilder'
-include 'app', 'kit', 'components'
