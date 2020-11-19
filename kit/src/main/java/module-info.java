@@ -12,6 +12,18 @@ module com.oracle.javafx.scenebuilder.kit {
     requires java.desktop;
     
     requires com.gluonhq.charm.glisten;
+    requires org.apache.maven.resolver;
+    requires org.apache.maven.resolver.util;
+    requires org.apache.maven.resolver.impl;
+    requires org.apache.maven.resolver.connector.basic;
+    requires org.apache.maven.resolver.spi;
+    requires org.apache.maven.resolver.transport.file;
+    requires org.apache.maven.resolver.transport.http;
+    requires org.apache.httpcomponents.httpclient;
+    requires org.apache.httpcomponents.httpcore;
+    requires org.apache.commons.codec;
+    requires org.apache.commons.lang3;
+
 
     opens com.oracle.javafx.scenebuilder.kit to javafx.fxml;
 
