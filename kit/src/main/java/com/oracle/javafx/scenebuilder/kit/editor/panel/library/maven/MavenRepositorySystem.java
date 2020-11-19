@@ -46,9 +46,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.codehaus.plexus.util.FileUtils;
+
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
@@ -307,7 +308,7 @@ public class MavenRepositorySystem {
         } catch (ArtifactResolutionException ex) { }
         
         try {
-            FileUtils.deleteDirectory(tempM2Repository);
+            FileUtils.deleteDirectory(new File(tempM2Repository));
         } catch (IOException ex) { }
         
         return absolutePath;

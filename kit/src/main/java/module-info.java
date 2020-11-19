@@ -24,6 +24,7 @@ module com.oracle.javafx.scenebuilder.kit {
     requires org.apache.commons.codec;
     requires org.apache.commons.lang3;
     requires jakarta.json;
+    requires org.apache.commons.io;
 
     opens com.oracle.javafx.scenebuilder.kit to javafx.fxml;
 
