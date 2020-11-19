@@ -27,3 +27,5 @@ package/
 /build/
 /components/build/
 /kit/target/
+/components/target/
+/app/target/

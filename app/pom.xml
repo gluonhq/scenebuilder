@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+
+    <artifactId>app</artifactId>
+
+    <parent>
+        <groupId>gr.codebb.scenebuilder</groupId>
+        <artifactId>parent</artifactId>
+        <version>15.0.1</version>
+        <relativePath>..</relativePath>
+    </parent>
+    
+        <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.5</version>
+                <configuration>
+                    <mainClass>com.oracle.javafx.scenebuilder.app.SceneBuilderApp</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>compile</includeScope>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <dependencies> 
+        <dependency>
+            <groupId>gr.codebb.scenebuilder</groupId>
+            <artifactId>kit</artifactId>
+            <version>15.0.1</version>          
+        </dependency>
+        <dependency>
+            <groupId>gr.codebb.scenebuilder</groupId>
+            <artifactId>components</artifactId>
+            <version>15.0.1</version>          
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+    </dependencies>
+</project>
