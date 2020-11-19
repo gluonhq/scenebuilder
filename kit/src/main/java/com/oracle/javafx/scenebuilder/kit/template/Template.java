@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Check license.txt for license
+ */
+/*
  * Copyright (c) 2017, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,7 +38,6 @@
 package com.oracle.javafx.scenebuilder.kit.template;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 
 import java.net.URL;
 
@@ -75,7 +79,6 @@ public enum Template {
     public static void prepareDocument(EditorController editorController, Template template) {
         if (template.getType() == Type.PHONE) {
             editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
-            editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
         }
     }
 }

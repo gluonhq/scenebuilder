@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Check license.txt for license
+ */
+/*
  * Copyright (c) 2017, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
@@ -163,46 +169,9 @@ class WorkspaceController {
         return Collections.unmodifiableList(themeStylesheets);
     }
     
-    public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme, EditorPlatform.GluonSwatch gluonSwatch, EditorPlatform.GluonTheme gluonTheme) {
+    public void setThemeStyleSheet(String themeStyleSheet, EditorPlatform.Theme theme) {
         assert themeStyleSheet != null;
         assert theme != null;
-        assert gluonSwatch != null;
-        assert gluonTheme != null;
-        String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-        String gluonSwatchStylesheet = gluonSwatch.getStylesheetURL();
-        String gluonThemeStylesheet = gluonTheme.getStylesheetURL();
-        String previousGluonSwatchStylesheet = editorController.getGluonSwatch().getStylesheetURL();
-        String previousGluonThemeStylesheet = editorController.getGluonTheme().getStylesheetURL();
-        if (theme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || theme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-            contentSubScene.setUserAgentStylesheet(EditorPlatform.Theme.MODENA.getStylesheetURL());
-            ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
-            currentStyleSheets.remove(previousGluonSwatchStylesheet);
-            currentStyleSheets.remove(previousGluonThemeStylesheet);
-            if (!currentStyleSheets.contains(themeStyleSheet)) {
-                currentStyleSheets.add(themeStyleSheet);
-            }
-            if (!currentStyleSheets.contains(gluonDocumentStylesheet)) {
-                currentStyleSheets.add(gluonDocumentStylesheet);
-            }
-            if (!currentStyleSheets.contains(gluonSwatchStylesheet)) {
-                currentStyleSheets.add(gluonSwatchStylesheet);
-            }
-            if (!currentStyleSheets.contains(gluonThemeStylesheet)) {
-                currentStyleSheets.add(gluonThemeStylesheet);
-            }
-            themeStylesheets.clear();
-            themeStylesheets.addAll(currentStyleSheets);
-            contentGroupApplyCss();
-//            setPreviewStyleSheets(Arrays.asList(themeStyleSheet));
-        } else {
-            contentSubScene.setUserAgentStylesheet(themeStyleSheet);
-
-            String gluonMobileStyleSheet = EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL(); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
-            themeStylesheets.remove(gluonMobileStyleSheet);
-            themeStylesheets.remove(gluonDocumentStylesheet);
-            themeStylesheets.remove(previousGluonSwatchStylesheet);
-            themeStylesheets.remove(previousGluonThemeStylesheet);
-        }
 
         // Update scenegraph layout, etc
         FXOMDocument fxomDocument = editorController.getFxomDocument();
@@ -212,15 +181,8 @@ class WorkspaceController {
     }
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
-        EditorPlatform.Theme currentTheme = editorController.getTheme();
         themeStylesheets.clear();
         themeStylesheets.addAll(previewStyleSheets);
-        if (currentTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || currentTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-            themeStylesheets.add(EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURL()); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
-            themeStylesheets.add(editorController.getGluonSwatch().getStylesheetURL());
-            themeStylesheets.add(editorController.getGluonTheme().getStylesheetURL());
-            themeStylesheets.add(EditorPlatform.getGluonDocumentStylesheetURL());
-        }
         contentGroupApplyCss();
     }
     

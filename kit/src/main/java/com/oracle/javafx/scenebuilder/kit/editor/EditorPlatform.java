@@ -1,34 +1,8 @@
 /*
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
  * Copyright (c) 2016, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Check license.txt for license
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
@@ -103,16 +77,6 @@ public class EditorPlatform {
      */
     public static final Theme DEFAULT_THEME = Theme.MODENA;
 
-    /**
-     * Default Gluon Swatch
-     */
-    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = GluonSwatch.BLUE;
-
-    /**
-     * Default Gluon Theme
-     */
-    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = GluonTheme.LIGHT;
-
     interface StylesheetProvider {
         String getStylesheetURL();
     }
@@ -121,8 +85,6 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
-        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
         MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
         MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
@@ -228,33 +190,10 @@ public class EditorPlatform {
             return rect;
         }
     }
-
-    /**
-     * Gluon Theme
-     */
-    public enum GluonTheme implements StylesheetProvider {
-        LIGHT,
-        DARK;
-
-        @Override
-        public String toString() {
-            String lowerCaseName = "title.gluon.theme." + name().toLowerCase(Locale.ROOT);
-            return I18N.getString(lowerCaseName);
-        }
-
-        @Override
-        public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
-        }
-    }
     
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
         return Theme.MODENA.getStylesheetURL();
-    }
-
-    public static String getGluonDocumentStylesheetURL() {
-        return GLUON_DOCUMENT_STYLESHEET;
     }
 
     public static boolean isModena(Theme theme) {
@@ -294,12 +233,6 @@ public class EditorPlatform {
     
     public static boolean isCaspian(Theme theme) {
         return theme.toString().startsWith("CASPIAN");
-    }
-
-    public static boolean isGluonMobileLight(Theme theme) { return theme == Theme.GLUON_MOBILE_LIGHT; }
-
-    public static boolean isGluonMobileDark(Theme theme) {
-        return theme == Theme.GLUON_MOBILE_DARK;
     }
 
     /**

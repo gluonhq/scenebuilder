@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2020, codebb.gr and/or its affiliates.
+ * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Check license.txt for license
+ */
+/*
  * Copyright (c) 2017, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -61,25 +66,17 @@ public class WarnThemeAlert extends SBAlert {
 
         getButtonTypes().setAll(setGluonTheme, ignore);
 
-        resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == setGluonTheme) {
-                editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
-            }
-        });
-
         setOnShown(event -> hasBeenShown = true);
     }
 
     public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject, Stage owner) {
-        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
+        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon()) {
             new WarnThemeAlert(editorController, owner).showAndWait();
         }
     }
 
     public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument, Stage owner) {
-        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
+        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls()) {
             new WarnThemeAlert(editorController, owner).showAndWait();
         }
     }
