@@ -59,6 +59,8 @@ module com.oracle.javafx.scenebuilder.kit {
     exports com.oracle.javafx.scenebuilder.kit.util.control.effectpicker;
     exports com.oracle.javafx.scenebuilder.kit.metadata.property;
     exports com.oracle.javafx.scenebuilder.kit.editor.messagelog;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.klass;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value;
     exports com.oracle.javafx.scenebuilder.kit.metadata.util;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.content.util;
