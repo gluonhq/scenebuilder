@@ -1,0 +1,29 @@
+name: Scene Builder Linux Bundles
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 14, 15 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: x64
+      - name: Create Bundle using JPackage
+        run: |
+          wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
+          export JAVAFX_HOME=/tmp/javafx-jmods-15.0.1/
+          export JPACKAGE_HOME=$JAVA_HOME
+          ./gradlew jpackage
+          ls app/build/
+          ldd app/build/runtime/lib/libjava.so
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: app/build/*.deb
