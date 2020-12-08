@@ -16,11 +16,8 @@ jobs:
           architecture: x64
       - name: Create Bundle using JPackage
         run: |
-          echo ${{env.JAVA_HOME}}
           bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_windows-x64_bin-jmods.zip D:\openjfx-15.0.1_windows-x64_bin-jmods.zip
           powershell -command "Expand-Archive -Force D:\openjfx-15.0.1_windows-x64_bin-jmods.zip D:\"
-          echo $env:JAVAFX_HOME
-          echo $env:JPACKAGE_HOME
           .\gradlew jpackage -PVERSION="12.0.0"
         env:
           JAVAFX_HOME: D:\javafx-jmods-15.0.1
@@ -28,4 +25,4 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          path: app/build/*.dmg
+          path: app/build/*.msi

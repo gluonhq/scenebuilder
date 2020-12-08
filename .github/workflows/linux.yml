@@ -18,11 +18,12 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
           unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
-          export JAVAFX_HOME=/tmp/javafx-jmods-15.0.1/
-          export JPACKAGE_HOME=$JAVA_HOME
           ./gradlew jpackage
           ls app/build/
           ldd app/build/runtime/lib/libjava.so
+        env:
+          JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
+          JPACKAGE_HOME: ${{JAVA_HOME}}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
