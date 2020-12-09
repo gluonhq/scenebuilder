@@ -22,7 +22,7 @@ jobs:
           unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
           ./gradlew jlink jpackage
           sed -i "s/'deb'/'rpm'/g" app/build.gradle
-          ./gradlew jpackage
+          ./gradlew jpackage -PVERSION=${{ matrix.java }}
           ls app/build/
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
