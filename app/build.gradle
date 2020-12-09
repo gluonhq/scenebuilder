@@ -115,7 +115,7 @@ task jlink(type: Exec) {
 }
 
 task jpackage(type: Exec) {
-    dependsOn 'jlink', 'shadowJar'
+    dependsOn 'shadowJar'
     workingDir 'build'
     def options = []
     doFirst {

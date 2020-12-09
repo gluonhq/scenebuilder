@@ -18,7 +18,7 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
           unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
-          ./gradlew jpackage
+          ./gradlew jlink jpackage
           sed -i "s/'deb'/'rpm'/g" app/build.gradle
           ./gradlew jpackage
           ls app/build/

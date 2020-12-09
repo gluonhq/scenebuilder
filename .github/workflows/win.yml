@@ -18,7 +18,7 @@ jobs:
         run: |
           bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_windows-x64_bin-jmods.zip D:\openjfx-15.0.1_windows-x64_bin-jmods.zip
           powershell -command "Expand-Archive -Force D:\openjfx-15.0.1_windows-x64_bin-jmods.zip D:\"
-          .\gradlew jpackage -PVERSION="12.0.0"
+          .\gradlew jlink jpackage -PVERSION="12.0.0"
         env:
           JAVAFX_HOME: D:\javafx-jmods-15.0.1
           JPACKAGE_HOME: ${{env.JAVA_HOME}}
