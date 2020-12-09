@@ -23,7 +23,7 @@ jobs:
           ldd app/build/runtime/lib/libjava.so
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
-          JPACKAGE_HOME: ${{JAVA_HOME}}
+          JPACKAGE_HOME: ${{env.JAVA_HOME}}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
