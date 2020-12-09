@@ -90,7 +90,6 @@ def java_home     = System.getenv('JAVA_HOME')
 def jpackage_home = System.getenv('JPACKAGE_HOME')
 
 task jlink(type: Exec) {
-    dependsOn 'clean'
     dependsOn 'jar'
     workingDir 'build'
 
