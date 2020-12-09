@@ -1,28 +1,27 @@
 name: Scene Builder MacOS Bundles
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   build:
     runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [ 14, 15 ]
     steps:
       - uses: actions/checkout@v2
       - name: Setup java
         uses: joschi/setup-jdk@v2
         with:
-          java-version: ${{ matrix.java }}
-          architecture: x64
+          java-version: 15
       - name: Create Bundle using JPackage
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_osx-x64_bin-jmods.zip
           unzip /tmp/openjfx-15.0.1_osx-x64_bin-jmods.zip -d /tmp
-          ./gradlew jlink jpackage -PVERSION=12.0.0
+          ./gradlew jlink jpackage
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
           JPACKAGE_HOME: ${{env.JAVA_HOME}}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
+          name: SceneBuilder-${{ runner.os }}
           path: app/build/*.dmg
