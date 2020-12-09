@@ -16,7 +16,8 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_osx-x64_bin-jmods.zip
           unzip /tmp/openjfx-15.0.1_osx-x64_bin-jmods.zip -d /tmp
-          ./gradlew jlink jpackage
+          TAG=${GITHUB_REF/refs\/tags\//}
+          ./gradlew jlink jpackage -PVERSION=$TAG
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
           JPACKAGE_HOME: ${{env.JAVA_HOME}}
