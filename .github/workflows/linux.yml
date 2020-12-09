@@ -8,6 +8,8 @@ jobs:
       matrix:
         java: [ 14, 15 ]
     steps:
+      - name: Install packages
+        run: sudo apt-get install xdg-utils
       - uses: actions/checkout@v2
       - name: Setup java
         uses: joschi/setup-jdk@v2
