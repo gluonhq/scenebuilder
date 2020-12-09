@@ -20,7 +20,7 @@ jobs:
           unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
           ./gradlew jpackage
           sed -i "s/'deb'/'rpm'/g" app/build.gradle
-          ./gradle jpackage
+          ./gradlew jpackage
           ls app/build/
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
