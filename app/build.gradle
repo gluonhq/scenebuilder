@@ -155,12 +155,9 @@ task jpackage(type: Exec) {
                 '--icon', '../assets/osx/icon-mac.icns',
                 '--mac-package-identifier', 'com.gluonhq.scenebuilder',
                 '--mac-package-name', 'Scene Builder',
-                /*
-                '--mac-bundle-signing-prefix', signingPrefix,
-                '--mac-signing-keychain', signingKeychain,
+                '--mac-package-signing-prefix', signingPrefix,
                 '--mac-signing-key-user-name', signingKeyUsername,
                 '--mac-sign'
-                */
             ]
         } else {
             options = [
