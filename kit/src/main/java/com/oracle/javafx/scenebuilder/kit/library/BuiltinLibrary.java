@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2020, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -97,7 +97,32 @@ public class BuiltinLibrary extends Library {
     public static String getEmptyQualifier() {
         return EMPTY_QUALIFIER;
     }
-    
+
+    /**
+     * Creates the FXML content to import a given class as follows:
+     * <pre>{@code
+     *     <?xml version="1.0" encoding="UTF-8"?> //NOI18N
+     *     <?import a.b.C?>
+     *     <C/>
+     * }</pre>
+     *
+     * @param componentClass the class
+     * @return a String with the FXML content
+     */
+    public static String makeFxmlText(Class<?> componentClass) {
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //NOI18N
+        sb.append("<?import "); //NOI18N
+        sb.append(componentClass.getCanonicalName());
+        sb.append("?>"); //NOI18N
+        sb.append("<"); //NOI18N
+        sb.append(componentClass.getSimpleName());
+        sb.append("/>\n"); //NOI18N
+
+        return sb.toString();
+    }
+
     /*
      * Library
      */
@@ -382,30 +407,7 @@ public class BuiltinLibrary extends Library {
     }
     
     
-    private static String makeFxmlText(Class<?> componentClass) {
-        final StringBuilder sb = new StringBuilder();
-        
-        /*
-         * <?xml version="1.0" encoding="UTF-8"?> //NOI18N
-         * 
-         * <?import a.b.C?>
-         * 
-         * <C/>
-         */
-        
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //NOI18N
-        
-        sb.append("<?import "); //NOI18N
-        sb.append(componentClass.getCanonicalName());
-        sb.append("?>"); //NOI18N
-        sb.append("<"); //NOI18N
-        sb.append(componentClass.getSimpleName());
-        sb.append("/>\n"); //NOI18N
-        
-        return sb.toString();
-    }
-    
-    private static String makeRegionFxmlText(Class<? extends Region> componentClass, 
+    private static String makeRegionFxmlText(Class<? extends Region> componentClass,
             double pw, double ph) {
         final StringBuilder sb = new StringBuilder();
         
