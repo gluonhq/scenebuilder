@@ -360,23 +360,25 @@ class LibraryFolderWatcher implements Runnable {
             }
 
             JarReport jarReport;
+            String resultText = "";
             if (LibraryUtil.isJarPath(currentJarOrFolder)) {
                 LOGGER.info(I18N.getString("log.info.explore.jar", currentJarOrFolder));
                 final JarExplorer explorer = new JarExplorer(currentJarOrFolder);
                 jarReport = explorer.explore(classLoader);
+                resultText = I18N.getString("log.info.explore.jar.results", jarName);
             }
             else if (Files.isDirectory(currentJarOrFolder)) {
                 LOGGER.info(I18N.getString("log.info.explore.folder", currentJarOrFolder));
                 final FolderExplorer explorer = new FolderExplorer(currentJarOrFolder);
                 jarReport = explorer.explore(classLoader);
+                resultText = I18N.getString("log.info.explore.folder.results", jarName);
             } else {
                 continue;
             }
 
             jarOrFolderReports.add(jarReport);
 
-            StringBuilder sb = new StringBuilder(I18N.getString("log.info.explore.jar.results", jarName))
-                    .append("\n");
+            StringBuilder sb = new StringBuilder(resultText).append("\n");
             if (jarReport.getEntries().isEmpty()) {
                 sb.append("> ").append(I18N.getString("log.info.explore.no.results"));
             } else {
