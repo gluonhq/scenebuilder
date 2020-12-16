@@ -36,7 +36,7 @@ jobs:
       - name: Upload to AWS S3
         run: |
           TAG=${GITHUB_REF/refs\/tags\//}
-          aws s3 cp app/build/ ${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/linux/ --include "SceneBuilder-$TAG*" --acl public-read --region us-east-1 --debug
+          aws s3 cp app/build/ ${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/linux/ --exclude "**/*" --acl public-read --recursive --region us-east-1 --debug
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
