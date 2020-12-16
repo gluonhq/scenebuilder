@@ -45,3 +45,12 @@ jobs:
         with:
           name: SceneBuilder-${{ runner.os }}
           path: ${{ steps.outputfile.outputs.path }}
+      - name: Upload to AWS S3
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          aws s3 cp app/build/SceneBuilder-$TAG.dmg ${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/mac/ --acl public-read --region us-east-1 --debug
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
