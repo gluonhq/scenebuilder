@@ -31,3 +31,11 @@ jobs:
         with:
           name: SceneBuilder-${{ runner.os }}
           path: app/build/*.msi
+      - name: Upload to AWS S3
+        run: |
+          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.AWS_S3_BUCKET }}/scenebuilder/${{ env.TAG }}/install/windows/x64/ --acl public-read --debug
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
