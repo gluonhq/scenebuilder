@@ -19,7 +19,7 @@ jobs:
         run: |
           TAG=${GITHUB_REF/refs\/tags\//}
           S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/windows/
-          if [ "$TAG" == *-RC* ]; then
+          if [[ "$TAG" == *-RC* ]]; then
               S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/install/linux/
           fi
           echo ::set-output name=SOURCE_TAG::$TAG
