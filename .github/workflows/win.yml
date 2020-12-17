@@ -1,0 +1,41 @@
+name: Scene Builder Windows Bundles
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 15
+      - name: Store TAG Name
+        id: tag_name
+        run: |
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+        shell: bash
+      - name: Create Bundle using JPackage
+        run: |
+          bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_windows-x64_bin-jmods.zip D:\openjfx-15.0.1_windows-x64_bin-jmods.zip
+          powershell -command "Expand-Archive -Force D:\openjfx-15.0.1_windows-x64_bin-jmods.zip D:\"
+          .\gradlew jlink jpackage -PVERSION="${{ env.TAG }}"
+        env:
+          JAVAFX_HOME: D:\javafx-jmods-15.0.1
+          JPACKAGE_HOME: ${{env.JAVA_HOME}}
+          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SceneBuilder-${{ runner.os }}
+          path: app/build/*.msi
+      - name: Upload to AWS S3
+        run: |
+          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.AWS_S3_BUCKET }}/scenebuilder/${{ env.TAG }}/install/windows/ --acl public-read --region us-east-1 --debug
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}

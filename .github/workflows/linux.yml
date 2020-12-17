@@ -1,0 +1,44 @@
+name: Scene Builder Linux Bundles
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install packages
+        run: sudo apt-get install xdg-utils
+      - uses: actions/checkout@v2
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 15
+      - name: Create Bundle using JPackage
+        run: |
+          wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
+          TAG=${GITHUB_REF/refs\/tags\//}
+          ./gradlew jlink jpackage -PVERSION=$TAG
+          sed -i "s/'deb'/'rpm'/g" app/build.gradle
+          ./gradlew jpackage -PVERSION=$TAG
+          ls app/build/
+        env:
+          JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
+          JPACKAGE_HOME: ${{env.JAVA_HOME}}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SceneBuilder-${{ runner.os }}
+          path: |
+            app/build/*.deb
+            app/build/*.rpm
+      - name: Upload to AWS S3
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          aws s3 cp app/build/ ${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/linux/ --exclude "**/*" --acl public-read --recursive --region us-east-1 --debug
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
