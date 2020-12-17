@@ -26,6 +26,13 @@ jobs:
           JAVAFX_HOME: D:\javafx-jmods-15.0.1
           JPACKAGE_HOME: ${{env.JAVA_HOME}}
           TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+      - name: Codesign
+        uses: DanaBear/code-sign-action@v4
+        with:
+          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_PASSWORD }}'
+          certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
+          folder: 'app/build'
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
