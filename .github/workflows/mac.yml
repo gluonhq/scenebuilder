@@ -63,8 +63,9 @@ jobs:
           path: ${{ steps.outputfile.outputs.path }}
       - name: Upload to AWS S3
         run: |
-          aws s3 ${{ env.PATH }} $S3_PATH --acl public-read --region us-east-1 --debug
+          aws s3 $ARTIFACT_PATH $S3_PATH --acl public-read --region us-east-1 --debug
         env:
-          PATH: ${{ steps.outputfile.outputs.path }}
+          ARTIFACT_PATH: ${{ steps.outputfile.outputs.path }}
+          S3_PATH: ${{ steps.variables.outputs.S3_PATH }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
