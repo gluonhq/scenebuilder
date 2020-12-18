@@ -12,20 +12,33 @@ jobs:
         uses: joschi/setup-jdk@v2
         with:
           java-version: 15
-      - name: Store TAG Name
-        id: tag_name
+      - name: Store Variables
+        id: variables
         run: |
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+          TAG=${GITHUB_REF/refs\/tags\//}
+          VERSION=$TAG
+          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/windows/
+          if [[ "$TAG" == *-RC* ]]; then
+              VERSION=`echo $TAG | cut -d- -f1`
+              S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/install/windows/
+          fi
+          echo ::set-output name=SOURCE_TAG::$TAG
+          echo ::set-output name=SOURCE_VERSION::$VERSION
+          echo ::set-output name=S3_PATH::$S3_PATH
         shell: bash
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       - name: Create Bundle using JPackage
         run: |
           bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_windows-x64_bin-jmods.zip D:\openjfx-15.0.1_windows-x64_bin-jmods.zip
           powershell -command "Expand-Archive -Force D:\openjfx-15.0.1_windows-x64_bin-jmods.zip D:\"
-          .\gradlew jlink jpackage -PVERSION="${{ env.TAG }}"
+          .\gradlew jlink jpackage -PVERSION="${{ env.VERSION }}"
+          ren app\build\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
         env:
           JAVAFX_HOME: D:\javafx-jmods-15.0.1
-          JPACKAGE_HOME: ${{env.JAVA_HOME}}
-          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+          VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
       - name: Codesign
         uses: DanaBear/code-sign-action@v4
         with:
@@ -40,9 +53,9 @@ jobs:
           path: app/build/*.msi
       - name: Upload to AWS S3
         run: |
-          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.AWS_S3_BUCKET }}/scenebuilder/${{ env.TAG }}/install/windows/ --acl public-read --region us-east-1 --debug
+          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
         env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TAG: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+          S3_PATH: ${{ steps.variables.outputs.S3_PATH }}
