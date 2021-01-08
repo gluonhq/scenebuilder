@@ -63,7 +63,7 @@ jobs:
           path: ${{ steps.outputfile.outputs.path }}
       - name: Upload to AWS S3
         run: |
-          aws s3 $ARTIFACT_PATH $S3_PATH --acl public-read --region us-east-1 --debug
+          aws s3 cp $ARTIFACT_PATH $S3_PATH --acl public-read --region us-east-1 --debug
         env:
           ARTIFACT_PATH: ${{ steps.outputfile.outputs.path }}
           S3_PATH: ${{ steps.variables.outputs.S3_PATH }}

@@ -40,7 +40,7 @@ jobs:
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
       - name: Codesign
-        uses: DanaBear/code-sign-action@v4
+        uses: erwin1/code-sign-action@master
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
           password: '${{ secrets.WINDOWS_PASSWORD }}'
