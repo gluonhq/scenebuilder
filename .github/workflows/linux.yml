@@ -19,7 +19,7 @@ jobs:
         run: |
           TAG=${GITHUB_REF/refs\/tags\//}
           VERSION=$TAG
-          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/windows/
+          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/linux/
           if [[ "$TAG" == *-RC* ]]; then
               VERSION=`echo $TAG | cut -d- -f1`
               S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/install/linux/
