@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Install packages
-        run: sudo apt-get install xdg-utils
+        run: sudo apt-get install xdg-utils xvfb tigervnc-standalone-server tigervnc-common
       - uses: actions/checkout@v2
       - name: Setup java
         uses: joschi/setup-jdk@v2
@@ -30,7 +30,13 @@ jobs:
       - name: Create Kit Jar
         run: |
           chmod +x gradlew
-          ./gradlew clean :kit:build -PVERSION=$TAG
+          export DISPLAY=:90
+          mkdir /home/runner/.vnc
+          echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
+          chmod -v 600 /home/runner/.vnc/passwd
+          vncserver :90 -localhost -nolisten tcp
+          ./gradlew -i clean :kit:build -PVERSION=$TAG
+          vncserver -kill :90
         env:
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
       - name: Upload Artifact
