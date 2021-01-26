@@ -164,9 +164,11 @@ task jpackage(type: Exec) {
                 '--type', 'msi',
                 '--java-options', '--add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED',
                 '--icon', '../assets/windows/icon-windows.ico',
+                '--win-dir-chooser',
                 '--win-menu',
-                '--win-shortcut',
-                '--win-menu-group', 'SceneBuilder'
+                '--win-menu-group', 'Scene Builder',
+                '--win-per-user-install',
+                '--win-shortcut'
             ]
         }
         argsList.addAll(options)
