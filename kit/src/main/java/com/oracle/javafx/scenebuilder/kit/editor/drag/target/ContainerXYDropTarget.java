@@ -94,11 +94,14 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
             result = false;
         } else {
             boolean containsIntrinsic = false;
+            // Intrinsic node also should be accepted as drag source ?
+            /*
             for (FXOMObject draggedObject : dragSource.getDraggedObjects()) {
                 if (draggedObject instanceof FXOMIntrinsic) {
-//                    containsIntrinsic = true;
+                    containsIntrinsic = true;
                 }
             }
+             */
             if (containsIntrinsic) {
                 result = false;
             } else {
