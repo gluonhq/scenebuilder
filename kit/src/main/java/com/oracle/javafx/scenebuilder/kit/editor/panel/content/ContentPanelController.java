@@ -547,7 +547,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
      * @return an FXOMObject that matches (sceneGraphNode, sceneX, sceneY)
      */
     public FXOMObject searchWithNode(Node sceneGraphNode, double sceneX, double sceneY) {
-       final FXOMObject result;
+        FXOMObject result = null;
         
         final FXOMDocument fxomDocument 
                 = getEditorController().getFxomDocument();
@@ -558,14 +558,16 @@ public class ContentPanelController extends AbstractFxmlPanelController
          * With the logic above, a click in a 'tab header' returns the
          * fxom object associated to the 'tab pane'. We would like to get
          * the fxom object associated to the 'tab'. When the pick result is
-         * a 'TabPane' we need to refine this result. This refinement logic
-         * is available in AbstractDriver.
+         * a 'TabPane' we need to refine this result. For intrinsic node,
+         * it doesn't need to refine. This refinement logic is available
+         * in AbstractDriver.
          */
         if (match != null) {
+            result = match;
             final AbstractDriver driver = lookupDriver(match);
-            result = driver.refinePick(sceneGraphNode, sceneX, sceneY, match);
-        } else {
-            result = null;
+            if(driver != null) {
+                result = driver.refinePick(sceneGraphNode, sceneX, sceneY, match);
+            }
         }
         
         return result;

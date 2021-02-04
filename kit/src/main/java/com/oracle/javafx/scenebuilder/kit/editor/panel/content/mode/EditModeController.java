@@ -60,6 +60,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.editor.util.ContextMenuController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
@@ -440,7 +441,15 @@ implements AbstractGesture.Observer {
         excludes.clear();
         final Group handleLayer = contentPanelController.getHandleLayer();
         for (FXOMObject incomingObject : incomingObjects) {
-            final AbstractDriver driver = contentPanelController.lookupDriver(incomingObject);
+            AbstractDriver driver;
+            // To attach handle to intrinsic node (<fx:included> or <fx:copy>).
+            if(incomingObject instanceof FXOMIntrinsic) {
+                FXOMInstance fxomInstance = ((FXOMIntrinsic) incomingObject).createFxomInstanceFromIntrinsic();
+                incomingObject = fxomInstance;
+                driver = contentPanelController.lookupDriver(fxomInstance);
+            } else {
+                driver = contentPanelController.lookupDriver(incomingObject);
+            }
             if (driver == null) {
                 // incomingObject cannot be managed by content panel (eg MenuItem)
                 excludes.add(incomingObject);
