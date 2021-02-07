@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,17 +33,24 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.HBox?>
 
 <HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-  <children><Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
-<styleClass>
-<String fx:value="label" />
-<String fx:value="symbol-prefix" />
-</styleClass></Label>
+  <children>
+    <Label fx:id="prefixLb" alignment="CENTER" minWidth="10.0">
+      <styleClass>
+        <String fx:value="label" />
+        <String fx:value="symbol-prefix" />
+      </styleClass>
+    </Label>
     <TextField fx:id="stylesheetTf">
 <HBox.margin>
 <Insets right="1.0" />

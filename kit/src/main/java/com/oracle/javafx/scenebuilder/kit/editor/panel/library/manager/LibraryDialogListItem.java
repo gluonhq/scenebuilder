@@ -32,6 +32,7 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -54,5 +55,13 @@ public class LibraryDialogListItem implements DialogListItem {
 
     public Path getFilePath() {
         return filePath;
+    }
+    
+    @Override
+    public String toString() {
+        if (Files.isDirectory(filePath))
+            return filePath.toAbsolutePath().toString();
+        else
+            return filePath.getFileName().toString();
     }
 }

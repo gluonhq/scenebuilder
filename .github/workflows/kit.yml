@@ -1,0 +1,54 @@
+name: Scene Builder Kit
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install packages
+        run: sudo apt-get install xdg-utils xvfb tigervnc-standalone-server tigervnc-common
+      - uses: actions/checkout@v2
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 15
+      - name: Store Variables
+        id: variables
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/
+          if [[ "$TAG" == *-RC* ]]; then
+              S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/
+          fi
+          echo ::set-output name=SOURCE_TAG::$TAG
+          echo ::set-output name=S3_PATH::$S3_PATH
+        shell: bash
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      - name: Create Kit Jar
+        run: |
+          chmod +x gradlew
+          export DISPLAY=:90
+          mkdir /home/runner/.vnc
+          echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
+          chmod -v 600 /home/runner/.vnc/passwd
+          vncserver :90 -localhost -nolisten tcp
+          ./gradlew -i clean :kit:build -PVERSION=$TAG
+          vncserver -kill :90
+        env:
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SceneBuilder-Kit-Jar
+          path: kit/build/libs/*.jar
+      - name: Upload to AWS S3
+        run: |
+          aws s3 cp kit/build/libs/scenebuilder-kit-$TAG.jar $S3_PATH --acl public-read --region us-east-1 --debug
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_PATH: ${{ steps.variables.outputs.S3_PATH }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}

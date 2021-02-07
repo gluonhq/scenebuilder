@@ -1,0 +1,61 @@
+name: Scene Builder Linux Bundles
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install packages
+        run: sudo apt-get install xdg-utils
+      - uses: actions/checkout@v2
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 15
+      - name: Store Variables
+        id: variables
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          VERSION=$TAG
+          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/linux/
+          if [[ "$TAG" == *-RC* ]]; then
+              VERSION=`echo $TAG | cut -d- -f1`
+              S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/install/linux/
+          fi
+          echo ::set-output name=SOURCE_TAG::$TAG
+          echo ::set-output name=SOURCE_VERSION::$VERSION
+          echo ::set-output name=S3_PATH::$S3_PATH
+        shell: bash
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      - name: Create Bundle using JPackage
+        run: |
+          wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
+          ./gradlew jlink jpackage -PVERSION=${{ env.VERSION }}
+          mv app/build/*.deb app/build/SceneBuilder-${{ env.TAG }}.deb
+          sed -i "s/'deb'/'rpm'/g" app/build.gradle
+          ./gradlew jpackage -PVERSION=${{ env.VERSION }}
+          mv app/build/*.rpm app/build/SceneBuilder-${{ env.TAG }}.rpm
+          ls app/build/
+        env:
+          JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+          VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SceneBuilder-${{ runner.os }}
+          path: |
+            app/build/*.deb
+            app/build/*.rpm
+      - name: Upload to AWS S3
+        run: |
+          aws s3 cp app/build/ ${{ env.S3_PATH }} --exclude "**/*" --acl public-read --recursive --region us-east-1 --debug
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_PATH: ${{ steps.variables.outputs.S3_PATH }}

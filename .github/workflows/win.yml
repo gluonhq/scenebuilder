@@ -1,0 +1,66 @@
+name: Scene Builder Windows Bundles
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '16-ea' 
+      - name: Store Variables
+        id: variables
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          VERSION=$TAG
+          S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/$TAG/install/windows/
+          if [[ "$TAG" == *-RC* ]]; then
+              VERSION=`echo $TAG | cut -d- -f1`
+              S3_PATH=${{ env.AWS_S3_BUCKET }}/scenebuilder/RC/$TAG/install/windows/
+          fi
+          echo ::set-output name=SOURCE_TAG::$TAG
+          echo ::set-output name=SOURCE_VERSION::$VERSION
+          echo ::set-output name=S3_PATH::$S3_PATH
+          echo ::set-output name=JAVA16EA_HOME::$JAVA_HOME
+        shell: bash
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      - name: Setup java
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 15
+      - name: Create Bundle using JPackage
+        run: |
+          bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_windows-x64_bin-jmods.zip D:\openjfx-15.0.1_windows-x64_bin-jmods.zip
+          powershell -command "Expand-Archive -Force D:\openjfx-15.0.1_windows-x64_bin-jmods.zip D:\"
+          .\gradlew jlink jpackage -PVERSION="${{ env.VERSION }}"
+          ren app\build\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
+        env:
+          JAVAFX_HOME: D:\javafx-jmods-15.0.1
+          JPACKAGE_HOME: ${{ steps.variables.outputs.JAVA16EA_HOME }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+          VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
+      - name: Codesign
+        uses: erwin1/code-sign-action@master
+        with:
+          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_PASSWORD }}'
+          certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
+          folder: 'app/build'
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SceneBuilder-${{ runner.os }}
+          path: app/build/*.msi
+      - name: Upload to AWS S3
+        run: |
+          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
+          S3_PATH: ${{ steps.variables.outputs.S3_PATH }}

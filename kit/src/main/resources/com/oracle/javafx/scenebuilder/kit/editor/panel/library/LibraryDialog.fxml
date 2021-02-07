@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Copyright (c) 2016, 2017 Gluon and/or its affiliates.
-All rights reserved. Use is subject to license terms.
+  Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
 
-This file is available and licensed under the following license:
+  This file is available and licensed under the following license:
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
 
-- Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-- Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in
-the documentation and/or other materials provided with the distribution.
-- Neither the name of Oracle Corporation nor the names of its
-contributors may be used to endorse or promote products derived
-from this software without specific prior written permission.
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <?import java.net.URL?>
@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:id="LibraryDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300.0" minWidth="300.0" prefHeight="420.0" prefWidth="500.0" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="LibraryDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300.0" minWidth="300.0" prefHeight="468.0" prefWidth="500.0" styleClass="theme-presets" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane hgap="5.0" prefHeight="380.0" prefWidth="520.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <columnConstraints>
@@ -60,6 +60,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
@@ -70,7 +71,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                  </placeholder>
             </ListView>
             <Label prefHeight="17.0" prefWidth="577.0" text="%library.dialog.label.install" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-            <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="7">
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="8">
                <children>
                   <Pane prefHeight="15.0" prefWidth="324.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="closeButton" layoutX="317.0" layoutY="17.0" minWidth="70.0" mnemonicParsing="false" onAction="#close" text="%library.dialog.button.close" />
@@ -82,7 +83,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                </GridPane.margin></Hyperlink>
             <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addManually" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.manually" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Hyperlink layoutX="15.0" layoutY="298.0" onAction="#addJar" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.jar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Hyperlink layoutX="30.0" layoutY="316.0" onAction="#manage" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.repositories" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Hyperlink fx:id="classesLink" onAction="#addFolder" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.folder" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Hyperlink layoutX="30.0" layoutY="316.0" onAction="#manage" prefHeight="25.0" prefWidth="477.0" styleClass="dialog-hyperlink" text="%library.dialog.hyperlink.repositories" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -30,66 +31,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.fxom;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
-import com.oracle.javafx.scenebuilder.kit.util.URLUtils;
-import com.sun.javafx.fxml.builder.JavaFXImageBuilder;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 
 /**
  *
  */
-class FXOMImageBuilder extends JavaFXImageBuilder {
+class LeftCell extends TableCell<IndexEntry, String> {
+    
     
     /*
-     * JavaFXImageBuilder
+     * TableCell
      */
-    
+
     @Override
-    public Object put(String key, Object value) {
-        Object fixedValue;
-        
-        if ("url".equals(key)) { //NOI18N
-            if (value == null) {
-                fixedValue = getMissingImageURL().toExternalForm();
-            } else {
-                try {
-                    // Check that value is a valid URI
-                    final File imageFile = URLUtils.getFile(value.toString());
-                    if (imageFile == null) { // Not a file URI
-                        fixedValue = getMissingImageURL().toExternalForm();
-                    } else if (imageFile.canRead()) {
-                        fixedValue = value;
-                    } else {
-                        fixedValue = getMissingImageURL().toExternalForm();
-                    }
-                } catch(URISyntaxException x) {
-                    fixedValue = getMissingImageURL().toExternalForm();
-                }
-            }
-        } else {
-            fixedValue = value;
-        }
-        
-        return super.put(key, fixedValue);
+    protected void updateItem(String leftValue, boolean empty) {
+        super.updateItem(leftValue, empty);
+        setText(empty ? "" : leftValue); //NOI18N
     }
-        
     
-    /*
-     * Private
-     */
     
-    private static URL missingImageURL;
     
-    private static URL getMissingImageURL() {
-        if (missingImageURL == null) {
-            missingImageURL = FXOMImageBuilder.class.getResource("missing-image.png"); //NOI18N
-            if (missingImageURL == null) {
-                throw new RuntimeException("Cannot find missing-image.png"); //NOI18N
-            }
+    
+    public static class Factory 
+    implements Callback<TableColumn<IndexEntry, String>, TableCell<IndexEntry, String>> {
+
+        /*
+         * Callback<TableView<IndexEntry, String>, TableCell<IndexEntry, String>>
+         */
+
+        @Override
+        public TableCell<IndexEntry, String> call(TableColumn<IndexEntry, String> tc) {
+            return new LeftCell();
         }
-        return missingImageURL;
     }
 }

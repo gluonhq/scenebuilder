@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -45,6 +46,9 @@ class GlueSerializer {
     
     private static final XMLAttrComparator attrComparator
             = new XMLAttrComparator();
+
+    private static final XMLAttrComparator colorAttrComparator =
+            new XMLColorAttrComparator();
     
     private final GlueDocument document;
     
@@ -143,8 +147,12 @@ class GlueSerializer {
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             attrNames.add(new SimpleEntry<>(entry.getKey(), entry.getValue()));
         }
-        Collections.sort(attrNames, attrComparator);
-        
+        if (element.getTagName().equals("Color")) {
+            Collections.sort(attrNames, colorAttrComparator);
+        } else {
+            Collections.sort(attrNames, attrComparator);
+        }
+
         for (Map.Entry<String,String> e : attrNames) {
             xmlBuffer.addAttribute(e.getKey(), e.getValue());
         }

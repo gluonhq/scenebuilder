@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2017 Gluon and/or its affiliates.
+  Copyright (c) 2017, 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -32,12 +32,9 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.StackPane?>
 
 <StackPane prefHeight="-1.0" prefWidth="-1.0" styleClass="theme-presets, SBKIT-hierarchy-panel" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>

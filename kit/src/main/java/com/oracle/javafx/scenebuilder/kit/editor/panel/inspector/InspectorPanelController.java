@@ -58,6 +58,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.EffectP
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination.KeyCombinationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.ListValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
@@ -69,7 +70,6 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -192,6 +192,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     private final Stack<Editor> buttonTypeEditorPool = new Stack<>();
     private final Stack<Editor> includeFxmlEditorPool = new Stack<>();
     private final Stack<Editor> charsetEditorPool = new Stack<>();
+    private final Stack<Editor> colorEditorPool = new Stack<>();
+
     // ...
     //
     // Subsection title pool
@@ -233,31 +235,13 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         this.editorController = editorController;
         this.availableCharsets = CharsetEditor.getStandardCharsets();
         viewModeProperty.setValue(ViewMode.SECTION);
-        viewModeProperty.addListener(new ChangeListener<ViewMode>() {
-            @Override
-            public void changed(ObservableValue<? extends ViewMode> arg0,
-                    ViewMode previousMode, ViewMode mode) {
-                viewModeChanged(previousMode, mode);
-            }
-        });
+        viewModeProperty.addListener((obv, previousMode, mode) -> viewModeChanged(previousMode, mode));
 
         showModeProperty.setValue(ShowMode.ALL);
-        showModeProperty.addListener(new ChangeListener<ShowMode>() {
-            @Override
-            public void changed(ObservableValue<? extends ShowMode> arg0,
-                    ShowMode previousMode, ShowMode mode) {
-                showModeChanged();
-            }
-        });
+        showModeProperty.addListener((obv, previousMode, mode) -> showModeChanged());
 
         expandedSectionProperty.setValue(SectionId.PROPERTIES);
-        expandedSectionProperty.addListener(new ChangeListener<SectionId>() {
-            @Override
-            public void changed(ObservableValue<? extends SectionId> arg0,
-                    SectionId previousSectionId, SectionId sectionId) {
-                expandedSectionChanged();
-            }
-        });
+        expandedSectionProperty.addListener((obv, previousSectionId, sectionId) -> expandedSectionChanged());
 
         // Editor pools init
         editorPools.put(I18nStringEditor.class, i18nStringEditorPool);
@@ -295,6 +279,7 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         editorPools.put(ButtonTypeEditor.class, buttonTypeEditorPool);
         editorPools.put(IncludeFxmlEditor.class, includeFxmlEditorPool);
         editorPools.put(CharsetEditor.class, charsetEditorPool);
+        editorPools.put(ColorPopupEditor.class, colorEditorPool);
 
         // ...
     }
@@ -425,6 +410,10 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
         searchPatternDidChange();
+    }
+
+    public void animateAccordion(boolean animate) {
+        accordion.getPanes().forEach(tp -> tp.setAnimated(animate));
     }
 
     /*
@@ -1473,6 +1462,8 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
             propertyEditor = makePropertyEditor(ToggleGroupEditor.class, propMeta);
         } else if (propMeta instanceof DurationPropertyMetadata) {
             propertyEditor = makePropertyEditor(DurationEditor.class, propMeta);
+        } else if (propMeta instanceof ColorPropertyMetadata) {
+            propertyEditor = makePropertyEditor(ColorPopupEditor.class, propMeta);
         } else {
             // Generic editor
             propertyEditor = makePropertyEditor(GenericEditor.class, propMeta);
@@ -1966,6 +1957,12 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         }
         else if(editorClass == CharsetEditor.class) {
             createdPropertyEditor = createOrResetCharsetEditor(createdPropertyEditor, selectedClasses, propMeta);
+        } else if (editorClass == ColorPopupEditor.class) {
+            if (createdPropertyEditor != null) {
+                createdPropertyEditor.reset(propMeta, selectedClasses);
+            } else {
+                createdPropertyEditor = new ColorPopupEditor(propMeta, selectedClasses, getEditorController());
+            }
         }
         else {
             if (createdPropertyEditor != null) {

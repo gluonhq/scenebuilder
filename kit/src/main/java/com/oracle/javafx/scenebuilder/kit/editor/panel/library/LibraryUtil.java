@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -29,54 +30,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
-package com.oracle.javafx.scenebuilder.app.info;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
+public class LibraryUtil {
 
-/**
- *
- */
-class RightCell extends TableCell<IndexEntry, FXOMObject> {
-    
-    
-    /*
-     * TableCell
-     */
+    public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
 
-    @Override
-    protected void updateItem(FXOMObject rightValue, boolean empty) {
-        super.updateItem(rightValue, empty);
-        
-        final String text;
-        if (empty) {
-            text = ""; //NOI18N
-        } else {
-            if (rightValue == null) {
-                text = "null"; //NOI18N
-            } else {
-                text = rightValue.getGlueElement().getTagName();
-            }
-        }
-        setText(text);
+    public static boolean isJarPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".jar"); //NOI18N
     }
-    
-    
-    
-    
-    public static class Factory 
-    implements Callback<TableColumn<IndexEntry, FXOMObject>, TableCell<IndexEntry, FXOMObject>> {
 
-        /*
-         * Callback<TableView<IndexEntry>, TableCell<IndexEntry, FXOMObject>>
-         */
+    public static boolean isFxmlPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".fxml"); //NOI18N
+    }
 
-        @Override
-        public TableCell<IndexEntry, FXOMObject> call(TableColumn<IndexEntry, FXOMObject> tc) {
-            return new RightCell();
-        }
+    public static boolean isFolderMarkerPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".folders"); //NOI18N
+    }
+
+    public static List<Path> getFolderPaths(Path libraryFile) throws FileNotFoundException, IOException {
+        return Files.readAllLines(libraryFile).stream()
+                .map(line -> {
+                    File f = new File(line);
+                    if (f.exists() && f.isDirectory())
+                        return f.toPath();
+                    else
+                        return null;
+                })
+                .filter(p -> p != null)
+                .collect(Collectors.toList());
     }
 }

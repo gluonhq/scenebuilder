@@ -1,5 +1,8 @@
 jar {
     baseName = 'scenebuilder-kit'
+    manifest {
+        attributes('Automatic-Module-Name': 'com.gluonhq.scenebuilder.kit')
+    }
 }
 
 apply plugin: 'maven'
@@ -7,10 +10,10 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = project.getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUrl = project.getStringProperty('publishRepositoryUrl', 'https://nexus.gluonhq.com/nexus/content/repositories/releases/');
             def repoUser = project.getStringProperty('publishRepositoryUser', '');
             def repoPassword = project.getStringProperty('publishRepositoryPassword', '');
-            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+            snapshotRepository(url: 'https://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
             repository(url: repoUrl) {
@@ -24,4 +27,11 @@ uploadArchives {
             }
         }
     }
+}
+
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.mavenDeployer
+
+[installer, deployer]*.pom*.whenConfigured { pom ->
+    pom.dependencies.findAll{ it.groupId == 'org.openjfx' }.collect { it.classifier = null }
 }

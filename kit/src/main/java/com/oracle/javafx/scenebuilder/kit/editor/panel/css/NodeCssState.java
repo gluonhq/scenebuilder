@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,8 +36,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssContentMaker.CssPr
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.css.Rule;
-import com.sun.javafx.css.Style;
+import javafx.css.Rule;
+import javafx.css.Style;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

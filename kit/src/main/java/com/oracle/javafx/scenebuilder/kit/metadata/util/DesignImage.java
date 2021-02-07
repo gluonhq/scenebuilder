@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,7 +33,6 @@
 
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.net.URL;
 import javafx.scene.image.Image;
 
@@ -53,10 +53,10 @@ public class DesignImage {
     
     public DesignImage(Image image) {
         assert image != null;
-        assert Deprecation.getUrl(image) != null;
+        assert image.getUrl() != null;
         
         this.image = image;
-        this.location = Deprecation.getUrl(image);
+        this.location = image.getUrl();
     }
 
     public Image getImage() {

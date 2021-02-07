@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+  Copyright (c) 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -31,14 +32,10 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.HBox?>
 
 <HBox id="HBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="-1.0" spacing="0.0" style="" styleClass="theme-presets" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
@@ -54,6 +51,6 @@
     <Insets left="5.0" />
   </padding>
   <stylesheets>
-    <URL value="@../../app/css/SelectionBar.css" />
+    <URL value="@SelectionBar.css" />
   </stylesheets>
 </HBox>

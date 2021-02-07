@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2015, Gluon.
  * All rights reserved. Use is subject to license terms.
  *
@@ -36,8 +36,6 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import com.sun.javafx.tk.Toolkit;
-import com.sun.prism.GraphicsPipeline;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,7 +123,6 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         StringBuilder text = getVersionParagraph()
                 .append(getBuildInfoParagraph())
                 .append(getLoggingParagraph())
-                .append(getFxParagraph())
                 .append(getJavaParagraph())
                 .append(getOsParagraph())
                 .append(I18N.getString(sbAboutCopyrightKeyName));
@@ -182,33 +179,6 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(I18N.getString("about.logging.body.second", getLogFilePath()))
                 .append("\n\n"); //NOI18N
         return sb;
-    }
-    
-    private StringBuilder getFxParagraph() {
-        boolean hwAccelerated = false;
-        String tk = Toolkit.getToolkit().getClass().getSimpleName();
-        StringBuilder fxtra = new StringBuilder("JavaFX\n"); //NOI18N
-        fxtra.append(I18N.getString("about.fx.toolkit"))
-                .append(" = ").append(tk).append("\n"); //NOI18N
-
-        if ("GlassToolkit".equals(tk) || "PrismToolkit".equals(tk) //NOI18N
-                || "QuantumToolkit".equals(tk)) { //NOI18N
-            String ppl = GraphicsPipeline.getPipeline().getClass().getSimpleName();
-            fxtra.append(I18N.getString("about.fx.pipeline"))
-                    .append(" = ").append(ppl).append("\n"); //NOI18N
-            if (ppl.trim().equals("D3DPipeline") //NOI18N
-                    || ppl.trim().equals("ES1Pipeline") //NOI18N
-                    || ppl.trim().equals("ES2Pipeline")) { //NOI18N
-                hwAccelerated = true;
-            }
-        }
-        fxtra.append(I18N.getString("about.fx.hardware.acceleration"))
-                .append(" ") //NOI18N
-                .append(hwAccelerated ? I18N.getString("about.fx.hardware.acceleration.enabled")
-                        : I18N.getString("about.fx.hardware.acceleration.disabled"))
-                .append("\n\n"); //NOI18N
-
-        return fxtra;
     }
     
     private StringBuilder getJavaParagraph() {

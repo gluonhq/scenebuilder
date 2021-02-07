@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,78 +29,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
-package com.oracle.javafx.scenebuilder.app.info;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors.PaintPopupEditor;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import java.util.Objects;
+import java.util.Set;
 
 /**
- *
+ * The editor is shown as a MenuButton. This button then shows a popup
+ * to select a {@link javafx.scene.paint.Color}.
  */
-public class IndexEntry {
-    
-    public enum Type {
-        FX_ID,
-        HANDLER,
-        RESOURCE_KEY,
-        STYLECLASS
-    }
-    
-    private final String key;
-    private final Type type;
-    private final FXOMObject fxomObject;
+public class ColorPopupEditor extends PaintPopupEditor {
 
-    public IndexEntry(String key, Type type, FXOMObject fxomObject) {
-        this.key = key;
-        this.type = type;
-        this.fxomObject = fxomObject;
-    }
+    private EditorController editorController;
 
-    public String getKey() {
-        return key;
-    }
-
-    public Type getType() {
-        return type;
-    }
-    
-    public FXOMObject getFxomObject() {
-        return fxomObject;
-    }
-
-    /*
-     * Object
-     */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.key);
-        hash = 79 * hash + Objects.hashCode(this.type);
-        hash = 79 * hash + Objects.hashCode(this.fxomObject);
-        return hash;
+    public ColorPopupEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses, EditorController editorController) {
+        super(propMeta, selectedClasses, editorController);
+        this.editorController = editorController;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final IndexEntry other = (IndexEntry) obj;
-        if (!Objects.equals(this.key, other.key)) {
-            return false;
-        }
-        if (this.type != other.type) {
-            return false;
-        }
-        if (this.fxomObject != other.fxomObject) {
-            return false;
-        }
-        return true;
+    public void initializePopupContent() {
+        final PaintPicker.Delegate delegate = (warningKey, arguments) -> editorController.getMessageLog().logWarningMessage(warningKey, arguments);
+        paintPicker = new PaintPicker(delegate, PaintPicker.Mode.COLOR);
     }
-    
-    
 }

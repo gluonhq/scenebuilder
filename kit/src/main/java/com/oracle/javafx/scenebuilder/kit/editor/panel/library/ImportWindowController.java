@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2020, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,18 +32,10 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
-import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -54,10 +46,25 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -86,10 +93,12 @@ import javafx.util.Callback;
  */
 public class ImportWindowController extends AbstractModalDialog {
 
+    private static final Logger LOGGER = Logger.getLogger(ImportWindowController.class.getSimpleName());
+
     public enum PrefSize {
 
         DEFAULT, TWO_HUNDRED_BY_ONE_HUNDRED, TWO_HUNDRED_BY_TWO_HUNDRED
-    };
+    }
 
     final List<File> importFiles;
     private final LibraryPanelController libPanelController;
@@ -228,10 +237,36 @@ public class ImportWindowController extends AbstractModalDialog {
         
         try {
             closeClassLoader();
-            if (copyFilesToUserLibraryDir) {
-                libPanelController.copyFilesToUserLibraryDir(importFiles);
-            }
+            
             UserLibrary userLib = ((UserLibrary) libPanelController.getEditorController().getLibrary());
+
+            if (copyFilesToUserLibraryDir) {
+                // collect directories from importFiles and add to library.folders file
+                // for other filex (jar, fxml) copy them directly
+                List<File> folders = new ArrayList<>(importFiles.size());
+                List<File> files = new ArrayList<>(importFiles.size());
+
+                for (File file : importFiles) {
+                    if (file.isDirectory())
+                        folders.add(file);
+                    else
+                        files.add(file);
+                }
+
+                if (!files.isEmpty())
+                    libPanelController.copyFilesToUserLibraryDir(files);
+
+                Path foldersMarkerPath = Paths.get(userLib.getPath().toString(), LibraryUtil.FOLDERS_LIBRARY_FILENAME);
+
+                if (!Files.exists(foldersMarkerPath))
+                    Files.createFile(foldersMarkerPath);
+
+                Set<String> lines = new TreeSet<>(Files.readAllLines(foldersMarkerPath));
+                lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
+
+                Files.write(foldersMarkerPath, lines);
+            }
+
             if (copyFilesToUserLibraryDir) {
                 userLib.setFilter(getExcludedItems());
             }
@@ -373,9 +408,16 @@ public class ImportWindowController extends AbstractModalDialog {
                     }
                     updateMessage(I18N.getString("import.work.exploring", file.getName()));
 //                    System.out.println("[" + index + "/" + max + "] Exploring file " + file.getName()); //NOI18N
-                    final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
-                    final JarReport jarReport = explorer.explore(classLoader);
-                    res.add(jarReport);
+                    if (file.isDirectory()) {
+                        final FolderExplorer explorer = new FolderExplorer(file.toPath());
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
+                    }
+                    else {
+                        final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
+                        final JarReport jarReport = explorer.explore(classLoader);
+                        res.add(jarReport);
+                    }
                     updateProgress(index, numOfImportedJar);
                     index++;
                 }
@@ -426,7 +468,13 @@ public class ImportWindowController extends AbstractModalDialog {
 
                 boolean importingGluonControls = false;
                 for (JarReport jarReport : jarReportList) {
+                    Path file = jarReport.getJar();
+                    String jarName = file.getName(file.getNameCount() - 1).toString();
+                    StringBuilder sb = new StringBuilder(
+                            I18N.getString("log.info.explore." + (Files.isDirectory(file) ? "folder" : "jar") + ".results", jarName))
+                            .append("\n");
                     for (JarReportEntry e : jarReport.getEntries()) {
+                        sb.append("> ").append(e.toString()).append("\n");
                         if ((e.getStatus() == JarReportEntry.Status.OK) && e.isNode()) {
                             boolean checked = true;
                             final String canonicalName = e.getKlass().getCanonicalName();
@@ -447,8 +495,17 @@ public class ImportWindowController extends AbstractModalDialog {
                                         updateOKButtonTitle(numOfComponentToImport);
                                         updateSelectionToggleText(numOfComponentToImport);
                                     });
+                        } else {
+                            if (e.getException() != null) {
+                                StringWriter sw = new StringWriter();
+                                PrintWriter pw = new PrintWriter(sw);
+                                e.getException().printStackTrace(pw);
+                                sb.append(">> " + sw.toString());
+                            }
                         }
                     }
+                    LOGGER.info(sb.toString());
+
                     if (jarReport.hasGluonControls()) {
                         importingGluonControls = true;
                     }
@@ -498,7 +555,7 @@ public class ImportWindowController extends AbstractModalDialog {
 
         importList.getSelectionModel().selectedItemProperty().addListener((ChangeListener<ImportRow>) (ov, t, t1) -> {
             previewGroup.getChildren().clear();
-            final String fxmlText = JarExplorer.makeFxmlText(t1.getJarReportEntry().getKlass());
+            final String fxmlText = BuiltinLibrary.makeFxmlText(t1.getJarReportEntry().getKlass());
             try {
                 FXOMDocument fxomDoc = new FXOMDocument(fxmlText, null, importClassLoader, null);
                 zeNode = (Node) fxomDoc.getSceneGraphRoot();
@@ -530,9 +587,11 @@ public class ImportWindowController extends AbstractModalDialog {
             }
             
             if (builtinPrefWidth == 0 || builtinPrefHeight == 0) {
-                ((Region) zeNode).setPrefSize(200, 200);
-                setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
-                defSizeChoice.getSelectionModel().select(2);
+                if (zeNode instanceof Region) { // must check instanceof: custom components are not necessarily regions..
+                    ((Region) zeNode).setPrefSize(200, 200);
+                    setSizeLabel(PrefSize.TWO_HUNDRED_BY_TWO_HUNDRED);
+                    defSizeChoice.getSelectionModel().select(2);
+                }
             } else {
                 setSizeLabel(PrefSize.DEFAULT);
                 defSizeChoice.getSelectionModel().selectFirst();
@@ -557,7 +616,13 @@ public class ImportWindowController extends AbstractModalDialog {
         try {
             int index = 0;
             for (File file : files) {
-                result[index] = new URL("jar","",file.toURI().toURL()+"!/");
+                URL url = file.toURI().toURL();
+                if (url.toString().endsWith(".jar")) {
+                    result[index] = new URL("jar", "", url + "!/"); // <-- jar:file/path/to/jar!/
+                } else {
+                    result[index] = url; // <-- file:/path/to/folder/
+                }
+
                 index++;
             }
         } catch (MalformedURLException x) {

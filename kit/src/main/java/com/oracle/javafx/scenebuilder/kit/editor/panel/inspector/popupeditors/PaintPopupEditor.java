@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2018, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,13 +53,13 @@ import javafx.scene.shape.Rectangle;
  */
 public class PaintPopupEditor extends PopupEditor {
 
-    private PaintPicker paintPicker;
     private final Rectangle graphic = new Rectangle(20, 10);
     private EditorController editorController;
+    protected PaintPicker paintPicker;
 
     private final ChangeListener<Paint> paintChangeListener = (ov, oldValue, newValue) -> {
         // If live update, do not commit the value
-        if (paintPicker.isLiveUpdate() == true) {
+        if (paintPicker.isLiveUpdate()) {
             userUpdateTransientValueProperty(newValue);
             popupMb.setText(getPreviewString(newValue));
         } else {
@@ -68,7 +69,7 @@ public class PaintPopupEditor extends PopupEditor {
     };
 
     private final ChangeListener<Boolean> liveUpdateListener = (ov, oldValue, newValue) -> {
-        if (paintPicker.isLiveUpdate() == false) {
+        if (!paintPicker.isLiveUpdate()) {
             commitValue(paintPicker.getPaintProperty());
         }
     };

@@ -33,6 +33,10 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -72,7 +76,7 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         cellContent.setAlignment(Pos.CENTER_LEFT);
         String name;
         if (dialogListItem instanceof LibraryDialogListItem) {
-            name = ((LibraryDialogListItem) dialogListItem).getFilePath().getFileName().toString();
+            name = ((LibraryDialogListItem) dialogListItem).toString();
         } else {
             name = ((ArtifactDialogListItem) dialogListItem).getCoordinates();
         }
@@ -90,10 +94,10 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         buttonContent.setSpacing(5);
         Button editButton = new Button("", new ImageView(ImageUtils.getEditIconImage()));
         editButton.getStyleClass().add("image-view-button");
-        editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLEdit(dialogListItem));
+        editButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderEdit(dialogListItem));
         editButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.edit.tooltip")));
         Button deleteButton = new Button("", new ImageView(ImageUtils.getDeleteIconImage()));
-        deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLDelete(dialogListItem));
+        deleteButton.setOnMouseClicked(event -> dialogListItem.getLibraryDialogController().processJarFXMLFolderDelete(dialogListItem));
         deleteButton.getStyleClass().add("image-view-button");
         deleteButton.setTooltip(new Tooltip(I18N.getString("library.dialog.button.delete.tooltip")));
         buttonContent.getChildren().addAll(editButton, deleteButton);

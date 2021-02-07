@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,42 +29,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.util;
 
-package com.oracle.javafx.scenebuilder.app.info;
-
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.fxml.FXMLLoader;
 
 /**
- *
+ * A temporary class created to reflectively call private and protected methods
+ * from classes in JDK 9 unless we come up with a permanent solution.
  */
-class LeftCell extends TableCell<IndexEntry, String> {
-    
-    
-    /*
-     * TableCell
-     */
+public class ReflectionUtils {
 
-    @Override
-    protected void updateItem(String leftValue, boolean empty) {
-        super.updateItem(leftValue, empty);
-        setText(empty ? "" : leftValue); //NOI18N
-    }
-    
-    
-    
-    
-    public static class Factory 
-    implements Callback<TableColumn<IndexEntry, String>, TableCell<IndexEntry, String>> {
+    private static final Map<String, Method> methodMap = new HashMap<>();
 
-        /*
-         * Callback<TableView<IndexEntry, String>, TableCell<IndexEntry, String>>
-         */
+    private ReflectionUtils() {}
 
-        @Override
-        public TableCell<IndexEntry, String> call(TableColumn<IndexEntry, String> tc) {
-            return new LeftCell();
+    public static void setStaticLoad(FXMLLoader loader, boolean staticLoad) {
+        Class<?> clazz = loader.getClass();
+        Method setStaticLoadMethod = methodMap.computeIfAbsent(clazz.getName(), s -> {
+            try {
+                Method method = clazz.getDeclaredMethod("setStaticLoad", boolean.class);
+                method.setAccessible(true);
+                return method;
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+        if (setStaticLoadMethod != null) {
+            try {
+                setStaticLoadMethod.invoke(loader, staticLoad);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 }

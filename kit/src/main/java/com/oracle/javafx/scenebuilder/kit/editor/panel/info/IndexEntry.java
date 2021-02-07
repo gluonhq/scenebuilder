@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -29,43 +30,78 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.image.Image;
-import javafx.util.Builder;
-import javafx.util.BuilderFactory;
+package com.oracle.javafx.scenebuilder.kit.editor.panel.info;
 
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import java.util.Objects;
 
 /**
  *
  */
-class FXOMBuilderFactory implements BuilderFactory {
+public class IndexEntry {
+    
+    public enum Type {
+        FX_ID,
+        HANDLER,
+        RESOURCE_KEY,
+        STYLECLASS
+    }
+    
+    private final String key;
+    private final Type type;
+    private final FXOMObject fxomObject;
 
-    final JavaFXBuilderFactory delegate;
-    
-    public FXOMBuilderFactory(ClassLoader classLoader) {
-        assert classLoader != null;
-        
-        this.delegate = Deprecation.newJavaFXBuilderFactory(classLoader);
+    public IndexEntry(String key, Type type, FXOMObject fxomObject) {
+        this.key = key;
+        this.type = type;
+        this.fxomObject = fxomObject;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Type getType() {
+        return type;
     }
     
+    public FXOMObject getFxomObject() {
+        return fxomObject;
+    }
+
     /*
-     * BuilderFactory
+     * Object
      */
-    
     @Override
-    public Builder<?> getBuilder(Class<?> type) {
-        final Builder<?> result;
-        
-        if (Image.class == type) {
-           result = new FXOMImageBuilder();
-        } else {
-           result = delegate.getBuilder(type);
-        }
-        
-        return result;
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.key);
+        hash = 79 * hash + Objects.hashCode(this.type);
+        hash = 79 * hash + Objects.hashCode(this.fxomObject);
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final IndexEntry other = (IndexEntry) obj;
+        if (!Objects.equals(this.key, other.key)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        if (this.fxomObject != other.fxomObject) {
+            return false;
+        }
+        return true;
+    }
+    
     
 }

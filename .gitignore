@@ -6,11 +6,12 @@ kit/build/
 # IDEA
 .idea/
 *.iml
+out/
 
 # Eclipse
 .classpath
 .project
-.settinigs/
+.settings/
 bin/
 
 # Netbeans
@@ -24,3 +25,4 @@ scenicView.properties
 *.class
 dist/
 package/
+/build/

@@ -1,3 +1,9 @@
+plugins {
+    id 'maven'
+    id 'org.openjfx.javafxplugin' version '0.0.9' apply false
+    id 'org.beryx.runtime' version '1.11.4' apply false
+}
+
 apply plugin: 'base'
 
 ext.getStringProperty = { name, defaultValue ->
@@ -11,9 +17,10 @@ ext.getStringProperty = { name, defaultValue ->
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
 
     group = 'com.gluonhq.scenebuilder'
-    version = project.findProperty('VERSION') ?: '8.5.0-SNAPSHOT'
+    version = project.findProperty('VERSION') ?: '11.0.0-SNAPSHOT'
 
     ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
@@ -25,7 +32,7 @@ subprojects {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
         maven {
-            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+            url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
 
         jcenter()
@@ -34,22 +41,26 @@ subprojects {
 
     dependencies {
         // maven dependencies
-        compile 'org.eclipse.aether:aether-api:1.1.0'
-        compile 'org.eclipse.aether:aether-impl:1.1.0'
-        compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
-        compile 'org.eclipse.aether:aether-transport-file:1.1.0'
-        compile 'org.eclipse.aether:aether-transport-http:1.1.0'
-        compile 'org.apache.maven:maven-aether-provider:3.3.9'
+        implementation 'org.eclipse.aether:aether-api:1.1.0'
+        implementation 'org.eclipse.aether:aether-impl:1.1.0'
+        implementation 'org.eclipse.aether:aether-connector-basic:1.1.0'
+        implementation 'org.eclipse.aether:aether-transport-file:1.1.0'
+        implementation 'org.eclipse.aether:aether-transport-http:1.1.0'
+        implementation 'org.apache.maven:maven-aether-provider:3.3.9'
 
-        compile 'com.gluonhq:charm-glisten:5.0.0'
+        implementation 'com.gluonhq:charm-glisten:5.0.0-jdk9'
 
         // REST API
-        compile 'org.apache.httpcomponents:httpclient:4.5.2'
-        compile 'javax.json:javax.json-api:1.0'
-        runtime 'org.glassfish:javax.json:1.0.4'
-        
-        testCompile 'junit:junit:4.12'
-        testCompile 'org.assertj:assertj-core:3.2.0'
+        implementation 'org.apache.httpcomponents:httpclient:4.5.2'
+        implementation 'javax.json:javax.json-api:1.0'
+        runtimeOnly 'org.glassfish:javax.json:1.0.4'
+
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.assertj:assertj-core:3.2.0'
+    }
+
+    javafx {
+        modules = [ 'javafx.web', 'javafx.fxml', 'javafx.swing', 'javafx.media' ]
     }
 
     test {
@@ -66,15 +77,13 @@ clean {
     delete "dist"
 }
 
-apply plugin: 'maven'
-
 uploadArchives {
     repositories {
         mavenDeployer {
-            def repoUrl = getStringProperty('publishRepositoryUrl', 'http://nexus.gluonhq.com/nexus/content/repositories/releases/');
+            def repoUrl = getStringProperty('publishRepositoryUrl', 'https://nexus.gluonhq.com/nexus/content/repositories/releases/');
             def repoUser = getStringProperty('publishRepositoryUser', '');
             def repoPassword = getStringProperty('publishRepositoryPassword', '');
-            snapshotRepository(url: 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
+            snapshotRepository(url: 'https://nexus.gluonhq.com/nexus/content/repositories/snapshots/') {
                 authentication userName: repoUser, password: repoPassword
             }
             repository(url: repoUrl) {

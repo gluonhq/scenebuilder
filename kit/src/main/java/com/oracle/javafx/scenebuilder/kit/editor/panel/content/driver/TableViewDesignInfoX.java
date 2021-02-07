@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver;
 
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
+import javafx.scene.control.skin.TableColumnHeader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,7 +38,6 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.BACKGROUND_IMAGE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_SWATCH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_HEIGHT;
@@ -46,17 +45,17 @@ import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.LIBRARY_DISPLAY_OPTION;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.PARENT_RING_COLOR;
+import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.THEME;
+
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ACCORDION_ANIMATION;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
-
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.BackgroundImage;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.CSSAnalyzerColumnsOrder;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
-
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_PARENT_RING_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_SWATCH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_THEME;
@@ -68,13 +67,16 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGl
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ROOT_CONTAINER_WIDTH;
-
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_ACCORDION_ANIMATION;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_WILDCARD_IMPORTS;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.DoubleField;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.BackgroundImage;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.CSSAnalyzerColumnsOrder;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.Mode;
 
@@ -85,7 +87,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
@@ -133,6 +135,10 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private ChoiceBox<EditorPlatform.Theme> themes;
     @FXML
     private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
+    @FXML
+    private CheckBox animateAccordion;
+    @FXML
+    private CheckBox wildcardImports;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -245,6 +251,14 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         recentItemsSize.getItems().setAll(recentItemsSizes);
         recentItemsSize.setValue(recordGlobal.getRecentItemsSize());
         recentItemsSize.getSelectionModel().selectedItemProperty().addListener(new RecentItemsSizeListener());
+
+        // Accordion Animation
+        animateAccordion.setSelected(recordGlobal.isAccordionAnimation());
+        animateAccordion.selectedProperty().addListener(new AnimationListener());
+
+        // Wildcard Imports
+        wildcardImports.setSelected(recordGlobal.isWildcardImports());
+        wildcardImports.selectedProperty().addListener(new WildcardImportListener());
     }
 
     /*
@@ -309,6 +323,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
 
         // Default Gluon swatch
         gluonSwatch.setValue(DEFAULT_SWATCH);
+
+        // Default Accordion Animation
+        animateAccordion.setSelected(DEFAULT_ACCORDION_ANIMATION);
+
+        // Default Wildcard import
+        wildcardImports.setSelected(DEFAULT_WILDCARD_IMPORTS);
     }
 
     /**
@@ -524,6 +544,36 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         @Override
         public void handleError(String warningKey, Object... arguments) {
             // Log a warning in message bar
+        }
+    }
+
+    private static class AnimationListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setAccordionAnimation(newValue);
+            recordGlobal.writeToJavaPreferences(ACCORDION_ANIMATION);
+            // Update UI
+            SceneBuilderApp.applyToAllDocumentWindows(dwc -> dwc.animateAccordion(newValue));
+        }
+    }
+
+    private static class WildcardImportListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setWildcardImports(newValue);
+            recordGlobal.writeToJavaPreferences(WILDCARD_IMPORT);
         }
     }
 }

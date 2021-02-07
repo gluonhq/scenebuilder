@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -41,9 +42,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadat
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.sun.javafx.css.ParsedValueImpl;
-import com.sun.javafx.css.Rule;
-import com.sun.javafx.css.Style;
+import javafx.css.Rule;
+import javafx.css.Style;
 import javafx.css.StyleOrigin;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -289,9 +289,7 @@ public class CssContentMaker {
     protected static CssStyle retrieveStyle(List<Style> styles, Style style) {
         CssStyle st = new CssStyle(style);
         ParsedValue parsedValue = style.getDeclaration().getParsedValue();
-        assert parsedValue instanceof ParsedValueImpl;
-        ParsedValueImpl parsedValueImpl = (ParsedValueImpl) parsedValue;
-        if (parsedValueImpl.isContainsLookups() || parsedValueImpl.isLookup()) {
+        if (parsedValue.isContainsLookups() || parsedValue.isLookup()) {
             retrieveStylesFromParsedValue(styles, st, style.getDeclaration().getParsedValue());
         }
         return st;
@@ -366,7 +364,7 @@ public class CssContentMaker {
     protected static List<Style> removeUserAgentStyles(List<Style> allStyles) {
         // With SB 2, we apply explicitly Modena/Caspian theme css on user scene graph.
         // The rules that appear with an AUTHOR origin has already been considered as USER_AGENT.
-        // So when an internal css method (such as impl_getMatchingStyles()) is called,
+        // So when an internal css method (such as getMatchingStyles()) is called,
         // we need here to remove all USER_AGENT styles, to avoid doublons.
         List<Style> matchingStyles = new ArrayList<>();
         for (Style style : allStyles) {

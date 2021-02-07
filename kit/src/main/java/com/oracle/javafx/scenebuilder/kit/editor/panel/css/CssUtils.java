@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,7 +34,6 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.css;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.util.Set;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
@@ -383,7 +383,7 @@ public class CssUtils {
 //    
 //    static {
 //        try {
-//            STYLE_SHEET_TOOL_CSS = CSSParser.getInstance().parse(new URL(TOOL_ROOT_CSS));
+//            STYLE_SHEET_TOOL_CSS = new CssParser().parse(new URL(TOOL_ROOT_CSS));
 //        } catch (IOException ex) {
 //            Utils.println("Failed to parse " + TOOL_ROOT_CSS, ex); //NOI18N
 //        }
@@ -455,7 +455,7 @@ public class CssUtils {
 //        Set<String> styleClasses = new HashSet<>();
 //        Stylesheet s;
 //        try {
-//            s = CSSParser.getInstance().parse(url);
+//            s = new CssParser().parse(url);
 //        } catch (IOException ex) {
 //            Utils.println("Invalid Stylesheet " + url);
 //            return styleClasses;
@@ -753,14 +753,14 @@ public class CssUtils {
         Styleable styleable = (target instanceof Styleable) ? (Styleable) target : null;
         Node node = null;
         if (styleable != null) {
-            node = Deprecation.getNode(styleable);
+            node = styleable.getStyleableNode();
             if (node == null) {
                 if (target instanceof MenuItem) {
                     final MenuItem mi = (MenuItem) target;
                     PopupControl pc = mi.getParentPopup();
 
                     if (pc != null) { // can be null for Menu.
-                        node = Deprecation.getNode(pc);
+                        node = pc.getStyleableNode();
                     }
                 } else {
                     if (target instanceof Tab) {
@@ -1023,7 +1023,7 @@ public class CssUtils {
 //
 //    private static final CssParsingListener cssListener = new CssParsingListener();
 //    static {
-//        StyleManager.errorsProperty().addListener(cssListener);
+//        CssParser.errorsProperty().addListener(cssListener);
 //    }
 //    
 //    public static void updateStylesheets(Project project, Parent parent, File file) {
@@ -1151,11 +1151,11 @@ public class CssUtils {
 //        // Synchronous listener to get errors synchronously.
 //        // Required for synchronous validation
 //        CssInlineStyleListener listener = new CssInlineStyleListener();
-//        StyleManager.errorsProperty().addListener(listener);
+//        CssParser.errorsProperty().addListener(listener);
 //        startListeningToCssErrors(project);
 //        try {
 //            try {
-//                s = CSSParser.getInstance().parseInlineStyle(new StyleableStub(style));
+//                s = new CssParser().parseInlineStyle(new StyleableStub(style));
 //            }catch(final RuntimeException ex){
 //                // Parser exception that has not been tracked by the listener.
 //                // Bug in CSS RT
@@ -1163,7 +1163,7 @@ public class CssUtils {
 //            }
 //        } finally {
 //            stopListeningToCssErrors(project);
-//            StyleManager.errorsProperty().removeListener(listener);
+//            CssParser.errorsProperty().removeListener(listener);
 //        }
 //        
 //        return s != null && listener.getErrors().isEmpty();
@@ -1253,7 +1253,7 @@ public class CssUtils {
 //    public static Set<String> lookupImagesInStyle(String style) {
 //        if (style != null) {
 //            try {
-//                Stylesheet s = CSSParser.getInstance().parseInlineStyle(new StyleableStub(style));
+//                Stylesheet s = new CssParser().parseInlineStyle(new StyleableStub(style));
 //                return lookupImagesInStylesheet(s);
 //            } catch (RuntimeException ex) {
 //                Utils.println(ex.getMessage());
@@ -1268,7 +1268,7 @@ public class CssUtils {
 //                startListeningToCssErrors(project);
 //            }
 //            try {
-//                Stylesheet s = CSSParser.getInstance().parse(uri.toURL());
+//                Stylesheet s = new CssParser().parse(uri.toURL());
 //                return lookupImagesInStylesheet(s);
 //            } catch (Exception ex) {
 //                Utils.println(ex.getMessage());
