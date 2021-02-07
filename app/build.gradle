@@ -46,6 +46,7 @@ processResources {
             javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
             buildDate: buildDate
         ])
+        filteringCharset = 'UTF-8'
         filter(EscapeUnicode)
     }
     into buildDir
