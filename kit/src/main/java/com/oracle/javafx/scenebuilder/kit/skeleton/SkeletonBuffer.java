@@ -37,8 +37,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
-import javafx.fxml.FXML;
-import javafx.util.Pair;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -99,13 +97,7 @@ class SkeletonBuffer {
 
     private void constructFxIds(SkeletonContext.Builder builder) {
         for (FXOMObject value : document.collectFxIds().values()) {
-            String fxId = value.getFxId();
-            Class<?> type = value.getSceneGraphObject().getClass();
-
-            builder.addImportsFor(FXML.class, type);
-
-            builder.addVariable(new Pair<>(fxId, type));
-            builder.addAssertionForFxId(fxId);
+            builder.addFxId(value);
         }
     }
 
@@ -113,11 +105,8 @@ class SkeletonBuffer {
         // need to initialize the internal events map
         FindEventNamesUtil.initializeEventsMap();
 
-        for (FXOMPropertyT handler : document.getFxomRoot().collectEventHandlers()) {
-            String eventName = FindEventNamesUtil.findEventName(handler.getName().getName());
-
-            builder.addEventHandler(handler.getValue(), eventName);
-            builder.addImportsForEvents(eventName);
+        for (FXOMPropertyT eventHandler : document.getFxomRoot().collectEventHandlers()) {
+            builder.addEventHandler(eventHandler);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import javafx.util.Pair;
 
 import java.lang.reflect.TypeVariable;
 import java.util.Map;
@@ -108,7 +107,7 @@ public class SkeletonCreatorJava {
     }
 
     private static void appendFieldsWithFxId(SkeletonContext context, StringBuilder sb) {
-        for (Pair<String, Class<?>> variable : context.getVariables()) {
+        for (Map.Entry<String, Class<?>> variable : context.getVariables().entrySet()) {
             sb.append(INDENT).append(FXML_ANNOTATION);
             if (context.getSettings().isWithComments()) {
                 sb.append(" // fx:id=\"").append(variable.getKey()).append("\""); //NOI18N
@@ -126,7 +125,7 @@ public class SkeletonCreatorJava {
         }
     }
 
-    private static void appendFieldParameters(StringBuilder sb, Pair<String, Class<?>> variable) {
+    private static void appendFieldParameters(StringBuilder sb, Map.Entry<String, Class<?>> variable) {
         final TypeVariable<? extends Class<?>>[] parameters = variable.getValue().getTypeParameters();
         if (parameters.length > 0) {
             sb.append("<"); //NOI18N

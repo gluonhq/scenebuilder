@@ -1,15 +1,18 @@
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.ImportBuilder;
-import javafx.util.Pair;
+import javafx.fxml.FXML;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -18,27 +21,27 @@ class SkeletonContext {
     private final String fxController;
     private final String documentName;
     private final SkeletonSettings settings;
-    private final Set<String> imports;
-    private final List<Pair<String, Class<?>>> variables;
-    private final Map<String, String> eventHandlers;
-    private final List<String> assertions;
+    private final SortedSet<String> imports;
+    private final SortedMap<String, Class<?>> variables;
+    private final SortedMap<String, String> eventHandlers;
+    private final SortedSet<String> assertions;
 
     private SkeletonContext(
         String fxController,
         String documentName,
         SkeletonSettings settings,
-        Set<String> imports,
-        List<Pair<String, Class<?>>> variables,
-        Map<String, String> eventHandlers,
-        List<String> assertions
+        SortedSet<String> imports,
+        SortedMap<String, Class<?>> variables,
+        SortedMap<String, String> eventHandlers,
+        SortedSet<String> assertions
     ) {
         this.fxController = fxController;
         this.documentName = documentName;
         this.settings = Objects.requireNonNull(settings);
-        this.imports = Collections.unmodifiableSet(imports);
-        this.variables = Collections.unmodifiableList(variables);
-        this.eventHandlers = Collections.unmodifiableMap(eventHandlers);
-        this.assertions = Collections.unmodifiableList(assertions);
+        this.imports = Collections.unmodifiableSortedSet(imports);
+        this.variables = Collections.unmodifiableSortedMap(variables);
+        this.eventHandlers = Collections.unmodifiableSortedMap(eventHandlers);
+        this.assertions = Collections.unmodifiableSortedSet(assertions);
     }
 
     static Builder builder() {
@@ -61,7 +64,7 @@ class SkeletonContext {
         return imports;
     }
 
-    List<Pair<String, Class<?>>> getVariables() {
+    Map<String, Class<?>> getVariables() {
         return variables;
     }
 
@@ -69,7 +72,7 @@ class SkeletonContext {
         return eventHandlers;
     }
 
-    List<String> getAssertions() {
+    Set<String> getAssertions() {
         return assertions;
     }
 
@@ -79,10 +82,10 @@ class SkeletonContext {
         private String documentName;
         private SkeletonSettings settings;
 
-        private final Set<String> imports = new TreeSet<>();
-        private final List<Pair<String, Class<?>>> variables = new ArrayList<>();
-        private final Map<String, String> eventHandlers = new TreeMap<>();
-        private final List<String> assertions = new ArrayList<>();
+        private final SortedSet<String> imports = new TreeSet<>();
+        private final SortedMap<String, Class<?>> variables = new TreeMap<>();
+        private final SortedMap<String, String> eventHandlers = new TreeMap<>();
+        private final SortedSet<String> assertions = new TreeSet<>();
 
         Builder withFxController(String fxController) {
             this.fxController = fxController;
@@ -99,20 +102,24 @@ class SkeletonContext {
             return this;
         }
 
-        void addVariable(Pair<String, Class<?>> variable) {
-            variables.add(variable);
+        public void addFxId(FXOMObject value) {
+            String fxId = value.getFxId();
+            Class<?> type = value.getSceneGraphObject().getClass();
+
+            addImportsFor(FXML.class, type);
+
+            variables.put(fxId, type);
+            assertions.add(fxId);
         }
 
-        void addEventHandler(String key, String value) {
-            eventHandlers.put(key, value);
+        public void addEventHandler(FXOMPropertyT eventHandler) {
+            String eventName = FindEventNamesUtil.findEventName(eventHandler.getName().getName());
+
+            eventHandlers.put(eventHandler.getValue(), eventName);
+            addImportsForEvents(eventName);
         }
 
-        /**
-         * Constructs import statements for event classes.
-         *
-         * @param eventName event name, for which a statement should be built.
-         */
-        void addImportsForEvents(String eventName) {
+        private void addImportsForEvents(String eventName) {
             if (EventNames.ACTION_EVENT.equals(eventName)) {
                 ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.EVENT_PACKAGE), eventName);
             } else {
@@ -139,10 +146,6 @@ class SkeletonContext {
         private void buildAndCollectImports() {
             imports.add(ImportBuilder.build());
             ImportBuilder.reset();
-        }
-
-        void addAssertionForFxId(String fxId) {
-            assertions.add(fxId);
         }
 
         SkeletonContext build() {
