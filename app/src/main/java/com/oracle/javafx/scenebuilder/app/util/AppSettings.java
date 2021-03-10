@@ -58,9 +58,9 @@ public class AppSettings {
     public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
     public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
 
-    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version-8.4.0.json";
+    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version.json";
 
-    public static final String DOWNLOAD_URL = "http://gluonhq.com/labs/scene-builder";
+    public static final String DOWNLOAD_URL = "https://gluonhq.com/products/scene-builder/";
 
     private static String sceneBuilderVersion;
     private static String latestVersion;
