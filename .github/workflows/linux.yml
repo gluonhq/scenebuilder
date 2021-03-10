@@ -13,7 +13,7 @@ jobs:
       - name: Setup java
         uses: joschi/setup-jdk@v2
         with:
-          java-version: 15
+          java-version: 16
       - name: Store Variables
         id: variables
         run: |
@@ -32,8 +32,8 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       - name: Create Bundle using JPackage
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/15.0.1/openjfx-15.0.1_linux-x64_bin-jmods.zip
-          unzip /tmp/openjfx-15.0.1_linux-x64_bin-jmods.zip -d /tmp
+          wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-16_linux-x64_bin-jmods.zip -d /tmp
           ./gradlew jlink jpackage -PVERSION=${{ env.VERSION }}
           mv app/build/*.deb app/build/SceneBuilder-${{ env.TAG }}.deb
           sed -i "s/'deb'/'rpm'/g" app/build.gradle
@@ -41,7 +41,7 @@ jobs:
           mv app/build/*.rpm app/build/SceneBuilder-${{ env.TAG }}.rpm
           ls app/build/
         env:
-          JAVAFX_HOME: /tmp/javafx-jmods-15.0.1/
+          JAVAFX_HOME: /tmp/javafx-jmods-16/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}

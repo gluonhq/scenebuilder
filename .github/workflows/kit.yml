@@ -13,7 +13,7 @@ jobs:
       - name: Setup java
         uses: joschi/setup-jdk@v2
         with:
-          java-version: 15
+          java-version: 16
       - name: Store Variables
         id: variables
         run: |
