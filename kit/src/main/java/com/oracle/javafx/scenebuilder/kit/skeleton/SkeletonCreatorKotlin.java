@@ -171,7 +171,7 @@ public class SkeletonCreatorKotlin {
             sb.append("<"); //NOI18N
             String sep = ""; //NOI18N
             for (TypeVariable<?> t : parameters) {
-                sb.append(sep).append("?"); //NOI18N
+                sb.append(sep).append("Any"); //NOI18N
                 sep = ", "; //NOI18N
             }
             sb.append(">"); //NOI18N
