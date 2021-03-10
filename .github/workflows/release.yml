@@ -13,7 +13,7 @@ jobs:
           TAG=${GITHUB_REF/refs\/tags\//}
           printf "latestversion=$TAG" > settings.properties
           aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --profile default
-#         Upload version.json. Some older versions still use version-8.4.0.json file
+          # Upload version.json. Some older versions still use version-8.4.0.json file
           aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version.json --acl public-read --profile default
           aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --profile default
         env:
