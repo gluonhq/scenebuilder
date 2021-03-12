@@ -37,7 +37,7 @@ jobs:
           ren app\build\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
         env:
           JAVAFX_HOME: D:\javafx-jmods-16
-          JPACKAGE_HOME: ${{ steps.variables.outputs.JAVA16EA_HOME }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
       - name: Codesign
