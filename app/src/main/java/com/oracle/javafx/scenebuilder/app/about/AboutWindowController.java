@@ -125,6 +125,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         StringBuilder text = getVersionParagraph()
                 .append(getBuildInfoParagraph())
                 .append(getLoggingParagraph())
+                .append(getJavaFXParagraph())
                 .append(getJavaParagraph())
                 .append(getOsParagraph())
                 .append(I18N.getString(sbAboutCopyrightKeyName));
@@ -181,6 +182,12 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append("\n") //NOI18N
                 .append(I18N.getString("about.logging.body.second", getLogFilePath()))
                 .append("\n\n"); //NOI18N
+        return sb;
+    }
+
+    private StringBuilder getJavaFXParagraph() {
+        StringBuilder sb = new StringBuilder("JavaFX\n"); //NOI18N
+        sb.append(System.getProperty("javafx.version")).append("\n\n"); //NOI18N
         return sb;
     }
     
