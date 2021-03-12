@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -58,9 +58,9 @@ public class AppSettings {
     public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
     public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
 
-    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version-8.4.0.json";
+    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version.json";
 
-    public static final String DOWNLOAD_URL = "http://gluonhq.com/labs/scene-builder";
+    public static final String DOWNLOAD_URL = "https://gluonhq.com/products/scene-builder/";
 
     private static String sceneBuilderVersion;
     private static String latestVersion;
