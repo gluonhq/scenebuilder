@@ -14,7 +14,7 @@ jobs:
           TAG=${GITHUB_REF/refs\/tags\//}
           echo "::set-output name=tag::$TAG"
       - name: Upload settings.properties and version.json
-        if: !contains(steps.find-tag.outputs.tag, 'RC')
+        if: "!contains(steps.find-tag.outputs.tag, 'RC')"
         run: |
           TAG=${{ steps.find-tag.outputs.tag }}
           printf "latestversion=$TAG" > settings.properties
