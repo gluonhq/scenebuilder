@@ -8,9 +8,15 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: Upload settings.properties and version.json
+      - name: Find TAG name
+        id: find-tag
         run: |
           TAG=${GITHUB_REF/refs\/tags\//}
+          echo "::set-output name=tag::$TAG"
+      - name: Upload settings.properties and version.json
+        if: !contains(steps.find-tag.outputs.tag, 'RC')
+        run: |
+          TAG=${{ steps.find-tag.outputs.tag }}
           printf "latestversion=$TAG" > settings.properties
           aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --profile default
           # Upload version.json. Some older versions still use version-8.4.0.json file
