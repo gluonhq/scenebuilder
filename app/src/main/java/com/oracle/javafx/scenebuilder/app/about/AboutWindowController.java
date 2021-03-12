@@ -61,6 +61,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private String sbBuildVersion;
     private String sbBuildDate;
     private String sbBuildJavaVersion;
+    private String sbBuildJavaFXVersion;
     // The resource bundle contains two keys: about.copyright and about.copyright.open
     private String sbAboutCopyrightKeyName;
     // File name must be in sync with what we use in logging.properties (Don't understand this comment, haven't found any logging.properties file
@@ -78,6 +79,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 sbBuildVersion = sbProps.getProperty("build.version", "UNSET"); //NOI18N
                 sbBuildDate = sbProps.getProperty("build.date", "UNSET"); //NOI18N
                 sbBuildJavaVersion = sbProps.getProperty("build.java.version", "UNSET"); //NOI18N
+                sbBuildJavaFXVersion = sbProps.getProperty("build.javafx.version", "UNSET"); //NOI18N
                 sbAboutCopyrightKeyName = sbProps.getProperty("copyright.key.name", "UNSET"); //NOI18N
             }
         } catch (IOException ex) {
@@ -166,6 +168,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         StringBuilder sb = new StringBuilder(I18N.getString("about.build.information"));
         sb.append("\n").append(sbBuildInfo).append("\n") //NOI18N
                 .append(I18N.getString("about.build.date", sbBuildDate)).append("\n")
+                .append(I18N.getString("about.build.javafx.version", sbBuildJavaFXVersion)).append("\n")
                 .append(I18N.getString("about.build.java.version", sbBuildJavaVersion))
                 .append("\n\n"); //NOI18N
         return sb;
