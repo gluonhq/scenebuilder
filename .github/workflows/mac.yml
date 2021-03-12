@@ -35,7 +35,7 @@ jobs:
       - name: Create Bundle using JPackage
         id: outputfile
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_osx-x64_bin-jmods-SIGNED.zip 
+          wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_osx-x64_bin-jmods-SIGNED.zip
           unzip /tmp/openjfx-16_osx-x64_bin-jmods-SIGNED.zip -d /tmp
           ./gradlew jlink jpackage -PVERSION=${{ env.VERSION }} -PsigningPrefix="$GLUON_MACSIGN_PREFIX" -PsigningKeyUsername="$GLUON_MACSIGN_USER"
           mv app/build/SceneBuilder-${{ env.VERSION }}.dmg app/build/SceneBuilder-${{ env.TAG }}.dmg
