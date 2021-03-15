@@ -60,6 +60,7 @@ subprojects {
     }
 
     javafx {
+        version = '16'
         modules = [ 'javafx.web', 'javafx.fxml', 'javafx.swing', 'javafx.media' ]
     }
 
