@@ -44,7 +44,7 @@ processResources {
         expand([
             version: version,
             javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
-            javafxVersion: "$javafx.version",
+            javafxVersion: javafx.version,
             buildDate: buildDate
         ])
         filteringCharset = 'UTF-8'
