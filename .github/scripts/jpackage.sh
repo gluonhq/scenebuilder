@@ -5,7 +5,7 @@ $JAVA_HOME/bin/jlink \
 --output app/target/runtime \
 --strip-debug --compress 2 --no-header-files --no-man-pages
 
-$JAVA_HOME/bin/jpackage \
+$JPACKAGE_HOME/bin/jpackage \
 --app-version $VERSION \
 --input app/target/lib \
 --install-dir /opt \

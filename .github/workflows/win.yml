@@ -33,8 +33,8 @@ jobs:
         run: |
           bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/16/openjfx-16_windows-x64_bin-jmods.zip D:\openjfx-16_windows-x64_bin-jmods.zip
           powershell -command "Expand-Archive -Force D:\openjfx-16_windows-x64_bin-jmods.zip D:\"
-          .\gradlew jlink jpackage -PVERSION="${{ env.VERSION }}"
-          ren app\build\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
+          scripts/jpacakge.sh
+          ren app\target\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
         env:
           JAVAFX_HOME: D:\javafx-jmods-16
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}

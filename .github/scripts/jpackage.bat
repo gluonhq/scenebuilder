@@ -9,7 +9,7 @@ set JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
 --output app/target/runtime ^
 --strip-debug --compress 2 --no-header-files --no-man-pages
 
-%JAVA_HOME%\bin\jpackage ^
+%JPACKAGE_HOME%\bin\jpackage ^
 --app-version %VERSION% ^
 --input app/target/lib ^
 --license-file LICENSE.txt ^
