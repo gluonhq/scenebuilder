@@ -1,3 +1,6 @@
+echo ">>>>>>>>>>>>>>"
+echo "$@"
+
 jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$TAG-all.jar)
 $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
