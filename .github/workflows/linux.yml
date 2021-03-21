@@ -36,13 +36,15 @@ jobs:
           unzip /tmp/openjfx-16_linux-x64_bin-jmods.zip -d /tmp
           mvn -q versions:set -DnewVersion=${{ env.TAG }} -DgenerateBackupPoms=false
           mvn -q package -Dmaven.test.skip=true
+          # Create DEB
           .github/scripts/jpackage.sh \
-          --icon assets/linux/icon-linux.png \
+          --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --type deb
           mv app/target/*.deb SceneBuilder-${{ env.TAG }}.deb
-          scripts/jpacakge.sh \
-          --icon app/assets/linux/icon-linux.png \
+          # Create RPM
+          .github/scripts/jpackage.sh \
+          --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --type rpm
           mv app/target/*.rpm SceneBuilder-${{ env.TAG }}.rpm
