@@ -1,4 +1,4 @@
-jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps app/target/SceneBuilder-$TAG-all.jar)
+jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps app/target/lib/SceneBuilder-$TAG-all.jar)
 $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
 --add-modules $jdeps_modules \
@@ -6,8 +6,8 @@ $JAVA_HOME/bin/jlink \
 --strip-debug --compress 2 --no-header-files --no-man-pages
 
 $JAVA_HOME/bin/jpackage \
---app-version $TAG \
---input app/target \
+--app-version $VERSION \
+--input app/target/lib \
 --install-dir /opt \
 --license-file LICENSE.txt \
 --main-jar SceneBuilder-$TAG-all.jar \
