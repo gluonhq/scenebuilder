@@ -1,4 +1,4 @@
-jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps app/target/lib/SceneBuilder-$TAG-all.jar)
+jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$TAG-all.jar)
 $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
 --add-modules $jdeps_modules \
@@ -7,7 +7,7 @@ $JAVA_HOME/bin/jlink \
 
 $JPACKAGE_HOME/bin/jpackage \
 --app-version $VERSION \
---input app/target/lib \
+--input $GITHUB_WORKSPACE/app/target/lib \
 --install-dir /opt \
 --license-file LICENSE.txt \
 --main-jar SceneBuilder-$TAG-all.jar \
@@ -16,6 +16,6 @@ $JPACKAGE_HOME/bin/jpackage \
 --description "Scene Builder" \
 --vendor Gluon \
 --verbose \
---runtime-image app/target/runtime \
+--runtime-image $GITHUB_WORKSPACE/app/target/runtime \
 --dest app/target \
 "$@"
