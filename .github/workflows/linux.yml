@@ -34,7 +34,8 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_linux-x64_bin-jmods.zip
           unzip /tmp/openjfx-16_linux-x64_bin-jmods.zip -d /tmp
-          mvn versions:set -DnewVersion=$TAG -DgenerateBackupPoms=false
+          mvn versions:set -DnewVersion=${{ env.TAG }} -DgenerateBackupPoms=false
+          mvn package -Dmaven.test.skip=true
           .github/scripts/jpackage.sh \
           --icon assets/linux/icon-linux.png \
           --java-options -Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED \
