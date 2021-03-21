@@ -3,6 +3,9 @@
 app/build/
 kit/build/
 
+# Maven
+target/
+
 # IDEA
 .idea/
 *.iml

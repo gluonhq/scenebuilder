@@ -34,13 +34,19 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_linux-x64_bin-jmods.zip
           unzip /tmp/openjfx-16_linux-x64_bin-jmods.zip -d /tmp
-          ./gradlew jlink jpackage -PVERSION=${{ env.VERSION }}
-          mv app/build/*.deb app/build/SceneBuilder-${{ env.TAG }}.deb
-          sed -i "s/'deb'/'rpm'/g" app/build.gradle
-          ./gradlew jpackage -PVERSION=${{ env.VERSION }}
-          mv app/build/*.rpm app/build/SceneBuilder-${{ env.TAG }}.rpm
-          ls app/build/
+          scripts/jpacakge.sh \
+          --icon assets/linux/icon-linux.png \
+          --java-options -Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED \
+          --type deb
+          mv app/target/*.deb SceneBuilder-${{ env.TAG }}.deb
+          scripts/jpacakge.sh \
+          --icon app/assets/linux/icon-linux.png \
+          --java-options '"-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --type rpm
+          mv app/target/*.rpm SceneBuilder-${{ env.TAG }}.rpm
+          ls
         env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-16/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
@@ -50,8 +56,8 @@ jobs:
         with:
           name: SceneBuilder-${{ runner.os }}
           path: |
-            app/build/*.deb
-            app/build/*.rpm
+            *.deb
+            *.rpm
       - name: Upload to AWS S3
         run: |
           aws s3 cp app/build/ ${{ env.S3_PATH }} --exclude "**/*" --acl public-read --recursive --region us-east-1 --debug
