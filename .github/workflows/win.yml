@@ -28,12 +28,15 @@ jobs:
         shell: bash
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      - name: Create Bundle using JPackage
+      - name: Setup JavaFX
         run: |
           bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/16/openjfx-16_windows-x64_bin-jmods.zip D:\openjfx-16_windows-x64_bin-jmods.zip
-          powershell -command "Expand-Archive -Force D:\openjfx-16_windows-x64_bin-jmods.zip D:\"
-          mvn -q versions:set "-DnewVersion=${{ env.TAG }}" "-DgenerateBackupPoms=false"
-          mvn -q package "-Dmaven.test.skip=true"
+          Expand-Archive -Force D:\openjfx-16_windows-x64_bin-jmods.zip D:\
+      - name: Create Bundle using JPackage
+        shell: cmd
+        run: |
+          mvn -q versions:set -DnewVersion=${{ env.TAG }} -DgenerateBackupPoms=false
+          mvn -q package -Dmaven.test.skip=true
           .github\scripts\jpackage.bat
           ren app\target\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi
         env:
@@ -52,10 +55,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: SceneBuilder-${{ runner.os }}
-          path: app/build/*.msi
+          path: app/target/*.msi
       - name: Upload to AWS S3
         run: |
-          aws s3 cp app/build/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
+          aws s3 cp app/target/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

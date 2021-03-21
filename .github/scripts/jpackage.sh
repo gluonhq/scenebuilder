@@ -20,5 +20,5 @@ $JPACKAGE_HOME/bin/jpackage \
 --vendor Gluon \
 --verbose \
 --runtime-image $GITHUB_WORKSPACE/app/target/runtime \
---dest app/target \
+--dest $GITHUB_WORKSPACE/app/target \
 "$@"
