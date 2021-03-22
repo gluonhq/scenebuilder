@@ -12,6 +12,11 @@
 
     <properties>
         <main.class.name>com.oracle.javafx.scenebuilder.app.SceneBuilderApp</main.class.name>
+        <!-- For about.properties file -->
+        <buildDate>${maven.build.timestamp}</buildDate>
+        <javaVersion>${java.vm.version}, ${java.vendor}</javaVersion>
+        <javafxVersion>${javafx.version}</javafxVersion>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -23,6 +28,12 @@
     </dependencies>
     
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
