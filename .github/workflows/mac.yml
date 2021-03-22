@@ -37,9 +37,21 @@ jobs:
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_osx-x64_bin-jmods-SIGNED.zip
           unzip /tmp/openjfx-16_osx-x64_bin-jmods-SIGNED.zip -d /tmp
-          ./gradlew jlink jpackage -PVERSION=${{ env.VERSION }} -PsigningPrefix="$GLUON_MACSIGN_PREFIX" -PsigningKeyUsername="$GLUON_MACSIGN_USER"
-          mv app/build/SceneBuilder-${{ env.VERSION }}.dmg app/build/SceneBuilder-${{ env.TAG }}.dmg
-          echo ::set-output name=path::app/build/SceneBuilder-${{ env.TAG }}.dmg
+          mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
+          mvn -q package -Dmaven.test.skip=true
+          # Create DMG
+          .github/scripts/jpackage.sh \
+          --icon $GITHUB_WORKSPACE/app/assets/osx/icon-mac.icns \
+          --java-options '"javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --type dmg \
+          --mac-package-identifier com.gluonhq.scenebuilder \
+          --mac-package-name '"Scene Builder"' \
+          --mac-package-signing-prefix $GLUON_MACSIGN_PREFIX \
+          --mac-signing-key-user-name $GLUON_MACSIGN_USER \
+          --mac-sign
+          mv $INSTALL_DIR/SceneBuilder-${{ env.VERSION }}.dmg $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.dmg
+          ls $INSTALL_DIR
+          echo ::set-output name=path::$INSTALL_DIR/SceneBuilder-${{ env.TAG }}.dmg
         env:
           JAVAFX_HOME: /tmp/javafx-jmods-16/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
@@ -47,6 +59,7 @@ jobs:
           GLUON_MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
+          INSTALL_DIR: app/target/install
       - name: "Notarize Release Build"
         uses: erwin1/xcode-notarize@main
         with:

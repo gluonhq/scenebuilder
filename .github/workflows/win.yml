@@ -35,7 +35,7 @@ jobs:
       - name: Create Bundle using JPackage
         shell: cmd
         run: |
-          mvn -q versions:set -DnewVersion=${{ env.TAG }} -DgenerateBackupPoms=false
+          mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
           mvn -q package -Dmaven.test.skip=true
           .github\scripts\jpackage.bat
           ren app\target\SceneBuilder-${{ env.VERSION }}.msi SceneBuilder-${{ env.TAG }}.msi

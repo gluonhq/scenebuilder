@@ -1,7 +1,7 @@
 echo ">>>>>>>>>>>>>>"
 echo "$@"
 
-jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$TAG-all.jar)
+jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$VERSION-all.jar)
 $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
 --add-modules $jdeps_modules \
@@ -13,12 +13,12 @@ $JPACKAGE_HOME/bin/jpackage \
 --input $GITHUB_WORKSPACE/app/target/lib \
 --install-dir /opt \
 --license-file LICENSE.txt \
---main-jar SceneBuilder-$TAG-all.jar \
+--main-jar SceneBuilder-$VERSION-all.jar \
 --main-class $MAIN_CLASS \
 --name SceneBuilder \
 --description "Scene Builder" \
 --vendor Gluon \
 --verbose \
 --runtime-image $GITHUB_WORKSPACE/app/target/runtime \
---dest $GITHUB_WORKSPACE/app/target \
+--dest $INSTALL_DIR \
 "$@"

@@ -1,4 +1,4 @@
-for /F %%i in ('%JAVA_HOME%\bin\jdeps --module-path %JAVAFX_HOME% --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-%TAG%-all.jar') do SET JDEPS_MODULES=%%i
+for /F %%i in ('%JAVA_HOME%\bin\jdeps --module-path %JAVAFX_HOME% --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-%VERSION%-all.jar') do SET JDEPS_MODULES=%%i
 
 REM jdeps doesn't include JavaFX modules in Windows
 set JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
@@ -16,7 +16,7 @@ dir $GITHUB_WORKSPACE\app\target
 --app-version %VERSION% ^
 --input $GITHUB_WORKSPACE/app/target/lib ^
 --license-file LICENSE.txt ^
---main-jar SceneBuilder-%TAG%-all.jar ^
+--main-jar SceneBuilder-%VERSION%-all.jar ^
 --main-class %MAIN_CLASS% ^
 --name SceneBuilder ^
 --description "Scene Builder" ^
