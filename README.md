@@ -61,15 +61,13 @@ To build and install the Scene Builder Kit in your local repository, run:
 
 `mvn clean install -f kit`
 
-The custom controls of the Scene Builder kit can be used in your project. 
+The custom controls of the Scene Builder kit can be used in your project.
 You can add it as a regular dependency to the build of your app:
 
 ```
-repositories {
-    mavenLocal()
-}
-
-dependencies {
-    implementation ('com.gluonhq.scenebuilder:scenebuilder-kit:$version') { transitive = false }
-}
+<dependency>
+  <groupId>com.gluonhq.scenebuilder</groupId>
+  <artifactId>kit</artifactId>
+  <version>$version</version>
+</dependency>
 ```
