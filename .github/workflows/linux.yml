@@ -30,12 +30,18 @@ jobs:
         shell: bash
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      - name: Create Bundle using JPackage
+      - name: Setup JavaFX
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_linux-x64_bin-jmods.zip
           unzip /tmp/openjfx-16_linux-x64_bin-jmods.zip -d /tmp
+      - name: Build and package JAR
+        run: |
           mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
           mvn -q package -Dmaven.test.skip=true
+        env:
+          VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
+      - name: Create Bundle using JPackage
+        run: |
           # Create DEB
           .github/scripts/jpackage.sh \
           --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
@@ -61,8 +67,8 @@ jobs:
         with:
           name: SceneBuilder-${{ runner.os }}
           path: |
-            *.deb
-            *.rpm
+            app/target/install/*.deb
+            app/target/install/*.rpm
       - name: Upload to AWS S3
         run: |
           aws s3 cp app/target/install/ ${{ env.S3_PATH }} --exclude "**/*" --acl public-read --recursive --region us-east-1 --debug

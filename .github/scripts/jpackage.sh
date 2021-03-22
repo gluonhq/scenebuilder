@@ -1,10 +1,9 @@
-echo ">>>>>>>>>>>>>>"
-echo "$@"
-
 jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$VERSION-all.jar)
+JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
+
 $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
---add-modules $jdeps_modules \
+--add-modules $jdeps_modules,$JAVAFX_MODULES \
 --output app/target/runtime \
 --strip-debug --compress 2 --no-header-files --no-man-pages
 

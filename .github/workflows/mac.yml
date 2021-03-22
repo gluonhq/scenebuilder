@@ -32,14 +32,19 @@ jobs:
         shell: bash
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      - name: Create Bundle using JPackage
-        id: outputfile
+      - name: Setup JavaFX
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_osx-x64_bin-jmods-SIGNED.zip
           unzip /tmp/openjfx-16_osx-x64_bin-jmods-SIGNED.zip -d /tmp
+      - name: Build and package JAR
+        run: |
           mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
           mvn -q package -Dmaven.test.skip=true
-          # Create DMG
+        env:
+          VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
+      - name: Create Bundle using JPackage
+        id: outputfile
+        run: |
           .github/scripts/jpackage.sh \
           --icon $GITHUB_WORKSPACE/app/assets/osx/icon-mac.icns \
           --java-options '"javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
@@ -53,6 +58,7 @@ jobs:
           ls $INSTALL_DIR
           echo ::set-output name=path::$INSTALL_DIR/SceneBuilder-${{ env.TAG }}.dmg
         env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-16/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           GLUON_MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
