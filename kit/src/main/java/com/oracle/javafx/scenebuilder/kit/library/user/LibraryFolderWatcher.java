@@ -411,18 +411,15 @@ class LibraryFolderWatcher implements Runnable {
                 final String canonicalName = e.getKlass().getCanonicalName();
                 if (!excludedItems.contains(canonicalName) && 
                     !artifactsFilter.contains(canonicalName)) {
-                	
-                	final String name = e.getKlass().getSimpleName();
-                	String sectionName =jarOrFolderReport.getJar().toString();
-                	
-                	// if some os don't use '/' for folder path (don't know if there is)
-                	if (sectionName.lastIndexOf("\\")==-1)
-                		sectionName=UserLibrary.TAG_USER_DEFINED;
-                	else
-                		sectionName=sectionName.substring(sectionName.lastIndexOf("\\")+1, 
-                					sectionName.lastIndexOf("."));
-                	
-                	final String fxmlText = JarExplorer.makeFxmlText(e.getKlass());
+                    final String name = e.getKlass().getSimpleName();
+                    String sectionName;
+                    try{
+                        sectionName=jarOrFolderReport.getJar().toFile().getName().replace(".jar", "");
+                    }catch(Exception exception){
+                        //if getJar returns null or toFile not finding path
+                        sectionName=UserLibrary.TAG_USER_DEFINED;
+                    }
+                    final String fxmlText = BuiltinLibrary.makeFxmlText(e.getKlass());
                     result.add(new LibraryItem(name, sectionName, fxmlText, iconURL, library));
                 }
             }
