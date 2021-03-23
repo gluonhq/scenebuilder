@@ -1,0 +1,26 @@
+name: Scene Builder Release - Upload files
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Find TAG name
+        id: find-tag
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          echo "::set-output name=tag::$TAG"
+      - name: Upload settings.properties and version.json
+        if: "!contains(steps.find-tag.outputs.tag, 'RC')"
+        run: |
+          TAG=${{ steps.find-tag.outputs.tag }}
+          printf "latestversion=$TAG" > settings.properties
+          aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --region us-east-1 --debug
+          # Upload version.json. Some older versions still use version-8.4.0.json file
+          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version.json --acl public-read --region us-east-1 --debug
+          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --region us-east-1 --debug
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}

@@ -1,0 +1,37 @@
+name: SceneBuilder Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt-get install xvfb tigervnc-standalone-server tigervnc-common
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build project
+        run: |
+          export DISPLAY=:90
+          mkdir /home/runner/.vnc
+          echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
+          chmod -v 600 /home/runner/.vnc/passwd
+          vncserver :90 -localhost -nolisten tcp
+          ./gradlew -i build
+          vncserver -kill :90

@@ -2,10 +2,11 @@ import org.apache.tools.ant.filters.EscapeUnicode
 
 plugins {
     id 'application'
-    id "com.github.johnrengelman.shadow" version "4.0.3"
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 mainClassName = 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp'
+archivesBaseName = "$rootProject.name"
 
 dependencies {
     implementation project(':kit')
@@ -18,9 +19,8 @@ run {
     }
 }
 
+jar.enabled = false
 shadowJar {
-    baseName = 'scenebuilder'
-
     manifest {
         attributes 'Main-Class': mainClassName
     }
@@ -44,8 +44,10 @@ processResources {
         expand([
             version: version,
             javaVersion: System.getProperty('java.runtime.version') + ', ' + System.getProperty('java.vendor'),
+            javafxVersion: javafx.version,
             buildDate: buildDate
         ])
+        filteringCharset = 'UTF-8'
         filter(EscapeUnicode)
     }
     into buildDir
@@ -82,3 +84,97 @@ uploadArchives {
     }
 }
 
+/**
+ * Tasks related to packaging and releasing of Scene Builder
+ */
+def fx_jmods      = System.getenv('JAVAFX_HOME')
+def java_home     = System.getenv('JAVA_HOME')
+def jpackage_home = System.getenv('JPACKAGE_HOME')
+
+task jlink(type: Exec) {
+    dependsOn 'jar'
+    workingDir 'build'
+
+    doFirst {
+        if (java_home == null) {
+            throw new RuntimeException("JAVA_HOME is not defined.")
+        }
+        if (fx_jmods == null) {
+            throw new RuntimeException("JAVAFX_HOME is not defined.")
+        }
+        def argsList = [
+            '--module-path', "${fx_jmods}",
+            '--add-modules', 'java.base,java.desktop,java.logging,java.naming,java.prefs,java.security.jgss,java.sql,java.xml,javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,jdk.unsupported',
+            '--output', 'runtime',
+            '--strip-debug',
+            '--compress', '2',
+            '--no-header-files',
+            '--no-man-pages'
+        ]
+        executable = "${java_home}/bin/jlink"
+        args = argsList
+    }
+}
+
+task jpackage(type: Exec) {
+    dependsOn 'shadowJar'
+    workingDir 'build'
+    def options = []
+    doFirst {
+        if (jpackage_home == null) {
+            throw new RuntimeException("JPACKAGE_HOME is not defined.")
+        }
+        def argsList = [
+                '--input', "$buildDir/libs/",
+                '--main-jar', "${rootProject.name}-${project.version}-all.jar",
+                '--main-class', "$mainClassName",
+                '--runtime-image', 'runtime',
+                '--license-file', '../../LICENSE.txt',
+                '--name', "$rootProject.name",
+                '--description', 'Scene Builder',
+                '--app-version', "$project.version",
+                '--vendor', 'Gluon',
+                '--verbose'
+        ]
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        if (currentOs.linux) {
+            options = [
+                '--type', 'deb',
+                '--java-options', '-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED',
+                '--icon', '../assets/linux/icon-linux.png',
+                '--install-dir', '/opt'
+            ]
+        } else if (currentOs.macOsX) {
+            /**
+             * Needs to paas the following project parameters for signing the package:
+             * 1. signingPrefix
+             * 2. signingKeychain
+             * 3. signingKeyUsername
+             */
+            options = [
+                '--type', 'dmg',
+                '--java-options', '--add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED',
+                '--icon', '../assets/osx/icon-mac.icns',
+                '--mac-package-identifier', 'com.gluonhq.scenebuilder',
+                '--mac-package-name', 'Scene Builder',
+                '--mac-package-signing-prefix', signingPrefix,
+                '--mac-signing-key-user-name', signingKeyUsername,
+                '--mac-sign'
+            ]
+        } else {
+            options = [
+                '--type', 'msi',
+                '--java-options', '--add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED',
+                '--icon', '../assets/windows/icon-windows.ico',
+                '--win-dir-chooser',
+                '--win-menu',
+                '--win-menu-group', 'Scene Builder',
+                '--win-per-user-install',
+                '--win-shortcut'
+            ]
+        }
+        argsList.addAll(options)
+        args = argsList
+    }
+    executable = "${jpackage_home}/bin/jpackage"
+}
