@@ -47,10 +47,10 @@ jobs:
         run: |
           .github/scripts/jpackage.sh \
           --icon $GITHUB_WORKSPACE/app/assets/osx/icon-mac.icns \
-          --java-options '"--add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --type dmg \
           --mac-package-identifier com.gluonhq.scenebuilder \
-          --mac-package-name '"Scene Builder"' \
+          --mac-package-name 'Scene Builder' \
           --mac-package-signing-prefix $GLUON_MACSIGN_PREFIX \
           --mac-signing-key-user-name $GLUON_MACSIGN_USER \
           --mac-sign

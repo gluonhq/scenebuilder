@@ -23,7 +23,7 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --runtime-image %GITHUB_WORKSPACE%/app/target/runtime ^
 --dest %GITHUB_WORKSPACE%/app/target ^
 --type msi ^
---java-options "--add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
+--java-options "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
 --icon %GITHUB_WORKSPACE%/app/assets/windows/icon-windows.ico ^
 --win-dir-chooser ^
 --win-menu ^
