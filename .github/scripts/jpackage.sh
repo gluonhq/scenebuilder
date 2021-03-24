@@ -1,4 +1,4 @@
-jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/SceneBuilder-$VERSION-all.jar)
+jdeps_modules=$(jdeps --module-path $JAVAFX_HOME --print-module-deps --ignore-missing-deps $GITHUB_WORKSPACE/app/target/lib/scenebuilder-$VERSION-all.jar)
 JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
 
 $JAVA_HOME/bin/jlink \
@@ -11,7 +11,7 @@ $JPACKAGE_HOME/bin/jpackage \
 --app-version $VERSION \
 --input $GITHUB_WORKSPACE/app/target/lib \
 --license-file LICENSE.txt \
---main-jar SceneBuilder-$VERSION-all.jar \
+--main-jar scenebuilder-$VERSION-all.jar \
 --main-class $MAIN_CLASS \
 --name SceneBuilder \
 --description "Scene Builder" \
