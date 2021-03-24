@@ -48,7 +48,7 @@ It will create a partial shadow cross-platform jar under `app/target/lib/scenebu
 
 ### How to run Scene Builder ###
 
-You can run it with Gradle:
+You can run it with Maven:
 
 `mvn javafx:run -f app`
 

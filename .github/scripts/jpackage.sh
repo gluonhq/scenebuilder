@@ -10,7 +10,6 @@ $JAVA_HOME/bin/jlink \
 $JPACKAGE_HOME/bin/jpackage \
 --app-version $VERSION \
 --input $GITHUB_WORKSPACE/app/target/lib \
---install-dir /opt \
 --license-file LICENSE.txt \
 --main-jar SceneBuilder-$VERSION-all.jar \
 --main-class $MAIN_CLASS \

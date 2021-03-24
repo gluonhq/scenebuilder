@@ -46,12 +46,14 @@ jobs:
           .github/scripts/jpackage.sh \
           --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --install-dir /opt \
           --type deb
           mv $INSTALL_DIR/*.deb $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.deb
           # Create RPM
           .github/scripts/jpackage.sh \
           --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2 --add-opens javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --install-dir /opt \
           --type rpm
           mv $INSTALL_DIR/*.rpm $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.rpm
           ls $INSTALL_DIR
