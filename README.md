@@ -54,7 +54,15 @@ You can run it with Maven:
 
 or you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
-`java --module-path /path/to/javafx-sdk-$javafxVersion/lib --add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media --add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED -cp app/target/lib/scenebuilder-$version.jar com.oracle.javafx.scenebuilder.app.SceneBuilderApp`
+```
+java 
+--module-path /path/to/javafx-sdk-$javafxVersion/lib \
+--add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media \
+--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED \
+-cp app/target/lib/scenebuilder-$version.jar \
+com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+```
+
 ## Scene Builder Kit ##
 
 To build and install the Scene Builder Kit in your local repository, run:
