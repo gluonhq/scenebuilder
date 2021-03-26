@@ -44,7 +44,7 @@ jobs:
         run: |
           # Create DEB
           .github/scripts/jpackage.sh \
-          --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
+          --icon app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2"' \
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --install-dir /opt \
@@ -52,7 +52,7 @@ jobs:
           mv $INSTALL_DIR/*.deb $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.deb
           # Create RPM
           .github/scripts/jpackage.sh \
-          --icon $GITHUB_WORKSPACE/app/assets/linux/icon-linux.png \
+          --icon app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2"' \
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --install-dir /opt \

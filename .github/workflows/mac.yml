@@ -46,7 +46,7 @@ jobs:
         id: outputfile
         run: |
           .github/scripts/jpackage.sh \
-          --icon $GITHUB_WORKSPACE/app/assets/osx/icon-mac.icns \
+          --icon app/assets/osx/icon-mac.icns \
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --type dmg \
           --mac-package-identifier com.gluonhq.scenebuilder \

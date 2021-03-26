@@ -7,12 +7,12 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 %JAVA_HOME%\bin\jlink ^
 --module-path %JAVAFX_HOME% ^
 --add-modules %JDEPS_MODULES%,%JAVAFX_MODULES% ^
---output %GITHUB_WORKSPACE%/app/target/runtime ^
+--output app/target/runtime ^
 --strip-debug --compress 2 --no-header-files --no-man-pages
 
 %JPACKAGE_HOME%\bin\jpackage ^
 --app-version %VERSION% ^
---input %GITHUB_WORKSPACE%/app/target/lib ^
+--input app/target/lib ^
 --license-file LICENSE.txt ^
 --main-jar scenebuilder-%VERSION%-all.jar ^
 --main-class %MAIN_CLASS% ^
@@ -20,11 +20,11 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --description "Scene Builder" ^
 --vendor Gluon ^
 --verbose ^
---runtime-image %GITHUB_WORKSPACE%/app/target/runtime ^
---dest %GITHUB_WORKSPACE%/app/target ^
+--runtime-image app/target/runtime ^
+--dest %$INSTALL_DIR% ^
 --type msi ^
 --java-options "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
---icon %GITHUB_WORKSPACE%/app/assets/windows/icon-windows.ico ^
+--icon app/assets/windows/icon-windows.ico ^
 --win-dir-chooser ^
 --win-menu ^
 --win-menu-group "Scene Builder" ^
