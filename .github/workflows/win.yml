@@ -63,10 +63,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: SceneBuilder-${{ runner.os }}
-          path: app/target/*.msi
+          path: app/target/install/*.msi
       - name: Upload to AWS S3
         run: |
-          aws s3 cp app/target/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
+          aws s3 cp app/target/install/SceneBuilder-${{ env.TAG }}.msi ${{ env.S3_PATH }} --acl public-read --region us-east-1 --debug
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
