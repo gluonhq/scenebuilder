@@ -36,7 +36,7 @@ jobs:
         shell: cmd
         run: |
           call mvn versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
-          call mvn package -Dmaven.test.skip=true
+          call mvn package -Dmaven.test.skip=true -X
         env:
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
       - name: Create Bundle using JPackage
@@ -58,7 +58,7 @@ jobs:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
           password: '${{ secrets.WINDOWS_PASSWORD }}'
           certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
-          folder: 'app/build'
+          folder: 'app/target/install'
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:

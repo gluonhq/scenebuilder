@@ -37,7 +37,7 @@ jobs:
       - name: Build and package JAR
         run: |
           mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
-          mvn -q package -Dmaven.test.skip=true
+          mvn -q package -Dmaven.test.skip=true -X
         env:
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
       - name: Create Bundle using JPackage

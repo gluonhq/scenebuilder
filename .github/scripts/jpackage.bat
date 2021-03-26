@@ -21,7 +21,7 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --vendor Gluon ^
 --verbose ^
 --runtime-image app/target/runtime ^
---dest %$INSTALL_DIR% ^
+--dest %INSTALL_DIR% ^
 --type msi ^
 --java-options "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
 --icon app/assets/windows/icon-windows.ico ^
