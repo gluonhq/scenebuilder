@@ -1,4 +1,4 @@
-name: SceneBuilder Build
+name: SceneBuilder Verify
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
       - master
 
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - name: Install packages
@@ -23,9 +23,6 @@ jobs:
         with:
           java-version: 11
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Build project
         run: |
           export DISPLAY=:90
@@ -33,5 +30,5 @@ jobs:
           echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
           chmod -v 600 /home/runner/.vnc/passwd
           vncserver :90 -localhost -nolisten tcp
-          ./gradlew -i build
+          mvn clean verify
           vncserver -kill :90

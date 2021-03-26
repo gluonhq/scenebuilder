@@ -1,14 +1,15 @@
 # Gluon Scene Builder #
 
-Gluon [Scene Builder](http://gluonhq.com/products/scene-builder/) is a drag and drop UI designer tool allowing rapid desktop and mobile app 
-development. Scene Builder separates design from logic, allowing team members to quickly and easily focus on their specific aspect of 
-application development.
+Gluon [Scene Builder](http://gluonhq.com/products/scene-builder/) is a drag and drop UI designer tool allowing rapid desktop and mobile app development.
+Scene Builder separates design from logic, allowing team members to quickly and easily focus on their specific aspect of application development.
 
-Scene Builder works with the JavaFX ecosystem – official controls, community projects, and Gluon offerings including 
-[Gluon Mobile](http://gluonhq.com/products/mobile), [Gluon Desktop](http://gluonhq.com/products/desktop), and [Gluon CloudLink](http://gluonhq.com/products/cloudlink).
+Scene Builder works with the JavaFX ecosystem – official controls, community projects, and Gluon offerings including
+[Gluon Mobile](http://gluonhq.com/products/mobile),
+[Gluon Desktop](http://gluonhq.com/products/desktop), and
+[Gluon CloudLink](http://gluonhq.com/products/cloudlink).
 
 Scene Builder is open source, and it is freely licensed under the BSD license.
-[Gluon](http://gluonhq.com) can provide [custom consultancy](http://gluonhq.com/services/consulting/) and [training](http://gluonhq.com/services/training/), and open source [commercial support](http://gluonhq.com/services/commercial-support/).
+[Gluon](http://gluonhq.com) can provide [custom consultancy](http://gluonhq.com/services/consulting/), [training](http://gluonhq.com/services/training/), and open source [commercial support](http://gluonhq.com/services/commercial-support/).
 
 ## Getting started ##
 
@@ -24,7 +25,7 @@ For community support, go to [StackOverflow](https://stackoverflow.com/questions
 Issues can be reported to the [Issue tracker](https://github.com/gluonhq/scenebuilder/issues/)
 
 Contributions can be submitted via [Pull requests](https://github.com/gluonhq/scenebuilder/pulls/), 
-providing you have signed the [Gluon Individual Contributor License Agreement (CLA)](https://docs.google.com/forms/d/16aoFTmzs8lZTfiyrEm8YgMqMYaGQl0J8wA0VJE2LCCY).
+providing you have signed the [Gluon Individual Contributor License Agreement (CLA)](https://cla.gluonhq.com).
 
 ## Building Scene Builder ##
 
@@ -41,35 +42,40 @@ These are the requisites:
 
 To build the Scene Builder services, on the project's root, run:
 
-`./gradlew clean build`
+`mvn clean package`
 
-It will create a partial shadow cross-platform jar under `app/build/libs/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
+It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
 
 ### How to run Scene Builder ###
 
-You can run it with Gradle:
+You can run it with Maven:
 
-`./gradlew run`
+`mvn javafx:run -f app`
 
 or you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
-`java --module-path /path/to/javafx-sdk-$javafxVersion/lib --add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media --add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED -cp app/build/libs/scenebuilder-$version.jar com.oracle.javafx.scenebuilder.app.SceneBuilderApp                                                           
+```
+java 
+--module-path /path/to/javafx-sdk-$javafxVersion/lib \
+--add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media \
+--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED \
+-cp app/target/lib/scenebuilder-$version.jar \
+com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+```
 
 ## Scene Builder Kit ##
 
 To build and install the Scene Builder Kit in your local repository, run:
 
-`./gradlew clean :kit:install`
+`mvn clean install -f kit`
 
-The custom controls of the Scene Builder kit can be used in your project. 
+The custom controls of the Scene Builder kit can be used in your project.
 You can add it as a regular dependency to the build of your app:
 
 ```
-repositories {
-    mavenLocal()
-}
-
-dependencies {
-    implementation ('com.gluonhq.scenebuilder:scenebuilder-kit:$version') { transitive = false }
-}
+<dependency>
+  <groupId>com.gluonhq.scenebuilder</groupId>
+  <artifactId>kit</artifactId>
+  <version>$version</version>
+</dependency>
 ```
