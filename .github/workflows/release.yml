@@ -24,3 +24,5 @@ jobs:
           aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --region us-east-1 --debug
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
