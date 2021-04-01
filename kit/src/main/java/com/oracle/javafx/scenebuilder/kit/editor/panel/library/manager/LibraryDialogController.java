@@ -151,7 +151,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         
         SortedList<DialogListItem> sortedItems = listItems.sorted(new DialogListItemComparator());
         libraryListView.setItems(sortedItems);
-        libraryListView.getSelectionModel().selectFirst();
         libraryListView.setCellFactory(param -> new LibraryDialogListCell());
         
         final Path folder = Paths.get(this.userLibrary.getPath());
@@ -179,6 +178,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .stream()
                 .map(c -> new ArtifactDialogListItem(this, c))
                 .collect(Collectors.toList()));
+        
+        libraryListView.getSelectionModel().selectFirst();
     }
 
     @FXML
