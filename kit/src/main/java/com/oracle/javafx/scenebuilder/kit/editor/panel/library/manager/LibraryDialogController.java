@@ -180,6 +180,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .collect(Collectors.toList()));
         
         libraryListView.getSelectionModel().selectFirst();
+        libraryListView.requestFocus();
     }
 
     @FXML
