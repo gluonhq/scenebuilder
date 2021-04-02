@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -66,6 +66,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListView;
@@ -147,7 +148,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             listItems = FXCollections.observableArrayList();
         }
         listItems.clear();
-        libraryListView.setItems(listItems);
+        
+        SortedList<DialogListItem> sortedItems = listItems.sorted(new DialogListItemComparator());
+        libraryListView.setItems(sortedItems);
         libraryListView.setCellFactory(param -> new LibraryDialogListCell());
         
         final Path folder = Paths.get(this.userLibrary.getPath());
@@ -175,11 +178,14 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 .stream()
                 .map(c -> new ArtifactDialogListItem(this, c))
                 .collect(Collectors.toList()));
+        
+        libraryListView.getSelectionModel().selectFirst();
+        libraryListView.requestFocus();
     }
 
     @FXML
     private void close() {
-        libraryListView.getItems().clear();
+        listItems.clear();
         closeWindow();
     }
 
