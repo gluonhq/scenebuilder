@@ -438,13 +438,7 @@ class LibraryFolderWatcher implements Runnable {
                 if (!excludedItems.contains(canonicalName) && 
                     !artifactsFilter.contains(canonicalName)) {
                     final String name = e.getKlass().getSimpleName();
-                    String sectionName;
-                    try{
-                        sectionName=jarOrFolderReport.getJar().toFile().getName().replace(".jar", "");
-                    }catch(Exception exception){
-                        //if getJar returns null or toFile not finding path
-                        sectionName=UserLibrary.TAG_USER_DEFINED;
-                    }
+                    final String sectionName = createSectionName(jarOrFolderReport); 
                     final String fxmlText = BuiltinLibrary.makeFxmlText(e.getKlass());
                     result.add(new LibraryItem(name, sectionName, fxmlText, iconURL, library));
                 }
@@ -453,7 +447,13 @@ class LibraryFolderWatcher implements Runnable {
         
         return result;
     }
-    
+    private String createSectionName(JarReport jarReport) {
+        try {
+            return jarReport.getJar().toFile().getName().replace(".jar", "");
+        } catch (Exception e) {
+            return UserLibrary.TAG_USER_DEFINED;
+        }
+    }
     
     private URL[] makeURLArrayFromPaths(Collection<Path> paths) {
         final URL[] result = new URL[paths.size()];
