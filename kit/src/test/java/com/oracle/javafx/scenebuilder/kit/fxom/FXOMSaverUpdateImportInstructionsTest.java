@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -35,7 +35,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -49,14 +48,19 @@ import java.util.TreeSet;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javafx.embed.swing.JFXPanel;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit test for {@link FXOMSaver#updateImportInstructions(FXOMDocument)}.
  */
 public class FXOMSaverUpdateImportInstructionsTest {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private static FXOMDocument fxomDocument;
     private static FXOMSaver serviceUnderTest;
@@ -254,9 +258,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     private void setupTestCase(FxmlTestInfo n) {
         Path pathToFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/" + n.getFilename() + ".fxml");
-        Path pathToTestFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/testerFXML.fxml");
         try {
-            Files.deleteIfExists(pathToTestFXML);
+            Path pathToTestFXML = temporaryFolder.newFile("testerFXML.fxml").toPath();
 
             // Setup for the fxomDocument from the FXML file that will be tested
             setupFXOMDocument(pathToFXML);
@@ -272,14 +275,11 @@ public class FXOMSaverUpdateImportInstructionsTest {
     }
 
     // setup for the FXOMDocument that will be tested
-    private void setupFXOMDocument(Path relativePath) {
-        // relativePath =
-        // "src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/[fxmlname].fxml"
-        File fxmlTesterFile = new File(relativePath.getParent() + "/testerFXML.fxml");
+    private void setupFXOMDocument(Path fxmlTesterFile) {
         serviceUnderTest = new FXOMSaver();
         try {
-            URL location = fxmlTesterFile.toURI().toURL();
-            String fxmlString = getFxmlAsString(relativePath);
+            URL location = fxmlTesterFile.toFile().toURI().toURL();
+            String fxmlString = getFxmlAsString(fxmlTesterFile);
 
             fxomDocument = new FXOMDocument(fxmlString, location, null, null);
         } catch (IOException e) {
