@@ -132,10 +132,9 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
         languageChoiceBox.getItems().addAll(SkeletonSettings.LANGUAGE.values());
         languageChoiceBox.getSelectionModel().select(SkeletonSettings.LANGUAGE.JAVA);
 
-        ChangeListener<Object> updateOnChangeListener = (ov, t, t1) -> update();
-        languageChoiceBox.getSelectionModel().selectedItemProperty().addListener(updateOnChangeListener);
-        commentCheckBox.selectedProperty().addListener(updateOnChangeListener);
-        formatCheckBox.selectedProperty().addListener(updateOnChangeListener);
+        languageChoiceBox.getSelectionModel().selectedItemProperty().addListener(fxomDocumentRevisionListener);
+        commentCheckBox.selectedProperty().addListener(fxomDocumentRevisionListener);
+        formatCheckBox.selectedProperty().addListener(fxomDocumentRevisionListener);
 
         update();
     }
@@ -143,7 +142,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     /*
      * Private
      */
-    private final ChangeListener<Number> fxomDocumentRevisionListener
+    private final ChangeListener<Object> fxomDocumentRevisionListener
         = (observable, oldValue, newValue) -> update();
 
     private void updateTitle() {
