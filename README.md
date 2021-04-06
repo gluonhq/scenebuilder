@@ -48,11 +48,16 @@ It will create a partial shadow cross-platform jar under `app/target/lib/scenebu
 
 ### How to run Scene Builder ###
 
-You can run it with Maven:
+Before starting the app, all dependencies must be installed locally.
+This is achieved by:
+
+`mvn install`
+
+Then Scene Builder can be started with Maven:
 
 `mvn javafx:run -f app`
 
-or you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
+Alternatively, you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
 ```
 java 
