@@ -52,7 +52,7 @@
                                 </excludes>
                             </artifactSet>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>target/lib/scenebuilder-${version}-all.jar</outputFile>
+                            <outputFile>target/lib/scenebuilder-${project.version}-all.jar</outputFile>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${main.class.name}</mainClass>
