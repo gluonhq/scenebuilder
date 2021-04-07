@@ -34,15 +34,18 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 class SkeletonCreator {
 
+    private final SkeletonCreatorJava skeletonCreatorJava = new SkeletonCreatorJava();
+    private final SkeletonCreatorKotlin skeletonCreatorKotlin = new SkeletonCreatorKotlin();
+
     /**
      * @return a code skeleton for the given context
      */
-    static String createFrom(SkeletonContext context) {
+    String createFrom(SkeletonContext context) {
         switch (context.getSettings().getLanguage()) {
             case JAVA:
-                return SkeletonCreatorJava.createFrom(context);
+                return skeletonCreatorJava.createFrom(context);
             case KOTLIN:
-                return SkeletonCreatorKotlin.createFrom(context);
+                return skeletonCreatorKotlin.createFrom(context);
             default:
                 throw new IllegalArgumentException("Language not supported: " + context.getSettings().getLanguage());
         }

@@ -33,6 +33,8 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import javafx.embed.swing.JFXPanel;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,6 +46,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class SkeletonBufferJavaTest {
+
+    @BeforeClass
+    public static void initialize() {
+        new JFXPanel();
+    }
 
     @Test
     public void skeletonToString_testFxml_full_withComments() throws IOException {

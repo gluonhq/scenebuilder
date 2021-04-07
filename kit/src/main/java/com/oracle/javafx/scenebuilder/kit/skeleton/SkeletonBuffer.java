@@ -41,15 +41,14 @@ import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- *
- */
 class SkeletonBuffer {
 
     private final FXOMDocument document;
     private final String documentName;
 
     private final SkeletonSettings settings = new SkeletonSettings();
+
+    private final SkeletonCreator skeletonCreator = new SkeletonCreator();
 
     SkeletonBuffer(FXOMDocument document, String documentName) {
         assert document != null;
@@ -85,7 +84,7 @@ class SkeletonBuffer {
 
             construct(builder);
 
-            return SkeletonCreator.createFrom(builder.build());
+            return skeletonCreator.createFrom(builder.build());
         }
     }
 
