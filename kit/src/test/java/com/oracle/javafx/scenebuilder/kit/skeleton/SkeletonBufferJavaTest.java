@@ -53,7 +53,7 @@ public class SkeletonBufferJavaTest {
     }
 
     @Test
-    public void skeletonToString_nestedTestFxml_full_withComments() throws IOException {
+    public void skeletonToString_nestedTestFxml() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("TestNested.fxml");
 
