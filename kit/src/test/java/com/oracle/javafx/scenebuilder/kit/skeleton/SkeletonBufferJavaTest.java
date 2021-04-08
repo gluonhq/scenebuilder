@@ -53,6 +53,18 @@ public class SkeletonBufferJavaTest {
     }
 
     @Test
+    public void skeletonToString_nestedTestFxml_full_withComments() throws IOException {
+        // given
+        SkeletonBuffer skeletonBuffer = load("TestNested.fxml");
+
+        // when
+        String skeleton = skeletonBuffer.toString();
+
+        // then
+        assertEqualsFileContent("skeleton_java_nested.txt", skeleton);
+    }
+
+    @Test
     public void skeletonToString_testFxml_full_withComments() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("Test.fxml");
