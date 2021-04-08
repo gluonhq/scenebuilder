@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Gluon and/or its affiliates.
+ * Copyright (c) 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,9 +31,9 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import javafx.embed.swing.JFXPanel;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class SkeletonBufferKotlinTest {
 
     @BeforeClass
     public static void initialize() {
-        new JFXPanel();
+        JfxInitializer.initialize();
     }
 
     @Test

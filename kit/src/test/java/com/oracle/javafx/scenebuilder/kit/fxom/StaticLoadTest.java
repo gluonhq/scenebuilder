@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -34,8 +34,9 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import java.io.IOException;
 import java.net.URL;
-import javafx.application.Application;
-import javafx.stage.Stage;
+
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+
 import static org.junit.Assert.assertFalse;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,23 +48,9 @@ public class StaticLoadTest {
     
     private boolean thrown;
     
-    public static class DummyApp extends Application {
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            // noop
-        }
-    }
-
     @BeforeClass
     public static void initJFX() {
-        Thread t = new Thread("JavaFX Init Thread") {
-            @Override
-            public void run() {
-                Application.launch(DummyApp.class, new String[0]);
-            }
-        };
-        t.setDaemon(true);
-        t.start();
+        JfxInitializer.initialize();
     }
     
     @Test

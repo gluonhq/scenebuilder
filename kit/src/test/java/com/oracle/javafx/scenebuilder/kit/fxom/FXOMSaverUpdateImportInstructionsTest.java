@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -67,7 +68,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
     @BeforeClass
     public static void initialize() {
-        new JFXPanel();
+        JfxInitializer.initialize();
     }
 
     @Test
