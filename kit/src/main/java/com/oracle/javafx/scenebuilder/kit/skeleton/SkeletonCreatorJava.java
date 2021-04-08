@@ -54,25 +54,36 @@ public class SkeletonCreatorJava extends AbstractSkeletonCreator {
 
     @Override
     void appendClassPart(SkeletonContext context, StringBuilder sb) {
-        String controller = context.getFxController();
-
         sb.append("public "); //NOI18N
-        if (controller != null && controller.contains("$")) { //NOI18N
+        if (hasNestedController(context)) {
             sb.append("static "); //NOI18N
         }
 
         sb.append("class "); //NOI18N
 
-        if (controller != null && !controller.isEmpty()) {
-            String simpleName = controller.replace("$", "."); //NOI18N
-            int dot = simpleName.lastIndexOf('.');
-            if (dot > -1) {
-                simpleName = simpleName.substring(dot + 1);
-            }
-            sb.append(simpleName);
+        if (hasController(context)) {
+            String controllerClassName = getControllerClassName(context);
+            sb.append(controllerClassName);
         } else {
             sb.append("PleaseProvideControllerClassName"); //NOI18N
         }
+    }
+
+    private boolean hasController(SkeletonContext context) {
+        return context.getFxController() != null && !context.getFxController().isEmpty();
+    }
+
+    private boolean hasNestedController(SkeletonContext context) {
+        return hasController(context) && context.getFxController().contains("$"); //NOI18N
+    }
+
+    private String getControllerClassName(SkeletonContext context) {
+        String simpleName = context.getFxController().replace("$", "."); //NOI18N
+        int dot = simpleName.lastIndexOf('.');
+        if (dot > -1) {
+            simpleName = simpleName.substring(dot + 1);
+        }
+        return simpleName;
     }
 
     @Override

@@ -38,7 +38,6 @@ public class SkeletonCreatorKotlin extends AbstractSkeletonCreator {
     void appendPackage(SkeletonContext context, StringBuilder sb) {
         String controller = context.getFxController();
 
-        // TODO Verify for Kotlin: inner/static controller class
         if (controller != null && controller.contains(".") && !controller.contains("$")) { //NOI18N
             sb.append("package "); //NOI18N
             sb.append(controller, 0, controller.lastIndexOf('.')); //NOI18N
@@ -57,28 +56,27 @@ public class SkeletonCreatorKotlin extends AbstractSkeletonCreator {
 
     @Override
     void appendClassPart(SkeletonContext context, StringBuilder sb) {
-        String controller = context.getFxController();
-
-        // TODO Verify for Kotlin: inner/static controller class?
-        /*
-        if (controller != null && controller.contains("$")) { //NOI18N
-            sb.append("static "); //NOI18N
-        }
-         */
-
         sb.append("class "); //NOI18N
 
-        // TODO Verify for Kotlin: is this necessary? Can be simplified?
-        if (controller != null && !controller.isEmpty()) {
-            String simpleName = controller.replace("$", "."); //NOI18N
-            int dot = simpleName.lastIndexOf('.');
-            if (dot > -1) {
-                simpleName = simpleName.substring(dot + 1);
-            }
-            sb.append(simpleName);
+        if (hasController(context)) {
+            String controllerClassName = getControllerClassName(context);
+            sb.append(controllerClassName);
         } else {
             sb.append("PleaseProvideControllerClassName"); //NOI18N
         }
+    }
+
+    private boolean hasController(SkeletonContext context) {
+        return context.getFxController() != null && !context.getFxController().isEmpty();
+    }
+
+    private String getControllerClassName(SkeletonContext context) {
+        String simpleName = context.getFxController().replace("$", "."); //NOI18N
+        int dot = simpleName.lastIndexOf('.');
+        if (dot > -1) {
+            simpleName = simpleName.substring(dot + 1);
+        }
+        return simpleName;
     }
 
     @Override
