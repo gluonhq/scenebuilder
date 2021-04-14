@@ -24,6 +24,7 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --dest %INSTALL_DIR% ^
 --type msi ^
 --java-options "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
+--java-options "-Djava.library.path=runtime\bin;runtime\lib" ^
 --icon app/assets/windows/icon-windows.ico ^
 --win-dir-chooser ^
 --win-menu ^
