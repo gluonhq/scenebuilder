@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -142,8 +143,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     /*
      * Private
      */
-    private final ChangeListener<Object> fxomDocumentRevisionListener
-        = (observable, oldValue, newValue) -> update();
+    private final InvalidationListener fxomDocumentRevisionListener = (observable) -> update();
 
     private void updateTitle() {
         final String title = I18N.getString("skeleton.window.title", documentName);
