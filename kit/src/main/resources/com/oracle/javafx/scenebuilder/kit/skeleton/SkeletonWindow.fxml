@@ -36,6 +36,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -51,6 +52,7 @@
                         <Button mnemonicParsing="false" onAction="#onCopyAction" text="%label.copy" HBox.hgrow="ALWAYS" />
                         <HBox alignment="BASELINE_RIGHT" spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
+                                <ChoiceBox fx:id="languageChoiceBox" />
                                 <CheckBox fx:id="commentCheckBox" mnemonicParsing="false" text="%skeleton.add.comments">
                                 </CheckBox><CheckBox fx:id="formatCheckBox" mnemonicParsing="false" text="%skeleton.format.full" />
                             </children>

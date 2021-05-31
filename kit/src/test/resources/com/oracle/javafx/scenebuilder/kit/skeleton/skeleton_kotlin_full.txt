@@ -1,0 +1,36 @@
+package com.oracle.javafx.scenebuilder.kit.skeleton
+
+import java.net.URL
+import java.util.ResourceBundle
+import javafx.fxml.FXML
+import javafx.scene.control.TableView
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.VBox
+
+class EmptyController {
+
+    @FXML
+    private lateinit var resources: ResourceBundle
+
+    @FXML
+    private lateinit var location: URL
+
+    @FXML
+    private lateinit var myTableView: TableView<Any>
+
+    @FXML
+    private lateinit var myVbox: VBox
+
+    @FXML
+    fun onMyVboxMouseEntered(event: MouseEvent) {
+
+    }
+
+    @FXML
+    fun initialize() {
+        assert(myTableView != null) {"fx:id=\"myTableView\" was not injected: check your FXML file 'test'." }
+        assert(myVbox != null) {"fx:id=\"myVbox\" was not injected: check your FXML file 'test'." }
+
+    }
+
+}

@@ -1,0 +1,25 @@
+/**
+ * Sample Skeleton for 'test' Controller Class
+ */
+
+package com.oracle.javafx.scenebuilder.kit.skeleton
+
+import javafx.fxml.FXML
+import javafx.scene.control.TableView
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.VBox
+
+class EmptyController {
+
+    @FXML // fx:id="myTableView"
+    private lateinit var myTableView: TableView<Any> // Value injected by FXMLLoader
+
+    @FXML // fx:id="myVbox"
+    private lateinit var myVbox: VBox // Value injected by FXMLLoader
+
+    @FXML
+    fun onMyVboxMouseEntered(event: MouseEvent) {
+
+    }
+
+}

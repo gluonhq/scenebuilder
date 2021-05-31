@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -47,43 +47,48 @@ public class SkeletonBufferTest {
 
     @Test
     public void testControllerWithoutPackageName() throws IOException {
-        EditorController editorController = new EditorController();
-        final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithoutPackage.fxml");
-        final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+        // given
+        SkeletonBuffer skeletonBuffer = load("ControllerWithoutPackage.fxml");
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
+        // when
         String skeleton = skeletonBuffer.toString();
 
+        // then
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
         assertEquals("", firstLine);
     }
 
     @Test
     public void testControllerWithSimplePackageName() throws IOException {
-        EditorController editorController = new EditorController();
-        final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithSimplePackage.fxml");
-        final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+        // given
+        SkeletonBuffer skeletonBuffer = load("ControllerWithSimplePackage.fxml");
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
+        // when
         String skeleton = skeletonBuffer.toString();
 
+        // then
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
         assertEquals("package com;", firstLine);
     }
 
     @Test
     public void testControllerWithAdvancedPackageName() throws IOException {
-        EditorController editorController = new EditorController();
-        final URL fxmlURL = SkeletonBufferTest.class.getResource("ControllerWithAdvancedPackage.fxml");
-        final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+        // given
+        SkeletonBuffer skeletonBuffer = load("ControllerWithAdvancedPackage.fxml");
 
-        SkeletonBuffer skeletonBuffer = new SkeletonBuffer(editorController.getFxomDocument(), "test");
+        // when
         String skeleton = skeletonBuffer.toString();
 
+        // then
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
         assertEquals("package com.example.app.view;", firstLine);
+    }
+
+    private SkeletonBuffer load(String fxmlFile) throws IOException {
+        EditorController editorController = new EditorController();
+        final URL fxmlURL = SkeletonBufferTest.class.getResource(fxmlFile);
+        final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+        return new SkeletonBuffer(editorController.getFxomDocument(), "test");
     }
 }

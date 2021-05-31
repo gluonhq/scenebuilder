@@ -1,0 +1,19 @@
+import javafx.fxml.FXML
+import javafx.scene.control.TableView
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.VBox
+
+class InnerController {
+
+    @FXML
+    private lateinit var myTableView: TableView<Any>
+
+    @FXML
+    private lateinit var myVbox: VBox
+
+    @FXML
+    fun onMyVboxMouseEntered(event: MouseEvent) {
+
+    }
+
+}

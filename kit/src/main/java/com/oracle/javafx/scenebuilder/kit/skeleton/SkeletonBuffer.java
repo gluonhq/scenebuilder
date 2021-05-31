@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,245 +32,44 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
-import com.oracle.javafx.scenebuilder.kit.util.eventnames.ImportBuilder;
-import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
-import javafx.fxml.FXML;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 
-import java.lang.reflect.TypeVariable;
 import java.net.URL;
-import java.util.*;
+import java.util.ResourceBundle;
 
-/**
- *
- */
-public class SkeletonBuffer {
+class SkeletonBuffer {
 
     private final FXOMDocument document;
-    private final String INDENT = "    "; //NOI18N
-    private final Set<String> imports = new TreeSet<>();
-    private final StringBuilder variables = new StringBuilder();
-    private final StringBuilder asserts = new StringBuilder();
-    private TEXT_TYPE textType = TEXT_TYPE.WITHOUT_COMMENTS;
-    private FORMAT_TYPE textFormat = FORMAT_TYPE.COMPACT;
-    private final StringBuilder packageLine = new StringBuilder();
-    private final StringBuilder classLine = new StringBuilder();
-    private final StringBuilder header = new StringBuilder();
-    private final StringBuilder initialize = new StringBuilder();
-    private final StringBuilder handlers = new StringBuilder();
-    private static final String FXML_ANNOTATION = "@FXML\n";
-
     private final String documentName;
 
-    public enum TEXT_TYPE {
-        WITH_COMMENTS, WITHOUT_COMMENTS
-    }
+    private final SkeletonSettings settings = new SkeletonSettings();
 
-    public enum FORMAT_TYPE {
-        COMPACT, FULL
-    }
+    private final SkeletonCreator skeletonCreator = new SkeletonCreator();
 
-    public SkeletonBuffer(FXOMDocument document, String documentName) {
+    SkeletonBuffer(FXOMDocument document, String documentName) {
         assert document != null;
         this.document = document;
         this.documentName = documentName;
     }
 
-    public void setTextType(TEXT_TYPE type) {
-        this.textType = type;
+    void setLanguage(SkeletonSettings.LANGUAGE language) {
+        settings.setLanguage(language);
     }
 
-    public void setFormat(FORMAT_TYPE format) {
-        this.textFormat = format;
+    void setTextType(SkeletonSettings.TEXT_TYPE type) {
+        settings.setTextType(type);
     }
 
-    private void constructHeader() {
-        if (textType == TEXT_TYPE.WITH_COMMENTS) {
-            final String title = I18N.getString("skeleton.window.title", documentName);
-            header.append("/**\n"); //NOI18N
-            header.append(" * "); //NOI18N
-            header.append(title);
-            header.append("\n */\n\n"); //NOI18N
-        }
+    void setFormat(SkeletonSettings.FORMAT_TYPE format) {
+        settings.setFormat(format);
     }
 
-    private void constructPackageLine() {
-            String controller = document.getFxomRoot().getFxController();
-
-            if (controller != null && !controller.isEmpty()
-                    && controller.contains(".") && !controller.contains("$")) { //NOI18N
-                packageLine.append("package "); //NOI18N
-                packageLine.append(controller.substring(0, controller.lastIndexOf('.'))); //NOI18N
-                packageLine.append(";\n\n"); //NOI18N
-            }
-        }
-
-    private void constructClassLine() {
-            String controller = document.getFxomRoot().getFxController();
-            classLine.append("\npublic "); //NOI18N
-
-            if (controller != null && controller.contains("$")) { //NOI18N
-                classLine.append("static "); //NOI18N
-            }
-
-            classLine.append("class "); //NOI18N
-
-            if (controller != null && !controller.isEmpty()) {
-                String simpleName = controller.replace("$", "."); //NOI18N
-                int dot = simpleName.lastIndexOf('.');
-                if (dot > -1) {
-                    simpleName = simpleName.substring(dot+1);
-                }
-                classLine.append(simpleName);
-            } else {
-                classLine.append("PleaseProvideControllerClassName"); //NOI18N
-            }
-
-            classLine.append(" {\n\n"); //NOI18N
-        }
-
-    private void constructInitialize() {
-        if (textFormat == FORMAT_TYPE.FULL) {
-            initialize.append(INDENT);
-            initialize.append("@FXML"); //NOI18N
-
-            if (textType == TEXT_TYPE.WITH_COMMENTS) {
-                initialize.append(" // This method is called by the FXMLLoader when initialization is complete\n"); //NOI18N
-            } else {
-                initialize.append("\n"); //NOI18N
-            }
-
-            initialize.append(INDENT);
-            initialize.append("void initialize() {\n"); //NOI18N
-            initialize.append(asserts);
-            initialize.append("\n"); //NOI18N
-            initialize.append(INDENT);
-            initialize.append("}\n"); //NOI18N
-        }
-    }
-
-    private void construct() {
-        constructHeader();
-        constructPackageLine();
-        constructClassLine();
-
-        // All that depends on fx:id
-        Map<String, FXOMObject> fxids = document.collectFxIds();
-
-        for (FXOMObject value : fxids.values()) {
-            String key = value.getFxId();
-            final Object obj = value.getSceneGraphObject();
-            final Class<?> type = obj.getClass();
-
-            addImportsFor(FXML.class, type);
-            variables.append(INDENT).append("@FXML"); //NOI18N
-
-            if (textType == TEXT_TYPE.WITH_COMMENTS) {
-                variables.append(" // fx:id=\"").append(key).append("\""); //NOI18N
-            }
-
-            variables.append("\n"); //NOI18N
-            variables.append(INDENT).append("private ").append(type.getSimpleName()); //NOI18N
-            final TypeVariable<? extends Class<?>>[] parameters = type.getTypeParameters();
-
-            if (parameters.length > 0) {
-                variables.append("<"); //NOI18N
-                String sep = ""; //NOI18N
-                for (TypeVariable<?> t : parameters) {
-                    variables.append(sep).append("?"); //NOI18N
-                    sep = ", "; //NOI18N
-                    t.getName(); // silly call to silence FindBugs
-                }
-                variables.append(">"); //NOI18N
-            }
-
-            if (textType == TEXT_TYPE.WITH_COMMENTS) {
-                variables.append(" ").append(key).append("; // Value injected by FXMLLoader\n\n"); //NOI18N
-            } else {
-                variables.append(" ").append(key).append(";\n\n"); //NOI18N
-            }
-
-            asserts.append(INDENT).append(INDENT).append("assert ").append(key).append(" != null : ") //NOI18N
-                    .append("\"fx:id=\\\"").append(key).append("\\\" was not injected: check your FXML file ") //NOI18N
-                    .append("'").append(documentName) //NOI18N
-                    .append("'.\";\n"); //NOI18N
-        }
-
-        if (textFormat == FORMAT_TYPE.FULL) {
-            addImportsFor(URL.class, ResourceBundle.class);
-        }
-
-        // Event handlers
-        // Map with pairs of methodNames and eventTypeNames
-        final Map<String, String> methodsAndEvents = new TreeMap<>();
-        // need to initialize the internal events map
-        FindEventNamesUtil.initializeEventsMap();
-        for (FXOMPropertyT handler : document.getFxomRoot().collectEventHandlers()) {
-            String eventTypeName = handler.getName().getName();
-            methodsAndEvents.put(handler.getValue(), eventTypeName);
-        }
-        // for each method name
-        methodsAndEvents.forEach(this::generateControllerSkeleton);
-        // This method must be called once asserts has been populated.
-        constructInitialize();
-    }
-
-    /**
-     * Generates the skeleton for the controller event handler methods.
-     * For every eventTypeName, it searches for the appropriate event name.
-     *
-     * @param methodName method name chosen by the user
-     * @param eventTypeName eventTypeName, e.g. onMouseClicked
-     */
-    private void generateControllerSkeleton(String methodName, String eventTypeName) {
-        handlers.append(INDENT).append(FXML_ANNOTATION).append(INDENT).append("void "); //NOI18N
-        final String methodNamePured = methodName.replace("#", ""); //NOI18N
-        handlers.append(methodNamePured);
-        String eventName = FindEventNamesUtil.findEventName(eventTypeName);
-        handlers.append("(").append(eventName).append(" event) {\n\n").append(INDENT).append("}\n\n"); //NOI18N
-        if (textFormat == FORMAT_TYPE.FULL) {
-            addImportsForEvents(eventName);
-        }
-    }
-
-    /**
-     * Constructs import statements for event classes.
-     *
-     * @param eventName event name, for which a statement should be built.
-     */
-    private void addImportsForEvents(String eventName) {
-        if(EventNames.ACTION_EVENT.equals(eventName)) {
-            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.EVENT_PACKAGE), eventName);
-        }
-        else {
-            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT.concat(ImportBuilder.INPUT_PACKAGE), eventName);
-        }
-        buildAndCollectImports();
-    }
-
-
-    /**
-     * Constructs import statements for other classes (like URL, ResourceBundle).
-     *
-     * @param classes other classes the statement should be built.
-     */
-    private void addImportsFor(Class<?>... classes) {
-        for (Class<?> c : classes) {
-            ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT, c.getName().replace("$", "."));
-            buildAndCollectImports();
-    }
-        // need an import statement for @FXML, too
-        ImportBuilder.add(ImportBuilder.IMPORT_STATEMENT, ImportBuilder.FXML_PACKAGE);
-        buildAndCollectImports();
-    }
-
-    private void buildAndCollectImports() {
-        imports.add(ImportBuilder.build());
-        ImportBuilder.reset();
+    private boolean isFull() {
+        return settings.isFull();
     }
 
     @Override
@@ -278,36 +77,41 @@ public class SkeletonBuffer {
         if (document.getFxomRoot() == null) {
             return I18N.getString("skeleton.empty");
         } else {
-            construct();
+            SkeletonContext.Builder builder = SkeletonContext.builder()
+                .withFxController(document.getFxomRoot().getFxController())
+                .withDocumentName(documentName)
+                .withSettings(settings);
 
-            StringBuilder code = new StringBuilder();
-            code.append(header);
-            code.append(packageLine);
+            construct(builder);
 
-            for (String importStatement : imports) {
-                code.append(importStatement);
-            }
+            return skeletonCreator.createFrom(builder.build());
+        }
+    }
 
-            code.append(classLine);
+    private void construct(SkeletonContext.Builder builder) {
+        constructFxIds(builder);
+        constructEventHandlers(builder);
+        constructAdditionalImports(builder);
+    }
 
-            if (textType == TEXT_TYPE.WITH_COMMENTS && textFormat == FORMAT_TYPE.FULL) {
-                code.append(INDENT).append("@FXML // ResourceBundle that was given to the FXMLLoader\n") //NOI18N
-                        .append(INDENT).append("private ResourceBundle resources;\n\n") //NOI18N
-                        .append(INDENT).append("@FXML // URL location of the FXML file that was given to the FXMLLoader\n") //NOI18N
-                        .append(INDENT).append("private URL location;\n\n"); //NOI18N
-            } else if (textFormat == FORMAT_TYPE.FULL) {
-                code.append(INDENT).append(FXML_ANNOTATION) //NOI18N
-                        .append(INDENT).append("private ResourceBundle resources;\n\n") //NOI18N
-                        .append(INDENT).append(FXML_ANNOTATION) //NOI18N
-                        .append(INDENT).append("private URL location;\n\n"); //NOI18N
-            }
+    private void constructFxIds(SkeletonContext.Builder builder) {
+        for (FXOMObject value : document.collectFxIds().values()) {
+            builder.addFxId(value);
+        }
+    }
 
-            code.append(variables);
-            code.append(handlers);
-            code.append(initialize);
-            code.append("}\n"); //NOI18N
+    private void constructEventHandlers(SkeletonContext.Builder builder) {
+        // need to initialize the internal events map
+        FindEventNamesUtil.initializeEventsMap();
 
-            return code.toString();
+        for (FXOMPropertyT eventHandler : document.getFxomRoot().collectEventHandlers()) {
+            builder.addEventHandler(eventHandler);
+        }
+    }
+
+    private void constructAdditionalImports(SkeletonContext.Builder builder) {
+        if (isFull()) {
+            builder.addImportsFor(URL.class, ResourceBundle.class);
         }
     }
 }

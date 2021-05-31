@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,27 +35,29 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  */
 public class SkeletonWindowController extends AbstractFxmlWindowController {
 
+    @FXML
+    ChoiceBox<SkeletonSettings.LANGUAGE> languageChoiceBox;
     @FXML
     CheckBox commentCheckBox;
     @FXML
@@ -78,7 +81,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     private final EditorController editorController;
     private boolean dirty = false;
 
-    private String documentName;
+    private final String documentName;
 
     public SkeletonWindowController(EditorController editorController, String documentName, Stage owner) {
         super(SkeletonWindowController.class.getResource("SkeletonWindow.fxml"), I18N.getBundle(), owner); //NOI18N
@@ -86,16 +89,16 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
         this.documentName = documentName;
 
         this.editorController.fxomDocumentProperty().addListener(
-                (ChangeListener<FXOMDocument>) (ov, od, nd) -> {
-                    assert editorController.getFxomDocument() == nd;
-                    if (od != null) {
-                        od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
-                    }
-                    if (nd != null) {
-                        nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
-                        update();
-                    }
-                });
+            (ChangeListener<FXOMDocument>) (ov, od, nd) -> {
+                assert editorController.getFxomDocument() == nd;
+                if (od != null) {
+                    od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
+                }
+                if (nd != null) {
+                    nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
+                    update();
+                }
+            });
 
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
@@ -122,13 +125,17 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     @Override
     protected void controllerDidLoadFxml() {
         super.controllerDidLoadFxml();
+        assert languageChoiceBox != null;
         assert commentCheckBox != null;
         assert formatCheckBox != null;
         assert textArea != null;
 
-        commentCheckBox.selectedProperty().addListener((ChangeListener<Boolean>) (ov, t, t1) -> update());
+        languageChoiceBox.getItems().addAll(SkeletonSettings.LANGUAGE.values());
+        languageChoiceBox.getSelectionModel().select(SkeletonSettings.LANGUAGE.JAVA);
 
-        formatCheckBox.selectedProperty().addListener((ChangeListener<Boolean>) (ov, t, t1) -> update());
+        languageChoiceBox.getSelectionModel().selectedItemProperty().addListener(fxomDocumentRevisionListener);
+        commentCheckBox.selectedProperty().addListener(fxomDocumentRevisionListener);
+        formatCheckBox.selectedProperty().addListener(fxomDocumentRevisionListener);
 
         update();
     }
@@ -136,8 +143,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     /*
      * Private
      */
-    private final ChangeListener<Number> fxomDocumentRevisionListener
-            = (observable, oldValue, newValue) -> update();
+    private final InvalidationListener fxomDocumentRevisionListener = (observable) -> update();
 
     private void updateTitle() {
         final String title = I18N.getString("skeleton.window.title", documentName);
@@ -152,16 +158,18 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
             updateTitle();
             final SkeletonBuffer buf = new SkeletonBuffer(editorController.getFxomDocument(), documentName);
 
+            buf.setLanguage(languageChoiceBox.getSelectionModel().getSelectedItem());
+
             if (commentCheckBox.isSelected()) {
-                buf.setTextType(SkeletonBuffer.TEXT_TYPE.WITH_COMMENTS);
+                buf.setTextType(SkeletonSettings.TEXT_TYPE.WITH_COMMENTS);
             } else {
-                buf.setTextType(SkeletonBuffer.TEXT_TYPE.WITHOUT_COMMENTS);
+                buf.setTextType(SkeletonSettings.TEXT_TYPE.WITHOUT_COMMENTS);
             }
 
             if (formatCheckBox.isSelected()) {
-                buf.setFormat(SkeletonBuffer.FORMAT_TYPE.FULL);
+                buf.setFormat(SkeletonSettings.FORMAT_TYPE.FULL);
             } else {
-                buf.setFormat(SkeletonBuffer.FORMAT_TYPE.COMPACT);
+                buf.setFormat(SkeletonSettings.FORMAT_TYPE.COMPACT);
             }
 
             textArea.setText(buf.toString());
