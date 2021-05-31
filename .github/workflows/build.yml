@@ -32,3 +32,10 @@ jobs:
           vncserver :90 -localhost -nolisten tcp
           mvn clean verify -X
           vncserver -kill :90
+
+      - name: Draft release
+        if: github.ref == 'refs/heads/master'
+        # Drafts your next Release notes as Pull Requests are merged into "master"
+        uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
