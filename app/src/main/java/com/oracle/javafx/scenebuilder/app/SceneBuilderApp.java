@@ -136,7 +136,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         // set design time flag
         java.beans.Beans.setDesignTime(true);
-
+        
         // SB-270
         windowList.addListener((ListChangeListener.Change<? extends DocumentWindowController> c) -> {
             while (c.next()) {
@@ -148,7 +148,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
             }
         });
-
+        
         /*
          * We spawn our two threads for handling background startup.
          */
@@ -507,7 +507,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-
+        
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
             performOpenFiles(fileObjs, null);
@@ -541,14 +541,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         /*
          * Note : this callback is called on Mac OS X only when the user
          * selects the 'Quit App' command in the Application menu.
-         *
+         * 
          * Before calling this callback, FX automatically sends a close event
          * to each open window ie DocumentWindowController.performCloseAction()
          * is invoked for each open window.
-         *
+         * 
          * When we arrive here, windowList is empty if the user has confirmed
          * the close operation for each window : thus exit operation can
-         * be performed. If windowList is not empty,  this means the user has
+         * be performed. If windowList is not empty,  this means the user has 
          * cancelled at least one close operation : in that case, exit operation
          * should be not be executed.
          */
@@ -840,34 +840,34 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private String getToolStylesheet() {
         return ResourceUtils.getToolStylesheet(toolTheme);
     }
-
-
+    
+    
     /*
      * Background startup
-     *
+     * 
      * To speed SB startup, we create two threads which anticipate some
      * initialization tasks and offload the JFX thread:
      *  - 'Phase 0' thread executes tasks that do not require JFX initialization
      *  - 'Phase 1' thread executes tasks that requires JFX initialization
-     *
+     * 
      * Tasks executed here must be carefully chosen:
      * 1) they must be thread-safe
      * 2) they should be order-safe : whether they are executed in background
      *    or by the JFX thread should make no difference.
-     *
+     * 
      * Currently we simply anticipate creation of big singleton instances
      * (like Metadata, Preferences...)
      */
 
     private void backgroundStartPhase0() {
-        assert Platform.isFxApplicationThread() == false; // Warning
+        assert Platform.isFxApplicationThread() == false; // Warning 
 
         PreferencesController.getSingleton();
         Metadata.getMetadata();
     }
 
     private void backgroundStartPhase2() {
-        assert Platform.isFxApplicationThread() == false; // Warning
+        assert Platform.isFxApplicationThread() == false; // Warning 
         assert launchLatch.getCount() == 0; // i.e JavaFX is initialized
 
         BuiltinLibrary.getLibrary();
