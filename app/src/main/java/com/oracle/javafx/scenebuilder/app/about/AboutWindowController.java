@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.app.about;
 
+import com.oracle.javafx.scenebuilder.app.AppPlatform;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
@@ -155,14 +156,14 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append("\n\n"); //NOI18N
         return sb;
     }
+
     private String getLogFilePath() {
-        StringBuilder sb = new StringBuilder(System.getProperty("java.io.tmpdir")); //NOI18N
+        StringBuilder sb = new StringBuilder(AppPlatform.getLogFolder());
         if (sb.charAt(sb.length() - 1) != File.separatorChar) {
             sb.append(File.separatorChar);
         }
         sb.append(LOG_FILE_NAME);
         return sb.toString();
-        
     }
 
     private StringBuilder getBuildInfoParagraph() {
