@@ -982,25 +982,26 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
                     alert.showAndWait();
                 });
-            }
-            try {
-                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                    String latestVersionText = AppSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
-                    Platform.runLater(() -> {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
-                                latestVersionAnnouncementURL, source.getStage());
-                        dialog.showAndWait();
-                    });
-                } else {
-                    SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                    alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                    alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                    alert.showAndWait();
+            } else {
+                try {
+                    if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                        String latestVersionText = AppSettings.getLatestVersionText();
+                        String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
+                        Platform.runLater(() -> {
+                            UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
+                                    latestVersionAnnouncementURL, source.getStage());
+                            dialog.showAndWait();
+                        });
+                    } else {
+                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
+                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
+                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                        alert.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Platform.runLater(() -> showVersionNumberFormatError(source));
                 }
-            } catch (NumberFormatException ex) {
-                Platform.runLater(() -> showVersionNumberFormatError(source));
             }
         });
     }
