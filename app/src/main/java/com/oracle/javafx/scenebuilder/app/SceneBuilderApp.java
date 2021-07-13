@@ -939,7 +939,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
             try {
                 boolean showUpdateDialog = true;
-                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                if (AppSettings.getSceneBuilderVersion().contains("SNAPSHOT")) {
+                    showUpdateDialog = false;
+                } else if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
                     PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
@@ -1011,7 +1013,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         // in development so we don't localize the strings
         alert.setTitle("Error");
         alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-        alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
+        alert.setContentText("Update check is disabled in development environment.");
         alert.showAndWait();
     }
 
