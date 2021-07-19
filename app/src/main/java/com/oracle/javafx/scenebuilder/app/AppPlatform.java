@@ -97,7 +97,7 @@ public class AppPlatform {
      */
     public static synchronized String getLogFolder() {
         if (logsFolder == null) {
-            logsFolder = System.getProperty("user.home") + "/.scenebuilder/logs"; //NOI18N
+            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
         }
         return logsFolder;
     }
