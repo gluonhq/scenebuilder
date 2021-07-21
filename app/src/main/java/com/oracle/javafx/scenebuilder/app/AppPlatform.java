@@ -54,6 +54,7 @@ public class AppPlatform {
     private static String applicationDataFolder;
     private static String userLibraryFolder;
     private static String messageBoxFolder;
+    private static String logsFolder;
     private static MessageBox<MessageBoxMessage> messageBox;
     
     public static synchronized String getApplicationDataFolder() {
@@ -90,6 +91,17 @@ public class AppPlatform {
         return userLibraryFolder;
     }
 
+    /**
+     * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
+     * @return Directory path for Scene Builder logs
+     */
+    public static synchronized String getLogFolder() {
+        if (logsFolder == null) {
+            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
+        }
+        return logsFolder;
+    }
+
     public static boolean requestStart(
             AppNotificationHandler notificationHandler, Application.Parameters parameters)  
     throws IOException {
@@ -123,6 +135,7 @@ public class AppPlatform {
         
         try {
             Files.createDirectories(Paths.get(getMessageBoxFolder()));
+            Files.createDirectories(Paths.get(getLogFolder()));
         } catch(FileAlreadyExistsException x) {
             // Fine
         }
