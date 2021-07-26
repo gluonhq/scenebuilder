@@ -1,7 +1,9 @@
 package com.oracle.javafx.scenebuilder.kit.util.eventnames;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Builds an import statement as a key/value pair.
@@ -46,18 +48,15 @@ public class ImportBuilder {
     }
 
     /**
-     * Builds a new import statement. The key may be the "import" keyword, or the "import" keyword combined with a
+     * Builds the list of import statements. The key may be the "import" keyword, or the "import" keyword combined with a
      * "javafx.scene.input." package name. The value may be a full class name (e.g. with package) or an input event name.
      *
-     * @return new import statement
+     * @return list of new import statements
      */
-    public static String build() {
-        StringBuilder sb = new StringBuilder();
-        imports.forEach((key, value) -> {
-            sb.append(key);
-            sb.append(value);
-            sb.append(";\n");
-        });
-        return sb.toString();
+    public static List<String> build() {
+        return imports.entrySet()
+               .stream()
+               .map(imprt->imprt.getKey()+imprt.getValue())
+               .collect(Collectors.toList());
     }
 }

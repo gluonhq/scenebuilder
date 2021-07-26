@@ -175,7 +175,7 @@ class SkeletonContext {
         }
 
         private void buildAndCollectImports() {
-            imports.add(ImportBuilder.build());
+            imports.addAll(ImportBuilder.build());
             ImportBuilder.reset();
         }
 

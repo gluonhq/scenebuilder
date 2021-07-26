@@ -47,7 +47,7 @@ public class SkeletonCreatorJava extends AbstractSkeletonCreator {
     @Override
     void appendImports(SkeletonContext context, StringBuilder sb) {
         for (String importStatement : context.getImports()) {
-            sb.append(importStatement);
+            sb.append(importStatement).append(";").append(NL);
         }
     }
 
