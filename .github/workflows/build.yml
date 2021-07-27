@@ -1,4 +1,4 @@
-name: SceneBuilder Verify
+name: Scene Builder Verify
 on:
   push:
     branches:
@@ -9,9 +9,14 @@ on:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
     steps:
-      - name: Install packages
+      - name: Install packages (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get install xvfb tigervnc-standalone-server tigervnc-common
 
@@ -23,7 +28,8 @@ jobs:
         with:
           java-version: 16
 
-      - name: Build project
+      - name: Run Tests (Linux)
+        if: runner.os == 'Linux'
         run: |
           export DISPLAY=:90
           mkdir /home/runner/.vnc
@@ -32,6 +38,11 @@ jobs:
           vncserver :90 -localhost -nolisten tcp
           mvn clean verify -X
           vncserver -kill :90
+
+      - name: Run Tests (MacOS / Windows)
+        if: runner.os != 'Linux'
+        run: |
+          mvn clean verify
 
       - name: Draft release
         if: github.ref == 'refs/heads/master'
