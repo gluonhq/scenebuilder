@@ -87,7 +87,7 @@ public class ImportBuilder {
     public static List<String> build() {
         return imports.entrySet()
                .stream()
-               .map(imprt->imprt.getKey()+imprt.getValue())
+               .map(preparedImport->preparedImport.getKey()+preparedImport.getValue())
                .collect(Collectors.toList());
     }
 }
