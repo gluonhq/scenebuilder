@@ -47,9 +47,7 @@ public class SkeletonCreatorKotlin extends AbstractSkeletonCreator {
     @Override
     void appendImports(SkeletonContext context, StringBuilder sb) {
         for (String importStatement : context.getImports()) {
-            // importStatement built with ImportBuilder.build() contains ';' at the end
-            String kotlinImport = importStatement.replaceAll(";", "");
-            sb.append(kotlinImport);
+            sb.append(importStatement).append(NL);
         }
     }
 

@@ -54,7 +54,7 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         // then
-        String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
+        String firstLine = skeleton.substring(0, skeleton.indexOf(AbstractSkeletonCreator.NL));
         assertEquals("", firstLine);
     }
 
@@ -67,7 +67,7 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         // then
-        String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
+        String firstLine = skeleton.substring(0, skeleton.indexOf(AbstractSkeletonCreator.NL));
         assertEquals("package com;", firstLine);
     }
 
@@ -80,7 +80,7 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         // then
-        String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
+        String firstLine = skeleton.substring(0, skeleton.indexOf(AbstractSkeletonCreator.NL));
         assertEquals("package com.example.app.view;", firstLine);
     }
 
