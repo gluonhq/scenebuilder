@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 
 abstract class AbstractSkeletonCreator {
 
-    static final String NL = "\n"; //System.lineSeparator();
+    static final String NL = System.lineSeparator();
     static final String INDENT = "    "; //NOI18N
     static final String FXML_ANNOTATION = "@FXML";
 
