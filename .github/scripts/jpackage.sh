@@ -19,4 +19,5 @@ $JPACKAGE_HOME/bin/jpackage \
 --verbose \
 --runtime-image app/target/runtime \
 --dest $INSTALL_DIR \
+--java-options "-Djava.library.path=./runtime/bin;./runtime/lib" \
 "$@"
