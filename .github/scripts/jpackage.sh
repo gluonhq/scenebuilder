@@ -18,6 +18,6 @@ $JPACKAGE_HOME/bin/jpackage \
 --vendor Gluon \
 --verbose \
 --runtime-image app/target/runtime \
---java-options "-Djava.library.path=lib/runtime/bin:lib/runtime/lib" \
+--java-options "-Djava.library.path=$APPDIR/../runtime/bin:$APPDIR/../runtime/lib" \
 --dest $INSTALL_DIR \
 "$@"
