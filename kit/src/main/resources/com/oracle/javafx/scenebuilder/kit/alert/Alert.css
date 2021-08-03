@@ -38,5 +38,5 @@
 
 .SB-alert.alert .label.content {
     -fx-background-color: #f6f6f7;
-    -fx-padding: 16 10 3em 10;
+    -fx-padding: 16 10 2em 10;
 }
