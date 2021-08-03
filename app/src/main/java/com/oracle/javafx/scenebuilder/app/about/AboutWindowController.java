@@ -195,7 +195,11 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private StringBuilder getJavaParagraph() {
         StringBuilder sb = new StringBuilder("Java\n"); //NOI18N
         sb.append(System.getProperty("java.runtime.version")).append(", ") //NOI18N
-                .append(System.getProperty("java.vendor")).append("\n\n"); //NOI18N
+                .append(System.getProperty("java.vendor")).append("\n") // NOI18N
+                .append("Java Library Path: ")
+                .append(System.getProperty("java.library.path")).append("\n\n"); //NOI18N
+        
+        ;
         return sb;
     }
     
