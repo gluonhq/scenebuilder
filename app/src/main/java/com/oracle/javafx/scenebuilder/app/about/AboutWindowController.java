@@ -40,6 +40,12 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowCo
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -196,13 +202,43 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         StringBuilder sb = new StringBuilder("Java\n"); //NOI18N
         sb.append(System.getProperty("java.runtime.version")).append(", ") //NOI18N
                 .append(System.getProperty("java.vendor")).append("\n") // NOI18N
-                .append("Java Library Path: ")
-                .append(System.getProperty("java.library.path")).append("\n\n"); //NOI18N
+                .append("Java Library Path(s): ").append("\n");
         
-        ;
+        List<String> invalidPaths = new ArrayList<>();
+        String libPaths = System.getProperty("java.library.path");
+        
+        String separator = getPathSeparator();
+        for (String libPath : libPaths.split(separator)) {
+            try {
+                Path absolutePath = Paths.get(libPath).normalize().toAbsolutePath();
+                if (Files.exists(absolutePath)) {                    
+                    String path = absolutePath.toString();
+                    sb.append("\t").append(path).append("\n");                            
+                } else {
+                    invalidPaths.add(libPath);
+                }
+            } catch (InvalidPathException error) {
+                invalidPaths.add(libPath);
+            }
+        }
+        sb.append("\n");
+        
+        if (!invalidPaths.isEmpty()) {
+            sb.append("Missing or invalid Java Library Path(s): ").append("\n");
+            invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
+            sb.append("\n");
+        }
+        
         return sb;
     }
     
+    private String getPathSeparator() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("win")>=0)
+            return ";";
+        return ":";
+    }
+
     private StringBuilder getOsParagraph() {
         StringBuilder sb = new StringBuilder(I18N.getString("about.operating.system"));
         sb.append("\n").append(System.getProperty("os.name")).append(", ") //NOI18N
