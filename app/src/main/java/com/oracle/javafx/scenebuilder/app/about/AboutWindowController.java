@@ -134,6 +134,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(getLoggingParagraph())
                 .append(getJavaFXParagraph())
                 .append(getJavaParagraph())
+                .append(getJavaLibraryPathParagraph())
                 .append(getOsParagraph())
                 .append(I18N.getString(sbAboutCopyrightKeyName));
         
@@ -201,19 +202,24 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private StringBuilder getJavaParagraph() {
         StringBuilder sb = new StringBuilder("Java\n"); //NOI18N
         sb.append(System.getProperty("java.runtime.version")).append(", ") //NOI18N
-                .append(System.getProperty("java.vendor")).append("\n") // NOI18N
-                .append("Java Library Path(s): ").append("\n");
+                .append(System.getProperty("java.vendor")) // NOI18N
+                .append("\n\n"); 
         
+        return sb;
+    }
+    
+    private StringBuilder getJavaLibraryPathParagraph() {
+        StringBuilder sb = new StringBuilder("Java Library Path(s):\n"); //NOI18N
+        
+        String libPaths = System.getProperty("java.library.path");       //NOI18N
         List<String> invalidPaths = new ArrayList<>();
-        String libPaths = System.getProperty("java.library.path");
-        
         String separator = getPathSeparator();
         for (String libPath : libPaths.split(separator)) {
             try {
                 Path absolutePath = Paths.get(libPath).normalize().toAbsolutePath();
                 if (Files.exists(absolutePath)) {                    
                     String path = absolutePath.toString();
-                    sb.append("\t").append(path).append("\n");                            
+                    sb.append("\t").append(path).append("\n");           //NOI18N                      
                 } else {
                     invalidPaths.add(libPath);
                 }
@@ -224,8 +230,12 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         sb.append("\n");
         
         if (!invalidPaths.isEmpty()) {
-            sb.append("Missing or invalid Java Library Path(s): ").append("\n");
-            invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
+            sb.append("Missing or invalid Java Library Path(s): ") //NOI18N
+              .append("\n"); 
+            
+            invalidPaths.forEach(invalidPath -> sb.append("\t")   //NOI18N
+                                                  .append(invalidPath)
+                                                  .append("\n"));
             sb.append("\n");
         }
         
@@ -234,9 +244,11 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     
     private String getPathSeparator() {
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.indexOf("win")>=0)
-            return ";";
-        return ":";
+        if (os.indexOf("win")>=0) {
+            return ";";            
+        } else {            
+            return ":";
+        }
     }
 
     private StringBuilder getOsParagraph() {
