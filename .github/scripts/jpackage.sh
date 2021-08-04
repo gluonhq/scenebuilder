@@ -18,6 +18,5 @@ $JPACKAGE_HOME/bin/jpackage \
 --vendor Gluon \
 --verbose \
 --runtime-image app/target/runtime \
---java-options "-Djava.library.path=/opt/scenebuilder/lib/runtime/bin:/opt/scenebuilder/lib/runtime/lib" \
 --dest $INSTALL_DIR \
 "$@"
