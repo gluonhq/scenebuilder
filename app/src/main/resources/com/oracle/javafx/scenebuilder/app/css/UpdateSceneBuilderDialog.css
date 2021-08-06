@@ -52,7 +52,9 @@
 }
 
 .download_scenebuilder-dialog .main-container > .latest-version-text {
-    -fx-max-width: 420;
+    -fx-pref-width: 420;
+    -fx-max-width: Infinity;
+    -fx-padding: 15 0 0 0;
     -fx-wrap-text: true;
 }
 

@@ -69,8 +69,6 @@ public class UpdateSceneBuilderDialog extends Dialog {
 
         Label latestVersionText = new Label(latestVersionTextString);
 
-        gridPane.getColumnConstraints().add(new ColumnConstraints(100));
-
         VBox contentContainer = new VBox();
         contentContainer.getChildren().addAll(header, gridPane);
         BorderPane mainContainer = new BorderPane();
