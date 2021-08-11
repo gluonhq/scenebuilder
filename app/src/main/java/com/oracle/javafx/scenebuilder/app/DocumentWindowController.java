@@ -1412,6 +1412,15 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     }
     
     @FXML
+    void onLibraryRefresh(ActionEvent event) {
+        
+        UserLibrary userLibrary = SceneBuilderApp.getSingleton().getUserLibrary();
+        
+        userLibrary.stopWatching();
+        userLibrary.startWatching();
+    }
+    
+    @FXML
     void onLibraryRevealCustomFolder(ActionEvent event) {
         String userLibraryPath = ((UserLibrary) getEditorController().getLibrary()).getPath();
         try {
