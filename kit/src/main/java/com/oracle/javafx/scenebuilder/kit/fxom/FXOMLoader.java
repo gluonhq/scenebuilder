@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -95,10 +95,27 @@ class FXOMLoader implements LoadListener {
             is.reset();
             setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
-            if (x.getCause().getClass() == XMLStreamException.class) {
-                handleUnsupportedCharset(x);
-            } else
-                throw new IOException(x);
+            handleFxmlLoadingError(x);
+        }
+    }
+
+    private void handleFxmlLoadingError(Exception x) throws IOException {
+        if (x.getCause() != null) {
+            handleKnownCauses(x);
+        } else {
+            handleUnknownAndMissingCauses(x);
+        }
+    }
+
+    private void handleUnknownAndMissingCauses(Exception x) throws IOException {
+        throw new IOException(x);
+    }
+
+    private void handleKnownCauses(Exception x) throws IOException {
+        if (x.getCause().getClass() == XMLStreamException.class) {
+            handleUnsupportedCharset(x);
+        } else {                    
+            handleUnknownAndMissingCauses(x);
         }
     }
 
