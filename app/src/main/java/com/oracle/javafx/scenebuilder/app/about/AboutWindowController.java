@@ -228,11 +228,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         }
         sb.append("\n");
         if (!invalidPaths.isEmpty()) {
-            sb.append("Missing or invalid Java Library Path(s): ") //NOI18N
-              .append("\n");
-            invalidPaths.forEach(invalidPath -> sb.append("\t")
-                                                  .append(invalidPath)
-                                                  .append("\n"));
+            sb.append("Missing or invalid Java Library Path(s): \n"); //NOI18N
+            invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
             sb.append("\n");
         }
 
