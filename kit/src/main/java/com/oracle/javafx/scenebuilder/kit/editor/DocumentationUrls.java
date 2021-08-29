@@ -114,6 +114,10 @@ public class DocumentationUrls {
     public String getGluonScenebuilderHome() {
         return getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_HOME);
     }
+
+    public String getTornadoFxGettingStartedWithKotlin() {
+        return getAsMandatoryValue(DocumentationItem.TORNADOFX_GETTING_STARTED_KOTLIN);
+    }
     
     String getAsMandatoryValue(DocumentationItem item) {
         String url = configuredUrls.get(item);
@@ -148,7 +152,6 @@ public class DocumentationUrls {
          */
         JAVADOC_HOME("https://openjfx.io/javadoc/11/"),
         ORACLE_DOCUMENTATION("https://docs.oracle.com/javafx/index.html"),
-        
         GLUON_JAVADOC_HOME("https://docs.gluonhq.com/charm/javadoc/latest/"),
         GLUON_SCENEBUILDER_HOME("https://gluonhq.com/products/scene-builder/"),
         
@@ -156,6 +159,8 @@ public class DocumentationUrls {
         OPENJFX_JAVADOC_HOME("https://openjfx.io/javadoc/16/"),
         OPENJFX_CSS_REFERENCE("https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html"),
         OPENJFX_FXML_REFERENCE("https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"),
+      
+        TORNADOFX_GETTING_STARTED_KOTLIN("https://docs.tornadofx.io/"),
         
         COMMUNITY_CONTRIBUTE_SCENEBUILDER,
         COMMUNITY_OPENJFX_HOME("https://openjfx.io/index.html#fh5co-work"),
@@ -179,5 +184,5 @@ public class DocumentationUrls {
         private String getKey() {
             return this.name().replace('_', '.').toLowerCase();
         }
-    }    
+    }
 }

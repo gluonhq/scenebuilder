@@ -305,6 +305,7 @@
                   <MenuItem fx:id="apiDocMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.api.docs" />
                   <MenuItem fx:id="cssReferenceGuideMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.css.reference" />
                   <MenuItem fx:id="fxmlIntroductionMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.fxml.reference" />
+				  <MenuItem fx:id="gettingStartedWithKotlinMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.getting.started.kotlin" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="%menu.title.help.community">
                     <items>

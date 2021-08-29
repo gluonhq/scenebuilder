@@ -412,6 +412,8 @@ public class MenuBarController {
     @FXML
     private MenuItem gettingStartedMenuItem;
     @FXML
+    private MenuItem gettingStartedWithKotlinMenuItem;
+    @FXML
     private MenuItem apiDocMenuItem;
     @FXML
     private MenuItem cssReferenceGuideMenuItem;
@@ -640,6 +642,7 @@ public class MenuBarController {
         assert aboutMenuItem != null;
         assert checkUpdatesMenuItem != null;
         assert gettingStartedMenuItem != null;
+        assert gettingStartedWithKotlinMenuItem != null;
         assert apiDocMenuItem != null;
         assert cssReferenceGuideMenuItem != null;
         assert fxmlIntroductionMenuItem != null;
@@ -1158,6 +1161,8 @@ public class MenuBarController {
         cssReferenceGuideMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F4));
         fxmlIntroductionMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_OPENJFX_FXML_REFERENCE));
         fxmlIntroductionMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F5));
+        gettingStartedWithKotlinMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GETTING_STARTED_WITH_KOTLIN));
+        gettingStartedWithKotlinMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F6));
         sceneBuilderHomeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GLUON_SCENEBUILDER_HOME));
         communityContributeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER));
         communityJavafxDocProjectMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_FXDOCS));

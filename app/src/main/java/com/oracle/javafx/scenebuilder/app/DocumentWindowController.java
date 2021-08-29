@@ -157,6 +157,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         HELP,
         SHOW_SAMPLE_CONTROLLER,
         HELP_OPEN_GETTING_STARTED_GUIDE,
+        HELP_OPEN_GETTING_STARTED_WITH_KOTLIN,
         HELP_OPEN_OPENJFX_APIDOC, 
         HELP_OPEN_OPENJFX_CSS_REFERENCE, 
         HELP_OPEN_OPENJFX_FXML_REFERENCE, 
@@ -647,34 +648,40 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case HELP:
                 result = true;
                 break;
-                
+
             case HELP_OPEN_GETTING_STARTED_GUIDE:
+            case HELP_OPEN_GETTING_STARTED_WITH_KOTLIN:
             case HELP_OPEN_OPENJFX_APIDOC:
             case HELP_OPEN_OPENJFX_CSS_REFERENCE:
             case HELP_OPEN_OPENJFX_FXML_REFERENCE:
             case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
                 result = true;
                 break;
-                
+
             case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_CONTRIBUTE_SCENEBUILDER);
                 break;
-                
+
             case HELP_COMMUNITY_FXDOCS:
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_DOCUMENTATION_FXDOCS);
-                break;     
+                break;
+
             case HELP_COMMUNITY_OPENJFX_HOME:
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_OPENJFX_HOME);
                 break;
+
             case HELP_COMMUNITY_FRAMEWORKS_TESTFX:
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_FRAMEWORKS_TESTFX);
                 break;
+
             case HELP_COMMUNITY_TUTORIALS_JENKOV:
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_TUTORIALS_JENKOV);
                 break;
+
             case HELP_COMMUNITY_TUTORIALS_ALMASBAIM:    
                 result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_TUTORIALS_ALMASBAIM);
                 break;
+
             default:
                 result = false;
                 assert false;
@@ -880,7 +887,11 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case HELP_OPEN_GETTING_STARTED_GUIDE:
                 openURL(DocumentationUrls.getInstance().getOpenjfxGettingStarted());
                 break;
-            
+
+            case HELP_OPEN_GETTING_STARTED_WITH_KOTLIN:
+                openURL(DocumentationUrls.getInstance().getTornadoFxGettingStartedWithKotlin());
+                break;
+
             case HELP_OPEN_OPENJFX_APIDOC:
                 openURL(DocumentationUrls.getInstance().getOpenjfxJavadocHome());
                 break;

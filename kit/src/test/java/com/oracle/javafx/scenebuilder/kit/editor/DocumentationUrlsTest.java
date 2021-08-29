@@ -71,9 +71,11 @@ public class DocumentationUrlsTest {
         assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javafx/index.html", 
                      classUnderTest.getOracleDocumentation());
         
-        assertEquals("The getting started guide", 
-                     "https://openjfx.io/openjfx-docs/", 
+        assertEquals("The getting started guide", "https://openjfx.io/openjfx-docs/", 
                      classUnderTest.getOpenjfxGettingStarted());
+        
+        assertEquals("The getting started guide", "https://docs.tornadofx.io/",
+                classUnderTest.getTornadoFxGettingStartedWithKotlin());
         
         assertEquals("Home of Gluon Scenebuilder", "https://gluonhq.com/products/scene-builder/",
                 classUnderTest.getGluonScenebuilderHome());
