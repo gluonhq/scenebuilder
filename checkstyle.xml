@@ -5,13 +5,10 @@
 
 <module name="Checker">
     <property name="cacheFile" value="${checkstyle.cache.file}" />
-
     <property name="severity" value="warning" />
-
     <property name="fileExtensions" value="java, properties, xml, fxml" />
 
     <!-- BeforeExecutionFileFilters is required for sources that are based on java9 -->
-    
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern"
             value="module\-info\.java$" />
@@ -42,12 +39,15 @@
         <module name="TypecastParenPad"/>
         
         <module name="EmptyLineSeparator">
-            <property name="tokens" value="IMPORT, STATIC_IMPORT, INTERFACE_DEF, INSTANCE_INIT, RECORD_DEF"/>
-            <property name="allowNoEmptyLineBetweenFields" value="false"/>
+            <property name="tokens" value="IMPORT"/>
+            <property name="tokens" value="STATIC_IMPORT"/>
+			<property name="tokens" value="INTERFACE_DEF"/>
+			<property name="tokens" value="INSTANCE_INIT"/>
+			<property name="tokens" value="RECORD_DEF"/>
+			<property name="allowNoEmptyLineBetweenFields" value="false"/>
             <property name="allowMultipleEmptyLinesInsideClassMembers" value="true"/>
         </module>
 
-        <!-- 
         <module name="NoWhitespaceAfter">
             <property name="tokens" value="ARRAY_INIT"/>
             <property name="tokens" value="AT"/>
@@ -61,8 +61,7 @@
             <property name="tokens" value="ARRAY_DECLARATOR"/>
             <property name="tokens" value="INDEX_OP"/>
             <property name="tokens" value="METHOD_REF"/>
-        </module>
-        -->        
+        </module>    
         
         <module name="EmptyBlock">
             <property name="tokens" value="LITERAL_CATCH"/>
