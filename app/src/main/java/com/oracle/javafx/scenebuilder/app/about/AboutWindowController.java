@@ -210,16 +210,15 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     
     private StringBuilder getJavaLibraryPathParagraph() {
         StringBuilder sb = new StringBuilder("Java Library Path(s):\n"); //NOI18N
-        
-        String libPaths = System.getProperty("java.library.path");       //NOI18N
+        String libPaths = System.getProperty("java.library.path"); //NOI18N
         List<String> invalidPaths = new ArrayList<>();
         String separator = getPathSeparator();
         for (String libPath : libPaths.split(separator)) {
             try {
                 Path absolutePath = Paths.get(libPath).normalize().toAbsolutePath();
-                if (Files.exists(absolutePath)) {                    
+                if (Files.exists(absolutePath)) {
                     String path = absolutePath.toString();
-                    sb.append("\t").append(path).append("\n");           //NOI18N                      
+                    sb.append("\t").append(path).append("\n");
                 } else {
                     invalidPaths.add(libPath);
                 }
@@ -228,25 +227,23 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
             }
         }
         sb.append("\n");
-        
         if (!invalidPaths.isEmpty()) {
             sb.append("Missing or invalid Java Library Path(s): ") //NOI18N
-              .append("\n"); 
-            
-            invalidPaths.forEach(invalidPath -> sb.append("\t")   //NOI18N
+              .append("\n");
+            invalidPaths.forEach(invalidPath -> sb.append("\t")
                                                   .append(invalidPath)
                                                   .append("\n"));
             sb.append("\n");
         }
-        
+
         return sb;
     }
-    
+
     private String getPathSeparator() {
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.indexOf("win")>=0) {
-            return ";";            
-        } else {            
+        if (os.indexOf("win") >= 0) {
+            return ";";
+        } else {
             return ":";
         }
     }
