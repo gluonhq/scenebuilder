@@ -42,6 +42,8 @@ import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls.DocumentationItem;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -124,12 +126,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
-/**
- *
- */
 public class DocumentWindowController extends AbstractFxmlWindowController {
-    
-    
+
     public enum DocumentControlAction {
         COPY,
         SELECT_ALL,
@@ -157,7 +155,18 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         REMOVE_RESOURCE,
         REVEAL_RESOURCE,
         HELP,
-        SHOW_SAMPLE_CONTROLLER
+        SHOW_SAMPLE_CONTROLLER,
+        HELP_OPEN_GETTING_STARTED_GUIDE,
+        HELP_OPEN_OPENJFX_APIDOC, 
+        HELP_OPEN_OPENJFX_CSS_REFERENCE, 
+        HELP_OPEN_OPENJFX_FXML_REFERENCE, 
+        HELP_OPEN_GLUON_SCENEBUILDER_HOME,
+        HELP_COMMUNITY_OPENJFX_HOME,
+        HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER,
+        HELP_COMMUNITY_FXDOCS,
+        HELP_COMMUNITY_FRAMEWORKS_TESTFX,
+        HELP_COMMUNITY_TUTORIALS_JENKOV,
+        HELP_COMMUNITY_TUTORIALS_ALMASBAIM,
     }
     
     public enum DocumentEditAction {
@@ -639,6 +648,33 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 result = true;
                 break;
                 
+            case HELP_OPEN_GETTING_STARTED_GUIDE:
+            case HELP_OPEN_OPENJFX_APIDOC:
+            case HELP_OPEN_OPENJFX_CSS_REFERENCE:
+            case HELP_OPEN_OPENJFX_FXML_REFERENCE:
+            case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
+                result = true;
+                break;
+                
+            case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_CONTRIBUTE_SCENEBUILDER);
+                break;
+                
+            case HELP_COMMUNITY_FXDOCS:
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_DOCUMENTATION_FXDOCS);
+                break;     
+            case HELP_COMMUNITY_OPENJFX_HOME:
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_OPENJFX_HOME);
+                break;
+            case HELP_COMMUNITY_FRAMEWORKS_TESTFX:
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_FRAMEWORKS_TESTFX);
+                break;
+            case HELP_COMMUNITY_TUTORIALS_JENKOV:
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_TUTORIALS_JENKOV);
+                break;
+            case HELP_COMMUNITY_TUTORIALS_ALMASBAIM:    
+                result = DocumentationUrls.isAvailable(DocumentationItem.COMMUNITY_TUTORIALS_ALMASBAIM);
+                break;
             default:
                 result = false;
                 assert false;
@@ -839,6 +875,62 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 
             case HELP:
                 performHelp();
+                break;
+
+            case HELP_OPEN_GETTING_STARTED_GUIDE:
+                openURL(DocumentationUrls.getInstance().getOpenjfxGettingStarted());
+                break;
+            
+            case HELP_OPEN_OPENJFX_APIDOC:
+                openURL(DocumentationUrls.getInstance().getOpenjfxJavadocHome());
+                break;
+
+            case HELP_OPEN_OPENJFX_CSS_REFERENCE:
+                openURL(DocumentationUrls.getInstance().getOpenjfxCssReference());
+                break;
+
+            case HELP_OPEN_OPENJFX_FXML_REFERENCE:
+                openURL(DocumentationUrls.getInstance().getOpenjfxFxmlReference());
+                break;
+
+            case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
+                openURL(DocumentationUrls.getInstance().getGluonScenebuilderHome());
+                break;
+            
+            case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_CONTRIBUTE_SCENEBUILDER)
+                                 .ifPresent(this::openURL);
+                break;
+            
+            case HELP_COMMUNITY_FXDOCS:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_DOCUMENTATION_FXDOCS)
+                                 .ifPresent(this::openURL);
+                break;
+            
+            case HELP_COMMUNITY_OPENJFX_HOME:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_OPENJFX_HOME)
+                                 .ifPresent(this::openURL);
+                break;
+            
+            case HELP_COMMUNITY_FRAMEWORKS_TESTFX:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_FRAMEWORKS_TESTFX)
+                                 .ifPresent(this::openURL);
+                break;
+
+            case HELP_COMMUNITY_TUTORIALS_JENKOV:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_TUTORIALS_JENKOV)
+                                 .ifPresent(this::openURL);
+                break;
+            
+            case HELP_COMMUNITY_TUTORIALS_ALMASBAIM:
+                DocumentationUrls.getInstance()
+                                 .getOptionalUrl(DocumentationItem.COMMUNITY_TUTORIALS_ALMASBAIM)
+                                 .ifPresent(this::openURL);
                 break;
                 
             case SHOW_SAMPLE_CONTROLLER:
@@ -2204,18 +2296,25 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         return result;
     }
-    
         
     private void performHelp() {
+        openURL(EditorPlatform.DOCUMENTATION_URL);
+    }
+    
+    private void openURL(String url) {
         try {
-            EditorPlatform.open(EditorPlatform.DOCUMENTATION_URL);
+            EditorPlatform.open(url);
         } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setMessage(I18N.getString("alert.help.failure.message", EditorPlatform.DOCUMENTATION_URL));
-            errorDialog.setDetails(I18N.getString("alert.messagebox.failure.details"));
-            errorDialog.setDebugInfoWithThrowable(ioe);
-            errorDialog.showAndWait();
+            handleErrorWhenOpeningURL(ioe, url);
         }
+    }
+
+    private void handleErrorWhenOpeningURL(IOException ioe, String url) {
+        final ErrorDialog errorDialog = new ErrorDialog(null);
+        errorDialog.setMessage(I18N.getString("alert.help.failure.message", url));
+        errorDialog.setDetails(I18N.getString("alert.messagebox.failure.details"));
+        errorDialog.setDebugInfoWithThrowable(ioe);
+        errorDialog.showAndWait();
     }
 
     private PreferencesRecordGlobal getPreferencesRecordGlobal() {
