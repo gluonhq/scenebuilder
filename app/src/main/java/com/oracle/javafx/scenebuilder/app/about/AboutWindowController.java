@@ -63,7 +63,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private GridPane vbox;
     @FXML
     private TextArea textArea;
-    
+
     private String sbBuildInfo;
     private String sbBuildVersion;
     private String sbBuildDate;
@@ -93,7 +93,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
             // We go with default values
         }
     }
-    
+
     @FXML
     public void onMousePressed(MouseEvent event) {
         if ((event.getClickCount() == 2) && event.isAltDown()) {
@@ -140,7 +140,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         
         return text.toString();
     }
-    
+
     /**
      *
      * @treatAsPrivate
@@ -148,7 +148,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     public String getBuildJavaVersion() {
         return sbBuildJavaVersion;
     }
-    
+
     /**
      *
      * @treatAsPrivate
@@ -156,7 +156,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     public String getBuildInfo() {
         return sbBuildInfo;
     }
-    
+
     private StringBuilder getVersionParagraph() {
         StringBuilder sb = new StringBuilder(I18N.getString("about.product.version"));
         sb.append("\nJavaFX Scene Builder ").append(sbBuildVersion) //NOI18N
@@ -203,8 +203,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         StringBuilder sb = new StringBuilder("Java\n"); //NOI18N
         sb.append(System.getProperty("java.runtime.version")).append(", ") //NOI18N
                 .append(System.getProperty("java.vendor")) // NOI18N
-                .append("\n\n"); 
-        
+                .append("\n\n");
         return sb;
     }
     
@@ -232,7 +231,6 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
             invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
             sb.append("\n");
         }
-
         return sb;
     }
 
