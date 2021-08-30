@@ -49,7 +49,7 @@ import java.util.List;
  * fxController name.
  *
  * <ol>
- * <li>undefined fxmlLocation and fxControllerName: - users directory with
+ * <li>undefined fxmlLocation and fxControllerName: - user directory with
  * PleaseProvideControllerClassName.java or PleaseProvideControllerClassName.kt.
  * 
  * <li>undefined fxControllerName but known fxmlLocation: - the name of the FXML
@@ -102,21 +102,16 @@ class SkeletonFileNameProposal {
             File fromControllerName = createFileFromControllerName(fxmlLocation, fxControllerName);
             return adjustToSrcMainDirWhenPossible(fromControllerName);
         }
-        return createFileInUsersDir();
+        return createFileInUserDir();
     }
 
     private File adjustToSrcMainDirWhenPossible(File controllerAtFxmlLocation) {
         String location = controllerAtFxmlLocation.toPath().toString().replace('\\', '/');
-        /*
-         * TODO: Discuss if this is a good function or not and if it is worth adding "src/test" to the source packages as
-         * well. This strongly depends on how users work with SceneBuilder.
-         * 
-         */
         List<Path> sourcePackages = List.of(Paths.get("src/main"));
         for (Path sourcePackage : sourcePackages) {
             String resources = resolvePath(sourcePackage, "resources");
-            String java      = resolvePath(sourcePackage, "java");
-            String kotlin    = resolvePath(sourcePackage, "kotlin");
+            String java = resolvePath(sourcePackage, "java");
+            String kotlin = resolvePath(sourcePackage, "kotlin");
             if (location.contains(resources)) {
                 switch (language) {
                 case JAVA:
@@ -159,8 +154,8 @@ class SkeletonFileNameProposal {
         try {
             return fxmlLocation.toURI();
         } catch (URISyntaxException e) {
-            File usersDir = new File(obtainUserDirectory()).getAbsoluteFile();
-            return usersDir.toURI();
+            File userDir = new File(obtainUserDirectory()).getAbsoluteFile();
+            return userDir.toURI();
         }
     }
 
@@ -179,18 +174,18 @@ class SkeletonFileNameProposal {
 
     }
 
-    private File createFileInUsersDir() {
+    private File createFileInUserDir() {
         String fileName = DEFAULT_CONTROLLER_CLASS_NAME + language.getExtension();
-        String usersDirectory = obtainUserDirectory();
-        return buildFileName(usersDirectory, fileName);
+        String userDirectory = obtainUserDirectory();
+        return buildFileName(userDirectory, fileName);
     }
 
     private String obtainUserDirectory() {
         return System.getProperty("user.home");
     }
 
-    private File buildFileName(String usersDirectory, String fileName) {
-        return Paths.get(usersDirectory, fileName).normalize().toAbsolutePath().toFile();
+    private File buildFileName(String userDirectory, String fileName) {
+        return Paths.get(userDirectory, fileName).normalize().toAbsolutePath().toFile();
     }
 
     /*
