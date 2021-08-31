@@ -162,12 +162,7 @@ public class DocumentationUrls {
       
         TORNADOFX_GETTING_STARTED_KOTLIN("https://docs.tornadofx.io/"),
         
-        COMMUNITY_CONTRIBUTE_SCENEBUILDER,
-        COMMUNITY_OPENJFX_HOME("https://openjfx.io/index.html#fh5co-work"),
-        COMMUNITY_DOCUMENTATION_FXDOCS,
-        COMMUNITY_FRAMEWORKS_TESTFX,
-        COMMUNITY_TUTORIALS_JENKOV,
-        COMMUNITY_TUTORIALS_ALMASBAIM;
+        GLUON_SCENEBUILDER_CONTRIBUTE;
         
         private final String defaultUrl;
         

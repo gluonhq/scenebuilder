@@ -421,16 +421,6 @@ public class MenuBarController {
     private MenuItem fxmlIntroductionMenuItem;
     @FXML
     private MenuItem communityContributeMenuItem;
-    @FXML
-    private MenuItem communityJavafxDocProjectMenuItem;
-    @FXML
-    private MenuItem communityOpenjfxHomeMenuItem;
-    @FXML
-    private MenuItem communityTestFxMenuItem;
-    @FXML
-    private MenuItem communityJenkovTutorialMenuItem;
-    @FXML
-    private MenuItem communityAlmasbaimVideoTutorialMenuItem;
     
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
@@ -648,11 +638,7 @@ public class MenuBarController {
         assert fxmlIntroductionMenuItem != null;
         assert sceneBuilderHomeMenuItem != null;
         assert communityContributeMenuItem != null;
-        assert communityJavafxDocProjectMenuItem != null;
-        assert communityOpenjfxHomeMenuItem != null;
-        assert communityTestFxMenuItem != null;
-        assert communityJenkovTutorialMenuItem != null;
-        assert communityAlmasbaimVideoTutorialMenuItem != null;
+
         /* 
          * To make MenuBar.fxml editable with SB 1.1, the menu bar is enclosed
          * in a StackPane. This stack pane is useless now.
@@ -1165,11 +1151,6 @@ public class MenuBarController {
         gettingStartedWithKotlinMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F6));
         sceneBuilderHomeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GLUON_SCENEBUILDER_HOME));
         communityContributeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER));
-        communityJavafxDocProjectMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_FXDOCS));
-        communityOpenjfxHomeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_OPENJFX_HOME));
-        communityTestFxMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_FRAMEWORKS_TESTFX));
-        communityJenkovTutorialMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_TUTORIALS_JENKOV));
-        communityAlmasbaimVideoTutorialMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_TUTORIALS_ALMASBAIM));
         /*
          * Put some generic handlers on each Menu and MenuItem.
          * For Insert and Window menu, we override with specific handlers.

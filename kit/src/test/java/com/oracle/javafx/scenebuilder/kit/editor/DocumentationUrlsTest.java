@@ -53,9 +53,9 @@ public class DocumentationUrlsTest {
     @Test
     public void that_defaults_are_used_with_incomplete_properties_file() {
         classUnderTest = new DocumentationUrls("incomplete_doc_urls.properties");
-        assertFalse(classUnderTest.getOptionalUrl(DocumentationItem.COMMUNITY_FRAMEWORKS_TESTFX).isPresent());
+        assertFalse(classUnderTest.getOptionalUrl(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE).isPresent());
         assertThrows(AssertionError.class,
-                () -> classUnderTest.getAsMandatoryValue(DocumentationItem.COMMUNITY_FRAMEWORKS_TESTFX));
+                () -> classUnderTest.getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE));
     }
 
     @Test

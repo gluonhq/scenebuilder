@@ -308,16 +308,7 @@
                         <MenuItem fx:id="cssReferenceGuideMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.css.reference" />
                         <MenuItem fx:id="fxmlIntroductionMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.fxml.reference" />
       				  <MenuItem fx:id="gettingStartedWithKotlinMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.getting.started.kotlin" />
-                        <MenuItem fx:id="communityOpenjfxHomeMenuItem" mnemonicParsing="false" text="%menu.title.help.community.openjfx.home" />
                      </items>
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="%menu.title.help.community">
-                    <items>
-                        <MenuItem fx:id="communityJavafxDocProjectMenuItem" mnemonicParsing="false" text="%menu.title.help.community.fxdocs.project" />
-                        <MenuItem fx:id="communityTestFxMenuItem" mnemonicParsing="false" text="%menu.title.help.community.testfx.project" />
-                        <MenuItem fx:id="communityJenkovTutorialMenuItem" mnemonicParsing="false" text="%menu.title.help.community.jenkov.com" />
-                        <MenuItem fx:id="communityAlmasbaimVideoTutorialMenuItem" mnemonicParsing="false" text="%menu.title.help.community.almasbaim.youtube" />
-                    </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="communityContributeMenuItem" mnemonicParsing="false" text="%menu.title.help.scenebuilder.contribute" />
