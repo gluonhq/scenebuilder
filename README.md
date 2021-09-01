@@ -91,8 +91,7 @@ To ensure that new code formatting matches the requirements for Pull Requests,
 the Maven Checkstyle plugin can be used to create a report listing possibly coding 
 style violations.
 
-The [Checkstyle](https://checkstyle.org) configuration is currently in a very early stage and so at present
-it checks for empty blocks, extra white space, padding and empty lines. 
+Contributors can check for code-style violations in their code by running the Checkstyle Maven goal. The checkstyle configuration is currently in a very early stage and only checks for empty blocks, extra white space, padding and empty lines.
 
 To run the plugin:
 
