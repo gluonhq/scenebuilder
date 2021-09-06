@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2020, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -100,7 +100,7 @@ class LibraryFolderWatcher implements Runnable {
             runDiscovery();
             runWatching();
         } catch(InterruptedException x) {
-            // Let's stop
+            // Let's stop: Typically, when UserLibrary::stopWatching is invoked, an InterruptedException is triggered to stop this watch service
         }
     }
     
@@ -257,6 +257,8 @@ class LibraryFolderWatcher implements Runnable {
             }
         }
         finally {
+        	// Typically, when UserLibrary::stopWatching is invoked, an InterruptedException is triggered to stop this watch service.
+        	// The InterruptedException is handled outside; here we just make sure to close() the watcher service that polls the filesystem.
             if (watchService != null) {
                 // we need to close the filesystem watcher here, otherwise it remains active and locking jars on library folder
                 try {
