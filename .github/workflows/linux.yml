@@ -49,7 +49,9 @@ jobs:
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --install-dir /opt \
           --type deb
-          mv $INSTALL_DIR/*.deb $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.deb
+          .github/scripts/repackage.sh
+          mv $INSTALL_DIR/*.deb $INSTALL_DIR/jpackage_deb
+          mv $INSTALL_DIR/repackaged_deb/*.deb $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.deb
           # Create RPM
           .github/scripts/jpackage.sh \
           --icon app/assets/linux/icon-linux.png \
