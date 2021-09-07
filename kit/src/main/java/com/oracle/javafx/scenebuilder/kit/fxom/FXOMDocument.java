@@ -90,9 +90,9 @@ public class FXOMDocument {
         if (this.glue.getRootElement() != null) {
             
             String fxmlTextToLoad = fxmlText;
-            if (Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
-                fxmlTextToLoad = fxmlText.replace("useSystemMenuBar=\"true\"",
-                                                  "useSystemMenuBar=\"false\"");
+            if (!Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
+                final FXMLPropertiesDisabler FXMLPropertiesDisabler = new FXMLPropertiesDisabler();
+                fxmlTextToLoad = FXMLPropertiesDisabler.disableNonWysiwygProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);
             loader.load(fxmlTextToLoad);
