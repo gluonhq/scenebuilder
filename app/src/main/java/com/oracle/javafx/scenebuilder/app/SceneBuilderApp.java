@@ -792,9 +792,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private enum ACTION {START, STOP}
-
-    ;
+    private enum ACTION {START, STOP};
 
     private void logTimestamp(ACTION type) {
         switch (type) {
