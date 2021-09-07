@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -80,16 +81,23 @@ public class FXOMDocument {
     
     private List<Class<?>> initialDeclaredClasses;
     
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, boolean normalize) throws IOException {
+    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, FXOMDocumentSwitch ... switches) throws IOException {
         this.glue = new GlueDocument(fxmlText);
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
         initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
+            
+            String fxmlTextToLoad = fxmlText;
+            if (Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
+                fxmlTextToLoad = fxmlText.replace("useSystemMenuBar=\"true\"",
+                                                  "useSystemMenuBar=\"false\"");
+            }
             final FXOMLoader loader = new FXOMLoader(this);
-            loader.load(fxmlText);
-            if (normalize) {
+            loader.load(fxmlTextToLoad);
+            
+            if (!Set.of(switches).contains(FXOMDocumentSwitch.NON_NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
             }
@@ -102,13 +110,7 @@ public class FXOMDocument {
 
         hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
     }
-    
-    
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources) throws IOException {
-        this(fxmlText, location, classLoader, resources, true /* normalize */);
-    }
-    
-    
+        
     public FXOMDocument() {
         this.glue = new GlueDocument();
     }
@@ -442,5 +444,10 @@ public class FXOMDocument {
     public static interface SceneGraphHolder {
         public void fxomDocumentWillRefreshSceneGraph(FXOMDocument fxomDocument);
         public void fxomDocumentDidRefreshSceneGraph(FXOMDocument fxomDocument);
+    }
+    
+    public enum FXOMDocumentSwitch {
+        NON_NORMALIZED,
+        FOR_PREVIEW;
     }
 }

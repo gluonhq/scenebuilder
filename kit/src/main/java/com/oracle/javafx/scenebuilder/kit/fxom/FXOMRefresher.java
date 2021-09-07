@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleArrayPropertyMetadata;
@@ -65,7 +66,7 @@ class FXOMRefresher {
                     document.getLocation(),
                     document.getClassLoader(),
                     document.getResources(),
-                    false /* normalized */);
+                    FXOMDocumentSwitch.NON_NORMALIZED);
             final TransientStateBackup backup = new TransientStateBackup(document);
             // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
             if (newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {
