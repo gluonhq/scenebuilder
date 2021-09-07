@@ -978,6 +978,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void checkUpdates(DocumentWindowController source) {
+        WindowPositionRestorer restoreWindowPosition = new WindowPositionRestorer(source);
         AppSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 Platform.runLater(() -> {
@@ -985,6 +986,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
                     alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
+                    alert.setOnShowing(restoreWindowPosition);
                     alert.showAndWait();
                 });
             } else {
@@ -1002,6 +1004,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
                         alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
                         alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                        alert.setOnShowing(restoreWindowPosition);
                         alert.showAndWait();
                     }
                 } catch (NumberFormatException ex) {
@@ -1012,12 +1015,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void showVersionNumberFormatError(DocumentWindowController dwc) {
+        WindowPositionRestorer restoreWindowPosition = new WindowPositionRestorer(dwc);
         SBAlert alert = new SBAlert(Alert.AlertType.ERROR, dwc.getStage());
         // The version number format is not supported and this is most probably only happening
         // in development so we don't localize the strings
         alert.setTitle("Error");
         alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
         alert.setContentText("Update check is disabled in development environment.");
+        alert.setOnShowing(restoreWindowPosition);
         alert.showAndWait();
     }
 
