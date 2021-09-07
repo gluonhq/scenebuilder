@@ -31,31 +31,31 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-class FXMLPropertiesDisabler {
+import static org.junit.Assert.assertTrue;
 
-    /**
-     * 
-     * On MacOS, when loading a FXML with a menu bar where useSystemMenuBarProperty()
-     * is enabled, the menu in the FXML will hide the menu of SceneBuilder. 
-     * In this case, SceneBuilder becomes unusable.
-     * 
-     * Setting the property here to false has the advantage, that the FXML to be saved
-     * will still contain the defined property BUT the SceneBuilder menu bar will remain 
-     * visible.
-     * 
-     * The modification of properties which are not desired to be active while
-     * editing must happen before loading the FXML using the FXMLLoader.
-     * 
-     * Here a disconnect between the FXOM and FXML is created as the state of the
-     * useSystemMenuBarProperty is now different in both models.
-     * 
-     * @param fxmlText FXML source to be modified
-     * @return FXML source with all properties disabled (=false) where WYSIWYG editing is not suitable.
-     * 
-     */
-    public String disableUseSystemMenuBarProperty(String fxmlText) {
-        return fxmlText.replace("useSystemMenuBar=\"true\"",
-                                "useSystemMenuBar=\"false\"");
+import java.io.File;
+import java.nio.file.Files;
+
+import org.junit.Test;
+
+public class FXMLPropertiesDisablerTest {
+
+    private FXMLPropertiesDisabler classUnderTest = new FXMLPropertiesDisabler();
+
+    @Test
+    public void that_property_value_is_set_to_false() throws Exception {
+        String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
+        assertTrue("ensures that test resource is correct",
+                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\">"));
+
+        String modfiedFxmlText = classUnderTest.disableUseSystemMenuBarProperty(fxmlText);
+
+        assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\">"));
+    }
+
+    private String readResourceText(String resourceName) throws Exception {
+        File fxmlFileName = new File(getClass().getResource(resourceName).toURI());
+        return Files.readString(fxmlFileName.toPath());
     }
 
 }

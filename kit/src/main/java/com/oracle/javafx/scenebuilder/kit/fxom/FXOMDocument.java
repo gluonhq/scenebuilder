@@ -92,7 +92,7 @@ public class FXOMDocument {
             String fxmlTextToLoad = fxmlText;
             if (!Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
                 final FXMLPropertiesDisabler FXMLPropertiesDisabler = new FXMLPropertiesDisabler();
-                fxmlTextToLoad = FXMLPropertiesDisabler.disableNonWysiwygProperties(fxmlText);
+                fxmlTextToLoad = FXMLPropertiesDisabler.disableUseSystemMenuBarProperty(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);
             loader.load(fxmlTextToLoad);
