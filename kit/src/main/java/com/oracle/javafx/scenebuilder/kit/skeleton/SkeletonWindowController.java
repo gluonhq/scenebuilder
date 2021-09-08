@@ -32,10 +32,14 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -47,9 +51,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -65,6 +66,9 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     @FXML
     TextArea textArea;
 
+    private String controllerName = null;
+    private SkeletonFileWriter skeletonFileWriter = null;
+
     @FXML
     private void onCopyAction(ActionEvent event) {
         final Map<DataFormat, Object> content = new HashMap<>();
@@ -76,6 +80,19 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
         }
 
         Clipboard.getSystemClipboard().setContent(content);
+    }
+
+    @FXML
+    private void onSaveAction(ActionEvent event) {
+
+        if (skeletonFileWriter == null) {           
+            skeletonFileWriter = new SkeletonFileWriter(() -> getStage(), textArea.textProperty());
+        }
+
+        SkeletonSettings.LANGUAGE language = languageChoiceBox.getSelectionModel()
+                                                              .getSelectedItem();
+
+        skeletonFileWriter.run(editorController.getFxmlLocation(), controllerName, language);
     }
 
     private final EditorController editorController;
@@ -172,6 +189,12 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
                 buf.setFormat(SkeletonSettings.FORMAT_TYPE.COMPACT);
             }
 
+            /*
+             * TODO: Discuss, if this is the correct way to obtain the FxController.
+             * As of now, the code to extract the controller class name would exist on
+             * 3 different locations.
+             */
+            controllerName = editorController.getFxomDocument().getFxomRoot().getFxController();
             textArea.setText(buf.toString());
             dirty = false;
         } else {

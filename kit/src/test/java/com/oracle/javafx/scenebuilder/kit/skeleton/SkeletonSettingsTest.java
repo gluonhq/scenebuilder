@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -31,72 +31,15 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-class SkeletonSettings {
+import static org.junit.Assert.*;
 
-    private LANGUAGE language = LANGUAGE.JAVA;
-    private TEXT_TYPE textType = TEXT_TYPE.WITHOUT_COMMENTS;
-    private FORMAT_TYPE textFormat = FORMAT_TYPE.COMPACT;
+import org.junit.Test;
 
-    enum LANGUAGE {
-        JAVA("Java", ".java"), KOTLIN("Kotlin", ".kt");
+public class SkeletonSettingsTest {
 
-        private final String name;
-        private final String ext;
-
-        LANGUAGE(String name, String fileNameExt) {
-            this.name = name;
-            this.ext = fileNameExt;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        String getExtension() {
-            return ext;
-        }
-    }
-
-    enum TEXT_TYPE {
-        WITH_COMMENTS, WITHOUT_COMMENTS
-    }
-
-    enum FORMAT_TYPE {
-        COMPACT, FULL
-    }
-
-    void setLanguage(LANGUAGE language) {
-        this.language = language;
-    }
-
-    public LANGUAGE getLanguage() {
-        return language;
-    }
-
-    void setTextType(TEXT_TYPE type) {
-        this.textType = type;
-    }
-
-    SkeletonSettings withTextType(TEXT_TYPE type) {
-        this.textType = type;
-        return this;
-    }
-
-    void setFormat(FORMAT_TYPE format) {
-        this.textFormat = format;
-    }
-
-    SkeletonSettings withFormat(FORMAT_TYPE format) {
-        this.textFormat = format;
-        return this;
-    }
-
-    boolean isWithComments() {
-        return textType == TEXT_TYPE.WITH_COMMENTS;
-    }
-
-    boolean isFull() {
-        return textFormat == FORMAT_TYPE.FULL;
+    @Test
+    public void that_controller_class_file_extensions_match_language() {
+        assertEquals(".java", SkeletonSettings.LANGUAGE.JAVA.getExtension());
+        assertEquals(".kt",   SkeletonSettings.LANGUAGE.KOTLIN.getExtension());
     }
 }
