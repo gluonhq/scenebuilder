@@ -153,8 +153,8 @@ public class UserLibrary extends Library {
     }
     
     public synchronized void startExplorer() {
-    	stopExplorer(); // automatically stops an eventually running explorer before spawning a new one
-    	
+        stopExplorer(); // automatically stops an eventually running explorer before spawning a new one
+        
         assert state == State.READY;
         
         if (state == State.READY) {

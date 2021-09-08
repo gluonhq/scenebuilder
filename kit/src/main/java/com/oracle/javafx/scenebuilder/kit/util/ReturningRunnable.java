@@ -31,5 +31,5 @@ package com.oracle.javafx.scenebuilder.kit.util;
 @FunctionalInterface
 public interface ReturningRunnable<T> {
 
-	public T run();
+    public T run();
 }

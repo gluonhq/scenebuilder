@@ -192,9 +192,9 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
     private void close() {
-    	if (changedProperty.get())
-    		userLibrary.startExplorer();
-    	
+        if (changedProperty.get())
+            userLibrary.startExplorer();
+        
         listItems.clear();
         closeWindow();
     }
@@ -212,7 +212,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         if (onAddJar != null) {
             Boolean added = onAddJar.run();
             if (Boolean.TRUE.equals(added))
-            	loadLibraryList(true);
+                loadLibraryList(true);
         }
     }
     
@@ -221,7 +221,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
         if (onAddFolder != null) {
             Boolean added = onAddFolder.run();
             if (Boolean.TRUE.equals(added))
-            	loadLibraryList(true);
+                loadLibraryList(true);
         }
     }
 
@@ -234,7 +234,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             @Override
             public void invalidated(Observable observable) {
                 if (!mavenDialogController.getStage().isShowing()) {
-                	if (mavenDialogController.isConfirmed())
+                    if (mavenDialogController.isConfirmed())
                         loadLibraryList(true);
                     mavenDialogController.getStage().showingProperty().removeListener(this);
                 }
@@ -251,7 +251,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             @Override
             public void invalidated(Observable observable) {
                 if (!mavenDialogController.getStage().isShowing()) {
-                	if (mavenDialogController.isConfirmed())
+                    if (mavenDialogController.isConfirmed())
                         loadLibraryList(true);
                     mavenDialogController.getStage().showingProperty().removeListener(this);
                 }
@@ -263,7 +263,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
      * We can simply delete the item since the library explorer is shut down when opening the dialog.
      */
     public void processJarFXMLFolderDelete(DialogListItem dialogListItem) {
-    	deleteFile(dialogListItem);
+        deleteFile(dialogListItem);
     }
 
     private void deleteFile(DialogListItem dialogListItem) {

@@ -109,7 +109,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private DefaultArtifact artifact;
     private final Stage owner;
     private final PreferencesControllerBase preferencesControllerBase;
-	private boolean confirmed;
+    private boolean confirmed;
     
     public SearchMavenDialogController(EditorController editorController, String userM2Repository,
                                        String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
@@ -352,6 +352,6 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     }
     
     public boolean isConfirmed() {
-		return confirmed;
-	}
+        return confirmed;
+    }
 }

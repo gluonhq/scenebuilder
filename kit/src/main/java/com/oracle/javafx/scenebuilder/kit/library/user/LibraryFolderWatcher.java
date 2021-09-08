@@ -145,12 +145,12 @@ class LibraryFolderWatcher implements Runnable {
                 exploreAndUpdateLibrary(currentJarsOrFolders);
             }
             catch (IOException x) {
-            	LOGGER.warning("Error updating library: " + x.getMessage());
+                LOGGER.warning("Error updating library: " + x.getMessage());
             }
         }
         finally {
-        	library.setExploring(false);
-        	library.updateExplorationCount(library.getExplorationCount()+1);
+            library.setExploring(false);
+            library.updateExplorationCount(library.getExplorationCount()+1);
         }
     }
     

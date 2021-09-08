@@ -109,7 +109,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     };
 
     private final PreferencesControllerBase preferencesControllerBase;
-	private boolean confirmed;
+    private boolean confirmed;
     
     public MavenDialogController(EditorController editorController, String userM2Repository,
             String tempM2Repository, PreferencesControllerBase preferencesControllerBase, Stage owner) {
@@ -328,7 +328,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     }
     
     public boolean isConfirmed() {
-		return confirmed;
-	}
+        return confirmed;
+    }
     
 }
