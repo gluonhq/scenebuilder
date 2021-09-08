@@ -168,21 +168,22 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
 
     /**
      * @param owner
+     * @return 
      * @treatAsPrivate Perform the import jar action.
      */
-    public void performImportJarFxml(Window owner) {
+    public boolean performImportJarFxml(Window owner) {
         // Open file chooser and get user selection
         final List<File> importedFiles = performSelectJarOrFxmlFile(owner);
-        processImportJarFxml(importedFiles);
+        return processImportJarFxml(importedFiles);
     }
     
     /**
      * @param owner
      * @treatAsPrivate Perform the import jar action.
      */
-    public void performImportFromFolder(Window owner) {
+    public boolean performImportFromFolder(Window owner) {
         File folder = performSelectFolder(owner);
-        processImportFolder(folder);
+        return processImportFolder(folder);
     }
     
 	/**
@@ -679,8 +680,6 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         if (hasDependencies) {
             userLibraryUpdateRejected();
         } else {
-            ((UserLibrary) getEditorController().getLibrary()).stopWatching();
-
             try {
                 // The selection can be multiple, in which case each asset is
                 // processed separately.
@@ -705,8 +704,6 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 if (currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
                     sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
                 }
-                    
-                ((UserLibrary) getEditorController().getLibrary()).startWatching();
             }
         }
     }
@@ -744,7 +741,7 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         return file;
     }
     
-    private void processImportJarFxml(List<File> importedFiles) {
+    private boolean processImportJarFxml(List<File> importedFiles) {
         if (importedFiles != null && !importedFiles.isEmpty()) {
             sectionNameToKeepOpened = getExpandedSectionName();
             Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
@@ -782,12 +779,16 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                     if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
                         sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
                     }
+                    
+                    return true;
                 }
             }
         }
+        
+        return false;
     }
     
-    private void processImportFolder(File folder) {
+    private boolean processImportFolder(File folder) {
         if (folder != null && folder.exists() && folder.isDirectory()) {
             Path libPath = Paths.get(((UserLibrary)getEditorController().getLibrary()).getPath());
             if (createUserLibraryDir(libPath)) {
@@ -809,8 +810,12 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 if (userChoice.equals(ButtonID.OK) && currentDisplayMode.equals(DISPLAY_MODE.SECTIONS)) {
                     sectionNameToKeepOpened = UserLibrary.TAG_USER_DEFINED;
                 }
+                
+                return true;
             }
         }
+        
+        return false;
     }
     
     private List<File> getSubsetOfFiles(String pattern, List<File> files) {
@@ -874,10 +879,6 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
         Path tempTargetPath = null;
         setUserLibraryPathString();
         
-        // Here we deactivate the UserLib so that it unlocks the files contained
-        // in the lib dir in the file system meaning (especially on Windows).
-        ((UserLibrary) getEditorController().getLibrary()).stopWatching();
-        
         try {
             for (File file : files) {
                 savedFileName = file.getName();
@@ -900,8 +901,6 @@ public class LibraryPanelController extends AbstractFxmlPanelController {
                 }
             }
         }
-
-        ((UserLibrary) getEditorController().getLibrary()).startWatching();
 
         if (errorCount > 0) {
             final ErrorDialog errorDialog = new ErrorDialog(null);

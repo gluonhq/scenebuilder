@@ -75,7 +75,7 @@ import javafx.collections.ObservableList;
  */
 public class UserLibrary extends Library {
     
-    public enum State { READY, WATCHING }
+    public enum State { READY, EXPLORING }
 
     public static final String TAG_USER_DEFINED = "Custom"; //NOI18N
     
@@ -94,8 +94,8 @@ public class UserLibrary extends Library {
 
     private State state = State.READY;
     private Exception exception;
-    private LibraryFolderWatcher watcher;
-    private Thread watcherThread;
+    private LibraryFolderWatcher explorer;
+    private Thread explorerThread;
     // Where we store canonical class names of items we want to exclude from
     // the user defined one displayed in the Library panel.
     // As a consequence an empty file means we display all items.
@@ -152,39 +152,39 @@ public class UserLibrary extends Library {
         return state;
     }
     
-    public synchronized void startWatching() {
+    public synchronized void startExplorer() {
+    	stopExplorer(); // automatically stops an eventually running explorer before spawning a new one
+    	
         assert state == State.READY;
         
         if (state == State.READY) {
-            assert watcher == null;
-            assert watcherThread == null;
+            assert explorer == null;
+            assert explorerThread == null;
 
-            watcher = new LibraryFolderWatcher(this);
-            watcherThread = new Thread(watcher);
-            watcherThread.setName(watcher.getClass().getSimpleName() + "(" + path  + ")"); //NOI18N
-            watcherThread.setDaemon(true);
-            watcherThread.start();
-            state = State.WATCHING;
+            explorer = new LibraryFolderWatcher(this);
+            explorerThread = new Thread(explorer);
+            explorerThread.setName(explorer.getClass().getSimpleName() + "(" + path  + ")"); //NOI18N
+            explorerThread.setDaemon(true);
+            explorerThread.start();
+            state = State.EXPLORING;
         }
     }
     
-    public synchronized void stopWatching() {
-        assert state == State.WATCHING;
-        
-        if (state == State.WATCHING) {
-            assert watcher != null;
-            assert watcherThread != null;
+    public synchronized void stopExplorer() {
+        if (state == State.EXPLORING) {
+            assert explorer != null;
+            assert explorerThread != null;
             assert exception == null;
             
-            watcherThread.interrupt();
+            explorerThread.interrupt();
             
             try {
-                watcherThread.join();
+                explorerThread.join();
             } catch(InterruptedException x) {
                 x.printStackTrace();
             } finally {
-                watcher = null;
-                watcherThread = null;
+                explorer = null;
+                explorerThread = null;
                 state = State.READY;
                 
                 // In READY state, we release the class loader.
@@ -425,11 +425,11 @@ public class UserLibrary extends Library {
     public static void main(String[] args) throws Exception {
         final String path = "/Users/elp/Desktop/MyLib"; //NOI18N
         final UserLibrary lib = new UserLibrary(path);
-        lib.startWatching();
+        lib.startExplorer();
         System.out.println("Starting to watch for 20 s"); //NOI18N
         Thread.sleep(20 * 1000);
         System.out.println("Stopping to watch for 20 s"); //NOI18N
-        lib.stopWatching();
+        lib.stopExplorer();
         Thread.sleep(20 * 1000);
         System.out.println("Exiting"); //NOI18N
     }

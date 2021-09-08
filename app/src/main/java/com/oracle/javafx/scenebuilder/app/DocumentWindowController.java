@@ -1361,12 +1361,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         libraryDialogController.openWindow();
     }
     
-    public void onImportJarFxml(Window owner) {
-        libraryPanelController.performImportJarFxml(owner);
+    public boolean onImportJarFxml(Window owner) {
+        return libraryPanelController.performImportJarFxml(owner);
     }
     
-    public void onImportFromFolder(Window owner) {
-        libraryPanelController.performImportFromFolder(owner);
+    public boolean onImportFromFolder(Window owner) {
+        return libraryPanelController.performImportFromFolder(owner);
     }
     
     @FXML
@@ -1416,8 +1416,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         UserLibrary userLibrary = SceneBuilderApp.getSingleton().getUserLibrary();
         
-        userLibrary.stopWatching();
-        userLibrary.startWatching();
+        userLibrary.stopExplorer();
+        userLibrary.startExplorer();
     }
     
     @FXML
