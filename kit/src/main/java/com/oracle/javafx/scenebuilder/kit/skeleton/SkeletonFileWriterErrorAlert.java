@@ -57,7 +57,7 @@ import javafx.stage.Stage;
 final class SkeletonFileWriterErrorAlert implements BiConsumer<File, Exception> {
 
     private final Supplier<Stage> stageSupplier;
-    
+
     /**
      * Creates a bi-consumer which accepts a file and an exception
      * so that an appropriate error message can be presented to the
@@ -68,7 +68,7 @@ final class SkeletonFileWriterErrorAlert implements BiConsumer<File, Exception> 
     SkeletonFileWriterErrorAlert(Supplier<Stage> stageSupplier) {
         this.stageSupplier = Objects.requireNonNull(stageSupplier);
     }
-    
+
     @Override
     public void accept(File skeletonFile, Exception error) {
         SBAlert alert = prepareErrorAlert(skeletonFile, error);
@@ -81,7 +81,7 @@ final class SkeletonFileWriterErrorAlert implements BiConsumer<File, Exception> 
         alert.getDialogPane().setExpandableContent(textArea);
         Platform.runLater(()->alert.showAndWait());
     }
-    
+
     private SBAlert prepareErrorAlert(File skeletonFile, Exception error) {
         var alert = new SBAlert(AlertType.ERROR, stageSupplier.get());
         alert.setTitle(I18N.getString("alert.skeleton.title"));
@@ -91,7 +91,7 @@ final class SkeletonFileWriterErrorAlert implements BiConsumer<File, Exception> 
                             + error.getLocalizedMessage());
         return alert;
     }
-    
+
     private String collectExceptionDetails(Exception error) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);

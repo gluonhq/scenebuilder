@@ -112,7 +112,7 @@ public class SkeletonFileNameProposalTest {
         String sourceFolder = "com/oracle/javafx/scenebuilder/kit/skeleton";
         Path resourcesDir = temporaryDirectory.getRoot().toPath().resolve("src/main/resources").resolve(sourceFolder);
         Path kotlinDir = temporaryDirectory.getRoot().toPath().resolve("src/main/kotlin").resolve(sourceFolder);
-        
+
         Files.createDirectories(resourcesDir);
         Files.createDirectories(kotlinDir);
 
@@ -125,7 +125,7 @@ public class SkeletonFileNameProposalTest {
 
         assertEquals(expected.toString(), result.toString());
     }
-  
+
     @Test
     public void that_controllerName_is_preferred_over_fxmlLocation_in_user_directory() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);

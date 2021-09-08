@@ -41,7 +41,6 @@ class SkeletonSettings {
         JAVA("Java", ".java"), KOTLIN("Kotlin", ".kt");
 
         private final String name;
-
         private final String ext;
 
         LANGUAGE(String name, String fileNameExt) {

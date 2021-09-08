@@ -161,7 +161,7 @@ class SkeletonFileNameProposal {
 
     private File createFileAccordingToFxml(URL fxmlLocation) {
         URI  uri = resolveURI(fxmlLocation);
-        Path fxmlFile = Paths.get(uri);        
+        Path fxmlFile = Paths.get(uri);
         String fxmlResource = fxmlFile.toString();
         String controllerSuffix = "Controller" + language.getExtension();
         int lastDot = fxmlResource.lastIndexOf('.');

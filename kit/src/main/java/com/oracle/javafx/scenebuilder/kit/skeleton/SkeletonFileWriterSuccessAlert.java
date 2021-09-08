@@ -63,7 +63,7 @@ import javafx.stage.Stage;
 final class SkeletonFileWriterSuccessAlert implements Consumer<File> {
 
     private final Supplier<Stage> stageSupplier;
-    
+
     /**
      * Creates a consumer which accepts the written file so
      * that an appropriate notification can be presented
@@ -74,7 +74,7 @@ final class SkeletonFileWriterSuccessAlert implements Consumer<File> {
     SkeletonFileWriterSuccessAlert(Supplier<Stage> stageSupplier) {
         this.stageSupplier = Objects.requireNonNull(stageSupplier);
     }
-    
+
     @Override
     public void accept(File fileWritten) {
         var alert = prepareSuccessAlert();
@@ -85,17 +85,16 @@ final class SkeletonFileWriterSuccessAlert implements Consumer<File> {
         HBox hbox = new HBox(textField,copyButton);
         HBox.setHgrow(textField, Priority.ALWAYS);
         dialogPane.setContent(hbox);
-        Platform.runLater(()->alert.showAndWait());
-        
+        Platform.runLater(() -> alert.showAndWait());
     }
-    
+
     private SBAlert prepareSuccessAlert() {
         var alert = new SBAlert(AlertType.INFORMATION, stageSupplier.get());
         alert.setTitle(I18N.getString("alert.skeleton.title"));
         alert.setHeaderText(I18N.getString("alert.skeleton.header.success"));
         return alert;
     }
-    
+
     private Button createCopyToClipboardButton(TextField textField) {
         SVGPath clipboardIcon = new SVGPath();
         clipboardIcon.setContent("M11.983,1.973L11.983,12.001L3.935,12.001L3.935,1.973L3.319,1.973C2.577,1.973 1.975,2.575 1.975,3.317L1.975,12.684C1.975,13.426 2.577,14.029 3.319,14.029L12.644,14.029C13.386,14.029 13.989,13.426 13.989,12.684L13.989,3.317C13.989,2.575 13.386,1.973 12.644,1.973L11.983,1.973ZM10.959,0.997L4.965,0.997L4.965,5.018L10.959,5.018L10.959,0.997ZM10.021,3.948L10.038,3.948L10.038,1.932L6.016,1.932L6.016,3.948L6.034,3.948L6.034,4.005L10.021,4.005L10.021,3.948Z");

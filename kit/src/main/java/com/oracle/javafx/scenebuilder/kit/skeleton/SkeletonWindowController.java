@@ -84,16 +84,15 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
 
     @FXML
     private void onSaveAction(ActionEvent event) {
-        
+
         if (skeletonFileWriter == null) {           
-            skeletonFileWriter = new SkeletonFileWriter(()->getStage(), textArea.textProperty());
+            skeletonFileWriter = new SkeletonFileWriter(() -> getStage(), textArea.textProperty());
         }
-        
+
         SkeletonSettings.LANGUAGE language = languageChoiceBox.getSelectionModel()
                                                               .getSelectedItem();
-        
+
         skeletonFileWriter.run(editorController.getFxmlLocation(), controllerName, language);
-        
     }
 
     private final EditorController editorController;
@@ -191,11 +190,9 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
             }
 
             /*
-             * 
              * TODO: Discuss, if this is the correct way to obtain the FxController.
              * As of now, the code to extract the controller class name would exist on
              * 3 different locations.
-             * 
              */
             controllerName = editorController.getFxomDocument().getFxomRoot().getFxController();
             textArea.setText(buf.toString());

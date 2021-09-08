@@ -60,24 +60,18 @@ final class SkeletonFileWriter {
     private final Supplier<Stage> stageSupplier;
 
     private final Map<SkeletonSettings.LANGUAGE, File> savedFilePerLanguage;
-    
     private final Map<SkeletonSettings.LANGUAGE, ExtensionFilter> extensionFilterByLanguage;
-    
+
     private final BiFunction<FileChooser,Stage,File> saveDialogInteraction;
-    
+
     private final Function<Supplier<Stage>,Consumer<File>> onSuccess;
-    
     private final Function<Supplier<Stage>,BiConsumer<File, Exception>> onError;
-       
+
     private SkeletonSettings.LANGUAGE language;
-    
     private URL fxmlLocation;
-
     private String controllerName;
-
     private FileChooser saveFileChooser;
-    
-    private ReadOnlyStringProperty textProperty;   
+    private ReadOnlyStringProperty textProperty;
 
     /**
      * Provides the option to save a controller skeleton to a file considering
@@ -90,10 +84,10 @@ final class SkeletonFileWriter {
      * 
      */
     public SkeletonFileWriter(Supplier<Stage> stageSupplier, ReadOnlyStringProperty textProperty) {
-        this(stageSupplier, textProperty, (fileChooser,stage)->fileChooser.showSaveDialog(stage),
-                SkeletonFileWriterSuccessAlert::new, SkeletonFileWriterErrorAlert::new);    
+        this(stageSupplier, textProperty, (fileChooser,stage) -> fileChooser.showSaveDialog(stage),
+                SkeletonFileWriterSuccessAlert::new, SkeletonFileWriterErrorAlert::new);
     }
-    
+
     /**
      * This constructor only exists for the purpose of testing. It allows to replace
      * the way how the file chooser interaction is handled. Also it allows to replace
@@ -114,8 +108,8 @@ final class SkeletonFileWriter {
      *                              is raised in case of an exception during an
      *                              attempt to write the skeleton file.
      */
-    protected SkeletonFileWriter(Supplier<Stage> stageSupplier, ReadOnlyStringProperty textProperty, 
-                                 BiFunction<FileChooser,Stage,File> saveDialogInteraction, 
+    protected SkeletonFileWriter(Supplier<Stage> stageSupplier, ReadOnlyStringProperty textProperty,
+                                 BiFunction<FileChooser,Stage,File> saveDialogInteraction,
                                  Function<Supplier<Stage>,Consumer<File>> onSuccessNotify,
                                  Function<Supplier<Stage>,BiConsumer<File, Exception>> onErrorNotify) {
         this.stageSupplier = Objects.requireNonNull(stageSupplier);
@@ -124,7 +118,7 @@ final class SkeletonFileWriter {
         this.onSuccess = Objects.requireNonNull(onSuccessNotify);
         this.onError   = Objects.requireNonNull(onErrorNotify);
         this.savedFilePerLanguage = new EnumMap<>(SkeletonSettings.LANGUAGE.class);
-        this.extensionFilterByLanguage = new EnumMap<>(SkeletonSettings.LANGUAGE.class);     
+        this.extensionFilterByLanguage = new EnumMap<>(SkeletonSettings.LANGUAGE.class);
     }
 
 
@@ -163,13 +157,12 @@ final class SkeletonFileWriter {
         /*
          * TODO: Ask user if a corresponding directory src/main/java or 
          * src/main/kotlin shall be created if it does not exist.
-         * 
          */
         File fileToSave = determineSaveFileName();
-        updateFileChooser(fileToSave);        
+        updateFileChooser(fileToSave);
         saveToFileWhenConfirmed();
     }
-    
+
     /**
      * This method allows to verify which files have been previously saved per language.
      *  
@@ -178,7 +171,7 @@ final class SkeletonFileWriter {
     Map<SkeletonSettings.LANGUAGE,File> getLastSavedFilesPerLanguage() {
         return Collections.unmodifiableMap(savedFilePerLanguage);
     }
-    
+
     /**
      * @return the defined notification function for the success case.
      */
@@ -228,7 +221,7 @@ final class SkeletonFileWriter {
         saveFileChooser.setInitialFileName(fileToSave.getName());
         saveFileChooser.setSelectedExtensionFilter(extensionFilterByLanguage.get(language));
     }
-    
+
     private void updateFileChooserAndSave(File savedFile) {
         updateFileChooser(savedFile);
         rememberLastSavedFilePerLanguage(savedFile);
@@ -250,11 +243,11 @@ final class SkeletonFileWriter {
     private void writeSkeletonFileAndNotifyUser(Path skeletonFile) throws IOException {
         String skeleton = textProperty.getValueSafe();
         OpenOption openOption = Files.exists(skeletonFile) ? StandardOpenOption.TRUNCATE_EXISTING : StandardOpenOption.CREATE_NEW;
-        Files.write(skeletonFile, skeleton.getBytes(), openOption);        
+        Files.write(skeletonFile, skeleton.getBytes(), openOption);
         onSuccess.apply(stageSupplier)
                  .accept(skeletonFile.toFile());
     }
-    
+
     private void logErrorAndNotifyUser(Path skeletonFile, IOException error) {
         onError.apply(stageSupplier)
                .accept(skeletonFile.toFile(),error);
