@@ -84,3 +84,23 @@ You can add it as a regular dependency to the build of your app:
   <version>$version</version>
 </dependency>
 ```
+
+## Code Style
+
+To ensure that new code formatting matches the requirements for Pull Requests,
+the Maven Checkstyle plugin can be used to create a report listing possibly coding 
+style violations.
+
+Contributors can check for code-style violations in their code by running the Checkstyle Maven goal. The checkstyle configuration is currently in a very early stage and only checks for empty blocks, extra white space, padding and empty lines.
+
+To run the plugin:
+
+```
+mvn checkstyle:checkstyle
+```
+
+There will be a report for each sub-project, one for `app` and one for `kit`.
+
+* Kit: `kit/target/site/checkstyle.html`
+* App: `kit/target/site/checkstyle.html`
+
