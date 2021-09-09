@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2020, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -100,7 +100,7 @@ class LibraryFolderWatcher implements Runnable {
             runDiscovery();
             runWatching();
         } catch(InterruptedException x) {
-            // Let's stop
+            // Let's stop: Typically, when UserLibrary::stopWatching is invoked, an InterruptedException is triggered to stop this watch service
         }
     }
     
@@ -161,98 +161,112 @@ class LibraryFolderWatcher implements Runnable {
     }
     
     private void runWatching() throws InterruptedException {
-        while (true) {
-            final Path folder = Paths.get(library.getPath());
+        WatchService watchService = null;
+        try {
+            while (true) {
+                final Path folder = Paths.get(library.getPath());
 
-            WatchService watchService = null;
-            while (watchService == null) {
-                try {
-                    watchService = folder.getFileSystem().newWatchService();
-                } catch(IOException x) {
-                    System.out.println("FileSystem.newWatchService() failed"); //NOI18N
-                    System.out.println("Sleeping..."); //NOI18N
-                    Thread.sleep(1000 /* ms */);
+                while (watchService == null) {
+                    try {
+                        watchService = folder.getFileSystem().newWatchService();
+                    } catch(IOException x) {
+                        System.out.println("FileSystem.newWatchService() failed"); //NOI18N
+                        System.out.println("Sleeping..."); //NOI18N
+                        Thread.sleep(1000 /* ms */);
+                    }
                 }
-            }
 
-            WatchKey watchKey = null;
-            while ((watchKey == null) || (watchKey.isValid() == false)) {
-                try {
-                    watchKey = folder.register(watchService, 
-                    StandardWatchEventKinds.ENTRY_CREATE, 
-                    StandardWatchEventKinds.ENTRY_DELETE, 
-                    StandardWatchEventKinds.ENTRY_MODIFY);
+                WatchKey watchKey = null;
+                while ((watchKey == null) || (watchKey.isValid() == false)) {
+                    try {
+                        watchKey = folder.register(watchService, 
+                                StandardWatchEventKinds.ENTRY_CREATE, 
+                                StandardWatchEventKinds.ENTRY_DELETE, 
+                                StandardWatchEventKinds.ENTRY_MODIFY);
 
-                    WatchKey wk;
-                    do {
-                        wk = watchService.take();
-                        assert wk == watchKey;
-                        
-                        boolean isDirty = false;
-                        for (WatchEvent<?> e: wk.pollEvents()) {
-                            final WatchEvent.Kind<?> kind = e.kind();
-                            final Object context = e.context();
+                        WatchKey wk;
+                        do {
+                            wk = watchService.take();
+                            assert wk == watchKey;
 
-                            if (kind == StandardWatchEventKinds.ENTRY_CREATE
-                                    || kind == StandardWatchEventKinds.ENTRY_DELETE
-                                    || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                                assert context instanceof Path;
-                                if (LibraryUtil.isJarPath((Path) context)) {
-                                    if (!hasJarBeenAdded((Path) context)) {
+                            boolean isDirty = false;
+                            for (WatchEvent<?> e: wk.pollEvents()) {
+                                final WatchEvent.Kind<?> kind = e.kind();
+                                final Object context = e.context();
+
+                                if (kind == StandardWatchEventKinds.ENTRY_CREATE
+                                        || kind == StandardWatchEventKinds.ENTRY_DELETE
+                                        || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                                    assert context instanceof Path;
+                                    if (LibraryUtil.isJarPath((Path) context)) {
+                                        if (!hasJarBeenAdded((Path) context)) {
+                                            isDirty = true;
+                                        }
+                                    } else if (LibraryUtil.isFxmlPath((Path)context)){
+                                        isDirty = true;
+                                    } else if (LibraryUtil.isFolderMarkerPath((Path)context)) {
                                         isDirty = true;
                                     }
-                                } else if (LibraryUtil.isFxmlPath((Path)context)){
-                                    isDirty = true;
-                                } else if (LibraryUtil.isFolderMarkerPath((Path)context)) {
-                               		isDirty = true;
+                                } else {
+                                    assert kind == StandardWatchEventKinds.OVERFLOW;
                                 }
-                            } else {
-                                assert kind == StandardWatchEventKinds.OVERFLOW;
                             }
-                        }
-                                                
-                        // We reconstruct a full set from scratch as soon as the
-                        // dirty flag is set.
-                        if (isDirty) {
-                            // First put the builtin items in the library
-                        	library.setExploring(true);
-                        	try {
-                        	    library.setItems(BuiltinLibrary.getLibrary().getItems());
 
-                        	    // Now attempts to add the maven jars
-                        	    List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
+                            // We reconstruct a full set from scratch as soon as the
+                            // dirty flag is set.
+                            if (isDirty) {
+                                // First put the builtin items in the library
+                                library.setExploring(true);
+                                try {
+                                    library.setItems(BuiltinLibrary.getLibrary().getItems());
 
-                        	    final Set<Path> fxmls = new HashSet<>();
-                        	    fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
-                        	    updateLibrary(fxmls);
+                                    // Now attempts to add the maven jars
+                                    List<Path> currentMavenJars = library.getAdditionalJarPaths().get();
 
-                        	    final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
-                        	    jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
+                                    final Set<Path> fxmls = new HashSet<>();
+                                    fxmls.addAll(getAllFiles(FILE_TYPE.FXML));
+                            	    updateLibrary(fxmls);
 
-                        	    Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
-                        	    for (Path path : foldersMarkers) {
-                        	        // open folders marker file: every line should be a single folder entry
-                        	        // we scan the file and add the path to currentJarsOrFolders
-                        	        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
-                        	        for (Path f : folderPaths) {
-                        	            jarsAndFolders.add(f);
-                        	        }
-                        	    }
+                                    final Set<Path> jarsAndFolders = new HashSet<>(currentMavenJars);
+                                    jarsAndFolders.addAll(getAllFiles(FILE_TYPE.JAR));
 
-                        	    exploreAndUpdateLibrary(jarsAndFolders);
+                                    Set<Path> foldersMarkers = getAllFiles(FILE_TYPE.FOLDER_MARKER);
+                                    for (Path path : foldersMarkers) {
+                                        // open folders marker file: every line should be a single folder entry
+                                        // we scan the file and add the path to currentJarsOrFolders
+                                        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
+                                        for (Path f : folderPaths) {
+                                            jarsAndFolders.add(f);
+                                        }
+                                    }
 
-                        	    library.updateExplorationCount(library.getExplorationCount()+1);
-                        	}
-                        	finally {
-                        		library.setExploring(false);
-                        	}
-                        }
-                    } while (wk.reset());
-                } catch(IOException x) {
-                    Thread.sleep(1000 /* ms */);
+                            	    exploreAndUpdateLibrary(jarsAndFolders);
+
+                                    library.updateExplorationCount(library.getExplorationCount()+1);
+                                }
+                                finally {
+                                    library.setExploring(false);
+                                }
+                            }
+                        } while (wk.reset());
+                    } catch(IOException x) {
+                        Thread.sleep(1000 /* ms */);
+                    }
+                }
+
+            }
+        }
+        finally {
+        	// Typically, when UserLibrary::stopWatching is invoked, an InterruptedException is triggered to stop this watch service.
+        	// The InterruptedException is handled outside; here we just make sure to close() the watcher service that polls the filesystem.
+            if (watchService != null) {
+                // we need to close the filesystem watcher here, otherwise it remains active and locking jars on library folder
+                try {
+                    watchService.close();
+                } catch (IOException e) {
+                	LOGGER.severe("Error closing FileSystemWatchService: " + e.getMessage());
                 }
             }
-
         }
     }
 
