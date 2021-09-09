@@ -36,13 +36,13 @@ jobs:
           echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
           chmod -v 600 /home/runner/.vnc/passwd
           vncserver :90 -localhost -nolisten tcp
-          mvn clean verify -X
+          mvn clean verify checkstyle:checkstyle --no-transfer-progress -X
           vncserver -kill :90
 
       - name: Run Tests (MacOS / Windows)
         if: runner.os != 'Linux'
         run: |
-          mvn clean verify
+          mvn clean verify checkstyle:checkstyle --no-transfer-progress
 
       - name: Draft release
         if: github.ref == 'refs/heads/master'

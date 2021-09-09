@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+          "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+          "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="cacheFile" value="${checkstyle.cache.file}" />
+    <property name="severity" value="warning" />
+    <property name="fileExtensions" value="java, properties, xml, fxml" />
+
+    <!-- BeforeExecutionFileFilters is required for sources that are based on java9 -->
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern"
+            value="module\-info\.java$" />
+    </module>
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="false" />
+    </module>
+
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+        
+        <module name="GenericWhitespace"/>
+        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForIteratorPad"/>
+        
+        <module name="NoWhitespaceBefore"/>
+        <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+        <module name="NoWhitespaceBefore">
+            <property name="tokens" value="DOT"/>
+            <property name="tokens" value="METHOD_REF"/>
+            <property name="allowLineBreaks" value="true"/>
+        </module>
+
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="false"/>
+        </module>
+        <module name="TypecastParenPad"/>
+        
+        <module name="EmptyLineSeparator">
+            <property name="tokens" value="IMPORT"/>
+            <property name="tokens" value="STATIC_IMPORT"/>
+			<property name="tokens" value="INTERFACE_DEF"/>
+			<property name="tokens" value="INSTANCE_INIT"/>
+			<property name="tokens" value="RECORD_DEF"/>
+			<property name="allowNoEmptyLineBetweenFields" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="true"/>
+        </module>
+
+        <module name="NoWhitespaceAfter">
+            <property name="tokens" value="ARRAY_INIT"/>
+            <property name="tokens" value="AT"/>
+            <property name="tokens" value="BNOT"/>
+            <property name="tokens" value="DEC"/>
+            <property name="tokens" value="DOT"/>
+            <property name="tokens" value="INC"/>
+            <property name="tokens" value="LNOT"/>
+            <property name="tokens" value="UNARY_MINUS"/>
+            <property name="tokens" value="UNARY_PLUS"/>
+            <property name="tokens" value="ARRAY_DECLARATOR"/>
+            <property name="tokens" value="INDEX_OP"/>
+            <property name="tokens" value="METHOD_REF"/>
+        </module>    
+        
+        <module name="EmptyBlock">
+            <property name="tokens" value="LITERAL_CATCH"/>
+            <property name="tokens" value="LITERAL_DEFAULT"/>
+            <property name="tokens" value="LITERAL_CASE"/>
+            <property name="tokens" value="INSTANCE_INIT"/>
+            <property name="tokens" value="STATIC_INIT"/>
+            <property name="tokens" value="LITERAL_DO"/>
+            <property name="tokens" value="LITERAL_ELSE"/>
+            <property name="tokens" value="LITERAL_FINALLY"/>
+            <property name="tokens" value="LITERAL_FOR"/>
+            <property name="tokens" value="LITERAL_IF"/>
+            <property name="tokens" value="LITERAL_SWITCH"/>
+            <property name="tokens" value="LITERAL_TRY"/>
+            <property name="tokens" value="LITERAL_SYNCHRONIZED"/>
+            <property name="tokens" value="LITERAL_WHILE"/>
+            <property name="option" value="text"/>
+        </module>
+    </module>
+</module>
