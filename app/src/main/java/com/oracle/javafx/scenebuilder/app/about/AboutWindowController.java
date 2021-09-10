@@ -143,15 +143,15 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private StringBuilder getApplicationDirectoriesParagraph() {
-        return new StringBuilder("Application Data Folder:")
+        return new StringBuilder(I18N.getString("about.app.data.directory"))
                 .append("\n\t") // NOI18N
                 .append(Paths.get(AppPlatform.getApplicationDataFolder()).normalize()) //NOI18N 
                 .append("\n\n") //NOI18N
-                .append("User Library Folder:")
+                .append(I18N.getString("about.app.user.library"))
                 .append("\n\t") //NOI18N
                 .append(Paths.get(AppPlatform.getUserLibraryFolder()).normalize()) //NOI18N
                 .append("\n\n") //NOI18N
-                .append("Application Directory:")
+                .append(I18N.getString("about.app.program.directory"))
                 .append("\n\t") //NOI18N
                 .append(Paths.get(".").toAbsolutePath().normalize()) //NOI18N
                 .append("\n\n"); //NOI18N
@@ -224,7 +224,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
     
     private StringBuilder getJavaLibraryPathParagraph() {
-        StringBuilder sb = new StringBuilder("Java Library Path(s):\n"); //NOI18N
+        StringBuilder sb = new StringBuilder(I18N.getString("about.java.library.paths"))
+                .append("\n"); //NOI18N
         String libPaths = System.getProperty("java.library.path"); //NOI18N
         List<String> invalidPaths = new ArrayList<>();
         String separator = getPathSeparator();
@@ -243,7 +244,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         }
         sb.append("\n");
         if (!invalidPaths.isEmpty()) {
-            sb.append("Missing or invalid Java Library Path(s): \n"); //NOI18N
+            sb.append(I18N.getString("about.java.library.paths.invalids")); //NOI18N
+            sb.append("\n");
             invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
             sb.append("\n");
         }
