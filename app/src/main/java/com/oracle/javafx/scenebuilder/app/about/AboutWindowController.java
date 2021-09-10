@@ -136,9 +136,25 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(getJavaParagraph())
                 .append(getJavaLibraryPathParagraph())
                 .append(getOsParagraph())
+                .append(getApplicationDirectoriesParagraph())
                 .append(I18N.getString(sbAboutCopyrightKeyName));
         
         return text.toString();
+    }
+
+    private StringBuilder getApplicationDirectoriesParagraph() {
+        return new StringBuilder("Application Data Folder:")
+                .append("\n\t") // NOI18N
+                .append(Paths.get(AppPlatform.getApplicationDataFolder()).normalize()) //NOI18N 
+                .append("\n\n") //NOI18N
+                .append("User Library Folder:")
+                .append("\n\t") //NOI18N
+                .append(Paths.get(AppPlatform.getUserLibraryFolder()).normalize()) //NOI18N
+                .append("\n\n") //NOI18N
+                .append("Application Directory:")
+                .append("\n\t") //NOI18N
+                .append(Paths.get(".").toAbsolutePath().normalize()) //NOI18N
+                .append("\n\n"); //NOI18N
     }
 
     /**
