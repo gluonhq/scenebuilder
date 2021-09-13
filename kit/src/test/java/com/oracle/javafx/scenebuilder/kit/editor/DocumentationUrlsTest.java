@@ -97,7 +97,7 @@ public class DocumentationUrlsTest {
         classUnderTest = new DocumentationUrls();
         
         assertEquals("Javadoc home is used in Editor Platform", 
-                "https://openjfx.io/javadoc/16/", classUnderTest.getJavadocHome());
+                "https://openjfx.io/javadoc/17/", classUnderTest.getJavadocHome());
         
         assertEquals("This is used as F1 help URL", 
                 "https://docs.oracle.com/javase/8/javase-clienttechnologies.htm", 
