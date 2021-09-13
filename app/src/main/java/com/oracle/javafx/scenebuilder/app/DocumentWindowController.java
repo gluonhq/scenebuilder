@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -158,9 +158,9 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         SHOW_SAMPLE_CONTROLLER,
         HELP_OPEN_GETTING_STARTED_GUIDE,
         HELP_OPEN_GETTING_STARTED_WITH_KOTLIN,
-        HELP_OPEN_OPENJFX_APIDOC, 
-        HELP_OPEN_OPENJFX_CSS_REFERENCE, 
-        HELP_OPEN_OPENJFX_FXML_REFERENCE, 
+        HELP_OPEN_OPENJFX_APIDOC,
+        HELP_OPEN_OPENJFX_CSS_REFERENCE,
+        HELP_OPEN_OPENJFX_FXML_REFERENCE,
         HELP_OPEN_GLUON_SCENEBUILDER_HOME,
         HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER,
     }
