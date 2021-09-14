@@ -40,6 +40,12 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowCo
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -57,7 +63,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private GridPane vbox;
     @FXML
     private TextArea textArea;
-    
+
     private String sbBuildInfo;
     private String sbBuildVersion;
     private String sbBuildDate;
@@ -87,7 +93,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
             // We go with default values
         }
     }
-    
+
     @FXML
     public void onMousePressed(MouseEvent event) {
         if ((event.getClickCount() == 2) && event.isAltDown()) {
@@ -128,12 +134,29 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(getLoggingParagraph())
                 .append(getJavaFXParagraph())
                 .append(getJavaParagraph())
+                .append(getJavaLibraryPathParagraph())
                 .append(getOsParagraph())
+                .append(getApplicationDirectoriesParagraph())
                 .append(I18N.getString(sbAboutCopyrightKeyName));
         
         return text.toString();
     }
-    
+
+    private StringBuilder getApplicationDirectoriesParagraph() {
+        return new StringBuilder(I18N.getString("about.app.data.directory"))
+                .append("\n\t") // NOI18N
+                .append(Paths.get(AppPlatform.getApplicationDataFolder()).normalize()) //NOI18N 
+                .append("\n\n") //NOI18N
+                .append(I18N.getString("about.app.user.library"))
+                .append("\n\t") //NOI18N
+                .append(Paths.get(AppPlatform.getUserLibraryFolder()).normalize()) //NOI18N
+                .append("\n\n") //NOI18N
+                .append(I18N.getString("about.app.program.directory"))
+                .append("\n\t") //NOI18N
+                .append(Paths.get(".").toAbsolutePath().normalize()) //NOI18N
+                .append("\n\n"); //NOI18N
+    }
+
     /**
      *
      * @treatAsPrivate
@@ -141,7 +164,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     public String getBuildJavaVersion() {
         return sbBuildJavaVersion;
     }
-    
+
     /**
      *
      * @treatAsPrivate
@@ -149,7 +172,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     public String getBuildInfo() {
         return sbBuildInfo;
     }
-    
+
     private StringBuilder getVersionParagraph() {
         StringBuilder sb = new StringBuilder(I18N.getString("about.product.version"));
         sb.append("\nJavaFX Scene Builder ").append(sbBuildVersion) //NOI18N
@@ -195,10 +218,49 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private StringBuilder getJavaParagraph() {
         StringBuilder sb = new StringBuilder("Java\n"); //NOI18N
         sb.append(System.getProperty("java.runtime.version")).append(", ") //NOI18N
-                .append(System.getProperty("java.vendor")).append("\n\n"); //NOI18N
+                .append(System.getProperty("java.vendor")) // NOI18N
+                .append("\n\n");
         return sb;
     }
     
+    private StringBuilder getJavaLibraryPathParagraph() {
+        StringBuilder sb = new StringBuilder(I18N.getString("about.java.library.paths"))
+                .append("\n"); //NOI18N
+        String libPaths = System.getProperty("java.library.path"); //NOI18N
+        List<String> invalidPaths = new ArrayList<>();
+        String separator = getPathSeparator();
+        for (String libPath : libPaths.split(separator)) {
+            try {
+                Path absolutePath = Paths.get(libPath).normalize().toAbsolutePath();
+                if (Files.exists(absolutePath)) {
+                    String path = absolutePath.toString();
+                    sb.append("\t").append(path).append("\n");
+                } else {
+                    invalidPaths.add(libPath);
+                }
+            } catch (InvalidPathException error) {
+                invalidPaths.add(libPath);
+            }
+        }
+        sb.append("\n");
+        if (!invalidPaths.isEmpty()) {
+            sb.append(I18N.getString("about.java.library.paths.invalids")); //NOI18N
+            sb.append("\n");
+            invalidPaths.forEach(invalidPath -> sb.append("\t").append(invalidPath).append("\n"));
+            sb.append("\n");
+        }
+        return sb;
+    }
+
+    private String getPathSeparator() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("win") >= 0) {
+            return ";";
+        } else {
+            return ":";
+        }
+    }
+
     private StringBuilder getOsParagraph() {
         StringBuilder sb = new StringBuilder(I18N.getString("about.operating.system"));
         sb.append("\n").append(System.getProperty("os.name")).append(", ") //NOI18N
