@@ -9,9 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup java
-        uses: joschi/setup-jdk@v2
+        uses: actions/setup-java@v2
         with:
-          java-version: 16
+          distribution: 'temurin'
+          java-version: '17-ea'
       - name: Store Variables
         id: variables
         run: |
@@ -30,8 +31,8 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       - name: Setup JavaFX
         run: |
-          bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/16/openjfx-16_windows-x64_bin-jmods.zip D:\openjfx-16_windows-x64_bin-jmods.zip
-          Expand-Archive -Force D:\openjfx-16_windows-x64_bin-jmods.zip D:\
+          bitsadmin /Transfer DownloadJavaFX https://download2.gluonhq.com/openjfx/17/openjfx-17_windows-x64_bin-jmods.zip D:\openjfx-17_windows-x64_bin-jmods.zip
+          Expand-Archive -Force D:\openjfx-17_windows-x64_bin-jmods.zip D:\
       - name: Build and package JAR
         shell: cmd
         run: |
@@ -47,7 +48,7 @@ jobs:
           call dir ${{ env.INSTALL_DIR }}
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
-          JAVAFX_HOME: D:\javafx-jmods-16
+          JAVAFX_HOME: D:\javafx-jmods-17
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
           VERSION: ${{ steps.variables.outputs.SOURCE_VERSION }}
