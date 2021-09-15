@@ -35,8 +35,8 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       - name: Setup JavaFX
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/17/openjfx-17_osx-x64_bin-jmods-SIGNED.zip
-          unzip /tmp/openjfx-17_osx-x64_bin-jmods-SIGNED.zip -d /tmp
+          wget -P /tmp https://download2.gluonhq.com/openjfx/17/openjfx-17_osx-x64_bin-jmods.zip
+          unzip /tmp/openjfx-17_osx-x64_bin-jmods.zip -d /tmp
       - name: Build and package JAR
         run: |
           mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
