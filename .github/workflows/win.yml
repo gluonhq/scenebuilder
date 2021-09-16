@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '17-ea'
+          java-version: '17'
       - name: Store Variables
         id: variables
         run: |
