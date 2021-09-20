@@ -6,13 +6,19 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      JAVA_VERSION: 17
     steps:
       - uses: actions/checkout@v2
+      - name: 'Download OpenJDK'
+        run: |
+          bitsadmin /Transfer DownloadJavaFX https://download.oracle.com/java/${{ env.JAVA_VERSION }}/archive/jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip ${{ runner.temp }}\jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
       - name: Setup java
         uses: actions/setup-java@v2
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: jdkfile
+          jdkFile: ${{ runner.temp }}\jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
       - name: Store Variables
         id: variables
         run: |

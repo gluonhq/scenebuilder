@@ -6,15 +6,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    env:
+      JAVA_VERSION: 17
     steps:
       - name: Install packages
         run: sudo apt-get install xdg-utils
       - uses: actions/checkout@v2
+      - name: 'Download OpenJDK'
+        run: |
+          wget --no-verbose \
+            --directory-prefix ${{ runner.temp }} \
+            https://download.oracle.com/java/${{ env.JAVA_VERSION }}/archive/jdk-${{ env.JAVA_VERSION }}_linux-x64_bin.tar.gz
       - name: Setup java
         uses: actions/setup-java@v2
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: jdkfile
+          jdkFile: ${{ runner.temp }}/jdk-${{ env.JAVA_VERSION }}_linux-x64_bin.tar.gz
       - name: Store Variables
         id: variables
         run: |
