@@ -12,13 +12,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: 'Download OpenJDK'
         run: |
-          bitsadmin /Transfer DownloadJavaFX https://download.oracle.com/java/${{ env.JAVA_VERSION }}/archive/jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip ${{ runner.temp }}\jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
+          bitsadmin /Transfer DownloadJavaFX https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_windows-x64_bin.zip ${{ runner.temp }}\openjdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
       - name: Setup java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: jdkfile
-          jdkFile: ${{ runner.temp }}\jdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
+          jdkFile: ${{ runner.temp }}\openjdk-${{ env.JAVA_VERSION }}_windows-x64_bin.zip
       - name: Store Variables
         id: variables
         run: |

@@ -14,13 +14,13 @@ jobs:
         run: |
           wget --no-verbose \
             --directory-prefix ${{ runner.temp }} \
-            https://download.oracle.com/java/${{ env.JAVA_VERSION }}/archive/jdk-${{ env.JAVA_VERSION }}_macos-x64_bin.tar.gz
+            https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_macos-x64_bin.tar.gz
       - name: Setup java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: jdkfile
-          jdkFile: ${{ runner.temp }}/jdk-${{ env.JAVA_VERSION }}_macos-x64_bin.tar.gz
+          jdkFile: ${{ runner.temp }}/openjdk-${{ env.JAVA_VERSION }}_macos-x64_bin.tar.gz
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
