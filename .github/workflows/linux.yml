@@ -49,6 +49,7 @@ jobs:
           --java-options '"-Djdk.gtk.version=2"' \
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
           --java-options '"-Djava.library.path=/opt/scenebuilder/lib/runtime/bin:/opt/scenebuilder/lib/runtime/lib"' \
+          --resource-dir app/assets/linux
           --install-dir /opt \
           --type deb
           mv $INSTALL_DIR/*.deb $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.deb
@@ -57,6 +58,7 @@ jobs:
           --icon app/assets/linux/icon-linux.png \
           --java-options '"-Djdk.gtk.version=2"' \
           --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+          --resource-dir app/assets/linux
           --install-dir /opt \
           --type rpm
           mv $INSTALL_DIR/*.rpm $INSTALL_DIR/SceneBuilder-${{ env.TAG }}.rpm
