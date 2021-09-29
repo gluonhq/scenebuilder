@@ -54,10 +54,7 @@ jobs:
       - name: Create Bundle using JPackage
         id: outputfile
         run: |
-          .github/scripts/jpackage.sh \
-          --icon app/assets/osx/icon-mac.icns \
-          --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
-          --type dmg \
+          .github/scripts/jpackage.sh --icon app/assets/osx/icon-mac.icns --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' --java-options "-Djava.library.path=runtime\bin;runtime\lib" --type dmg \
           --mac-package-identifier com.gluonhq.scenebuilder \
           --mac-package-name 'Scene Builder' \
           --mac-package-signing-prefix "$GLUON_MACSIGN_PREFIX" \
