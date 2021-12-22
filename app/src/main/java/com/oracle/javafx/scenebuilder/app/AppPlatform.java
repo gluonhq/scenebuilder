@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.util.MessageBox;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_LINUX;
@@ -61,18 +62,18 @@ public class AppPlatform {
         
         if (applicationDataFolder == null) {
             final String appName = "Scene Builder"; //NOI18N
-            
+            final String appVersion = getApplicationVersion();
             if (IS_WINDOWS) {
                 applicationDataFolder 
-                        = System.getenv("APPDATA") + "\\" + appName; //NOI18N
+                        = System.getenv("APPDATA") + "\\" + appName + "-" + appVersion; //NOI18N
             } else if (IS_MAC) {
                 applicationDataFolder 
                         = System.getProperty("user.home") //NOI18N
                         + "/Library/Application Support/" //NOI18N
-                        + appName;
+                        + appName + "-" + appVersion;     //NOI18N
             } else if (IS_LINUX) {
                 applicationDataFolder
-                        = System.getProperty("user.home") + "/.scenebuilder"; //NOI18N
+                        = System.getProperty("user.home") + "/.scenebuilder-"+appVersion; //NOI18N
             }
         }
         
@@ -80,7 +81,22 @@ public class AppPlatform {
         
         return applicationDataFolder;
     }
-    
+
+    /*
+     * TODO: 
+     * How to deal with snapshot versions? 
+     * Shall the suffix "-SNAPSHOT" be ignored?
+     * 
+     * For testing it would be helpful to have 
+     * the snapshot suffix as with that one could run 
+     * released vs. non-released SB versions.
+     */
+    private static String getApplicationVersion() {
+        String version = AppSettings.getSceneBuilderVersion();
+        assert version != null;
+        assert !version.isBlank();
+        return version;
+    }   
     
     public static synchronized String getUserLibraryFolder() {
         
@@ -96,15 +112,15 @@ public class AppPlatform {
      * @return Directory path for Scene Builder logs
      */
     public static synchronized String getLogFolder() {
+        final String appVersion = AppSettings.getSceneBuilderVersion();
         if (logsFolder == null) {
-            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
+            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder-"+appVersion, "logs").toString(); //NOI18N
         }
         return logsFolder;
     }
 
-    public static boolean requestStart(
-            AppNotificationHandler notificationHandler, Application.Parameters parameters)  
-    throws IOException {
+    public static boolean requestStart(AppNotificationHandler notificationHandler, 
+                                       Application.Parameters parameters) throws IOException {
         if (EditorPlatform.isAssertionEnabled()) {
             // Development mode : we do not delegate to the existing instance
             notificationHandler.handleLaunch(parameters.getUnnamed());
@@ -126,9 +142,8 @@ public class AppPlatform {
      * Private (requestStartGeneric)
      */
     
-    private static synchronized boolean requestStartGeneric(
-            AppNotificationHandler notificationHandler, Application.Parameters parameters) 
-    throws IOException {
+    private static synchronized boolean requestStartGeneric(AppNotificationHandler notificationHandler, 
+                                                            Application.Parameters parameters) throws IOException {
         assert notificationHandler != null;
         assert parameters != null;
         assert messageBox == null;
@@ -165,7 +180,7 @@ public class AppPlatform {
         return result;
     }
     
-    private static String getMessageBoxFolder() {
+    protected static String getMessageBoxFolder() {
         if (messageBoxFolder == null) {
             messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
         }
