@@ -42,6 +42,7 @@ import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
@@ -388,6 +389,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         setApplicationUncaughtExceptionHandler();
 
+        PreferencesImporter prefsImporter = PreferencesController.getSingleton().getImporter();
+        prefsImporter.askForActionAndRun();
+        
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
@@ -792,9 +796,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private enum ACTION {START, STOP}
-
-    ;
+    private enum ACTION {START, STOP};
 
     private void logTimestamp(ACTION type) {
         switch (type) {

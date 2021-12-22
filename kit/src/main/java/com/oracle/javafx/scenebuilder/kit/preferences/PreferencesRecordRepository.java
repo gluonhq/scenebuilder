@@ -44,11 +44,11 @@ public class PreferencesRecordRepository {
     
     private final Preferences repositoriesRootPreferences;
     private Preferences repositoryPreferences;
-    public final static String REPO_ID  = "ID";
-    public final static String REPO_TYPE  = "type";
-    public final static String REPO_URL  = "URL";
+    public final static String REPO_ID = "ID";
+    public final static String REPO_TYPE = "type";
+    public final static String REPO_URL = "URL";
     public final static String REPO_USER = "User";
-    public final static String REPO_PASS = "Password";   
+    public final static String REPO_PASS = "Password";
     
     private final Repository repository;
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2012 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,16 +32,19 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
 
 /**
  * Defines preferences for Scene Builder App.
@@ -55,7 +58,8 @@ public class PreferencesController extends PreferencesControllerBase{
      **************************************************************************/
 
     // PREFERENCES NODE NAME
-    static final String SB_RELEASE_NODE = "SB_"+AppSettings.getSceneBuilderVersion(); //NOI18N
+    static final String SB_RELEASE_NODE_PREFIX = "SB_";
+    static final String SB_RELEASE_NODE = SB_RELEASE_NODE_PREFIX+AppSettings.getSceneBuilderVersion(); //NOI18N
 
     // GLOBAL PREFERENCES
     static final String TOOL_THEME = "TOOL_THEME"; //NOI18N
@@ -103,8 +107,8 @@ public class PreferencesController extends PreferencesControllerBase{
      *                                                                         *
      **************************************************************************/
 
-    private PreferencesController() {
-        super(SB_RELEASE_NODE, new PreferencesRecordGlobal());
+    private PreferencesController(Preferences rootNode) {
+        super(rootNode, SB_RELEASE_NODE, new PreferencesRecordGlobal());
 
         // Cleanup document preferences at start time : 
         final String items = applicationRootPreferences.get(RECENT_ITEMS, null); //NOI18N
@@ -139,13 +143,30 @@ public class PreferencesController extends PreferencesControllerBase{
      **************************************************************************/
 
     public static synchronized PreferencesController getSingleton() {
+        return getSingleton(null);
+    }
+
+    /**
+     * This method allows to pass in a custom {@link Preferences} node, e.g. for testing.
+     * When configured with null, the Preferences node to be used will be defined internally.
+     * The custom node is only set with the first call, when the {@link PreferencesController} was initialized before, t
+     * the Preferences node to be used cannot be changed anymore.
+     * 
+     * @param prefs {@link Preferences} node to be used, can be null.
+     * @return The one and only PreferencesController instance.
+     */
+    protected static synchronized PreferencesController getSingleton(Preferences prefs) {
         if (singleton == null) {
-            singleton = new PreferencesController();
+            singleton = new PreferencesController(prefs);
             singleton.getRecordGlobal().readFromJavaPreferences();
+        } else {
+            if (prefs != null) {
+                Logger.getLogger(PreferencesController.class.getName())
+                      .log(Level.INFO, "PreferencesController was already initialized. Ignoring the provided preferences node.");
+            }
         }
         return singleton;
     }
-
 
     public PreferencesRecordDocument getRecordDocument(final DocumentWindowController dwc) {
         final PreferencesRecordDocument recordDocument;
@@ -184,5 +205,40 @@ public class PreferencesController extends PreferencesControllerBase{
     
     protected String getEffectiveUsedRootNode() {
         return applicationRootPreferences.absolutePath();
+    }
+
+    /**
+     * If there were older versions of Scene Builder used, 
+     * this will return the Preferences node matching the most recent previous version.
+     * @return Optional version number of
+     */
+    protected Optional<VersionedPreferences> getPreviousVersionSettings() {
+        return new VersionedPreferencesFinder(SB_RELEASE_NODE_PREFIX, applicationPreferences)
+                   .previousVersionPrefs();
+    }
+    
+    /**
+     * This allows to re-initialize application settings after user has decided to
+     * import previous version settings. If not called after import, a restart of
+     * Scene Builder is needed to have all imported settings effective.
+     * <p>
+     * Reloads the contents of {@link PreferencesRecordGlobal} and initializes
+     * {@link MavenPreferences} and {@link RepositoryPreferences} afterwards.
+     */
+    protected void reload() {
+        getRecordGlobal().readFromJavaPreferences();
+        initializeMavenPreferences();
+        initializeRepositoryPreferences();
+    }
+
+    /**
+     * @return A {@link PreferencesImporter} instance for this application which
+     *         will help to import previous version application settings.
+     */
+    public PreferencesImporter getImporter() {
+        Optional<VersionedPreferences> previousVersionSettings = getPreviousVersionSettings();
+        PreferencesImporter importer = new PreferencesImporter(applicationRootPreferences, previousVersionSettings);
+        importer.runAfterImport(this::reload);
+        return importer;
     }
 }

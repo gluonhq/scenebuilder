@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.kit.alert;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /**
@@ -39,6 +40,12 @@ import javafx.stage.Stage;
  */
 public class SBAlert extends Alert {
 
+    public SBAlert(AlertType alertType, ButtonType... buttons) {
+        super(alertType, "", buttons);
+        getDialogPane().getStyleClass().add("SB-alert");
+        getDialogPane().getStylesheets().add(SBAlert.class.getResource("Alert.css").toString());
+    }
+    
     public SBAlert(AlertType alertType, Stage owner) {
         super(alertType);
 
@@ -52,4 +59,6 @@ public class SBAlert extends Alert {
         Stage alertStage = (Stage) getDialogPane().getScene().getWindow();
         alertStage.getIcons().setAll(owner.getIcons());
     }
+
+
 }
