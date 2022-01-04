@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.app.util.TextInputControlPaster;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
@@ -1573,8 +1574,23 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } else {
             assert isTextInputControlEditing(focusOwner);
             final TextInputControl tic = getTextInputControl(focusOwner);
-            tic.paste();
+            performTextInputControlPaste(tic);
         }
+    }
+
+    /*
+     * TODO: Once the issue JDK-8205915 is solved, this branch can be removed.
+     */
+    /**
+     * This method represents a workaround for the issue in JavaFX
+     * which prevents Scene Builder from pasting text values in TextInputControl elements
+     * on MacOS.
+     * 
+     * @see https://bugs.openjdk.java.net/browse/JDK-8205915
+     */
+    private void performTextInputControlPaste(final TextInputControl tic) {
+        boolean isNotMacOS = !EditorPlatform.IS_MAC;
+        new TextInputControlPaster(tic).pasteConditionally(isNotMacOS);
     }
 
     private boolean canPerformDelete() {
