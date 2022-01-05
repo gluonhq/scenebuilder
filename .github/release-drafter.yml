@@ -1,5 +1,12 @@
 exclude-labels:
   - 'housekeeping'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'bug'
 template: |
   ## What’s Changed
   $CHANGES
