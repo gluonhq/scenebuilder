@@ -88,6 +88,11 @@ class FXMLPropertiesDisabler {
         MACOS,
         WINDOWS,
         LINUX;
+    	/**
+    	 * Obtains the operating system type from system property os.name.
+    	 * @return {@link OperatingSystem}
+    	 * @throws UnsupportedOperationException in case of an unknown operating system
+    	 */
         public static OperatingSystem get() {
             String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
             if (osName.contains("linux")) {
