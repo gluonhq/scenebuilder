@@ -9,9 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup java
-        uses: joschi/setup-jdk@v2
+        uses: actions/setup-java@v2
         with:
-          java-version: 16
+          distribution: 'temurin'
+          java-version: '17-ea'
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
@@ -34,8 +35,8 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       - name: Setup JavaFX
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/16/openjfx-16_osx-x64_bin-jmods-SIGNED.zip
-          unzip /tmp/openjfx-16_osx-x64_bin-jmods-SIGNED.zip -d /tmp
+          wget -P /tmp https://download2.gluonhq.com/openjfx/17/openjfx-17_osx-x64_bin-jmods.zip
+          unzip /tmp/openjfx-17_osx-x64_bin-jmods.zip -d /tmp
       - name: Build and package JAR
         run: |
           mvn -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
@@ -59,7 +60,7 @@ jobs:
           echo ::set-output name=path::$INSTALL_DIR/SceneBuilder-${{ env.TAG }}.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
-          JAVAFX_HOME: /tmp/javafx-jmods-16/
+          JAVAFX_HOME: /tmp/javafx-jmods-17/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           GLUON_MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
           GLUON_MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}

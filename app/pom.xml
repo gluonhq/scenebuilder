@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
-        <version>16.0.0-SNAPSHOT</version>
+        <version>17.0.0</version>
     </parent>
 
     <properties>
         <main.class.name>com.oracle.javafx.scenebuilder.app.SceneBuilderApp</main.class.name>
         <!-- For about.properties file -->
         <buildDate>${maven.build.timestamp}</buildDate>
-        <javaVersion>${java.vm.version}, ${java.vendor}</javaVersion>
+        <javaVersion>${java.version}, ${java.runtime.name}</javaVersion>
         <javafxVersion>${javafx.version}</javafxVersion>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     </properties>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.gluonhq.scenebuilder</groupId>
             <artifactId>kit</artifactId>
-            <version>16.0.0-SNAPSHOT</version>
+            <version>17.0.0</version>
         </dependency>
     </dependencies>
     
