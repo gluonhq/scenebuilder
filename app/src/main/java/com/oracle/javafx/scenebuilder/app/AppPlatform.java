@@ -35,9 +35,6 @@ package com.oracle.javafx.scenebuilder.app;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.util.MessageBox;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_LINUX;
-import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
-import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_WINDOWS;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -59,27 +56,39 @@ public class AppPlatform {
     private static MessageBox<MessageBoxMessage> messageBox;
     
     public static synchronized String getApplicationDataFolder() {
-        
+        final String appVersion = getApplicationVersion();
         if (applicationDataFolder == null) {
-            final String appName = "Scene Builder"; //NOI18N
-            final String appVersion = getApplicationVersion();
-            if (IS_WINDOWS) {
-                applicationDataFolder 
-                        = System.getenv("APPDATA") + "\\" + appName + "-" + appVersion; //NOI18N
-            } else if (IS_MAC) {
-                applicationDataFolder 
-                        = System.getProperty("user.home") //NOI18N
-                        + "/Library/Application Support/" //NOI18N
-                        + appName + "-" + appVersion;     //NOI18N
-            } else if (IS_LINUX) {
-                applicationDataFolder
-                        = System.getProperty("user.home") + "/.scenebuilder-"+appVersion; //NOI18N
-            }
+            OperatingSystem os = OperatingSystem.get();
+            final String appDataSubFolder = getApplicationDataSubFolder(os,appVersion);
+            assert appDataSubFolder != null;
+            
+            String appDataRoot = getApplicationDataRoot(os);
+            assert appDataRoot != null;
+            
+            applicationDataFolder = appDataRoot+appDataSubFolder;
         }
-        
         assert applicationDataFolder != null;
-        
         return applicationDataFolder;
+    }
+    
+    public static String getApplicationDataRoot(OperatingSystem os) {
+        switch (os) {
+            case WINDOWS: return System.getenv("APPDATA") + "\\";
+            case MACOS: return System.getProperty("user.home") + "/Library/Application Support/";
+            case LINUX: return System.getProperty("user.home") + "/";
+            default: return null;
+        }
+    }
+    public static String getApplicationDataSubFolder(OperatingSystem os, String version) {
+        final String appName = "Scene Builder"; //NOI18N
+        final String appVersion = (version == null) ? "" : version;
+        final String suffix = "".equalsIgnoreCase(appVersion) ? "" : "-"+appVersion;
+        switch (os) {
+            case WINDOWS: return appName+suffix;
+            case MACOS: return appName+suffix;
+            case LINUX: return ".scenebuilder"+suffix;
+            default: return null;
+        }
     }
 
     /*
@@ -159,7 +168,7 @@ public class AppPlatform {
         messageBox = new MessageBox<>(getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
         // Fix Start: Github Issue #301
         final List<String> parametersUnnamed = new ArrayList<>(parameters.getUnnamed());
-        if (IS_MAC) {
+        if (OperatingSystem.get().equals(OperatingSystem.MACOS)) {
             parametersUnnamed.removeIf(p -> p.startsWith("-psn"));
         }
         // Fix End

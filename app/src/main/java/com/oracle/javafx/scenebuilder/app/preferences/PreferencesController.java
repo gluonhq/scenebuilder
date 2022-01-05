@@ -41,6 +41,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.library.user.UserLibraryImporter;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
@@ -240,5 +241,9 @@ public class PreferencesController extends PreferencesControllerBase{
         PreferencesImporter importer = new PreferencesImporter(applicationRootPreferences, previousVersionSettings);
         importer.runAfterImport(this::reload);
         return importer;
+    }
+    
+    public UserLibraryImporter getUserLibraryImporter() {
+        return new UserLibraryImporter(applicationPreferences);
     }
 }

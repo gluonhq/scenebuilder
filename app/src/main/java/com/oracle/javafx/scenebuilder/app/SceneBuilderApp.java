@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.app.library.user.UserLibraryImporter;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
@@ -386,14 +387,15 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     @Override
     public void handleLaunch(List<String> files) {
         boolean showWelcomeDialog = files.isEmpty();
-
         setApplicationUncaughtExceptionHandler();
-
         PreferencesImporter prefsImporter = PreferencesController.getSingleton().getImporter();
         prefsImporter.askForActionAndRun();
         
-        MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
+        UserLibraryImporter userLibImporter = PreferencesController.getSingleton().getUserLibraryImporter();
+        userLibImporter.performImportWhenDesired();
+        
         // Creates the user library
+        MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
                 () -> mavenPreferences.getArtifactsPathsWithDependencies(),
                 () -> mavenPreferences.getArtifactsFilter());

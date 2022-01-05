@@ -29,45 +29,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.preferences;
+package com.oracle.javafx.scenebuilder.app;
 
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
+import java.util.Locale;
 
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
-
-/**
- * Utility Class to help preparing Preferences nodes for tests
- */
-public class PrefsHelper {
-    private PrefsHelper() {
-        /* not intended for instantiation */
-    }
-    public static void removeAllNonReleaseNodes(Preferences prefs) {
-        String appVersion = AppSettings.getSceneBuilderVersion();
-        String versionSpecificNode = PreferencesController.SB_RELEASE_NODE_PREFIX + appVersion;
-        try {
-            String[] childnodes = prefs.childrenNames();
-            for (String childName : childnodes) {
-                if (!childName.equals(versionSpecificNode)) {
-                    prefs.node(childName).removeNode();
-                    prefs.flush();
-                }
-            }
-        } catch (BackingStoreException e) {
-            throw new RuntimeException(e);
+public enum OperatingSystem {
+    MACOS,
+    WINDOWS,
+    LINUX;
+    /**
+     * Obtains the operating system type from system property os.name.
+     * 
+     * @return {@link OperatingSystem}
+     * @throws UnsupportedOperationException in case of an unknown operating system
+     */
+    public static OperatingSystem get() {
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        if (osName.contains("linux")) {
+            return OperatingSystem.LINUX;
         }
-    }
-    
-    public static void removeAllChildNodes(Preferences prefs) {
-        try {
-            String[] childnodes = prefs.childrenNames();
-            for (String childName : childnodes) {
-                prefs.node(childName).removeNode();
-                prefs.flush();
-            }
-        } catch (BackingStoreException e) {
-            throw new RuntimeException(e);
+        if (osName.contains("mac")) {
+            return OperatingSystem.MACOS;
         }
+        if (osName.contains("windows")) {
+            return OperatingSystem.WINDOWS;
+        }
+        throw new UnsupportedOperationException("Unknown operating system platform!");
     }
 }

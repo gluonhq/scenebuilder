@@ -95,7 +95,7 @@ public class PreferencesImporterTest {
 
         assertTrue(responses.contains("action performed"));
         assertEquals("1234", appPrefs.get("somekey", null));
-        assertNotNull(appPrefs.get(PreferencesImporter.ASKED_FOR_IMPORT, null));
+        assertNotNull(appPrefs.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null));
     }
     
     @Test(expected = NullPointerException.class)

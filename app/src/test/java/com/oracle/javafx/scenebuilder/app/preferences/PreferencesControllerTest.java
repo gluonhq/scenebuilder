@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,11 +56,17 @@ public class PreferencesControllerTest {
     @BeforeClass
     public static void setup() {
         testNode = Preferences.userRoot()
-                              .node("SBTEST")
+                              .node("PREFS_CONTROLLER_TEST")
                               .node("com/oracle/javafx/scenebuilder/app/preferences");
         PrefsHelper.removeAllChildNodes(testNode);
         classUnderTest = PreferencesController.getSingleton(testNode);
     }
+    
+    @AfterClass
+    public static void cleanup() throws Exception {
+        Preferences.userRoot().node("PREFS_CONTROLLER_TEST").removeNode();
+    }
+    
 
     @Test
     public void that_preferences_are_stored_per_version() {
@@ -73,7 +80,7 @@ public class PreferencesControllerTest {
         String prefsNodeUsed = classUnderTest.getEffectiveUsedRootNode();
         String appVersion = AppSettings.getSceneBuilderVersion();
         String versionSpecificNode = "SB_" + appVersion;
-        String expectedPrefsNode = "/SBTEST/com/oracle/javafx/scenebuilder/app/preferences/" + versionSpecificNode;
+        String expectedPrefsNode = "/PREFS_CONTROLLER_TEST/com/oracle/javafx/scenebuilder/app/preferences/" + versionSpecificNode;
         assertEquals(expectedPrefsNode, prefsNodeUsed);
     }
     
@@ -131,7 +138,7 @@ public class PreferencesControllerTest {
         Preferences targetNode = testNode.node(versionSpecificNode);
         
         // User Decision is memorized
-        assertNotNull(targetNode.get(PreferencesImporter.ASKED_FOR_IMPORT, null));
+        assertNotNull(targetNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null));
         
         // Maven Repositories are initialized properly
         List<String> artifacts = classUnderTest.getMavenPreferences().getArtifactsCoordinates();

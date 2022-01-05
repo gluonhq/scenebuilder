@@ -58,7 +58,9 @@ public class PreferencesImporter {
      **************************************************************************/
     
     // GLOBAL PREFERENCES
-    static final String ASKED_FOR_IMPORT = "ASKED_FOR_IMPORT";
+    public static final String PREF_ASKED_FOR_IMPORT = "ASKED_FOR_IMPORT";
+    
+    public static final String DECISION_NO_IMPORT = "-no-import";
     
     /***************************************************************************
      *                                                                         *
@@ -130,7 +132,7 @@ public class PreferencesImporter {
      * @return true in case the import decision was not yet made.
      */
     public boolean askForImport() {
-        String lastTimeAsked = target.get(ASKED_FOR_IMPORT, null);
+        String lastTimeAsked = target.get(PREF_ASKED_FOR_IMPORT, null);
         return lastTimeAsked == null;
     }
 
@@ -138,9 +140,14 @@ public class PreferencesImporter {
      * Stores the preferences key ASKED_FOR_IMPORT upon request. If this key does
      * not exist, Scene Builder will ask user to import settings from previous
      * version during application startup.
+     * 
      */
     public void saveTimestampWhenAskedForImport() {
-        target.put(ASKED_FOR_IMPORT, LocalDateTime.now().toString());
+        target.put(PREF_ASKED_FOR_IMPORT, LocalDateTime.now().toString());
+    }
+    
+    public void documentThatNoImportIsDesired() {
+        target.put(PREF_ASKED_FOR_IMPORT, LocalDateTime.now().toString()+DECISION_NO_IMPORT);
     }
 
     /**
@@ -199,6 +206,8 @@ public class PreferencesImporter {
             if (response.isPresent() && ButtonType.YES.equals(response.get())) {
                 logger.log(Level.INFO, "User decided to import previous version settings.");
                 tryImportingPreviousVersionSettings();
+            } else {
+                documentThatNoImportIsDesired();
             }
         }
     }

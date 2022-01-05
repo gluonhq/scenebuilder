@@ -29,45 +29,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.app.preferences;
+package com.oracle.javafx.scenebuilder.app.library.user;
 
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
+import com.oracle.javafx.scenebuilder.app.AppPlatform;
+import com.oracle.javafx.scenebuilder.app.OperatingSystem;
 
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+public interface AppDirectories {
+    String getApplicationDataRoot(OperatingSystem os);
 
-/**
- * Utility Class to help preparing Preferences nodes for tests
- */
-public class PrefsHelper {
-    private PrefsHelper() {
-        /* not intended for instantiation */
-    }
-    public static void removeAllNonReleaseNodes(Preferences prefs) {
-        String appVersion = AppSettings.getSceneBuilderVersion();
-        String versionSpecificNode = PreferencesController.SB_RELEASE_NODE_PREFIX + appVersion;
-        try {
-            String[] childnodes = prefs.childrenNames();
-            for (String childName : childnodes) {
-                if (!childName.equals(versionSpecificNode)) {
-                    prefs.node(childName).removeNode();
-                    prefs.flush();
-                }
+    String getUserLibraryFolder();
+
+    String getApplicationDataSubFolder(OperatingSystem os, String string);
+
+    public static AppDirectories usingAppPlatform() {
+        return new AppDirectories() {
+            @Override
+            public String getUserLibraryFolder() {
+                return AppPlatform.getUserLibraryFolder();
             }
-        } catch (BackingStoreException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public static void removeAllChildNodes(Preferences prefs) {
-        try {
-            String[] childnodes = prefs.childrenNames();
-            for (String childName : childnodes) {
-                prefs.node(childName).removeNode();
-                prefs.flush();
+            
+            @Override
+            public String getApplicationDataSubFolder(OperatingSystem os, String version) {
+                return AppPlatform.getApplicationDataSubFolder(os, version);
             }
-        } catch (BackingStoreException e) {
-            throw new RuntimeException(e);
-        }
+            
+            @Override
+            public String getApplicationDataRoot(OperatingSystem os) {
+                return AppPlatform.getApplicationDataRoot(os);
+            }
+
+        };
     }
 }
