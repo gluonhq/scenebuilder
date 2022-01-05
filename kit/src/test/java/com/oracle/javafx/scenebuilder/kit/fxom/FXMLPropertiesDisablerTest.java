@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -38,19 +39,31 @@ import java.nio.file.Files;
 
 import org.junit.Test;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXMLPropertiesDisabler.OperatingSystem;
+
 public class FXMLPropertiesDisablerTest {
 
     private FXMLPropertiesDisabler classUnderTest = new FXMLPropertiesDisabler();
-
+ 
     @Test
-    public void that_property_value_is_set_to_false() throws Exception {
+    public void that_property_value_is_set_to_false_on_MacOS() throws Exception {
+        classUnderTest = new FXMLPropertiesDisabler(OperatingSystem.MACOS);
         String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
         assertTrue("ensures that test resource is correct",
-                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\">"));
-
-        String modfiedFxmlText = classUnderTest.disableUseSystemMenuBarProperty(fxmlText);
-
-        assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\">"));
+                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
+        assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+    }
+    
+    @Test
+    public void that_property_value_is_not_modified_on_Windows() throws Exception {
+        classUnderTest = new FXMLPropertiesDisabler(OperatingSystem.WINDOWS);
+        String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
+        assertTrue("ensures that test resource is correct",
+                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
+        assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
 
     private String readResourceText(String resourceName) throws Exception {
@@ -58,4 +71,27 @@ public class FXMLPropertiesDisablerTest {
         return Files.readString(fxmlFileName.toPath());
     }
 
+    @Test
+    public void that_MacOS_is_detected_properly() {
+        if (EditorPlatform.IS_MAC) {
+            OperatingSystem os = OperatingSystem.get();
+            assertEquals(OperatingSystem.MACOS, os);
+        }
+    }
+    
+    @Test
+    public void that_Windows_is_detected_properly() {
+        if (EditorPlatform.IS_WINDOWS) {
+            OperatingSystem os = OperatingSystem.get();
+            assertEquals(OperatingSystem.WINDOWS, os);
+        }
+    }
+    
+    @Test
+    public void that_Linux_is_detected_properly() {
+        if (EditorPlatform.IS_LINUX) {
+            OperatingSystem os = OperatingSystem.get();
+            assertEquals(OperatingSystem.LINUX, os);
+        }
+    }
 }

@@ -107,8 +107,8 @@ public class FXOMDocumentTest {
         fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
-        String generatedFxml = classUnderTest.getFxmlText(false).replace("\n", System.lineSeparator());
-        String expectedFxml = readResourceText("Normalized_Accordion.fxml");
+        String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("Normalized_Accordion.fxml"));
         assertEquals(expectedFxml, generatedFxml);
     }
 
@@ -118,17 +118,29 @@ public class FXOMDocumentTest {
         fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.NON_NORMALIZED);
 
-        String generatedFxml = classUnderTest.getFxmlText(false).replace("\n", System.lineSeparator());
-        String expectedFxml = readResourceText("NonNormalized_Accordion.fxml").replace("\n", System.lineSeparator());
+        String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NonNormalized_Accordion.fxml"));
         assertEquals(expectedFxml, generatedFxml);
     }
 
     private String readResourceText(String resourceName) throws Exception {
         File fxmlFileName = new File(getResourceUrl(resourceName).toURI());
-        return Files.readString(fxmlFileName.toPath());
+        return useOnlyNewLine(Files.readString(fxmlFileName.toPath()));
     }
 
     private URL getResourceUrl(String resourceName) {
         return getClass().getResource(resourceName);
+    }
+    
+    private String useOnlyNewLine(String source) {
+        return source.replace("\r\n", "\n");
+    }
+    
+    private String extractContentsOfFirstChildrenTag(String source) {
+        String openingTag = "<children>";
+        String closingTag = "</children>";
+        int open = source.indexOf(openingTag);
+        int close = source.lastIndexOf(closingTag) + closingTag.length();
+        return source.substring(open, close);
     }
 }
