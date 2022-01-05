@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,6 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -38,14 +40,92 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.xml.sax.SAXParseException;
 
 public class FXOMDocumentTest {
     @Test
-    public void that_IOexception_is_thrown_in_case_FXMLLoader_error() throws Exception {
+    public void that_IOException_is_thrown_in_case_FXMLLoader_error() throws Exception {
         URL resource = getClass().getResource("BrokenByUserData.fxml");
         String fxmlText = FXOMDocument.readContentFromURL(resource);
         Throwable t = assertThrows(IOException.class, () -> new FXOMDocument(fxmlText, resource, null, null));
         String message = t.getMessage();
         assertTrue(message.startsWith("javafx.fxml.LoadException:"));
+    }
+    
+    @Test
+    public void that_illegal_null_value_for_fxmlText_raises_AssertionError() throws Exception {
+        URL resource = getClass().getResource("BrokenByUserData.fxml");
+        String fxmlText = null;
+        assertThrows(AssertionError.class, () -> new FXOMDocument(fxmlText, resource, null, null));
+    }
+    
+    @Test
+    public void that_exception_in_case_of_broken_XML_is_captured() throws Exception {
+        URL resource = getClass().getResource("IncompleteXml.fxml");
+        String fxmlText = FXOMDocument.readContentFromURL(resource);
+        Throwable t = assertThrows(IOException.class, () -> new FXOMDocument(fxmlText, resource, null, null));
+        String message = t.getMessage();
+        assertTrue(message.startsWith("org.xml.sax.SAXParseException;"));
+        
+        Throwable cause = t.getCause();
+        assertTrue(cause instanceof SAXParseException);
+    }
+    
+    @Test
+    public void that_no_exception_is_created_with_empty_FXML() throws Exception {
+        URL resource = getClass().getResource("Empty.fxml");
+        String fxmlText = "";
+        boolean normalizeFxom = false;
+        FXOMDocument classUnderTest = new FXOMDocument(fxmlText, resource, null, null, normalizeFxom);
+        assertNotNull(classUnderTest);
+    }
+    
+    @Test
+    public void that_FXOMDocument_is_created_for_valid_FXML() throws Exception {
+        URL validResource = getClass().getResource("ValidFxml.fxml");
+        String validFxmlText = FXOMDocument.readContentFromURL(validResource);
+        FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, validResource, null, null);
+        assertNotNull(classUnderTest);
+    }
+    
+    @Test
+    public void that_wildcard_imports_are_built_on_demand() throws Exception {
+        URL validResource = getClass().getResource("PublicStaticImport.fxml");
+        String validFxmlText = FXOMDocument.readContentFromURL(validResource);
+        FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, validResource, null, null);
+        boolean withWildCardImports = true;
+        
+        String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
+        String expectedFxmlText = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "\n"
+                + "<?import javafx.scene.effect.*?>\n"
+                + "<?import javafx.scene.layout.*?>\n"
+                + "<?import javafx.scene.text.*?>\n"
+                + "\n"
+                + "<StackPane xmlns=\"http://javafx.com/javafx/null\" xmlns:fx=\"http://javafx.com/fxml/1\">\n"
+                + "   <children>\n"
+                + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
+                + "         <effect>\n"
+                + "            <Lighting diffuseConstant=\"2.0\" specularConstant=\"0.9\" specularExponent=\"10.5\" surfaceScale=\"9.3\">\n"
+                + "               <light>\n"
+                + "                  <Light.Distant />\n"
+                + "               </light>\n"
+                + "            </Lighting>\n"
+                + "         </effect>\n"
+                + "      </Text>\n"
+                + "   </children>\n"
+                + "</StackPane>\n"
+                + "";
+        assertEquals(expectedFxmlText, generatedFxmlText);
+    }
+    
+    @Test
+    public void that_generated_FXML_text_is_empty_for_empty_FXOMDocument() throws Exception {
+        FXOMDocument classUnderTest = new FXOMDocument();
+        boolean withWildCardImports = false;
+        String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
+        
+        assertEquals("", generatedFxmlText);
     }
 }
