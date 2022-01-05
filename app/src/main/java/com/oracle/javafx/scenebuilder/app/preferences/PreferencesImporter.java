@@ -196,8 +196,8 @@ public class PreferencesImporter {
             customAlert.setHeaderText("Import settings");
             customAlert.setContentText("Previous version settings found.\nDo you want to import those?\n\nScene Builder will remember your decision and not ask again.");
             Optional<ButtonType> response = customAlert.showAndWait();
-            System.out.println(response);
             if (response.isPresent() && ButtonType.YES.equals(response.get())) {
+                logger.log(Level.INFO, "User decided to import previous version settings.");
                 tryImportingPreviousVersionSettings();
             }
         }
