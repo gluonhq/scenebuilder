@@ -720,7 +720,7 @@ public class FXOMNodes {
             fitWidth = 0;
             fitHeight = 0;
         } else {
-            final double widthScale  = fitSize / imageSize;
+            final double widthScale = fitSize / imageSize;
             final double heightScale = fitSize / imageHeight;
             final double scale = Math.min(widthScale, heightScale);
             fitWidth = Math.floor(imageWidth * scale);
@@ -784,7 +784,7 @@ public class FXOMNodes {
             fitWidth = 0;
             fitHeight = 0;
         } else {
-            final double widthScale  = fitSize / mediaSize;
+            final double widthScale = fitSize / mediaSize;
             final double heightScale = fitSize / mediaHeight;
             final double scale = Math.min(widthScale, heightScale);
             fitWidth = Math.floor(mediaWidth * scale);

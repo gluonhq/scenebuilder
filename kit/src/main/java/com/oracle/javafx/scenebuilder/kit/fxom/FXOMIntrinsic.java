@@ -57,7 +57,8 @@ public class FXOMIntrinsic extends FXOMObject {
     private Object sourceSceneGraphObject;
 
     
-    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject,  List<FXOMProperty> properties) {
+    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject,
+            List<FXOMProperty> properties) {
         super(document, glueElement, null);
         this.sourceSceneGraphObject = targetSceneGraphObject;
         for (FXOMProperty p : properties) {
