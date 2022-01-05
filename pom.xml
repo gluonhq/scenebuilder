@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>16.0.0-SNAPSHOT</version>
+    <version>17.0.0</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <javafx.version>16</javafx.version>
+        <javafx.version>17</javafx.version>
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>5.0.0-jdk9</charm.glisten.version>
         <maven.compiler.release>11</maven.compiler.release>
@@ -100,7 +100,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/gluonhq/ChatApp/issues</url>
+        <url>https://github.com/gluonhq/scenebuilder/issues</url>
     </issueManagement>
 
     <licenses>

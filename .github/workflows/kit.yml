@@ -11,9 +11,10 @@ jobs:
         run: sudo apt-get install xdg-utils xvfb tigervnc-standalone-server tigervnc-common
       - uses: actions/checkout@v2
       - name: Setup java
-        uses: joschi/setup-jdk@v2
+        uses: actions/setup-java@v2
         with:
-          java-version: 16
+          distribution: 'temurin'
+          java-version: '17-ea'
       - name: Store Variables
         id: variables
         run: |
@@ -35,7 +36,7 @@ jobs:
           chmod -v 600 /home/runner/.vnc/passwd
           vncserver :90 -localhost -nolisten tcp
           mvn -q versions:set -DnewVersion=${{ env.TAG }} -DgenerateBackupPoms=false
-          mvn clean package -Dmaven.test.skip=true -X
+          mvn clean package -Dmaven.test.skip=true -f kit -X
           vncserver -kill :90
         env:
           TAG: ${{ steps.variables.outputs.SOURCE_TAG }}
