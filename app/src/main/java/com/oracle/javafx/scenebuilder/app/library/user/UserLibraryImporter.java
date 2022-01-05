@@ -49,7 +49,8 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oracle.javafx.scenebuilder.app.OperatingSystem;
+import com.oracle.javafx.scenebuilder.app.PlatformDirectories;
+import com.oracle.javafx.scenebuilder.app.AppPlatform;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
@@ -58,25 +59,26 @@ public class UserLibraryImporter {
     protected static final String USER_LIBRARY_IMPORT_COMPLETE = "-userlib-import-done";
     
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
-    private final OperatingSystem os;
     private final Optional<AppVersion> version;
     private final Preferences preferences;
-    private final AppDirectories appDirectories;
+    private final PlatformDirectories appDirectories;
     
     public UserLibraryImporter(Preferences applicationPreferences) {
-        this(AppDirectories.usingAppPlatform(), applicationPreferences);
+        this(AppPlatform.getAppDirectories(), applicationPreferences);
     }
     
-    public UserLibraryImporter(AppDirectories directories, Preferences applicationPreferences) {
-        this(AppVersion.fromString(AppSettings.getSceneBuilderVersion()),
-             OperatingSystem.get(), directories, applicationPreferences);
+    public UserLibraryImporter(PlatformDirectories directories, Preferences applicationPreferences) {
+        this(AppVersion.fromString(AppSettings.getSceneBuilderVersion()), directories, applicationPreferences);
     }
     
-    public UserLibraryImporter(Optional<AppVersion> appVersion, OperatingSystem os, AppDirectories appDirectories, Preferences applicationPreferences) {
-        this.os = Objects.requireNonNull(os);
+    public UserLibraryImporter(Optional<AppVersion> appVersion, PlatformDirectories appDirectories, Preferences applicationPreferences) {
         this.version = Objects.requireNonNull(appVersion);
         this.preferences = Objects.requireNonNull(applicationPreferences);
         this.appDirectories = Objects.requireNonNull(appDirectories);
+    }
+    
+    protected PlatformDirectories getPlatformDirectories() {
+        return this.appDirectories;
     }
 
     /**
@@ -109,7 +111,7 @@ public class UserLibraryImporter {
         String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, timestamp.toString());
         String importStatus = importDecision+USER_LIBRARY_IMPORT_COMPLETE;
         preferences.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,importStatus);
-        String appDataDir = appDirectories.getApplicationDataRoot(os);
+        String appDataDir = appDirectories.getApplicationDataRoot();
         Path appData = Paths.get(appDataDir);
         List<Path> candidates = collectLibraryCandidates(appData);
         Optional<Path> oldSettingsDirectory = previousVersionUserLibraryPath(candidates);
@@ -171,7 +173,7 @@ public class UserLibraryImporter {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error while searching previous version user library locations.", e);
         }
-        return null;
+        return Collections.emptyList();
     }
     
     protected Optional<Path> previousVersionUserLibraryPath(List<Path> candidates) {
@@ -188,7 +190,7 @@ public class UserLibraryImporter {
             return Collections.emptyMap();
         }
         AppVersion currentVersion = version.get();
-        String legacyDirName = appDirectories.getApplicationDataSubFolder(os,"");
+        String legacyDirName = appDirectories.getApplicationDataSubFolder(false);
         Map<AppVersion, Path> sceneBuilderDirs = new HashMap<>();
         for (Path candidate : candidates) {
             String name = candidate.getFileName().toString();

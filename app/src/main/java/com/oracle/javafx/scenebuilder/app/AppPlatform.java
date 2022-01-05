@@ -48,49 +48,27 @@ import javafx.application.Platform;
  *
  */
 public class AppPlatform {
-    
-    private static String applicationDataFolder;
-    private static String userLibraryFolder;
-    private static String messageBoxFolder;
-    private static String logsFolder;
     private static MessageBox<MessageBoxMessage> messageBox;
+    private static PlatformSpecificDirectories platformSpecificDirectories;
     
     public static synchronized String getApplicationDataFolder() {
-        final String appVersion = getApplicationVersion();
-        if (applicationDataFolder == null) {
-            OperatingSystem os = OperatingSystem.get();
-            final String appDataSubFolder = getApplicationDataSubFolder(os,appVersion);
-            assert appDataSubFolder != null;
-            
-            String appDataRoot = getApplicationDataRoot(os);
-            assert appDataRoot != null;
-            
-            applicationDataFolder = appDataRoot+appDataSubFolder;
+        if (platformSpecificDirectories == null) {
+            platformSpecificDirectories = getAppDirectories();
         }
-        assert applicationDataFolder != null;
-        return applicationDataFolder;
+        return platformSpecificDirectories.getApplicationDataFolder();
     }
     
-    public static String getApplicationDataRoot(OperatingSystem os) {
-        switch (os) {
-            case WINDOWS: return System.getenv("APPDATA") + "\\";
-            case MACOS: return System.getProperty("user.home") + "/Library/Application Support/";
-            case LINUX: return System.getProperty("user.home") + "/";
-            default: return null;
+    public static synchronized PlatformSpecificDirectories getAppDirectories() {
+        final String appVersion = getApplicationVersion();
+        if (platformSpecificDirectories == null) {
+            OperatingSystem os = OperatingSystem.get();
+            platformSpecificDirectories = new PlatformSpecificDirectories(os, appVersion);
         }
+        assert platformSpecificDirectories != null;
+        return platformSpecificDirectories;
     }
-    public static String getApplicationDataSubFolder(OperatingSystem os, String version) {
-        final String appName = "Scene Builder"; //NOI18N
-        final String appVersion = (version == null) ? "" : version;
-        final String suffix = "".equalsIgnoreCase(appVersion) ? "" : "-"+appVersion;
-        switch (os) {
-            case WINDOWS: return appName+suffix;
-            case MACOS: return appName+suffix;
-            case LINUX: return ".scenebuilder"+suffix;
-            default: return null;
-        }
-    }
-
+    
+    
     /*
      * TODO: 
      * How to deal with snapshot versions? 
@@ -108,12 +86,10 @@ public class AppPlatform {
     }   
     
     public static synchronized String getUserLibraryFolder() {
-        
-        if (userLibraryFolder == null) {
-            userLibraryFolder = getApplicationDataFolder() + "/Library"; //NOI18N
+        if (platformSpecificDirectories == null) {
+            platformSpecificDirectories = getAppDirectories();
         }
-        
-        return userLibraryFolder;
+        return platformSpecificDirectories.getUserLibraryFolder();
     }
 
     /**
@@ -121,13 +97,19 @@ public class AppPlatform {
      * @return Directory path for Scene Builder logs
      */
     public static synchronized String getLogFolder() {
-        final String appVersion = AppSettings.getSceneBuilderVersion();
-        if (logsFolder == null) {
-            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder-"+appVersion, "logs").toString(); //NOI18N
+        if (platformSpecificDirectories == null) {
+            platformSpecificDirectories = getAppDirectories();
         }
-        return logsFolder;
+        return platformSpecificDirectories.getLogFolder();
     }
-
+    
+    protected static String getMessageBoxFolder() {
+        if (platformSpecificDirectories == null) {
+            platformSpecificDirectories = getAppDirectories();
+        }
+        return platformSpecificDirectories.getMessageBoxFolder();
+    }
+    
     public static boolean requestStart(AppNotificationHandler notificationHandler, 
                                        Application.Parameters parameters) throws IOException {
         if (EditorPlatform.isAssertionEnabled()) {
@@ -187,14 +169,6 @@ public class AppPlatform {
         }
         
         return result;
-    }
-    
-    protected static String getMessageBoxFolder() {
-        if (messageBoxFolder == null) {
-            messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
-        }
-        
-        return messageBoxFolder;
     }
     
     private static class MessageBoxMessage extends ArrayList<String> {

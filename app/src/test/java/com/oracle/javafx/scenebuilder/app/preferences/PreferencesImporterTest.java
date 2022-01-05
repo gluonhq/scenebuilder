@@ -2,17 +2,22 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javafx.scene.control.ButtonType;
 
 public class PreferencesImporterTest {
     
@@ -52,6 +57,8 @@ public class PreferencesImporterTest {
     @Test
     public void that_user_will_be_only_asked_when_import_decision_was_not_made() throws Exception {
         Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET");
+        appPrefs.clear();
+        
         classUnderTest = new PreferencesImporter(appPrefs, Optional.empty());
         
         assertTrue(classUnderTest.askForImport());
@@ -98,11 +105,61 @@ public class PreferencesImporterTest {
         assertNotNull(appPrefs.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void that_null_value_for_run_after_import_action_is_not_accepted() {
         Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET");
         classUnderTest = new PreferencesImporter(appPrefs, Optional.empty());
-        classUnderTest.runAfterImport(null);
+        assertThrows(NullPointerException.class,
+                ()->classUnderTest.runAfterImport(null));
+    }
+    
+    @Test
+    public void that_user_interaction_is_executed_and_user_opt_out_decision_is_documented() throws Exception {
+        Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET");
+        appPrefs.clear();
+        
+        classUnderTest = new PreferencesImporter(appPrefs, Optional.empty());
+        
+        Set<String> interactionResponses = new HashSet<>();
+        
+        Supplier<Optional<ButtonType>> userInteraction = ()->{
+            interactionResponses.add("alert-opened");
+            return Optional.empty();
+        };
+        
+        classUnderTest.executeInteractionAndImport(userInteraction);
+        String documentedUserDecision = appPrefs.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, "");
+        
+        assertTrue(interactionResponses.contains("alert-opened"));
+        assertTrue(documentedUserDecision.contains("-no-import"));
+    }
+    
+    @Test
+    public void that_user_interaction_is_executed_and_used_opted_in() throws Exception {
+        Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET2");
+        appPrefs.clear();
+        
+        AppVersion oldVersion = new AppVersion(0, 9);
+        Preferences olderPrefs = Preferences.userRoot().node("SB_OLD_VER");
+        olderPrefs.put("somekey", "1234");
+        
+        Optional<VersionedPreferences> previousVersionSettings = Optional.of(new VersionedPreferences(oldVersion, olderPrefs));
+       
+        classUnderTest = new PreferencesImporter(appPrefs, previousVersionSettings);
+        
+        Set<String> interactionResponses = new HashSet<>();
+        
+        Supplier<Optional<ButtonType>> userInteraction = ()->{
+            interactionResponses.add("alert-opened");
+            return Optional.of(ButtonType.YES);
+        };
+        
+        classUnderTest.askForActionAndRun(userInteraction);
+        String documentedUserDecision = appPrefs.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, "");
+        
+        assertTrue(interactionResponses.contains("alert-opened"));
+        assertFalse(documentedUserDecision.contains("-no-import"));
+        assertNotEquals("", documentedUserDecision);
     }
 
 }

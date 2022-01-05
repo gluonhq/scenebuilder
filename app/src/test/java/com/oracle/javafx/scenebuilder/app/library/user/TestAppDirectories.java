@@ -31,33 +31,38 @@
  */
 package com.oracle.javafx.scenebuilder.app.library.user;
 
-import com.oracle.javafx.scenebuilder.app.AppPlatform;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.oracle.javafx.scenebuilder.app.OperatingSystem;
+import com.oracle.javafx.scenebuilder.app.PlatformSpecificDirectories;
 
-public interface AppDirectories {
-    String getApplicationDataRoot(OperatingSystem os);
+public class TestAppDirectories extends PlatformSpecificDirectories {
 
-    String getUserLibraryFolder();
-
-    String getApplicationDataSubFolder(OperatingSystem os, String string);
-
-    public static AppDirectories usingAppPlatform() {
-        return new AppDirectories() {
-            @Override
-            public String getUserLibraryFolder() {
-                return AppPlatform.getUserLibraryFolder();
-            }
-            
-            @Override
-            public String getApplicationDataSubFolder(OperatingSystem os, String version) {
-                return AppPlatform.getApplicationDataSubFolder(os, version);
-            }
-            
-            @Override
-            public String getApplicationDataRoot(OperatingSystem os) {
-                return AppPlatform.getApplicationDataRoot(os);
-            }
-
-        };
+    private final Path tempDir = createDirectory();
+    public TestAppDirectories(OperatingSystem os, String appVersion) {
+        super(os, appVersion);
     }
+    
+    private Path createDirectory() {
+        try {
+            return Files.createTempDirectory("SBTEST_APPDATA_");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public String getApplicationDataRoot() {
+        return tempDir.toString();
+    }
+    
+    @Override
+    public String getApplicationDataSubFolder() {
+        final String suffix = "".equalsIgnoreCase(super.version) ? "" : "-"+super.version;
+        return ".scenebuilder"+suffix;
+    }
+
 }

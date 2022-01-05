@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
@@ -196,19 +197,30 @@ public class PreferencesImporter {
      * The question will only appear in cases where previous version settings exist and the user decision has not been saved yet.
      */
     public void askForActionAndRun() {
-        if (askForImportIfOlderSettingsExist()) {
+        Supplier<Optional<ButtonType>> alertInteraction = ()->{
             SBAlert customAlert = new SBAlert(AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO);
             customAlert.initOwner(null);
             customAlert.setTitle("Gluon Scene Builder");
             customAlert.setHeaderText("Import settings");
             customAlert.setContentText("Previous version settings found.\nDo you want to import those?\n\nScene Builder will remember your decision and not ask again.");
-            Optional<ButtonType> response = customAlert.showAndWait();
-            if (response.isPresent() && ButtonType.YES.equals(response.get())) {
-                logger.log(Level.INFO, "User decided to import previous version settings.");
-                tryImportingPreviousVersionSettings();
-            } else {
-                documentThatNoImportIsDesired();
-            }
+            return customAlert.showAndWait();
+        };
+        askForActionAndRun(alertInteraction);
+    }
+    
+    protected void askForActionAndRun(Supplier<Optional<ButtonType>> alertInteraction) {
+        if (askForImportIfOlderSettingsExist()) {
+            executeInteractionAndImport(alertInteraction);
+        }
+    }
+    
+    protected void executeInteractionAndImport(Supplier<Optional<ButtonType>> alertInteraction) {
+        Optional<ButtonType> response = alertInteraction.get();
+        if (response.isPresent() && ButtonType.YES.equals(response.get())) {
+            logger.log(Level.INFO, "User decided to import previous version settings.");
+            tryImportingPreviousVersionSettings();
+        } else {
+            documentThatNoImportIsDesired();
         }
     }
 }

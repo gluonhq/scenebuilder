@@ -39,8 +39,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +52,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.oracle.javafx.scenebuilder.app.AppPlatform;
+import com.oracle.javafx.scenebuilder.app.PlatformDirectories;
+import com.oracle.javafx.scenebuilder.app.PlatformSpecificDirectories;
 import com.oracle.javafx.scenebuilder.app.OperatingSystem;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
@@ -62,9 +61,9 @@ import com.oracle.javafx.scenebuilder.app.preferences.PrefsHelper;
 
 public class UserLibraryImporterTest {
 
-    private UserLibraryImporter classUnderTest;
-    
     private static Preferences testNode;
+    private UserLibraryImporter classUnderTest;
+    private PlatformDirectories appDirectories;
     
     @BeforeClass
     public static void setup() {
@@ -81,15 +80,15 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_exception_is_thrown_when_null_argument_is_used() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0-SNAPSHOT"), OperatingSystem.LINUX,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forLinux("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0-SNAPSHOT"), appDirectories, testNode);
         assertThrows(NullPointerException.class,
                 ()->classUnderTest.previousVersionUserLibraryPath(null));
     }
     @Test
     public void that_empty_optional_is_provided_when_current_version_has_unsupported_format() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0-SNAPSHOT"), OperatingSystem.LINUX,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forLinux("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0-SNAPSHOT"), appDirectories, testNode);
         List<Path> candidates = List.of(Paths.get("Scene Builder"),
                                         Paths.get("Scene Builder-19.0.1")); 
         assertTrue(classUnderTest.previousVersionUserLibraryPath(candidates).isEmpty());
@@ -97,16 +96,16 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_empty_optional_is_provided_when_old_library_path_not_exists() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.LINUX,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forLinux("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(Paths.get("Scene Builder"),
                                         Paths.get("Scene Builder-19.0.1")); 
         assertTrue(classUnderTest.previousVersionUserLibraryPath(candidates).isEmpty());
     }
     @Test
     public void that_user_library_paths_are_detected_for_LINUX() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.LINUX,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forLinux("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get(".scenebuilder-15.0.0"),
                 Paths.get("Scene Builder"),
@@ -123,8 +122,8 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_legacy_library_path_is_detected_for_LINUX() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.LINUX,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forLinux("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
@@ -138,8 +137,8 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_user_library_paths_are_detected_for_WINDOWS() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.WINDOWS,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forWindows("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get("Scene Builder-17.0.0"),
                 Paths.get("Scene Builder"),
@@ -155,8 +154,8 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_legacy_library_path_is_detected_for_WINDOWS() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.WINDOWS,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forWindows("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
@@ -170,8 +169,8 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_user_library_paths_are_detected_for_MACOS() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.MACOS,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forMacOS("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get("Scene Builder-17.0.0"),
                 Paths.get("Scene Builder"),
@@ -187,8 +186,8 @@ public class UserLibraryImporterTest {
     
     @Test
     public void that_legacy_library_path_is_detected_for_MACOS() {
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), OperatingSystem.MACOS,
-                                                 AppDirectories.usingAppPlatform(),testNode);
+        appDirectories = forMacOS("17.0.0-SNAPSHOT");
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0"), appDirectories, testNode);
         List<Path> candidates = List.of(
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
@@ -200,29 +199,6 @@ public class UserLibraryImporterTest {
         assertEquals(Paths.get("Scene Builder"), x.get());
     }
     
-    private AppDirectories creatLinuxLikeAppDirs(OperatingSystem os, String version) {
-        try {
-            Path tempDir = Files.createTempDirectory("SBUserLibImportTest_");
-            return new AppDirectories() {
-                @Override
-                public String getUserLibraryFolder() { 
-                    return getApplicationDataRoot(os)+"/"+getApplicationDataSubFolder(os,version)+"/Library";
-                }
-                @Override
-                public String getApplicationDataSubFolder(OperatingSystem os, String version) {
-                    return AppPlatform.getApplicationDataSubFolder(os, version);
-                }
-                @Override
-                public String getApplicationDataRoot(OperatingSystem os) {
-                    return tempDir.toString();
-                }
-            };
-            
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-    
     @Test
     public void that_import_is_skipped_when_user_opted_out() {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
@@ -231,8 +207,8 @@ public class UserLibraryImporterTest {
         
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        AppDirectories appDirectories = creatLinuxLikeAppDirs(os, version);
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), os,appDirectories, testNode);
+        PlatformDirectories appDirectories = new TestAppDirectories(os, version);
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
         classUnderTest.performImportWhenDesired(timestamp);
         
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
@@ -250,8 +226,8 @@ public class UserLibraryImporterTest {
         
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        AppDirectories appDirectories = creatLinuxLikeAppDirs(os, version);
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), os,appDirectories, testNode);
+        PlatformDirectories appDirectories = new TestAppDirectories(os, version);
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
         classUnderTest.performImportWhenDesired(timestamp);
         
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
@@ -268,11 +244,10 @@ public class UserLibraryImporterTest {
 
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        AppDirectories appDirectories = creatLinuxLikeAppDirs(os, version);
-
+        PlatformDirectories appDirectories = new TestAppDirectories(os, version);
         
         // Prepare an old library
-        String dataRoot = appDirectories.getApplicationDataRoot(OperatingSystem.LINUX);
+        String dataRoot = appDirectories.getApplicationDataRoot();
         Path oldLibrary = Paths.get(dataRoot).resolve(".scenebuilder").resolve("Library");
         Files.createDirectories(oldLibrary);
         Path myJar = oldLibrary.resolve("MyCustomArtifact.txt");
@@ -281,7 +256,7 @@ public class UserLibraryImporterTest {
         Path userLib = Paths.get(appDirectories.getUserLibraryFolder());
         Files.createDirectories(userLib);
         
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), os,appDirectories, testNode);
+        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
         classUnderTest.performImportWhenDesired(timestamp);
         
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
@@ -292,6 +267,27 @@ public class UserLibraryImporterTest {
         File[] importedFiles = new File(appDirectories.getUserLibraryFolder()).listFiles(); 
         assertEquals(1, importedFiles.length);
         assertEquals("MyCustomArtifact.txt", importedFiles[0].getName());
+    }
+    
+    @Test
+    public void that_correct_AppDirectories_are_used_by_default() {
+       if (testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null) !=null) {           
+           testNode.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
+       }
+       classUnderTest = new UserLibraryImporter(testNode);
+       assertTrue(classUnderTest.getPlatformDirectories() instanceof PlatformSpecificDirectories);
+    }
+    
+    private static PlatformDirectories forLinux(String version) {
+        return new PlatformSpecificDirectories(OperatingSystem.LINUX, version);
+    }
+    
+    private static PlatformDirectories forMacOS(String version) {
+        return new PlatformSpecificDirectories(OperatingSystem.MACOS, version);
+    }
+    
+    private static PlatformDirectories forWindows(String version) {
+        return new PlatformSpecificDirectories(OperatingSystem.WINDOWS, version);
     }
 
 }
