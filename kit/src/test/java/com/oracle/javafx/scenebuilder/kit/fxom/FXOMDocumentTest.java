@@ -90,44 +90,44 @@ public class FXOMDocumentTest {
 
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
-    	boolean isMacOS = EditorPlatform.IS_MAC;
-    	if (isMacOS) {
-    		classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
-    		
-    		FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
-    		
-    		assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-    		assertFalse("for preview, useSystemMenu is expected to be enabled",
-    				((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
-    		
-    		String generatedFxml = classUnderTest.getFxmlText(false);
-    		assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));    		
-    	}
+        boolean isMacOS = EditorPlatform.IS_MAC;
+        if (isMacOS) {
+            classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+
+            FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+
+            assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+            assertFalse("for preview, useSystemMenu is expected to be enabled",
+                    ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+            String generatedFxml = classUnderTest.getFxmlText(false);
+            assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
+        }
     }
     
     @Test
     public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
-    	boolean isWinOrLinux = EditorPlatform.IS_WINDOWS | EditorPlatform.IS_LINUX;
-    	if (isWinOrLinux) {
-    		classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
-    		
-    		FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
-    		
-    		assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-    		assertTrue("for preview, useSystemMenu is expected to be enabled",
-    				((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
-    		
-    		String generatedFxml = classUnderTest.getFxmlText(false);
-    		assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));    		
-    	}
+        boolean isWinOrLinux = EditorPlatform.IS_WINDOWS | EditorPlatform.IS_LINUX;
+        if (isWinOrLinux) {
+            classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+
+            FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+
+            assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+            assertTrue("for preview, useSystemMenu is expected to be enabled",
+                    ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+            String generatedFxml = classUnderTest.getFxmlText(false);
+            assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
+        }
     }
 
 
     @Test
-    public void that_normalization_is_applied_by_default() throws Exception {
+    public void that_normalization_is_applied_only_when_NORMALIZED_is_set() throws Exception {
         fxmlText = readResourceText("NonNormalized_Accordion.fxml");
         fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
-        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.NORMALIZED);
 
         String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
         String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("Normalized_Accordion.fxml"));
@@ -135,10 +135,10 @@ public class FXOMDocumentTest {
     }
 
     @Test
-    public void that_normalization_is_disabled_when_created_with_NON_NORMALIZED() throws Exception {
+    public void that_normalization_is_disabled_when_NORMALIZED_is_not_set() throws Exception {
         fxmlText = readResourceText("NonNormalized_Accordion.fxml");
         fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
-        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.NON_NORMALIZED);
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
         String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NonNormalized_Accordion.fxml"));

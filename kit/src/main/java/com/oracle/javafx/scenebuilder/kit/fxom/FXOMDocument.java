@@ -84,7 +84,9 @@ public class FXOMDocument {
     /**
      * Creates a new {@link FXOMDocument} from given FXML source. Depending on the
      * use case, the {@link FXOMDocumentSwitch} items can be used to configure the
-     * document creation process according to specific needs.
+     * document creation process according to specific needs. E.g. normalization is
+     * not enabled by default, thus if required the {@link FXOMDocumentSwitch}
+     * {@code NORMALIZED} should be added as constructor argument.
      * 
      * @param fxmlText    FXML source
      * @param location    {@link URL} describing the actual document location
@@ -92,7 +94,7 @@ public class FXOMDocument {
      * @param resources   {@link ResourceBundle} to be used
      * @param switches    {@link FXOMDocumentSwitch} configuration options to enable
      *                    or disable certain steps in {@link FXOMDocument} creation
-     *                    (e.g. disabling normalization)
+     *                    (e.g. enforcing normalization)
      * @throws IOException when the fxmlText cannot be loaded
      */
     public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, FXOMDocumentSwitch... switches) throws IOException {
@@ -110,7 +112,7 @@ public class FXOMDocument {
             }
             final FXOMLoader loader = new FXOMLoader(this);
             loader.load(fxmlTextToLoad);
-            if (!Set.of(switches).contains(FXOMDocumentSwitch.NON_NORMALIZED)) {
+            if (Set.of(switches).contains(FXOMDocumentSwitch.NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
             }
@@ -467,9 +469,9 @@ public class FXOMDocument {
      */
     public enum FXOMDocumentSwitch {
         /**
-         * If this switch is defined, the {@link FXOMDocument} will not be normalized (see {@link FXOMNormalizer}).
+         * If this switch is defined, the {@link FXOMDocument} will be normalized (see {@link FXOMNormalizer}).
          */
-        NON_NORMALIZED,
+        NORMALIZED,
         
         /**
          * When this flag is present during {@link FXOMDocument} creation,

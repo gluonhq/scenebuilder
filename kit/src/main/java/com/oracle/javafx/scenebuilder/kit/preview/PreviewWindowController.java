@@ -216,7 +216,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     fxomDocument.getLocation(),
                     fxomDocument.getClassLoader(),
                     fxomDocument.getResources(),
-                    FXOMDocumentSwitch.FOR_PREVIEW);
+                    FXOMDocumentSwitch.FOR_PREVIEW, FXOMDocumentSwitch.NORMALIZED);
             clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
         } catch (IOException ex) {
             throw new RuntimeException("Bug in PreviewWindowController::openDialog", ex); //NOI18N

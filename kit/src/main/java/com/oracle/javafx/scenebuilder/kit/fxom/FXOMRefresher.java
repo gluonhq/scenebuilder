@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleArrayPropertyMetadata;
@@ -65,8 +64,7 @@ class FXOMRefresher {
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),
                     document.getClassLoader(),
-                    document.getResources(),
-                    FXOMDocumentSwitch.NON_NORMALIZED);
+                    document.getResources());
             final TransientStateBackup backup = new TransientStateBackup(document);
             // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
             if (newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {
