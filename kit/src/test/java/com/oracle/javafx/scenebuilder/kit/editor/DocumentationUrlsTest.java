@@ -36,23 +36,32 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Properties;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls.DocumentationItem;
 
 public class DocumentationUrlsTest {
     
     private DocumentationUrls classUnderTest;
+    
+    @BeforeClass
+    public static void initJavaFX() {
+        JfxInitializer.initialize();
+    }
 
     @Test
     public void that_error_is_raised_when_resource_file_is_missing() {
         assertThrows(AssertionError.class, 
-                () -> new DocumentationUrls("myNotExistingResource.properties"));
+                () -> new DocumentationUrls("17.0.0.1","myNotExistingResource.properties"));
     }
     
     @Test
     public void that_defaults_are_used_with_incomplete_properties_file() {
-        classUnderTest = new DocumentationUrls("incomplete_doc_urls.properties");
+        classUnderTest = new DocumentationUrls("17.0.0.1","incomplete_doc_urls.properties");
         assertFalse(classUnderTest.getOptionalUrl(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE).isPresent());
         assertThrows(AssertionError.class,
                 () -> classUnderTest.getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE));
@@ -60,7 +69,7 @@ public class DocumentationUrlsTest {
 
     @Test
     public void that_defaults_are_correct_and_useful() {
-        classUnderTest = new DocumentationUrls("incomplete_doc_urls.properties");
+        classUnderTest = new DocumentationUrls("17.0.0.1", "incomplete_doc_urls.properties");
         
         assertEquals("Javadoc home is used in Editor Platform", 
                      "https://openjfx.io/javadoc/11/", classUnderTest.getJavadocHome());
@@ -97,13 +106,47 @@ public class DocumentationUrlsTest {
         classUnderTest = new DocumentationUrls();
         
         assertEquals("Javadoc home is used in Editor Platform", 
-                "https://openjfx.io/javadoc/17/", classUnderTest.getJavadocHome());
+                "https://openjfx.io/javadoc/unknown/", classUnderTest.getJavadocHome());
         
         assertEquals("This is used as F1 help URL", 
                 "https://docs.oracle.com/javase/8/javase-clienttechnologies.htm", 
                 classUnderTest.getOracleDocumentation());
     }
     
+    @Test
+    public void that_major_version_is_properly_extracted() {
+        String javaFxVersion = "17.0.1.a";
+        String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
+        assertEquals("17", majorVersion);
+    }
+    
+    @Test
+    public void that_unsupported_version_schema_yields_full_version_string() {
+        String javaFxVersion = "17-0-0-1";
+        String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
+        assertEquals("17-0-0-1", majorVersion);
+    }
+    
+    @Test
+    public void that_blank_or_null_strings_yield_unknown_version_value() {
+        assertEquals("unknown", DocumentationUrls.getMajorJavaFxVersion(null));
+        assertEquals("unknown", DocumentationUrls.getMajorJavaFxVersion(""));
+    }
+
+    @Test
+    public void that_javafx_version_is_obtained_with_correct_properties_key() {
+        Properties props = new Properties();
+        props.setProperty("javafx.version", "18.0.0.ea");
+        String version = DocumentationUrls.getJavaFxVersion(props);
+        assertEquals("18.0.0.ea", version);
+    }
+
+    @Test
+    public void that_unknown_is_returned_as_javafx_version_with_empty_props() {
+        assertEquals("unknown",
+                DocumentationUrls.getJavaFxVersion(new Properties()));
+    }
+
     @Test
     public void that_by_default_all_items_are_available() {
         classUnderTest = DocumentationUrls.getInstance();
