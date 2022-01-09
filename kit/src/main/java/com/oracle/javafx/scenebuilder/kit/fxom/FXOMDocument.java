@@ -462,7 +462,7 @@ public class FXOMDocument {
      * Depending on where the {@link FXOMDocument} shall be used, 
      * it is necessary to configure the {@link FXOMDocument} creation process.
      * The switches here can be used to configure the creation process in the desired way.
-     * This enum replaces the previously used boolean arguments in the {@link FXOMDocument} constructor.
+     * Replaces the previously used boolean arguments in the {@link FXOMDocument} constructor.
      */
     public enum FXOMDocumentSwitch {
         /**

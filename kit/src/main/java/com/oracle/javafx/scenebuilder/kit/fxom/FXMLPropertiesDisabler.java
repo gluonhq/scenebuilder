@@ -35,13 +35,17 @@ import java.util.Locale;
 import java.util.Objects;
 
 class FXMLPropertiesDisabler {
+    
     private final OperatingSystem os;
+
     public FXMLPropertiesDisabler() {
         this(OperatingSystem.get());
     }
+
     public FXMLPropertiesDisabler(OperatingSystem os) {
         this.os = Objects.requireNonNull(os);
     }
+
     /**
      * In some cases, during FXML Loading, certain properties must be disabled.
      * This method modifies the FXML source accordingly.
@@ -55,7 +59,7 @@ class FXMLPropertiesDisabler {
         String modifiedFxml = disableUseSystemMenuBarProperty(fxmlText);
         return modifiedFxml;
     }
-    
+
     /**
      * On MacOS, when loading a FXML with a menu bar where useSystemMenuBarProperty()
      * is enabled, the menu in the FXML will hide the menu of Scene Builder. 
