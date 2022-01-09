@@ -465,19 +465,19 @@ public class FXOMDocument {
      * Depending on where the {@link FXOMDocument} shall be used, 
      * it is necessary to configure the {@link FXOMDocument} creation process.
      * The switches here can be used to configure the creation process in the desired way.
-     * Replaces the previously used boolean arguments in the {@link FXOMDocument} constructor.
      */
     public enum FXOMDocumentSwitch {
         /**
-         * If this switch is defined, the {@link FXOMDocument} will be normalized (see {@link FXOMNormalizer}).
+         * When this flag is present, the {@link FXOMDocument} will be normalized (see {@link FXOMNormalizer}).
          */
         NORMALIZED,
         
         /**
-         * When this flag is present during {@link FXOMDocument} creation,
-         * the {@link FXMLPropertiesDisabler} will be used to prepare the FXML source in a way, 
-         * so that settings defined in the FXML will not interfere Scene Builders configuration.
-         * One possible example here is the option to use the MacOS system menu bar.  
+         * When this flag is present during {@link FXOMDocument} creation, the
+         * {@link FXMLPropertiesDisabler} will be used to modify the FXML source in such
+         * a way that the included settings will not interfere Scene Builder's
+         * configuration. One possible example here is the option to use the MacOS
+         * system menu bar.
          */
         FOR_PREVIEW;
     }
