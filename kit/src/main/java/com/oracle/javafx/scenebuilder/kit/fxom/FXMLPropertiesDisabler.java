@@ -31,19 +31,18 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import java.util.Locale;
 import java.util.Objects;
 
 class FXMLPropertiesDisabler {
-    
-    private final OperatingSystem os;
 
-    public FXMLPropertiesDisabler() {
-        this(OperatingSystem.get());
-    }
+    private final boolean isMacOS;
 
-    public FXMLPropertiesDisabler(OperatingSystem os) {
-        this.os = Objects.requireNonNull(os);
+    /**
+     * 
+     * @param isMacOS true when used platform is MacOS
+     */
+    public FXMLPropertiesDisabler(boolean isMacOS) {
+        this.isMacOS = isMacOS;
     }
 
     /**
@@ -81,35 +80,10 @@ class FXMLPropertiesDisabler {
      */
     private String disableUseSystemMenuBarProperty(String fxmlText) {
         Objects.requireNonNull(fxmlText, "fxmlText must not be null");
-        if (OperatingSystem.MACOS.equals(os)) {
+        if (isMacOS) {
             return fxmlText.replace("useSystemMenuBar=\"true\"",
                                     "useSystemMenuBar=\"false\"");
         }
         return fxmlText;
-    }
-    
-    enum OperatingSystem {
-        MACOS,
-        WINDOWS,
-        LINUX;
-        /**
-         * Obtains the operating system type from system property os.name.
-         * 
-         * @return {@link OperatingSystem}
-         * @throws UnsupportedOperationException in case of an unknown operating system
-         */
-        public static OperatingSystem get() {
-            String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-            if (osName.contains("linux")) {
-                return OperatingSystem.LINUX;
-            }
-            if (osName.contains("mac")) {
-                return OperatingSystem.MACOS;
-            }
-            if (osName.contains("windows")) {
-                return OperatingSystem.WINDOWS;
-            }
-            throw new UnsupportedOperationException("Unknown operating system platform!");
-        }
     }
 }

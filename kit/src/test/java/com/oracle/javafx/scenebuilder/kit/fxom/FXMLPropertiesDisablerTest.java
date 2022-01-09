@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -39,16 +38,14 @@ import java.nio.file.Files;
 
 import org.junit.Test;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXMLPropertiesDisabler.OperatingSystem;
-
 public class FXMLPropertiesDisablerTest {
 
-    private FXMLPropertiesDisabler classUnderTest = new FXMLPropertiesDisabler();
+    private FXMLPropertiesDisabler classUnderTest;
  
     @Test
     public void that_property_value_is_set_to_false_on_MacOS() throws Exception {
-        classUnderTest = new FXMLPropertiesDisabler(OperatingSystem.MACOS);
+        boolean isMacOS = true;
+        classUnderTest = new FXMLPropertiesDisabler(isMacOS);
         String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
         assertTrue("ensures that test resource is correct",
                 fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
@@ -58,7 +55,8 @@ public class FXMLPropertiesDisablerTest {
     
     @Test
     public void that_property_value_is_not_modified_on_Windows() throws Exception {
-        classUnderTest = new FXMLPropertiesDisabler(OperatingSystem.WINDOWS);
+        boolean isMacOS = false;
+        classUnderTest = new FXMLPropertiesDisabler(isMacOS);
         String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
         assertTrue("ensures that test resource is correct",
                 fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
@@ -69,29 +67,5 @@ public class FXMLPropertiesDisablerTest {
     private String readResourceText(String resourceName) throws Exception {
         File fxmlFileName = new File(getClass().getResource(resourceName).toURI());
         return Files.readString(fxmlFileName.toPath());
-    }
-
-    @Test
-    public void that_MacOS_is_detected_properly() {
-        if (EditorPlatform.IS_MAC) {
-            OperatingSystem os = OperatingSystem.get();
-            assertEquals(OperatingSystem.MACOS, os);
-        }
-    }
-    
-    @Test
-    public void that_Windows_is_detected_properly() {
-        if (EditorPlatform.IS_WINDOWS) {
-            OperatingSystem os = OperatingSystem.get();
-            assertEquals(OperatingSystem.WINDOWS, os);
-        }
-    }
-    
-    @Test
-    public void that_Linux_is_detected_properly() {
-        if (EditorPlatform.IS_LINUX) {
-            OperatingSystem os = OperatingSystem.get();
-            assertEquals(OperatingSystem.LINUX, os);
-        }
     }
 }

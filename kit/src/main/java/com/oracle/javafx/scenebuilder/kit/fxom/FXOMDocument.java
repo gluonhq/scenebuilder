@@ -104,7 +104,8 @@ public class FXOMDocument {
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
             if (!Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
-                final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler();
+                boolean isMacOS = EditorPlatform.IS_MAC;
+                final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler(isMacOS);
                 fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);

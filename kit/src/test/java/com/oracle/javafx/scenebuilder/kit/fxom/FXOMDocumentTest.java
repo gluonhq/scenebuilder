@@ -39,14 +39,13 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXMLPropertiesDisabler.OperatingSystem;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
 import javafx.scene.control.MenuBar;
@@ -91,8 +90,8 @@ public class FXOMDocumentTest {
 
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
-    	OperatingSystem os = OperatingSystem.get();
-    	if (os.equals(OperatingSystem.MACOS)) {
+    	boolean isMacOS = EditorPlatform.IS_MAC;
+    	if (isMacOS) {
     		classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
     		
     		FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
@@ -107,9 +106,9 @@ public class FXOMDocumentTest {
     }
     
     @Test
-    public void that_useSystemMenuBarProperty_not_modifie_on_Linux_and_Windows() throws Exception {
-    	OperatingSystem os = OperatingSystem.get();
-    	if (Set.of(OperatingSystem.LINUX, OperatingSystem.WINDOWS).contains(os)) {
+    public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
+    	boolean isWinOrLinux = EditorPlatform.IS_WINDOWS | EditorPlatform.IS_LINUX;
+    	if (isWinOrLinux) {
     		classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
     		
     		FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
