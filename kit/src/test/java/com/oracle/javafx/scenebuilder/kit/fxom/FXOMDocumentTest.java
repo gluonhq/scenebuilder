@@ -39,8 +39,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Callable;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,6 +48,7 @@ import org.xml.sax.SAXParseException;
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 
 public class FXOMDocumentTest {
@@ -147,15 +147,9 @@ public class FXOMDocumentTest {
         URL resource = getClass().getResource("DynamicScreenSize.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(resource);
 
-        invokeAndWait(() -> {
-            try {
-                FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, resource, null, null, false);
-                String beforeNormalization = classUnderTest.getFxmlText(false);
-                assertFalse(beforeNormalization.isBlank());
-            } catch (IOException e) {
-                throw new AssertionError("unexpected error: " + e);
-            }
-        });
+        FXOMDocument classUnderTest = waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null, false));
+        String beforeNormalization = classUnderTest.getFxmlText(false);
+        assertFalse(beforeNormalization.isBlank());
     }
 
     @Test
@@ -163,27 +157,25 @@ public class FXOMDocumentTest {
         URL resource = getClass().getResource("DynamicScreenSize.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(resource);
 
-        Throwable t = assertThrows(ExecutionException.class,
-                       () -> invokeAndWait(
-                               () -> {
-            try {
-                /* normalization enabled */
-                FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, resource, null, null, true);
-                String beforeNormalization = classUnderTest.getFxmlText(false);
-                assertFalse(beforeNormalization.isBlank());
-            } catch (IOException e) {
-                throw new AssertionError("unexpected error: " + e);
-            }
-        }));
+        Throwable t = assertThrows(Throwable.class,
+                       () -> waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null, true /* normalization enabled */)));
         
-        assertTrue(t.getCause() instanceof IllegalStateException);
-        String message = t.getCause().getMessage();
-        assertTrue(message.startsWith("Bug in FXOMRefresher: FXML dumped in "));
+        if (t.getCause() != null) {
+            t = t.getCause();
+        }
+         
+        assertEquals(IllegalStateException.class, t.getClass());
+        assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
-    
-    void invokeAndWait(Runnable r) throws Exception {
-        FutureTask<?> task = new FutureTask<>(r, null);
-        Platform.runLater(task);
-        task.get();
+        
+    private <T> T waitFor(Callable<T> callable) throws Exception {
+        Task<T> task = new Task<T>() {
+            @Override
+            protected T call() throws Exception {
+                return callable.call();
+            }
+        };
+        Platform.runLater(()->task.run());
+        return task.get();
     }
 }
