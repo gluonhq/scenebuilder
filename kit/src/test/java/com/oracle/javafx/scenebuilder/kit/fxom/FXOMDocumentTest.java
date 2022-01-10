@@ -110,16 +110,24 @@ public class FXOMDocumentTest {
         boolean withWildCardImports = true;
 
         String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
-        String expectedFxmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "\n"
-                + "<?import javafx.scene.effect.*?>\n" + "<?import javafx.scene.layout.*?>\n"
-                + "<?import javafx.scene.text.*?>\n" + "\n"
+        String expectedFxmlText = 
+                  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
+                + "<?import javafx.scene.effect.*?>\n"
+                + "<?import javafx.scene.layout.*?>\n"
+                + "<?import javafx.scene.text.*?>\n\n"
                 + "<StackPane xmlns=\"http://javafx.com/javafx/null\" xmlns:fx=\"http://javafx.com/fxml/1\">\n"
-                + "   <children>\n" + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
+                + "   <children>\n"
+                + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
                 + "         <effect>\n"
                 + "            <Lighting diffuseConstant=\"2.0\" specularConstant=\"0.9\" specularExponent=\"10.5\" surfaceScale=\"9.3\">\n"
-                + "               <light>\n" + "                  <Light.Distant />\n" + "               </light>\n"
-                + "            </Lighting>\n" + "         </effect>\n" + "      </Text>\n" + "   </children>\n"
-                + "</StackPane>\n" + "";
+                + "               <light>\n"
+                + "                  <Light.Distant />\n"
+                + "               </light>\n"
+                + "            </Lighting>\n"
+                + "         </effect>\n"
+                + "      </Text>\n"
+                + "   </children>\n"
+                + "</StackPane>\n";
         assertEquals(expectedFxmlText, generatedFxmlText);
     }
 
