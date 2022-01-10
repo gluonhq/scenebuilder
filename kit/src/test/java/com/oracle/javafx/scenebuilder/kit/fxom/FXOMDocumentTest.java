@@ -40,6 +40,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +49,6 @@ import org.xml.sax.SAXParseException;
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 
 public class FXOMDocumentTest {
@@ -169,13 +169,12 @@ public class FXOMDocumentTest {
     }
         
     private <T> T waitFor(Callable<T> callable) throws Exception {
-        Task<T> task = new Task<T>() {
-            @Override
-            protected T call() throws Exception {
-                return callable.call();
-            }
-        };
-        Platform.runLater(()->task.run());
-        return task.get();
+        FutureTask<T> task = new FutureTask<T>(callable);
+        if (Platform.isFxApplicationThread()) {
+            return callable.call();
+        } else {
+            Platform.runLater(()->task.run());
+            return task.get();
+        }
     }
 }
