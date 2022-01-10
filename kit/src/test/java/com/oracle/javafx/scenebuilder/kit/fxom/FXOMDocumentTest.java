@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXParseException;
 
@@ -53,8 +53,8 @@ import javafx.fxml.FXMLLoader;
 
 public class FXOMDocumentTest {
 
-    @BeforeClass
-    public static void init() {
+    @Before
+    public void init() {
         JfxInitializer.initialize();
     }
 
