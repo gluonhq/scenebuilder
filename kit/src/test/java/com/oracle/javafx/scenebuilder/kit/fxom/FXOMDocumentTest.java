@@ -32,17 +32,31 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXParseException;
 
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+
+import javafx.application.Platform;
+
 public class FXOMDocumentTest {
+
+    @BeforeClass
+    public static void init() {
+        JfxInitializer.initialize();
+    }
+
     @Test
     public void that_IOException_is_thrown_in_case_FXMLLoader_error() throws Exception {
         URL resource = getClass().getResource("BrokenByUserData.fxml");
@@ -51,14 +65,14 @@ public class FXOMDocumentTest {
         String message = t.getMessage();
         assertTrue(message.startsWith("javafx.fxml.LoadException:"));
     }
-    
+
     @Test
     public void that_illegal_null_value_for_fxmlText_raises_AssertionError() throws Exception {
         URL resource = getClass().getResource("BrokenByUserData.fxml");
         String fxmlText = null;
         assertThrows(AssertionError.class, () -> new FXOMDocument(fxmlText, resource, null, null));
     }
-    
+
     @Test
     public void that_exception_in_case_of_broken_XML_is_captured() throws Exception {
         URL resource = getClass().getResource("IncompleteXml.fxml");
@@ -66,11 +80,11 @@ public class FXOMDocumentTest {
         Throwable t = assertThrows(IOException.class, () -> new FXOMDocument(fxmlText, resource, null, null));
         String message = t.getMessage();
         assertTrue(message.startsWith("org.xml.sax.SAXParseException;"));
-        
+
         Throwable cause = t.getCause();
         assertTrue(cause instanceof SAXParseException);
     }
-    
+
     @Test
     public void that_no_exception_is_created_with_empty_FXML() throws Exception {
         URL resource = getClass().getResource("Empty.fxml");
@@ -79,7 +93,7 @@ public class FXOMDocumentTest {
         FXOMDocument classUnderTest = new FXOMDocument(fxmlText, resource, null, null, normalizeFxom);
         assertNotNull(classUnderTest);
     }
-    
+
     @Test
     public void that_FXOMDocument_is_created_for_valid_FXML() throws Exception {
         URL validResource = getClass().getResource("ValidFxml.fxml");
@@ -87,45 +101,79 @@ public class FXOMDocumentTest {
         FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, validResource, null, null);
         assertNotNull(classUnderTest);
     }
-    
+
     @Test
     public void that_wildcard_imports_are_built_on_demand() throws Exception {
         URL validResource = getClass().getResource("PublicStaticImport.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(validResource);
         FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, validResource, null, null);
         boolean withWildCardImports = true;
-        
+
         String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
-        String expectedFxmlText = 
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "\n"
-                + "<?import javafx.scene.effect.*?>\n"
-                + "<?import javafx.scene.layout.*?>\n"
-                + "<?import javafx.scene.text.*?>\n"
-                + "\n"
+        String expectedFxmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "\n"
+                + "<?import javafx.scene.effect.*?>\n" + "<?import javafx.scene.layout.*?>\n"
+                + "<?import javafx.scene.text.*?>\n" + "\n"
                 + "<StackPane xmlns=\"http://javafx.com/javafx/null\" xmlns:fx=\"http://javafx.com/fxml/1\">\n"
-                + "   <children>\n"
-                + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
+                + "   <children>\n" + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
                 + "         <effect>\n"
                 + "            <Lighting diffuseConstant=\"2.0\" specularConstant=\"0.9\" specularExponent=\"10.5\" surfaceScale=\"9.3\">\n"
-                + "               <light>\n"
-                + "                  <Light.Distant />\n"
-                + "               </light>\n"
-                + "            </Lighting>\n"
-                + "         </effect>\n"
-                + "      </Text>\n"
-                + "   </children>\n"
-                + "</StackPane>\n"
-                + "";
+                + "               <light>\n" + "                  <Light.Distant />\n" + "               </light>\n"
+                + "            </Lighting>\n" + "         </effect>\n" + "      </Text>\n" + "   </children>\n"
+                + "</StackPane>\n" + "";
         assertEquals(expectedFxmlText, generatedFxmlText);
     }
-    
+
     @Test
     public void that_generated_FXML_text_is_empty_for_empty_FXOMDocument() throws Exception {
         FXOMDocument classUnderTest = new FXOMDocument();
         boolean withWildCardImports = false;
         String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
-        
+
         assertEquals("", generatedFxmlText);
+    }
+
+    @Test
+    public void that_fxml_with_defines_loads_without_error_without_normalization() throws Exception {
+        URL resource = getClass().getResource("DynamicScreenSize.fxml");
+        String validFxmlText = FXOMDocument.readContentFromURL(resource);
+
+        invokeAndWait(() -> {
+            try {
+                FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, resource, null, null, false);
+                String beforeNormalization = classUnderTest.getFxmlText(false);
+                assertFalse(beforeNormalization.isBlank());
+            } catch (IOException e) {
+                throw new AssertionError("unexpected error: " + e);
+            }
+        });
+    }
+
+    @Test
+    public void that_missing_imports_during_defines_resolution_cause_exception() throws Exception {
+        URL resource = getClass().getResource("DynamicScreenSize.fxml");
+        String validFxmlText = FXOMDocument.readContentFromURL(resource);
+
+        Throwable t = assertThrows(ExecutionException.class,
+                       () -> invokeAndWait(
+                               () -> {
+            try {
+                /* normalization enabled */
+                FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, resource, null, null, true);
+                String beforeNormalization = classUnderTest.getFxmlText(false);
+                assertFalse(beforeNormalization.isBlank());
+            } catch (IOException e) {
+                throw new AssertionError("unexpected error: " + e);
+            }
+        }));
+        
+        assertTrue(t.getCause() instanceof IllegalStateException);
+        String message = t.getCause().getMessage();
+        assertTrue(message.startsWith("Bug in FXOMRefresher: FXML dumped in "));
+    }
+    
+    void invokeAndWait(Runnable r) throws Exception {
+        FutureTask<?> task = new FutureTask<>(r, null);
+        Platform.runLater(task);
+        task.get();
     }
 }
