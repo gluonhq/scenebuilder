@@ -49,6 +49,7 @@ import org.xml.sax.SAXParseException;
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 
 public class FXOMDocumentTest {
 
@@ -109,13 +110,14 @@ public class FXOMDocumentTest {
         FXOMDocument classUnderTest = new FXOMDocument(validFxmlText, validResource, null, null);
         boolean withWildCardImports = true;
 
+        String javaFxVersion = FXMLLoader.JAVAFX_VERSION;
         String generatedFxmlText = classUnderTest.getFxmlText(withWildCardImports);
         String expectedFxmlText = 
                   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
                 + "<?import javafx.scene.effect.*?>\n"
                 + "<?import javafx.scene.layout.*?>\n"
                 + "<?import javafx.scene.text.*?>\n\n"
-                + "<StackPane xmlns=\"http://javafx.com/javafx/null\" xmlns:fx=\"http://javafx.com/fxml/1\">\n"
+                + "<StackPane xmlns=\"http://javafx.com/javafx/"+javaFxVersion+"\" xmlns:fx=\"http://javafx.com/fxml/1\">\n"
                 + "   <children>\n"
                 + "      <Text stroke=\"BLACK\" text=\"Some simple text\">\n"
                 + "         <effect>\n"
