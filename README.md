@@ -25,7 +25,7 @@ For community support, go to [StackOverflow](https://stackoverflow.com/questions
 Issues can be reported to the [Issue tracker](https://github.com/gluonhq/scenebuilder/issues/)
 
 Contributions can be submitted via [Pull requests](https://github.com/gluonhq/scenebuilder/pulls/), 
-providing you have signed the [Gluon Individual Contributor License Agreement (CLA)](https://cla.gluonhq.com).
+providing you have signed the [Gluon Individual Contributor License Agreement (CLA)](https://cla.gluonhq.com). Please check the [contribution guide](CONTRIBUTING.md) for more details.
 
 ## Building Scene Builder ##
 
