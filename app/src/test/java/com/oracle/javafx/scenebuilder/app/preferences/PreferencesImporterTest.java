@@ -110,7 +110,7 @@ public class PreferencesImporterTest {
         Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET");
         classUnderTest = new PreferencesImporter(appPrefs, Optional.empty());
         assertThrows(NullPointerException.class,
-                ()->classUnderTest.runAfterImport(null));
+                () -> classUnderTest.runAfterImport(null));
     }
     
     @Test
@@ -122,7 +122,7 @@ public class PreferencesImporterTest {
         
         Set<String> interactionResponses = new HashSet<>();
         
-        Supplier<Optional<ButtonType>> userInteraction = ()->{
+        Supplier<Optional<ButtonType>> userInteraction = () -> {
             interactionResponses.add("alert-opened");
             return Optional.empty();
         };
@@ -149,7 +149,7 @@ public class PreferencesImporterTest {
         
         Set<String> interactionResponses = new HashSet<>();
         
-        Supplier<Optional<ButtonType>> userInteraction = ()->{
+        Supplier<Optional<ButtonType>> userInteraction = () -> {
             interactionResponses.add("alert-opened");
             return Optional.of(ButtonType.YES);
         };

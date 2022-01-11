@@ -48,7 +48,7 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
      * @return {@link Comparator} sorting {@link AppVersion} instances in descending order.
      */
     public static Comparator<AppVersion> descending() {
-        return (a,b)->b.compareTo(a);
+        return (a,b) -> b.compareTo(a);
     }
     
     public AppVersion(int major, int minor) {

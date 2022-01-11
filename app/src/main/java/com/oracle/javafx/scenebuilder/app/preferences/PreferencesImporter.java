@@ -84,7 +84,7 @@ public class PreferencesImporter {
     public PreferencesImporter(Preferences applicationPreferences, Optional<VersionedPreferences> optionalSourceNode) {
         this.target = Objects.requireNonNull(applicationPreferences);
         this.optionalSourceNode = Objects.requireNonNull(optionalSourceNode);
-        this.actionAfterImport = ()->logger.log(Level.INFO, "Importing settings completed. No post-import action defined.");
+        this.actionAfterImport = () -> logger.log(Level.INFO, "Importing settings completed. No post-import action defined.");
     }
 
     /**
@@ -197,7 +197,7 @@ public class PreferencesImporter {
      * The question will only appear in cases where previous version settings exist and the user decision has not been saved yet.
      */
     public void askForActionAndRun() {
-        Supplier<Optional<ButtonType>> alertInteraction = ()->{
+        Supplier<Optional<ButtonType>> alertInteraction = () -> {
             SBAlert customAlert = new SBAlert(AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO);
             customAlert.initOwner(null);
             customAlert.setTitle("Gluon Scene Builder");

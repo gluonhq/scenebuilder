@@ -180,8 +180,8 @@ public class UserLibraryImporter {
         Objects.requireNonNull(candidates, "list of path candidates must not be null");
         Map<AppVersion, Path> previousVersionLibDirs = collectPreviousVersionLibraryDirs(candidates);
         return previousVersionLibDirs.entrySet().stream()
-                                         .sorted((a,b)->b.getKey().compareTo(a.getKey()))
-                                         .map(e->e.getValue())
+                                         .sorted((a,b) -> b.getKey().compareTo(a.getKey()))
+                                         .map(e -> e.getValue())
                                          .findFirst();
     }
     
@@ -199,7 +199,7 @@ public class UserLibraryImporter {
                     String[] parts = name.split("[-]");
                     if (parts.length == 2) {
                         AppVersion.fromString(parts[1])
-                                  .ifPresent(v->{
+                                  .ifPresent(v -> {
                                       if (v.compareTo(currentVersion) < 0) {
                                           sceneBuilderDirs.put(v, candidate);
                                       }

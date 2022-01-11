@@ -83,7 +83,7 @@ public class UserLibraryImporterTest {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
         classUnderTest = new UserLibraryImporter(AppVersion.fromString("17.0.0-SNAPSHOT"), appDirectories, testNode);
         assertThrows(NullPointerException.class,
-                ()->classUnderTest.previousVersionUserLibraryPath(null));
+                () -> classUnderTest.previousVersionUserLibraryPath(null));
     }
     @Test
     public void that_empty_optional_is_provided_when_current_version_has_unsupported_format() {
