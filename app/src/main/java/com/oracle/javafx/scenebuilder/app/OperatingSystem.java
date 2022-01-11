@@ -33,6 +33,9 @@ package com.oracle.javafx.scenebuilder.app;
 
 import java.util.Locale;
 
+/**
+ * Detects the used operating system and provides an enum item for it.
+ */
 public enum OperatingSystem {
     MACOS("mac"),
     WINDOWS("windows"),
@@ -51,7 +54,6 @@ public enum OperatingSystem {
 
     /**
      * Obtains the operating system type from system property os.name.
-     * 
      * @return {@link OperatingSystem}
      * @throws UnsupportedOperationException in case of an unknown operating system
      */
