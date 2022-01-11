@@ -84,10 +84,10 @@ public class AppPlatformTest {
     }
     
     @Test
-    public void that_logfile_stored_in_userhome_version_specific_log_dir() {
+    public void that_logfile_stored_in_userhome_dot_scenebuilder_log_dir() {
         Path logDir   = Paths.get(AppPlatform.getLogFolder());
         Path expected = Paths.get(System.getProperty("user.home"))
-                             .resolve(".scenebuilder-"+appVersion)
+                             .resolve(".scenebuilder")
                              .resolve("logs");
         assertEquals(expected, logDir);
     }
