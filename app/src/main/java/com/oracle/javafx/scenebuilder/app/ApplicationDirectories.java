@@ -31,7 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-public interface PlatformDirectories {
+public interface ApplicationDirectories {
     
     /**
      * @return the root location where application data shall be stored on the
@@ -76,8 +76,8 @@ public interface PlatformDirectories {
     String getApplicationDataFolder();
     
     /**
-     * 
-     * @return
+     * Logfile location
+     * @return The directory containing the application log file.
      */
     String getLogFolder();
     

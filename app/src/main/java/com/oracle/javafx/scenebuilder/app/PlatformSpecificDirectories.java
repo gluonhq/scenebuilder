@@ -8,7 +8,7 @@ import java.util.Objects;
  * If a new operating system (OS) platform shall be supported, the OS specific
  * behavior is supposed to be implemented here in.
  */
-public class PlatformSpecificDirectories implements PlatformDirectories {
+public class PlatformSpecificDirectories implements ApplicationDirectories {
     protected final OperatingSystem os;
     protected final String version;
     
