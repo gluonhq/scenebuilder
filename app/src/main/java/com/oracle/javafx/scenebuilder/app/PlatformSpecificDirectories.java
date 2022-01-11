@@ -3,6 +3,10 @@ package com.oracle.javafx.scenebuilder.app;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+/*
+ * TODO: Replace this with one implementation per platform. 
+ * With that, all the conditions/switches will vanish.
+ */
 /**
  * This is where all relevant application directories and paths are defined.
  * If a new operating system (OS) platform shall be supported, the OS specific
