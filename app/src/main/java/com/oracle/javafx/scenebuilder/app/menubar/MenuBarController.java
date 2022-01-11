@@ -655,7 +655,7 @@ public class MenuBarController {
             menuBar.setUseSystemMenuBar(true);
             // SB-269
             menuBar.useSystemMenuBarProperty().addListener((obs, ov, nv) -> {
-                if (! nv) {
+                if (!nv) {
                     // Restore System MenuBar
                     menuBar.setUseSystemMenuBar(true);
                 }
@@ -1986,8 +1986,8 @@ public class MenuBarController {
                 Size currentSize = documentWindowController.getPreviewWindowController().getSize();
                 res = (size == currentSize)
                         && documentWindowController.getPreviewWindowController().getStage().isShowing()
-                        && ! documentWindowController.getPreviewWindowController().userResizedPreviewWindow()
-                        && ! documentWindowController.getEditorController().is3D()
+                        && !documentWindowController.getPreviewWindowController().userResizedPreviewWindow()
+                        && !documentWindowController.getEditorController().is3D()
                         && documentWindowController.getEditorController().isNode();
             }
             
@@ -2005,7 +2005,7 @@ public class MenuBarController {
                 
                 if (documentWindowController.getPreviewWindowController() != null
                         && documentWindowController.getPreviewWindowController().getStage().isShowing()
-                        && ! documentWindowController.getEditorController().is3D()
+                        && !documentWindowController.getEditorController().is3D()
                         && documentWindowController.getEditorController().isNode()) {
                         title = I18N.getString("menu.title.size.preferred.with.value",
                                 getStringFromDouble(documentWindowController.getPreviewWindowController().getRoot().prefWidth(-1)),
