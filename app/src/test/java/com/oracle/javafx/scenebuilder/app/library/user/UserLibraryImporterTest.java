@@ -72,12 +72,12 @@ public class UserLibraryImporterTest {
                               .node("com/oracle/javafx/scenebuilder/app/preferences");
         PrefsHelper.removeAllChildNodes(testNode);
     }
-    
-       @AfterClass
+
+    @AfterClass
     public static void cleanup() throws Exception {
         Preferences.userRoot().node("USR_LIB_IMPORTER_TEST").removeNode();
     }
-    
+
     @Test
     public void that_exception_is_thrown_when_null_argument_is_used() {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
@@ -85,6 +85,7 @@ public class UserLibraryImporterTest {
         assertThrows(NullPointerException.class,
                 () -> classUnderTest.previousVersionUserLibraryPath(null));
     }
+
     @Test
     public void that_empty_optional_is_provided_when_current_version_has_unsupported_format() {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
@@ -93,7 +94,7 @@ public class UserLibraryImporterTest {
                                         Paths.get("Scene Builder-19.0.1")); 
         assertTrue(classUnderTest.previousVersionUserLibraryPath(candidates).isEmpty());
     }
-    
+
     @Test
     public void that_empty_optional_is_provided_when_old_library_path_not_exists() {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
@@ -102,6 +103,7 @@ public class UserLibraryImporterTest {
                                         Paths.get("Scene Builder-19.0.1")); 
         assertTrue(classUnderTest.previousVersionUserLibraryPath(candidates).isEmpty());
     }
+
     @Test
     public void that_user_library_paths_are_detected_for_LINUX() {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
@@ -119,7 +121,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get(".scenebuilder-15.0.0"), x.get());
     }
-    
+
     @Test
     public void that_legacy_library_path_is_detected_for_LINUX() {
         appDirectories = forLinux("17.0.0-SNAPSHOT");
@@ -134,7 +136,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get(".scenebuilder"), x.get());
     }
-    
+
     @Test
     public void that_user_library_paths_are_detected_for_WINDOWS() {
         appDirectories = forWindows("17.0.0-SNAPSHOT");
@@ -151,7 +153,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder-8.5.0"), x.get());
     }
-    
+
     @Test
     public void that_legacy_library_path_is_detected_for_WINDOWS() {
         appDirectories = forWindows("17.0.0-SNAPSHOT");
@@ -166,7 +168,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder"), x.get());
     }
-    
+
     @Test
     public void that_user_library_paths_are_detected_for_MACOS() {
         appDirectories = forMacOS("17.0.0-SNAPSHOT");
@@ -183,7 +185,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder-8.5.0"), x.get());
     }
-    
+
     @Test
     public void that_legacy_library_path_is_detected_for_MACOS() {
         appDirectories = forMacOS("17.0.0-SNAPSHOT");
@@ -198,7 +200,7 @@ public class UserLibraryImporterTest {
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder"), x.get());
     }
-    
+
     @Test
     public void that_import_is_skipped_when_user_opted_out() {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
@@ -217,8 +219,7 @@ public class UserLibraryImporterTest {
         assertEquals("2022-01-05T20:14-no-import", documentedResult);
         assertNull(new File(appDirectories.getUserLibraryFolder()).listFiles());
     }
-    
-    
+
     @Test
     public void that_import_is_skipped_when_done_before() {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
@@ -236,7 +237,7 @@ public class UserLibraryImporterTest {
         assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
         assertNull(new File(appDirectories.getUserLibraryFolder()).listFiles());
     }
-    
+
     @Test
     public void that_old_files_are_imported() throws Exception {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
@@ -268,7 +269,7 @@ public class UserLibraryImporterTest {
         assertEquals(1, importedFiles.length);
         assertEquals("MyCustomArtifact.txt", importedFiles[0].getName());
     }
-    
+
     @Test
     public void that_correct_AppDirectories_are_used_by_default() {
        if (testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null) !=null) {           
@@ -277,17 +278,16 @@ public class UserLibraryImporterTest {
        classUnderTest = new UserLibraryImporter(testNode);
        assertTrue(classUnderTest.getPlatformDirectories() instanceof PlatformSpecificDirectories);
     }
-    
+
     private static ApplicationDirectories forLinux(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.LINUX, version);
     }
-    
+
     private static ApplicationDirectories forMacOS(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.MACOS, version);
     }
-    
+
     private static ApplicationDirectories forWindows(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.WINDOWS, version);
     }
-
 }
