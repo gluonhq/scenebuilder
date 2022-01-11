@@ -36,7 +36,7 @@ import java.util.Optional;
 
 /**
  * A record type to work with Scene Builder versions following the semantic
- * versioning schema. Patch versions can be null and will be ignored then.
+ * version schema. Patch versions can be null and will be ignored then.
  * 
  * Version numbers can be sorted, where major beats minor beats patch versions.
  * Version numbers with patch versions will be considered as higher (or newer) than version numbers without patch numbers.
