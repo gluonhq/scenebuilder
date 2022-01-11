@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -126,6 +126,11 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+/**
+ * Handles all editing and control actions in the Scene Builder editor window.
+ * Editing action are used to modify a document (cut, paste, delete, import).
+ * Control actions in most cases do not cause document structure modifications. 
+ */
 public class DocumentWindowController extends AbstractFxmlWindowController {
 
     public enum DocumentControlAction {
