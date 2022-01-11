@@ -70,7 +70,7 @@ class FXOMLoader implements LoadListener {
     public FXOMLoader(FXOMDocument document) {
         this(document, FXOMLoader::showErrorDialog);
     }
-    
+
     FXOMLoader(FXOMDocument document, Consumer<Exception> knownErrorsHandler) {
         assert document != null;
         assert document.getGlue().getRootElement() != null;
