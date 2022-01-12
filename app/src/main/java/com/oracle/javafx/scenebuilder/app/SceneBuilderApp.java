@@ -785,7 +785,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private enum ACTION {
         START("log.start"),
         STOP("log.stop");
+
         private final String logKey;
+
         ACTION(String logKey) {
             this.logKey = logKey;
         }
