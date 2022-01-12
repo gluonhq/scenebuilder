@@ -33,12 +33,15 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import java.util.Objects;
 
+/**
+ * Modifies FXML to be loaded so that properties in the FXML will not interfere
+ * with Scene Builder.
+ */
 class FXMLPropertiesDisabler {
 
     private final boolean isMacOS;
 
     /**
-     * 
      * @param isMacOS true when used platform is MacOS
      */
     public FXMLPropertiesDisabler(boolean isMacOS) {
