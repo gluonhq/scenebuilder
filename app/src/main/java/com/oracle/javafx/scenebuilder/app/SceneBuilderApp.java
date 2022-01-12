@@ -639,7 +639,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
-        final Map<File, IOException> exceptions = new HashMap<>();
+        final Map<File, Exception> exceptions = new HashMap<>();
         for (File fxmlFile : fxmlFiles) {
             try {
                 final DocumentWindowController dwc
@@ -660,7 +660,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                 }
-            } catch (IOException xx) {
+            } catch (Exception xx) {
                 exceptions.put(fxmlFile, xx);
             }
         }
