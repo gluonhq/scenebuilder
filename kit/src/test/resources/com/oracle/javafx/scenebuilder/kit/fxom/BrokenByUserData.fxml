@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="940.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller">
+    <userData>
+        <fx:reference source="controller"/>
+    </userData>
+   <children>
+      <HBox spacing="7.0">
+         <children>
+            <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" text="Import methods" />
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#onExport" text="Export selection" />
+            <Button fx:id="analysisButton" mnemonicParsing="false" onAction="#onAnalysis" text="Use method for analysis" />
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" text="Delete selected methods" />
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+         </padding>
+      </HBox>
+      <TableView fx:id="tableView" minWidth="700.0" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="kitId" editable="false" prefWidth="178.0" text="Kit ID" />
+          <TableColumn fx:id="methodId" editable="false" prefWidth="164.0" text="Method ID" />
+          <TableColumn fx:id="revision" editable="false" prefWidth="148.0" text="Revision" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>
