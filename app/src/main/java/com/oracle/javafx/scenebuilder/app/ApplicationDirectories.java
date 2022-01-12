@@ -32,13 +32,13 @@
 package com.oracle.javafx.scenebuilder.app;
 
 public interface ApplicationDirectories {
-    
+
     /**
      * @return the root location where application data shall be stored on the
      *         corresponding platform.
      */
     String getApplicationDataRoot();
-    
+
     /**
      * Scene Builder provides the option to hold custom JAR files in a user library.
      * This method provides the full path to the location of the user library
@@ -46,7 +46,7 @@ public interface ApplicationDirectories {
      * the application data folder.
      */
     String getUserLibraryFolder();
-    
+
     /**
      * @return Provides the name of the by default version specific application data
      *         sub directory. This folder is will be located inside the application
@@ -57,7 +57,9 @@ public interface ApplicationDirectories {
     /**
      * In previous versions, Scene Builder stored its files in a directory without
      * version number. Hence, in some cases it might be helpful to control when the
-     * version number is used or not.
+     * version number is used or not. To obtain this folder without version number
+     * can be beneficial in cases, where one wants to search the application data root
+     * folder for other existing settings of Scene Builder.
      * 
      * @param includeVersion If true, the version number might be a part of the sub
      *                       folder name.
@@ -65,7 +67,7 @@ public interface ApplicationDirectories {
      *         without version information.
      */
     String getApplicationDataSubFolder(boolean includeVersion);
-    
+
     /**
      * The application data folder is usually a child folder inside the application
      * data root.
@@ -74,12 +76,16 @@ public interface ApplicationDirectories {
      *         where settings and arbitrary files can be placed.
      */
     String getApplicationDataFolder();
-    
+
     /**
      * Logfile location
      * @return The directory containing the application log file.
      */
     String getLogFolder();
-    
+
+    /**
+     * Location of Scene Builders Message Box
+     * @return The directory where the Message Box is saved.
+     */
     String getMessageBoxFolder();
 }

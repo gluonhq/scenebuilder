@@ -33,26 +33,35 @@ package com.oracle.javafx.scenebuilder.app;
 
 import java.util.Locale;
 
+/**
+ * Detects the used operating system and provides an enum item for it.
+ */
 public enum OperatingSystem {
-    MACOS,
-    WINDOWS,
-    LINUX;
+    MACOS("mac"),
+    WINDOWS("windows"),
+    LINUX("linux");
+
+    private final String osName;
+
+    OperatingSystem(String osName) {
+        this.osName = osName;
+    }
+
+    private boolean matches() {
+        String currentOsName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        return currentOsName.contains(osName);
+    }
+
     /**
      * Obtains the operating system type from system property os.name.
-     * 
      * @return {@link OperatingSystem}
      * @throws UnsupportedOperationException in case of an unknown operating system
      */
     public static OperatingSystem get() {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-        if (osName.contains("linux")) {
-            return OperatingSystem.LINUX;
-        }
-        if (osName.contains("mac")) {
-            return OperatingSystem.MACOS;
-        }
-        if (osName.contains("windows")) {
-            return OperatingSystem.WINDOWS;
+        for (OperatingSystem os : OperatingSystem.values()) {
+            if (os.matches()) {
+                return os;
+            }
         }
         throw new UnsupportedOperationException("Unknown operating system platform!");
     }
