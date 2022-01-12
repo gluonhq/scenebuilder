@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 
 /**
@@ -57,6 +59,7 @@ import java.util.Collections;
 class FXOMLoader implements LoadListener {
 
     private final FXOMDocument document;
+    private final Consumer<Exception> knownErrorsHandler;
     private TransientNode currentTransientNode;
     private GlueCursor glueCursor;
     
@@ -65,9 +68,14 @@ class FXOMLoader implements LoadListener {
      */
 
     public FXOMLoader(FXOMDocument document) {
+        this(document, FXOMLoader::showErrorDialog);
+    }
+
+    FXOMLoader(FXOMDocument document, Consumer<Exception> knownErrorsHandler) {
         assert document != null;
         assert document.getGlue().getRootElement() != null;
         this.document = document;
+        this.knownErrorsHandler = Objects.requireNonNull(knownErrorsHandler);
     }
 
     public void load(String fxmlText) throws java.io.IOException {
@@ -95,14 +103,31 @@ class FXOMLoader implements LoadListener {
             is.reset();
             setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
-            if (x.getCause().getClass() == XMLStreamException.class) {
-                handleUnsupportedCharset(x);
-            } else
-                throw new IOException(x);
+            handleFxmlLoadingError(x);
         }
     }
 
-    private void handleUnsupportedCharset(Exception x) {
+    private void handleFxmlLoadingError(Exception x) throws IOException {
+        if (x.getCause() != null) {
+            handleKnownCauses(x);
+        } else {
+            handleUnknownAndMissingCauses(x);
+        }
+    }
+
+    private void handleUnknownAndMissingCauses(Exception x) throws IOException {
+        throw new IOException(x);
+    }
+
+    private void handleKnownCauses(Exception x) throws IOException {
+        if (x.getCause().getClass() == XMLStreamException.class) {
+            knownErrorsHandler.accept(x);
+        } else {                    
+            handleUnknownAndMissingCauses(x);
+        }
+    }
+
+    private static void showErrorDialog(Exception x) {
         final ErrorDialog errorDialog = new ErrorDialog(null);
         errorDialog.setMessage(I18N.getString("alert.open.failure.charset.not.found"));
         errorDialog.setDetails(I18N.getString("alert.open.failure.charset.not.found.details"));
