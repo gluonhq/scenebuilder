@@ -668,7 +668,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                 }
-            } catch (RuntimeException | IOException xx) {
+            } catch (Exception xx) {
                 exceptions.put(fxmlFile, xx);
             }
         }
