@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -792,21 +792,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private enum ACTION {START, STOP}
+    private enum ACTION {
+        START("log.start"),
+        STOP("log.stop");
 
-    ;
+        private final String logKey;
+
+        ACTION(String logKey) {
+            this.logKey = logKey;
+        }
+    }
 
     private void logTimestamp(ACTION type) {
-        switch (type) {
-            case START:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.start"));
-                break;
-            case STOP:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.stop"));
-                break;
-            default:
-                assert false;
-        }
+        Logger.getLogger(this.getClass().getName()).info(I18N.getString(type.logKey));
     }
 
     private void setApplicationUncaughtExceptionHandler() {
