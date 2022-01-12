@@ -92,12 +92,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- *
+ * This is the SB main entry point.
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
 
     public enum ApplicationControlAction {
-
         ABOUT,
         CHECK_UPDATES,
         REGISTER,
@@ -229,7 +228,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
         }
     }
-
 
     public boolean canPerformControlAction(ApplicationControlAction a, DocumentWindowController source) {
         final boolean result;
@@ -375,8 +373,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         logTimestamp(ACTION.START);
-
-
     }
 
     /*
@@ -403,7 +399,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
                         shouldShowImportGluonJarAlert = true;
                     }
-
                 }
             }
             if (shouldShowImportGluonJarAlert) {
@@ -449,7 +444,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     } else {
                         showRegistrationDialogIfRequired(newWindow);
                     }
-
                 });
             });
 
@@ -461,7 +455,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
         }
-
     }
 
     private void sendTrackingStartupInfo() {
@@ -537,7 +530,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     @Override
     public void handleQuitAction() {
-
         /*
          * Note : this callback is called on Mac OS X only when the user
          * selects the 'Quit App' command in the Application menu.
@@ -792,21 +784,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private enum ACTION {START, STOP}
+    private enum ACTION {
+        START("log.start"),
+        STOP("log.stop");
 
-    ;
+        private final String logKey;
+
+        ACTION(String logKey) {
+            this.logKey = logKey;
+        }
+    }
 
     private void logTimestamp(ACTION type) {
-        switch (type) {
-            case START:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.start"));
-                break;
-            case STOP:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.stop"));
-                break;
-            default:
-                assert false;
-        }
+        Logger.getLogger(this.getClass().getName()).info(I18N.getString(type.logKey));
     }
 
     private void setApplicationUncaughtExceptionHandler() {
@@ -825,7 +815,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-
     private void performUseToolTheme(ToolTheme toolTheme) {
         this.toolTheme = toolTheme;
 
@@ -836,11 +825,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-
     private String getToolStylesheet() {
         return ResourceUtils.getToolStylesheet(toolTheme);
     }
-    
     
     /*
      * Background startup
@@ -1099,5 +1086,4 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             consumer.accept(dwc);
         }
     }
-
 }
