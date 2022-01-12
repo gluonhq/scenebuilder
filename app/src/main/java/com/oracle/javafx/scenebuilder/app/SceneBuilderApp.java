@@ -111,7 +111,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private static SceneBuilderApp singleton;
-    private static String darkToolStylesheet;
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
     private final ObservableList<DocumentWindowController> windowList = FXCollections.observableArrayList();
@@ -334,13 +333,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (EditorPlatform.IS_MAC) {
             MenuBarController.getSystemMenuBarController().setDebugMenuVisible(!visible);
         }
-    }
-
-    public static synchronized String getDarkToolStylesheet() {
-        if (darkToolStylesheet == null) {
-            darkToolStylesheet = ResourceUtils.THEME_DARK_STYLESHEET;
-        }
-        return darkToolStylesheet;
     }
 
     /*
