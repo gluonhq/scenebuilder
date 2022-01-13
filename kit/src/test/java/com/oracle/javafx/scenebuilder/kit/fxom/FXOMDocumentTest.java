@@ -36,12 +36,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -51,7 +53,7 @@ import org.junit.Test;
 import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
 import javafx.application.Platform;
@@ -98,38 +100,35 @@ public class FXOMDocumentTest {
 
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
-        boolean isMacOS = EditorPlatform.IS_MAC;
-        if (isMacOS) {
-            classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+        assumeTrue("MacOS", OS.get() == OS.MAC);
+        
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
-            FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+        FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
 
-            assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-            assertFalse("for preview, useSystemMenu is expected to be enabled",
-                    ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+        assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+        assertFalse("for preview, useSystemMenu is expected to be enabled",
+                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
 
-            String generatedFxml = classUnderTest.getFxmlText(false);
-            assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
-        }
+        String generatedFxml = classUnderTest.getFxmlText(false);
+        assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
-    
+
     @Test
     public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
-        boolean isWinOrLinux = EditorPlatform.IS_WINDOWS | EditorPlatform.IS_LINUX;
-        if (isWinOrLinux) {
-            classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+        assumeTrue("Windows or Linux", Set.of(OS.LINUX, OS.WINDOWS).contains(OS.get()));
 
-            FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
-            assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-            assertTrue("for preview, useSystemMenu is expected to be enabled",
-                    ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+        FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
 
-            String generatedFxml = classUnderTest.getFxmlText(false);
-            assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
-        }
+        assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+        assertTrue("for preview, useSystemMenu is expected to be enabled",
+                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+        String generatedFxml = classUnderTest.getFxmlText(false);
+        assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
-
 
     @Test
     public void that_normalization_is_applied_only_when_NORMALIZED_is_set() throws Exception {
@@ -161,7 +160,7 @@ public class FXOMDocumentTest {
     private URL getResourceUrl(String resourceName) {
         return getClass().getResource(resourceName);
     }
-    
+
     private String useOnlyNewLine(String source) {
         return source.replace("\r\n", "\n");
     }
@@ -285,7 +284,7 @@ public class FXOMDocumentTest {
         assertEquals(IllegalStateException.class, t.getClass());
         assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
-        
+
     private <T> T waitFor(Callable<T> callable) throws Exception {
         FutureTask<T> task = new FutureTask<T>(callable);
         if (Platform.isFxApplicationThread()) {
