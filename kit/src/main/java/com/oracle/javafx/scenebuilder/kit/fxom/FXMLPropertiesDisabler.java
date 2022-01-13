@@ -48,7 +48,7 @@ class FXMLPropertiesDisabler {
      * according to required platform behavior.
      */
     public FXMLPropertiesDisabler() {
-        this.os = OS.get();
+        this(OS.get());
     }
 
     /**
