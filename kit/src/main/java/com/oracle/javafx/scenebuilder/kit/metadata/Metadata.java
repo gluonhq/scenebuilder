@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -1260,6 +1260,8 @@ public class Metadata {
             new PropertyName("unitIncrement");
     private final PropertyName upperBoundName = 
             new PropertyName("upperBound");
+    private final PropertyName useSystemMenuBarName = 
+            new PropertyName("useSystemMenuBar");
     private final PropertyName userAgentStylesheetName = 
             new PropertyName("userAgentStylesheet");
     private final PropertyName valignmentName = 
@@ -4470,7 +4472,12 @@ public class Metadata {
                 com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind.COORDINATE,
                 true, /* readWrite */
                 100.0, /* defaultValue */
-                new InspectorPath("Properties", "Specific", 98));
+                new InspectorPath("Properties", "Specific", 10));
+    private final ValuePropertyMetadata useSystemMenuBarNamePropertyMetadata =
+            new BooleanPropertyMetadata(useSystemMenuBarName, 
+                    true, /* readWrite */
+                    false, 
+                    new InspectorPath("Properties", "Specific", 70));
     private final ValuePropertyMetadata userAgentStylesheetPropertyMetadata =
             new StringPropertyMetadata(
                 userAgentStylesheetName,
@@ -5412,6 +5419,7 @@ public class Metadata {
         MenuBarMetadata.getProperties().add(accessibleRole_MENU_BAR_PropertyMetadata);
         MenuBarMetadata.getProperties().add(menusPropertyMetadata);
         MenuBarMetadata.getProperties().add(styleClass_c18_PropertyMetadata);
+        MenuBarMetadata.getProperties().add(useSystemMenuBarNamePropertyMetadata);
 
         MenuButtonMetadata.getProperties().add(accessibleRole_MENU_BUTTON_PropertyMetadata);
         MenuButtonMetadata.getProperties().add(focusTraversable_true_PropertyMetadata);
