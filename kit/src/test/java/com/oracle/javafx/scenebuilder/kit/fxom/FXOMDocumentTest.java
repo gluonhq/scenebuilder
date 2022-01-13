@@ -77,7 +77,7 @@ public class FXOMDocumentTest {
 
     @Before
     public void prepareTest() throws Exception {
-        fxmlName = "ContainerWithMenu_SystemMenuBarEnabled.fxml";
+        fxmlName = "ContainerWithMenuSystemMenuBarEnabled.fxml";
         fxmlUrl = getResourceUrl(fxmlName);
         fxmlText = readResourceText(fxmlName);
         loader = this.getClass().getClassLoader();
