@@ -246,7 +246,7 @@ public class FXOMInstance extends FXOMObject {
         if (element == null) {
             return;
         }
-        if (!element.getChildren().isEmpty()) {
+        if (! element.getChildren().isEmpty()) {
             for (GlueElement e : element.getChildren()) {
                 collectGlueElementPropertiesT(e, result);
             } 
@@ -255,7 +255,7 @@ public class FXOMInstance extends FXOMObject {
             if (clazz != null) {
                 for (Class<?> c : fxomDocument.getInitialDeclaredClasses()) {
                     if (c.getCanonicalName().equals(clazz) || c.getSimpleName().equals(clazz)) {
-                        if (!result.contains(c)) {
+                        if (! result.contains(c)) {
                             result.add(c);
                         }
                         break;
