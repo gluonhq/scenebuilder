@@ -53,7 +53,7 @@ public class FXMLPropertiesDisablerTest {
         String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
         assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
-    
+
     @Test
     public void that_property_value_is_not_modified_on_Windows() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.WINDOWS);
