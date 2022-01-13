@@ -74,6 +74,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -303,17 +304,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return result;
     }
 
-    public DocumentWindowController lookupUnusedDocumentWindowController() {
-        DocumentWindowController result = null;
-
-        for (DocumentWindowController dwc : windowList) {
-            if (dwc.isUnused()) {
-                result = dwc;
-                break;
-            }
-        }
-
-        return result;
+    public Optional<DocumentWindowController> findFirstUnusedDocumentWindowController() {
+        return windowList.stream()
+                .filter(DocumentWindowController::isUnused)
+                .findFirst();
     }
 
     public void toggleDebugMenu() {
@@ -641,14 +635,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     dwc.getStage().toFront();
                 } else {
                     // Open fxmlFile
-                    final DocumentWindowController hostWindow;
-                    final DocumentWindowController unusedWindow
-                            = lookupUnusedDocumentWindowController();
-                    if (unusedWindow != null) {
-                        hostWindow = unusedWindow;
-                    } else {
-                        hostWindow = makeNewWindow();
-                    }
+                    var hostWindow = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                 }
