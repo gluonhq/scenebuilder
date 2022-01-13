@@ -94,8 +94,17 @@ class FXMLPropertiesDisabler {
     private String disableUseSystemMenuBarProperty(String fxmlText) {
         Objects.requireNonNull(fxmlText, "fxmlText must not be null");
         if (OS.MAC == os) {
-            return fxmlText.replace("useSystemMenuBar=\"true\"",
-                                    "useSystemMenuBar=\"false\"");
+            /*
+             * Regex description:
+             * mandatory white space
+             * useSystemMenuBar
+             * optional white space
+             * =
+             * optional white space
+             * "true"
+             */
+            String regex = "(\\s)useSystemMenuBar(\\s*)[=](\\s*)\"true\"";
+            return fxmlText.replaceAll(regex, " useSystemMenuBar=\"false\"");
         }
         return fxmlText;
     }
