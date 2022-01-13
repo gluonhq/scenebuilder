@@ -126,6 +126,11 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+/**
+ * Handles all editing and control actions in the Scene Builder editor window.
+ * Editing action are used to modify a document (cut, paste, delete, import).
+ * Control actions in most cases do not cause document structure modifications. 
+ */
 public class DocumentWindowController extends AbstractFxmlWindowController {
 
     public enum DocumentControlAction {
@@ -827,12 +832,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 
             case TOGGLE_OUTLINES_VISIBILITY:
                 contentPanelController.setOutlinesVisible(
-                        ! contentPanelController.isOutlinesVisible());
+                        !contentPanelController.isOutlinesVisible());
                 break;
                 
             case TOGGLE_GUIDES_VISIBILITY:
                 contentPanelController.setGuidesVisible(
-                        ! contentPanelController.isGuidesVisible());
+                        !contentPanelController.isGuidesVisible());
                 break;
                 
             case ADD_SCENE_STYLE_SHEET:
@@ -1989,7 +1994,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 // Below we ask the user if the extension shall be added or not.
                 // See DTL-5948.
                 final String path = fxmlFile.getPath();
-                if (! path.endsWith(".fxml")) { //NOI18N
+                if (!path.endsWith(".fxml")) { //NOI18N
                     try {
                         URL alternateURL = new URL(fxmlFile.toURI().toURL().toExternalForm() + ".fxml"); //NOI18N
                         File alternateFxmlFile = new File(alternateURL.toURI());

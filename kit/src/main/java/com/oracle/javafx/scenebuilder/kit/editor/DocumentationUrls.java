@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -40,6 +40,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
+/**
+ * Documentation URLs are provided in a resource
+ * {@code documentation_urls.properties}. These URLs point to OpenJFX pages such
+ * as Javadoc API / CSS or FXML references. Those are meant to be used in the
+ * Scene Builder help menu to eventually provide quick and easy access to
+ * essential JavaFX developer documentation.
+ */
 public class DocumentationUrls {
 
     private static final String UNKNOWN = "unknown";
@@ -53,6 +60,12 @@ public class DocumentationUrls {
         return instance;
     }
 
+    /**
+     * Verifies if the desired {@link DocumentationItem} is available.
+     * 
+     * @param item {@link DocumentationItem} (usually an URL)
+     * @return true when available in corresponding resource
+     */
     public static boolean isAvailable(DocumentationItem item) {
         return getInstance().getOptionalUrl(item).isPresent();
     }
