@@ -6278,7 +6278,6 @@ public class Metadata {
         hiddenProperties.add(new PropertyName("typeSelector"));
         hiddenProperties.add(new PropertyName("undoable"));
         hiddenProperties.add(new PropertyName("userData"));
-        hiddenProperties.add(new PropertyName("useSystemMenuBar"));
         hiddenProperties.add(new PropertyName("valueChanging"));
         hiddenProperties.add(new PropertyName("valueConverter"));
         hiddenProperties.add(new PropertyName("valueFactory"));
