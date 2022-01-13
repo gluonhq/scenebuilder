@@ -74,11 +74,8 @@ public class FXMLPropertiesDisablerVariationsTest {
     }
 
     private String id;
-
     private OS os;
-
     private String input;
-
     private String expected;
 
     public FXMLPropertiesDisablerVariationsTest(String id, String osName, String input, String expected) {
