@@ -412,31 +412,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         sendTrackingStartupInfo();
 
         if (showWelcomeDialog) {
-            // Creates an empty document
-            final DocumentWindowController newWindow = makeNewWindow();
-            newWindow.updateWithDefaultContent();
-            newWindow.openWindow();
-
             // Show ScenicView Tool when the JVM is started with option -Dscenic.
             // NetBeans: set it on [VM Options] line in [Run] category of project's Properties.
             if (System.getProperty("scenic") != null) { //NOI18N
-                Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
+                // commented out until it is implemented
+                //Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
             }
-
-            WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                showUpdateDialogIfRequired(newWindow, () -> {
-                    if (!Platform.isFxApplicationThread()) {
-                        Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
-                    } else {
-                        showRegistrationDialogIfRequired(newWindow);
-                    }
-                });
-            });
 
             // Unless we're on a Mac we're starting SB directly (fresh start)
             // so we're not opening any file and as such we should show the Welcome Dialog
             WelcomeDialogWindowController.getInstance().getStage().show();
 
+            // let JavaFX handle above call ASAP and delay empty document window for improved UX
+            makeEmptyDocumentWindowOnNextTick();
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
@@ -473,6 +461,23 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             recordGlobal.setLastSentTrackingInfoDate(now);
         }
         return sendTrackingInfo;
+    }
+
+    private void makeEmptyDocumentWindowOnNextTick() {
+        Platform.runLater(() -> {
+            var newWindow = makeNewWindow();
+            newWindow.updateWithDefaultContent();
+
+            WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
+                showUpdateDialogIfRequired(newWindow, () -> {
+                    if (!Platform.isFxApplicationThread()) {
+                        Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
+                    } else {
+                        showRegistrationDialogIfRequired(newWindow);
+                    }
+                });
+            });
+        });
     }
 
     @Override
@@ -584,7 +589,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     public void performNewTemplate(Template template) {
-        DocumentWindowController documentWC = getDocumentWindowControllers().get(0);
+        var documentWC = findFirstUnusedDocumentWindowController().orElseGet(() -> {
+            var w = makeNewWindow();
+            w.updateWithDefaultContent();
+            return w;
+        });
+
         loadTemplateInWindow(template, documentWC);
     }
 

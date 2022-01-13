@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -101,36 +102,49 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         super.controllerDidLoadFxml();
         assert recentDocuments != null;
 
-        PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
-                .getSingleton().getRecordGlobal();
-        List<String> recentItems = preferencesRecordGlobal.getRecentItems();
-        if (recentItems.size() == 0) {
-            Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
-            noRecentItems.getStyleClass().add("no-recent-items-label");
-            recentDocuments.getChildren().add(noRecentItems);
-        }
-        for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
-            if (recentItems.size() < row + 1) {
-                break;
-            }
-
-            String recentItem = recentItems.get(row);
-            File recentItemFile = new File(recentItems.get(row));
-            String recentItemTitle = recentItemFile.getName();
-            Button recentDocument = new Button(recentItemTitle);
-            recentDocument.getStyleClass().add("recent-document");
-            recentDocument.setMaxWidth(Double.MAX_VALUE);
-            recentDocument.setAlignment(Pos.BASELINE_LEFT);
-            recentDocuments.getChildren().add(recentDocument);
-
-            recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
-            recentDocument.setTooltip(new Tooltip(recentItem));
-        }
+        loadAndPopulateRecentItemsInBackground();
 
         emptyApp.setUserData(Template.EMPTY_APP);
 
         setOnTemplateChosen(sceneBuilderApp::performNewTemplate);
         setupTemplateButtonHandlers();
+    }
+
+    private void loadAndPopulateRecentItemsInBackground() {
+        new Thread(() -> {
+            PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
+                    .getSingleton().getRecordGlobal();
+            List<String> recentItems = preferencesRecordGlobal.getRecentItems();
+
+            if (recentItems.size() == 0) {
+                Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
+                noRecentItems.getStyleClass().add("no-recent-items-label");
+
+                Platform.runLater(() -> {
+                    recentDocuments.getChildren().add(noRecentItems);
+                });
+            }
+
+            for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
+                if (recentItems.size() < row + 1) {
+                    break;
+                }
+
+                String recentItem = recentItems.get(row);
+                File recentItemFile = new File(recentItems.get(row));
+                String recentItemTitle = recentItemFile.getName();
+                Button recentDocument = new Button(recentItemTitle);
+                recentDocument.getStyleClass().add("recent-document");
+                recentDocument.setMaxWidth(Double.MAX_VALUE);
+                recentDocument.setAlignment(Pos.BASELINE_LEFT);
+                recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
+                recentDocument.setTooltip(new Tooltip(recentItem));
+
+                Platform.runLater(() -> {
+                    recentDocuments.getChildren().add(recentDocument);
+                });
+            }
+        }, "Recent Items Loading Thread").start();
     }
 
     public static WelcomeDialogWindowController getInstance() {
