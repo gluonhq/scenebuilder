@@ -4473,11 +4473,11 @@ public class Metadata {
                 true, /* readWrite */
                 100.0, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 10));
-    private final ValuePropertyMetadata useSystemMenuBarNamePropertyMetadata =
+    private final ValuePropertyMetadata useSystemMenuBarPropertyMetadata =
             new BooleanPropertyMetadata(useSystemMenuBarName, 
                     true, /* readWrite */
                     false, 
-                    new InspectorPath("Properties", "Specific", 70));
+                    new InspectorPath("Properties", "Node", 25));
     private final ValuePropertyMetadata userAgentStylesheetPropertyMetadata =
             new StringPropertyMetadata(
                 userAgentStylesheetName,
@@ -5419,7 +5419,7 @@ public class Metadata {
         MenuBarMetadata.getProperties().add(accessibleRole_MENU_BAR_PropertyMetadata);
         MenuBarMetadata.getProperties().add(menusPropertyMetadata);
         MenuBarMetadata.getProperties().add(styleClass_c18_PropertyMetadata);
-        MenuBarMetadata.getProperties().add(useSystemMenuBarNamePropertyMetadata);
+        MenuBarMetadata.getProperties().add(useSystemMenuBarPropertyMetadata);
 
         MenuButtonMetadata.getProperties().add(accessibleRole_MENU_BUTTON_PropertyMetadata);
         MenuButtonMetadata.getProperties().add(focusTraversable_true_PropertyMetadata);
