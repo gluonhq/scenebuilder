@@ -312,7 +312,7 @@ class FXOMLoader implements LoadListener {
         } else if (currentTransientNode instanceof TransientProperty) {
             final TransientProperty transientProperty = (TransientProperty) currentTransientNode;
             transientProperty.getCollectedProperties().add(fxomProperty);
-        } else if (currentTransientNode instanceof TransientIntrinsic) {
+        } else if(currentTransientNode instanceof  TransientIntrinsic) {
             final TransientIntrinsic transientIntrinsic = (TransientIntrinsic) currentTransientNode;
             transientIntrinsic.getProperties().add(fxomProperty);
         }
