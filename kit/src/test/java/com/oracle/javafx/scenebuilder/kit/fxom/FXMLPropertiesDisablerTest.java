@@ -64,6 +64,16 @@ public class FXMLPropertiesDisablerTest {
         assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
 
+    @Test
+    public void that_property_value_is_not_modified_on_LINUX() throws Exception {
+        classUnderTest = new FXMLPropertiesDisabler(OS.LINUX);
+        String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
+        assertTrue("ensures that test resource is correct",
+                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
+        assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+    }
+
     private String readResourceText(String resourceName) throws Exception {
         File fxmlFileName = new File(getClass().getResource(resourceName).toURI());
         return Files.readString(fxmlFileName.toPath());
