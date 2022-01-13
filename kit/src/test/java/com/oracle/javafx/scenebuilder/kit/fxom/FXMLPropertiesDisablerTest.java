@@ -38,14 +38,15 @@ import java.nio.file.Files;
 
 import org.junit.Test;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
+
 public class FXMLPropertiesDisablerTest {
 
     private FXMLPropertiesDisabler classUnderTest;
  
     @Test
     public void that_property_value_is_set_to_false_on_MacOS() throws Exception {
-        boolean isMacOS = true;
-        classUnderTest = new FXMLPropertiesDisabler(isMacOS);
+        classUnderTest = new FXMLPropertiesDisabler(OS.MAC);
         String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
         assertTrue("ensures that test resource is correct",
                 fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
@@ -55,8 +56,7 @@ public class FXMLPropertiesDisablerTest {
     
     @Test
     public void that_property_value_is_not_modified_on_Windows() throws Exception {
-        boolean isMacOS = false;
-        classUnderTest = new FXMLPropertiesDisabler(isMacOS);
+        classUnderTest = new FXMLPropertiesDisabler(OS.WINDOWS);
         String fxmlText = readResourceText("ContainerWithMenu_SystemMenuBarEnabled.fxml");
         assertTrue("ensures that test resource is correct",
                 fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));

@@ -47,6 +47,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
@@ -106,8 +107,7 @@ public class FXOMDocument {
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
             if (!Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
-                boolean isMacOS = EditorPlatform.IS_MAC;
-                final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler(isMacOS);
+                final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler();
                 fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);

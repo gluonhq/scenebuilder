@@ -33,19 +33,29 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import java.util.Objects;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
+
 /**
  * Modifies FXML to be loaded so that properties in the FXML will not interfere
  * with Scene Builder.
  */
 class FXMLPropertiesDisabler {
 
-    private final boolean isMacOS;
+    private final OS os;
 
     /**
-     * @param isMacOS true when used platform is MacOS
+     * Creates a new FXMLPropertiesDisable which is aware of the platform and can
+     * according to required platform behavior.
      */
-    public FXMLPropertiesDisabler(boolean isMacOS) {
-        this.isMacOS = isMacOS;
+    public FXMLPropertiesDisabler() {
+        this.os = OS.get();
+    }
+
+    /**
+     * @param os Operating system where Scene Builder is executed
+     */
+    FXMLPropertiesDisabler(OS os) {
+        this.os = Objects.requireNonNull(os);
     }
 
     /**
@@ -83,7 +93,7 @@ class FXMLPropertiesDisabler {
      */
     private String disableUseSystemMenuBarProperty(String fxmlText) {
         Objects.requireNonNull(fxmlText, "fxmlText must not be null");
-        if (isMacOS) {
+        if (OS.MAC == os) {
             return fxmlText.replace("useSystemMenuBar=\"true\"",
                                     "useSystemMenuBar=\"false\"");
         }
