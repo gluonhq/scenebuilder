@@ -48,8 +48,9 @@ public enum OperatingSystem {
     }
 
     private boolean matches() {
-        String currentOsName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-        return currentOsName.contains(osName);
+        return System.getProperty("os.name")
+                     .toLowerCase(Locale.ROOT)
+                     .contains(osName);
     }
 
     /**
