@@ -56,6 +56,8 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
     }
 
     /**
+     * Provides the name of the application data sub directory (with version number). 
+     * 
      * @return Provides the name of the by default version specific application data
      *         sub directory. This folder is will be located inside the application
      *         data root folder.
@@ -67,17 +69,21 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
     }
 
     /**
-     * In previous versions, Scene Builder stored its files in a directory without
-     * version number. Hence, in some cases it might be helpful to control when the
-     * version number is used or not. To obtain this folder without version number
-     * can be beneficial in cases, where one wants to search the application data root
-     * folder for other existing settings of Scene Builder.
+     * Provides the name of the application data sub directory (with or without
+     * version number). 
+     * 
+     * In previous versions, Scene Builder stored its files in a
+     * directory without version number. Hence, in some cases it might be helpful to
+     * control when the version number is used or not. To obtain this folder without
+     * version number can be beneficial in cases, where one wants to search the
+     * application data root folder for other existing settings of Scene Builder.
      * 
      * @param includeVersion If true, the version number might be a part of the sub
      *                       folder name.
      * @return Provides the name of the application data sub directory with or
      *         without version information.
-     * @throws UnsupportedOperationException in case of the operating system is unknown
+     * @throws UnsupportedOperationException in case of the operating system is
+     *                                       unknown
      */
     @Override
     public String getApplicationDataSubFolder(boolean includeVersion) {
