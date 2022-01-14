@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.stage.Screen?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity"
+    minHeight="400.0" minWidth="500.0"
+    prefWidth="${screen.visualBounds.width}"
+    prefHeight="${screen.visualBounds.height}"
+    xmlns="http://javafx.com/javafx/11.0.1"
+    xmlns:fx="http://javafx.com/fxml/1">
+    <fx:define>
+        <Screen fx:factory="getPrimary" fx:id="screen" />
+    </fx:define>
+</GridPane>
