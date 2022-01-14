@@ -217,7 +217,7 @@ public class UserLibraryImporterTest {
         
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-no-import", documentedResult);
-        assertNull(new File(appDirectories.getUserLibraryFolder()).listFiles());
+        assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
     }
 
     @Test
@@ -235,7 +235,7 @@ public class UserLibraryImporterTest {
         
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
-        assertNull(new File(appDirectories.getUserLibraryFolder()).listFiles());
+        assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
     }
 
     @Test
@@ -248,13 +248,13 @@ public class UserLibraryImporterTest {
         AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         
         // Prepare an old library
-        String dataRoot = appDirectories.getApplicationDataRoot();
-        Path oldLibrary = Paths.get(dataRoot).resolve(".scenebuilder").resolve("Library");
+        Path dataRoot = appDirectories.getApplicationDataRoot();
+        Path oldLibrary = dataRoot.resolve(".scenebuilder").resolve("Library");
         Files.createDirectories(oldLibrary);
         Path myJar = oldLibrary.resolve("MyCustomArtifact.txt");
         Files.writeString(myJar, "NotaJarButSomeTestContent", StandardOpenOption.CREATE);
         
-        Path userLib = Paths.get(appDirectories.getUserLibraryFolder());
+        Path userLib = appDirectories.getUserLibraryFolder();
         Files.createDirectories(userLib);
         
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
@@ -265,7 +265,7 @@ public class UserLibraryImporterTest {
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
         
-        File[] importedFiles = new File(appDirectories.getUserLibraryFolder()).listFiles(); 
+        File[] importedFiles = appDirectories.getUserLibraryFolder().toFile().listFiles(); 
         assertEquals(1, importedFiles.length);
         assertEquals("MyCustomArtifact.txt", importedFiles[0].getName());
     }

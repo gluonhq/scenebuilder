@@ -31,13 +31,15 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import java.nio.file.Path;
+
 public interface AppPlatformDirectories {
 
     /**
      * @return the root location where application data shall be stored on the
      *         corresponding platform.
      */
-    String getApplicationDataRoot();
+    Path getApplicationDataRoot();
 
     /**
      * Scene Builder provides the option to hold custom JAR files in a user library.
@@ -45,7 +47,7 @@ public interface AppPlatformDirectories {
      * directory. Typically, the user library directory (Library) is placed inside
      * the application data folder.
      */
-    String getUserLibraryFolder();
+    Path getUserLibraryFolder();
 
     /**
      * @return Provides the name of the by default version specific application data
@@ -75,13 +77,13 @@ public interface AppPlatformDirectories {
      * @return the exact location, specifically for this version of Scene Builder,
      *         where settings and arbitrary files can be placed.
      */
-    String getApplicationDataFolder();
+    Path getApplicationDataFolder();
 
     /**
      * Logfile location
      * @return The directory containing the application log file.
      */
-    String getLogFolder();
+    Path getLogFolder();
 
     /* MessageBox folder is not provided by this as MessageBox folder previously
      * was package private, here all previously public directories are accessible.

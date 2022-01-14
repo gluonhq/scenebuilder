@@ -38,7 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
@@ -106,16 +106,17 @@ public class AppPlatform {
         assert notificationHandler != null;
         assert parameters != null;
         assert messageBox == null;
-        
+
+        Path mboxDir = ((PlatformSpecificDirectories)getAppDirectories()).getMessageBoxFolder();
         try {
-            Files.createDirectories(Paths.get(((PlatformSpecificDirectories)getAppDirectories()).getMessageBoxFolder()));
-            Files.createDirectories(Paths.get(getAppDirectories().getLogFolder()));
+            Files.createDirectories(mboxDir);
+            Files.createDirectories(getAppDirectories().getLogFolder());
         } catch(FileAlreadyExistsException x) {
             // Fine
         }
         
         final boolean result;
-        messageBox = new MessageBox<>(((PlatformSpecificDirectories)getAppDirectories()).getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
+        messageBox = new MessageBox<>(mboxDir.toAbsolutePath().toString(), MessageBoxMessage.class, 1000 /* ms */);
         // Fix Start: Github Issue #301
         final List<String> parametersUnnamed = new ArrayList<>(parameters.getUnnamed());
         if (OperatingSystem.get().equals(OperatingSystem.MACOS)) {

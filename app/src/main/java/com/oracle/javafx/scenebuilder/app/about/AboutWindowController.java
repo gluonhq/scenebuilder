@@ -147,11 +147,11 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         AppPlatformDirectories appDirs = AppPlatform.getAppDirectories();
         return new StringBuilder(I18N.getString("about.app.data.directory"))
                 .append("\n\t") // NOI18N
-                .append(Paths.get(appDirs.getApplicationDataFolder()).normalize()) //NOI18N 
+                .append(appDirs.getApplicationDataFolder().normalize()) //NOI18N 
                 .append("\n\n") //NOI18N
                 .append(I18N.getString("about.app.user.library"))
                 .append("\n\t") //NOI18N
-                .append(Paths.get(appDirs.getUserLibraryFolder()).normalize()) //NOI18N
+                .append(appDirs.getUserLibraryFolder().normalize()) //NOI18N
                 .append("\n\n") //NOI18N
                 .append(I18N.getString("about.app.program.directory"))
                 .append("\n\t") //NOI18N
@@ -183,7 +183,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private String getLogFilePath() {
-        StringBuilder sb = new StringBuilder(AppPlatform.getAppDirectories().getLogFolder());
+        StringBuilder sb = new StringBuilder(AppPlatform.getAppDirectories().getLogFolder().toString());
         if (sb.charAt(sb.length() - 1) != File.separatorChar) {
             sb.append(File.separatorChar);
         }

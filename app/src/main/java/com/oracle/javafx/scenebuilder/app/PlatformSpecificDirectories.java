@@ -1,5 +1,6 @@
 package com.oracle.javafx.scenebuilder.app;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -30,10 +31,8 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      * @throws UnsupportedOperationException in case of the operating system is unknown
      */
     @Override
-    public String getApplicationDataFolder() {
-        String appDataRoot = getApplicationDataRoot();
-        String appDataSubFolder = getApplicationDataSubFolder();
-        return appDataRoot+"/"+appDataSubFolder;
+    public Path getApplicationDataFolder() {
+        return getApplicationDataRoot().resolve(getApplicationDataSubFolder());
     }
 
     /**
@@ -42,18 +41,18 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      * @throws UnsupportedOperationException in case of the operating system is unknown
      */
     @Override
-    public String getApplicationDataRoot() {
+    public Path getApplicationDataRoot() {
         return switch (os) {
-            case WINDOWS -> System.getenv("APPDATA") + "\\";
-            case MACOS -> System.getProperty("user.home") + "/Library/Application Support/";
-            case LINUX -> System.getProperty("user.home") + "/";
+            case WINDOWS -> Paths.get(System.getenv("APPDATA"));
+            case MACOS -> Paths.get(System.getProperty("user.home")).resolve("Library/Application Support/");
+            case LINUX -> Paths.get(System.getProperty("user.home"));
             default -> throw new UnsupportedOperationException("Unknown operating system platform!");
         };
     }
 
     @Override
-    public String getUserLibraryFolder() {
-        return getApplicationDataFolder() + "/Library";
+    public Path getUserLibraryFolder() {
+        return getApplicationDataFolder().resolve("Library");
     }
 
     /**
@@ -98,16 +97,15 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      * @return Directory path for Scene Builder logs
      */
     @Override
-    public String getLogFolder() {
-        return Paths.get(System.getProperty("user.home"), 
-                         ".scenebuilder", "logs").toString();
+    public Path getLogFolder() {
+        return Paths.get(System.getProperty("user.home"),".scenebuilder", "logs");
     }
 
     /**
      * Location of Scene Builders Message Box
      * @return The directory where the Message Box is saved.
      */
-    protected String getMessageBoxFolder() {
-        return getApplicationDataFolder() + "/MB";
+    protected Path getMessageBoxFolder() {
+        return getApplicationDataFolder().resolve("MB");
     }
 }

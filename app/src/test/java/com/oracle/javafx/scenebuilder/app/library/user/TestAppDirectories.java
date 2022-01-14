@@ -55,8 +55,8 @@ public class TestAppDirectories extends PlatformSpecificDirectories {
     }
 
     @Override
-    public String getApplicationDataRoot() {
-        return tempDir.toString();
+    public Path getApplicationDataRoot() {
+        return tempDir;
     }
     
     @Override

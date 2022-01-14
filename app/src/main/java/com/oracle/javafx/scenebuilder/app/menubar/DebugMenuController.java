@@ -70,7 +70,7 @@ class DebugMenuController {
          * User Library Folder
          */
         final String applicationDataFolder 
-                = AppPlatform.getAppDirectories().getApplicationDataFolder();
+                = AppPlatform.getAppDirectories().getApplicationDataFolder().normalize().toString();
         final MenuItem libraryFolderMenuItem 
                 = new MenuItem();
         libraryFolderMenuItem.setText(applicationDataFolder);

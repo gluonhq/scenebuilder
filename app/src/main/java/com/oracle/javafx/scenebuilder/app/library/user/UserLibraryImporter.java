@@ -34,7 +34,6 @@ package com.oracle.javafx.scenebuilder.app.library.user;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -111,12 +110,11 @@ public class UserLibraryImporter {
         String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, timestamp.toString());
         String importStatus = importDecision+USER_LIBRARY_IMPORT_COMPLETE;
         preferences.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,importStatus);
-        String appDataDir = appDirectories.getApplicationDataRoot();
-        Path appData = Paths.get(appDataDir);
+        Path appData = appDirectories.getApplicationDataRoot();
         List<Path> candidates = collectLibraryCandidates(appData);
         Optional<Path> oldSettingsDirectory = previousVersionUserLibraryPath(candidates);
         if (oldSettingsDirectory.isPresent()) {
-            Path userLib = Paths.get(appDirectories.getUserLibraryFolder());
+            Path userLib = appDirectories.getUserLibraryFolder();
             importUserLibraryContentsFrom(oldSettingsDirectory.get(), userLib);
         }
     }

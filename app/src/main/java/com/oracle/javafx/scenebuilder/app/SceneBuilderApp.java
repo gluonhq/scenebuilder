@@ -396,7 +396,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         
         // Creates the user library
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
-        userLibrary = new UserLibrary(AppPlatform.getAppDirectories().getUserLibraryFolder(),
+        String userLibDir = AppPlatform.getAppDirectories().getUserLibraryFolder().normalize().toString();
+        userLibrary = new UserLibrary(userLibDir,
                 () -> mavenPreferences.getArtifactsPathsWithDependencies(),
                 () -> mavenPreferences.getArtifactsFilter());
 
