@@ -44,9 +44,9 @@ public class PreferencesRecordArtifact {
     
     private final Preferences artifactsRootPreferences;
     private Preferences artifactPreferences;
-    private final static String GROUPID = "groupID";
-    private final static String ARTIFACTID = "artifactId";
-    private final static String VERSION = "version";
+    private final static String GROUPID  = "groupID";
+    private final static String ARTIFACTID  = "artifactId";
+    private final static String VERSION  = "version";
     public final static String DEPENDENCIES = "dependencies";
     public final static String FILTER = "filter";
     public final static String PATH = "path";
