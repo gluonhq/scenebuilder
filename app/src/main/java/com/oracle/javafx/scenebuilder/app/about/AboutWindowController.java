@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2015, Gluon.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.about;
 
 import com.oracle.javafx.scenebuilder.app.AppPlatform;
+import com.oracle.javafx.scenebuilder.app.ApplicationDirectories;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
@@ -143,13 +144,14 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private StringBuilder getApplicationDirectoriesParagraph() {
+        ApplicationDirectories appDirs = AppPlatform.getAppDirectories();
         return new StringBuilder(I18N.getString("about.app.data.directory"))
                 .append("\n\t") // NOI18N
-                .append(Paths.get(AppPlatform.getApplicationDataFolder()).normalize()) //NOI18N 
+                .append(Paths.get(appDirs.getApplicationDataFolder()).normalize()) //NOI18N 
                 .append("\n\n") //NOI18N
                 .append(I18N.getString("about.app.user.library"))
                 .append("\n\t") //NOI18N
-                .append(Paths.get(AppPlatform.getUserLibraryFolder()).normalize()) //NOI18N
+                .append(Paths.get(appDirs.getUserLibraryFolder()).normalize()) //NOI18N
                 .append("\n\n") //NOI18N
                 .append(I18N.getString("about.app.program.directory"))
                 .append("\n\t") //NOI18N

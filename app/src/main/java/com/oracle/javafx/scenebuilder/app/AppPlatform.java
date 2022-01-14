@@ -49,16 +49,9 @@ import javafx.application.Platform;
  */
 public class AppPlatform {
     private static MessageBox<MessageBoxMessage> messageBox;
-    private static PlatformSpecificDirectories platformSpecificDirectories;
-    
-    public static synchronized String getApplicationDataFolder() {
-        if (platformSpecificDirectories == null) {
-            platformSpecificDirectories = getAppDirectories();
-        }
-        return platformSpecificDirectories.getApplicationDataFolder();
-    }
-    
-    public static synchronized PlatformSpecificDirectories getAppDirectories() {
+    private static ApplicationDirectories platformSpecificDirectories;
+
+    public static synchronized ApplicationDirectories getAppDirectories() {
         final String appVersion = getApplicationVersion();
         if (platformSpecificDirectories == null) {
             OperatingSystem os = OperatingSystem.get();

@@ -48,8 +48,8 @@ public class AppPlatformTest {
     
     @Test
     public void that_windows_application_data_directory_is_specific_to_version() {
-        assumeTrue(getOsName().contains("windows"));     
-        Path appDataDir = Paths.get(AppPlatform.getApplicationDataFolder());
+        assumeTrue(getOsName().contains("windows"));
+        Path appDataDir = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder());
         Path expected   = Paths.get(System.getenv("APPDATA"))
                                .resolve("Scene Builder-"+appVersion);
         assertEquals(expected, appDataDir);
@@ -58,7 +58,7 @@ public class AppPlatformTest {
     @Test
     public void that_mac_application_data_directory_is_specific_to_version() {
         assumeTrue(getOsName().contains("mac"));
-        Path appDataDir = Paths.get(AppPlatform.getApplicationDataFolder());
+        Path appDataDir = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder());
         Path expected   = Paths.get(System.getProperty("user.home"))
                                .resolve("Library")
                                .resolve("Application Support")
@@ -69,7 +69,7 @@ public class AppPlatformTest {
     @Test
     public void that_linux_application_data_directory_is_specific_to_version() {
         assumeTrue(getOsName().contains("linux"));
-        Path appDataDir = Paths.get(AppPlatform.getApplicationDataFolder());
+        Path appDataDir = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder());
         Path expected   = Paths.get(System.getProperty("user.home"))
                                .resolve(".scenebuilder-"+appVersion);
         assertEquals(expected, appDataDir);
@@ -78,7 +78,7 @@ public class AppPlatformTest {
     @Test
     public void that_user_library_resides_in_application_settings_folder() {
         Path userLibraryFolder = Paths.get(AppPlatform.getUserLibraryFolder());
-        Path expected          = Paths.get(AppPlatform.getApplicationDataFolder())
+        Path expected          = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder())
                                       .resolve("Library");
         assertEquals(expected, userLibraryFolder);
     }
@@ -95,7 +95,7 @@ public class AppPlatformTest {
     @Test
     public void that_messagebox_is_placed_in_application_dir() {
         Path mboxDir   = Paths.get(AppPlatform.getMessageBoxFolder());
-        Path expected  = Paths.get(AppPlatform.getApplicationDataFolder())
+        Path expected  = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder())
                               .resolve("MB");
         assertEquals(expected, mboxDir);
     }
