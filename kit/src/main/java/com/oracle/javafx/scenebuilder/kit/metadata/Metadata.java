@@ -4472,7 +4472,7 @@ public class Metadata {
                 com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind.COORDINATE,
                 true, /* readWrite */
                 100.0, /* defaultValue */
-                new InspectorPath("Properties", "Specific", 10));
+                new InspectorPath("Properties", "Specific", 98));
     private final ValuePropertyMetadata useSystemMenuBarPropertyMetadata =
             new BooleanPropertyMetadata(useSystemMenuBarName, 
                     true, /* readWrite */
