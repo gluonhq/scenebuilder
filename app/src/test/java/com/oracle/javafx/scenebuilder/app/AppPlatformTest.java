@@ -85,7 +85,7 @@ public class AppPlatformTest {
     
     @Test
     public void that_logfile_stored_in_userhome_dot_scenebuilder_log_dir() {
-        Path logDir   = Paths.get(AppPlatform.getLogFolder());
+        Path logDir   = Paths.get(AppPlatform.getAppDirectories().getLogFolder());
         Path expected = Paths.get(System.getProperty("user.home"))
                              .resolve(".scenebuilder")
                              .resolve("logs");

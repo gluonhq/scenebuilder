@@ -93,6 +93,10 @@ public class PlatformSpecificDirectories implements ApplicationDirectories {
         };
     }
 
+    /**
+     * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
+     * @return Directory path for Scene Builder logs
+     */
     @Override
     public String getLogFolder() {
         return Paths.get(System.getProperty("user.home"), 

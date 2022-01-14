@@ -183,7 +183,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private String getLogFilePath() {
-        StringBuilder sb = new StringBuilder(AppPlatform.getLogFolder());
+        StringBuilder sb = new StringBuilder(AppPlatform.getAppDirectories().getLogFolder());
         if (sb.charAt(sb.length() - 1) != File.separatorChar) {
             sb.append(File.separatorChar);
         }

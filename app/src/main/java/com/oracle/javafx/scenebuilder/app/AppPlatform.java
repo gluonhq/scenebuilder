@@ -78,17 +78,6 @@ public class AppPlatform {
         return version;
     }   
 
-    /**
-     * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
-     * @return Directory path for Scene Builder logs
-     */
-    public static synchronized String getLogFolder() {
-        if (platformSpecificDirectories == null) {
-            platformSpecificDirectories = getAppDirectories();
-        }
-        return platformSpecificDirectories.getLogFolder();
-    }
-    
     protected static String getMessageBoxFolder() {
         if (platformSpecificDirectories == null) {
             platformSpecificDirectories = getAppDirectories();
@@ -127,7 +116,7 @@ public class AppPlatform {
         
         try {
             Files.createDirectories(Paths.get(getMessageBoxFolder()));
-            Files.createDirectories(Paths.get(getLogFolder()));
+            Files.createDirectories(Paths.get(getAppDirectories().getLogFolder()));
         } catch(FileAlreadyExistsException x) {
             // Fine
         }
