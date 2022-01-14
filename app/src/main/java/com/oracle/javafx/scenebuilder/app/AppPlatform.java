@@ -77,13 +77,6 @@ public class AppPlatform {
         assert !version.isBlank();
         return version;
     }   
-    
-    public static synchronized String getUserLibraryFolder() {
-        if (platformSpecificDirectories == null) {
-            platformSpecificDirectories = getAppDirectories();
-        }
-        return platformSpecificDirectories.getUserLibraryFolder();
-    }
 
     /**
      * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".

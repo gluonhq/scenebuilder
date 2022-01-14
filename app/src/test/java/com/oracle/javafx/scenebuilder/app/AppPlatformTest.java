@@ -77,7 +77,7 @@ public class AppPlatformTest {
     
     @Test
     public void that_user_library_resides_in_application_settings_folder() {
-        Path userLibraryFolder = Paths.get(AppPlatform.getUserLibraryFolder());
+        Path userLibraryFolder = Paths.get(AppPlatform.getAppDirectories().getUserLibraryFolder());
         Path expected          = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder())
                                       .resolve("Library");
         assertEquals(expected, userLibraryFolder);
