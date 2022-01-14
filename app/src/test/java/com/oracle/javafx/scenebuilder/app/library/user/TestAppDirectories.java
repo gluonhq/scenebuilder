@@ -45,7 +45,7 @@ public class TestAppDirectories extends PlatformSpecificDirectories {
     public TestAppDirectories(OperatingSystem os, String appVersion) {
         super(os, appVersion);
     }
-    
+
     private Path createDirectory() {
         try {
             return Files.createTempDirectory("SBTEST_APPDATA_");
@@ -58,11 +58,10 @@ public class TestAppDirectories extends PlatformSpecificDirectories {
     public Path getApplicationDataRoot() {
         return tempDir;
     }
-    
+
     @Override
     public String getApplicationDataSubFolder() {
         final String suffix = "".equalsIgnoreCase(super.version) ? "" : "-"+super.version;
         return ".scenebuilder"+suffix;
     }
-
 }

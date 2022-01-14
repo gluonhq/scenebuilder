@@ -28,7 +28,6 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      * 
      * @return the exact location, specifically for this version of Scene Builder,
      *         where settings and arbitrary files can be placed.
-     * @throws UnsupportedOperationException in case of the operating system is unknown
      */
     @Override
     public Path getApplicationDataFolder() {
@@ -38,7 +37,6 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
     /**
      * @return the root location where application data shall be stored on the
      *         corresponding platform.
-     * @throws UnsupportedOperationException in case of the operating system is unknown
      */
     @Override
     public Path getApplicationDataRoot() {
@@ -46,7 +44,7 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
             case WINDOWS -> Paths.get(System.getenv("APPDATA"));
             case MACOS -> Paths.get(System.getProperty("user.home")).resolve("Library/Application Support/");
             case LINUX -> Paths.get(System.getProperty("user.home"));
-            default -> throw new UnsupportedOperationException("Unknown operating system platform!");
+            default -> Paths.get(System.getProperty("user.home"));
         };
     }
 
@@ -61,7 +59,6 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      * @return Provides the name of the by default version specific application data
      *         sub directory. This folder is will be located inside the application
      *         data root folder.
-     * @throws UnsupportedOperationException in case of the operating system is unknown
      */
     @Override
     public String getApplicationDataSubFolder() {
@@ -82,8 +79,6 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
      *                       folder name.
      * @return Provides the name of the application data sub directory with or
      *         without version information.
-     * @throws UnsupportedOperationException in case of the operating system is
-     *                                       unknown
      */
     @Override
     public String getApplicationDataSubFolder(boolean includeVersion) {
@@ -94,7 +89,7 @@ public class PlatformSpecificDirectories implements AppPlatformDirectories {
             case WINDOWS -> appName+suffix;
             case MACOS -> appName+suffix;
             case LINUX -> ".scenebuilder"+suffix;
-            default -> throw new UnsupportedOperationException("Unknown operating system platform!");
+            default -> ".scenebuilder"+suffix;
         };
     }
 
