@@ -33,7 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.about;
 
 import com.oracle.javafx.scenebuilder.app.AppPlatform;
-import com.oracle.javafx.scenebuilder.app.ApplicationDirectories;
+import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
@@ -144,7 +144,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private StringBuilder getApplicationDirectoriesParagraph() {
-        ApplicationDirectories appDirs = AppPlatform.getAppDirectories();
+        AppPlatformDirectories appDirs = AppPlatform.getAppDirectories();
         return new StringBuilder(I18N.getString("about.app.data.directory"))
                 .append("\n\t") // NOI18N
                 .append(Paths.get(appDirs.getApplicationDataFolder()).normalize()) //NOI18N 

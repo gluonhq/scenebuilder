@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.nio.file.Path;
@@ -91,11 +92,17 @@ public class AppPlatformTest {
                              .resolve("logs");
         assertEquals(expected, logDir);
     }
-    
+
+    /*
+     * MessageBox does not seem to be public API, the directory was previously
+     * declared protected, hence here the cast is needed.
+     */
     @Test
     public void that_messagebox_is_placed_in_application_dir() {
-        Path mboxDir   = Paths.get(AppPlatform.getMessageBoxFolder());
-        Path expected  = Paths.get(AppPlatform.getAppDirectories().getApplicationDataFolder())
+        assertTrue(AppPlatform.getAppDirectories() instanceof PlatformSpecificDirectories);
+        PlatformSpecificDirectories dirs = (PlatformSpecificDirectories) AppPlatform.getAppDirectories();
+        Path mboxDir   = Paths.get(dirs.getMessageBoxFolder());
+        Path expected  = Paths.get(dirs.getApplicationDataFolder())
                               .resolve("MB");
         assertEquals(expected, mboxDir);
     }

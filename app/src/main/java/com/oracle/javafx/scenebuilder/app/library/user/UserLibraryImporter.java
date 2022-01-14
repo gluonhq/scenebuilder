@@ -49,7 +49,7 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oracle.javafx.scenebuilder.app.ApplicationDirectories;
+import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.AppPlatform;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
@@ -61,23 +61,23 @@ public class UserLibraryImporter {
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Optional<AppVersion> version;
     private final Preferences preferences;
-    private final ApplicationDirectories appDirectories;
+    private final AppPlatformDirectories appDirectories;
     
     public UserLibraryImporter(Preferences applicationPreferences) {
         this(AppPlatform.getAppDirectories(), applicationPreferences);
     }
     
-    public UserLibraryImporter(ApplicationDirectories directories, Preferences applicationPreferences) {
+    public UserLibraryImporter(AppPlatformDirectories directories, Preferences applicationPreferences) {
         this(AppVersion.fromString(AppSettings.getSceneBuilderVersion()), directories, applicationPreferences);
     }
     
-    public UserLibraryImporter(Optional<AppVersion> appVersion, ApplicationDirectories appDirectories, Preferences applicationPreferences) {
+    public UserLibraryImporter(Optional<AppVersion> appVersion, AppPlatformDirectories appDirectories, Preferences applicationPreferences) {
         this.version = Objects.requireNonNull(appVersion);
         this.preferences = Objects.requireNonNull(applicationPreferences);
         this.appDirectories = Objects.requireNonNull(appDirectories);
     }
     
-    protected ApplicationDirectories getPlatformDirectories() {
+    protected AppPlatformDirectories getPlatformDirectories() {
         return this.appDirectories;
     }
 

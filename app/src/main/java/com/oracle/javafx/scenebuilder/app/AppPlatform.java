@@ -49,9 +49,9 @@ import javafx.application.Platform;
  */
 public class AppPlatform {
     private static MessageBox<MessageBoxMessage> messageBox;
-    private static ApplicationDirectories platformSpecificDirectories;
+    private static PlatformSpecificDirectories platformSpecificDirectories;
 
-    public static synchronized ApplicationDirectories getAppDirectories() {
+    public static synchronized AppPlatformDirectories getAppDirectories() {
         final String appVersion = getApplicationVersion();
         if (platformSpecificDirectories == null) {
             OperatingSystem os = OperatingSystem.get();
@@ -78,13 +78,6 @@ public class AppPlatform {
         return version;
     }   
 
-    protected static String getMessageBoxFolder() {
-        if (platformSpecificDirectories == null) {
-            platformSpecificDirectories = getAppDirectories();
-        }
-        return platformSpecificDirectories.getMessageBoxFolder();
-    }
-    
     public static boolean requestStart(AppNotificationHandler notificationHandler, 
                                        Application.Parameters parameters) throws IOException {
         if (EditorPlatform.isAssertionEnabled()) {
@@ -115,14 +108,14 @@ public class AppPlatform {
         assert messageBox == null;
         
         try {
-            Files.createDirectories(Paths.get(getMessageBoxFolder()));
+            Files.createDirectories(Paths.get(((PlatformSpecificDirectories)getAppDirectories()).getMessageBoxFolder()));
             Files.createDirectories(Paths.get(getAppDirectories().getLogFolder()));
         } catch(FileAlreadyExistsException x) {
             // Fine
         }
         
         final boolean result;
-        messageBox = new MessageBox<>(getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
+        messageBox = new MessageBox<>(((PlatformSpecificDirectories)getAppDirectories()).getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
         // Fix Start: Github Issue #301
         final List<String> parametersUnnamed = new ArrayList<>(parameters.getUnnamed());
         if (OperatingSystem.get().equals(OperatingSystem.MACOS)) {

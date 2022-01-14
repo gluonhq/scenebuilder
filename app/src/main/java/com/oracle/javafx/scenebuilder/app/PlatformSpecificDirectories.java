@@ -12,7 +12,7 @@ import java.util.Objects;
  * If a new operating system (OS) platform shall be supported, the OS specific
  * behavior is supposed to be implemented here in.
  */
-public class PlatformSpecificDirectories implements ApplicationDirectories {
+public class PlatformSpecificDirectories implements AppPlatformDirectories {
     protected final OperatingSystem os;
     protected final String version;
 
@@ -103,8 +103,11 @@ public class PlatformSpecificDirectories implements ApplicationDirectories {
                          ".scenebuilder", "logs").toString();
     }
 
-    @Override
-    public String getMessageBoxFolder() {
+    /**
+     * Location of Scene Builders Message Box
+     * @return The directory where the Message Box is saved.
+     */
+    protected String getMessageBoxFolder() {
         return getApplicationDataFolder() + "/MB";
     }
 }

@@ -52,7 +52,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.oracle.javafx.scenebuilder.app.ApplicationDirectories;
+import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.PlatformSpecificDirectories;
 import com.oracle.javafx.scenebuilder.app.OperatingSystem;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
@@ -63,7 +63,7 @@ public class UserLibraryImporterTest {
 
     private static Preferences testNode;
     private UserLibraryImporter classUnderTest;
-    private ApplicationDirectories appDirectories;
+    private AppPlatformDirectories appDirectories;
     
     @BeforeClass
     public static void setup() {
@@ -209,7 +209,7 @@ public class UserLibraryImporterTest {
         
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        ApplicationDirectories appDirectories = new TestAppDirectories(os, version);
+        AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
         classUnderTest.performImportWhenDesired(timestamp);
         
@@ -227,7 +227,7 @@ public class UserLibraryImporterTest {
         
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        ApplicationDirectories appDirectories = new TestAppDirectories(os, version);
+        AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
         classUnderTest.performImportWhenDesired(timestamp);
         
@@ -245,7 +245,7 @@ public class UserLibraryImporterTest {
 
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
-        ApplicationDirectories appDirectories = new TestAppDirectories(os, version);
+        AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         
         // Prepare an old library
         String dataRoot = appDirectories.getApplicationDataRoot();
@@ -279,15 +279,15 @@ public class UserLibraryImporterTest {
        assertTrue(classUnderTest.getPlatformDirectories() instanceof PlatformSpecificDirectories);
     }
 
-    private static ApplicationDirectories forLinux(String version) {
+    private static AppPlatformDirectories forLinux(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.LINUX, version);
     }
 
-    private static ApplicationDirectories forMacOS(String version) {
+    private static AppPlatformDirectories forMacOS(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.MACOS, version);
     }
 
-    private static ApplicationDirectories forWindows(String version) {
+    private static AppPlatformDirectories forWindows(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.WINDOWS, version);
     }
 }

@@ -31,7 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-public interface ApplicationDirectories {
+public interface AppPlatformDirectories {
 
     /**
      * @return the root location where application data shall be stored on the
@@ -83,9 +83,7 @@ public interface ApplicationDirectories {
      */
     String getLogFolder();
 
-    /**
-     * Location of Scene Builders Message Box
-     * @return The directory where the Message Box is saved.
+    /* MessageBox folder is not provided by this as MessageBox folder previously
+     * was package private, here all previously public directories are accessible.
      */
-    String getMessageBoxFolder();
 }
