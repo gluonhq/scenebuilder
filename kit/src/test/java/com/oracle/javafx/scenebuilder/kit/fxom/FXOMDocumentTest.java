@@ -132,23 +132,23 @@ public class FXOMDocumentTest {
 
     @Test
     public void that_normalization_is_applied_only_when_NORMALIZED_is_set() throws Exception {
-        fxmlText = readResourceText("NonNormalized_Accordion.fxml");
-        fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
+        fxmlText = readResourceText("NonNormalizedAccordion.fxml");
+        fxmlUrl = getResourceUrl("NonNormalizedAccordion.fxml");
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.NORMALIZED);
 
         String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
-        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("Normalized_Accordion.fxml"));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NormalizedAccordion.fxml"));
         assertEquals(expectedFxml, generatedFxml);
     }
 
     @Test
     public void that_normalization_is_disabled_when_NORMALIZED_is_not_set() throws Exception {
-        fxmlText = readResourceText("NonNormalized_Accordion.fxml");
-        fxmlUrl = getResourceUrl("NonNormalized_Accordion.fxml");
+        fxmlText = readResourceText("NonNormalizedAccordion.fxml");
+        fxmlUrl = getResourceUrl("NonNormalizedAccordion.fxml");
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
-        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NonNormalized_Accordion.fxml"));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NonNormalizedAccordion.fxml"));
         assertEquals(expectedFxml, generatedFxml);
     }
 
