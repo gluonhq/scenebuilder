@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2022, Oracle and/or its affiliates.
+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -57,8 +57,7 @@ public class FXOMIntrinsic extends FXOMObject {
     private Object sourceSceneGraphObject;
 
     
-    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject,
-            List<FXOMProperty> properties) {
+    FXOMIntrinsic(FXOMDocument document, GlueElement glueElement, Object targetSceneGraphObject,  List<FXOMProperty> properties) {
         super(document, glueElement, null);
         this.sourceSceneGraphObject = targetSceneGraphObject;
         for (FXOMProperty p : properties) {

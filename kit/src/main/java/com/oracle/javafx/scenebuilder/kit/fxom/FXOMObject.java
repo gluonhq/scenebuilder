@@ -289,12 +289,14 @@ public abstract class FXOMObject extends FXOMNode {
     
     public Scene getScene() {
         final Scene result;
+        
         if (sceneGraphObject instanceof Node) {
             final Node sceneGraphNode = (Node) sceneGraphObject;
             result = sceneGraphNode.getScene();
-        } else {
+        } else  {
             result = null;
-        }        
+        }
+        
         return result;
     }
     
@@ -686,11 +688,13 @@ public abstract class FXOMObject extends FXOMNode {
         assert destination != null;
         assert destination != getFxomDocument();
         assert destination.getGlue() == glueElement.getDocument();
-        assert (parentProperty == null) || (destination == parentProperty.getFxomDocument());
+        assert (parentProperty   == null) || (destination == parentProperty.getFxomDocument());
         assert (parentCollection == null) || (destination == parentCollection.getFxomDocument());
+        
         super.changeFxomDocument(destination);
     }
 
+    
     /*
      * Object
      */
