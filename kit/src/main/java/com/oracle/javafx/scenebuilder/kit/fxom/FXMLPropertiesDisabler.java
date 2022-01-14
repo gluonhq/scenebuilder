@@ -44,15 +44,20 @@ class FXMLPropertiesDisabler {
     private final OS os;
 
     /**
-     * Creates a new FXMLPropertiesDisable which is aware of the platform and can
-     * according to required platform behavior.
+     * Creates a new FXMLPropertiesDisabler which is aware of the platform and can
+     * prepare the FXML test according required platform behavior.
      */
     public FXMLPropertiesDisabler() {
         this(OS.get());
     }
 
     /**
-     * @param os Operating system where Scene Builder is executed
+     * This constructor is primarily intended to enable testing of operating system
+     * depending behavior. Please favor the default constructor
+     * {@code FXMLPropertiesDisabler()}.
+     * 
+     * @param os {@link OS} Represents the operating system where Scene Builder is
+     *           supposed to work on.
      */
     FXMLPropertiesDisabler(OS os) {
         this.os = Objects.requireNonNull(os);
