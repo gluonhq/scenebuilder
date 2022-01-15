@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2012 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -143,6 +143,12 @@ public class PreferencesController extends PreferencesControllerBase{
      *                                                                         *
      **************************************************************************/
 
+    /**
+     * Provides an instance of Scene Builders {@link PreferencesController}.
+     * The {@link Preferences} node to be used is defined internally.
+     * 
+     * @return {@link PreferencesController}
+     */
     public static synchronized PreferencesController getSingleton() {
         return getSingleton(null);
     }

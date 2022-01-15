@@ -135,7 +135,7 @@ public class PreferencesImporterTest {
     }
     
     @Test
-    public void that_user_interaction_is_executed_and_used_opted_in() throws Exception {
+    public void that_user_interaction_is_executed_and_user_opted_in() throws Exception {
         Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET2");
         appPrefs.clear();
         

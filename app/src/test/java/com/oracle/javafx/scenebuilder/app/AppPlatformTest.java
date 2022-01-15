@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -49,7 +49,7 @@ public class AppPlatformTest {
     
     @Test
     public void that_windows_application_data_directory_is_specific_to_version() {
-        assumeTrue(getOsName().contains("windows"));
+        assumeTrue("Windows", osNameContains("windows"));
         Path appDataDir = AppPlatform.getAppDirectories().getApplicationDataFolder();
         Path expected   = Paths.get(System.getenv("APPDATA"))
                                .resolve("Scene Builder-"+appVersion);
@@ -58,7 +58,7 @@ public class AppPlatformTest {
     
     @Test
     public void that_mac_application_data_directory_is_specific_to_version() {
-        assumeTrue(getOsName().contains("mac"));
+        assumeTrue("MacOS", osNameContains("mac"));
         Path appDataDir = AppPlatform.getAppDirectories().getApplicationDataFolder();
         Path expected   = Paths.get(System.getProperty("user.home"))
                                .resolve("Library")
@@ -69,7 +69,7 @@ public class AppPlatformTest {
     
     @Test
     public void that_linux_application_data_directory_is_specific_to_version() {
-        assumeTrue(getOsName().contains("linux"));
+        assumeTrue("Linux", osNameContains("linux"));
         Path appDataDir = AppPlatform.getAppDirectories().getApplicationDataFolder();
         Path expected   = Paths.get(System.getProperty("user.home"))
                                .resolve(".scenebuilder-"+appVersion);
@@ -96,7 +96,8 @@ public class AppPlatformTest {
 
     /*
      * MessageBox does not seem to be public API, the directory was previously
-     * declared protected, hence here the cast is needed.
+     * declared protected, hence here the cast is needed as it is not part
+     * of the AppPlatformDirectories interface.
      */
     @Test
     public void that_messagebox_is_placed_in_application_dir() {
@@ -107,7 +108,9 @@ public class AppPlatformTest {
         assertEquals(expected, mboxDir);
     }
     
-    private String getOsName() {
-        return System.getProperty("os.name").toLowerCase(Locale.ROOT);
+    private boolean osNameContains(String expectedName) {
+        return System.getProperty("os.name")
+                     .toLowerCase(Locale.ROOT)
+                     .contains(expectedName);
     }
 }
