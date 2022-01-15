@@ -73,15 +73,19 @@ public class PreferencesImporterTest {
         Preferences olderPrefs = Preferences.userRoot().node("SB_OLD_VER");
         Preferences appPrefs = Preferences.userRoot().node("SB_TEST_TARGET2");
 
+        // ensure the user was never asked before
+        appPrefs.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
         classUnderTest = new PreferencesImporter(appPrefs, Optional.of(new VersionedPreferences(oldVersion, olderPrefs)));
         assertTrue(classUnderTest.askForImportIfOlderSettingsExist());
-        
+
         classUnderTest = new PreferencesImporter(appPrefs, Optional.empty());
         assertFalse(classUnderTest.askForImportIfOlderSettingsExist());
-        
+
         classUnderTest = new PreferencesImporter(appPrefs, Optional.of(new VersionedPreferences(oldVersion, olderPrefs)));
         classUnderTest.saveTimestampWhenAskedForImport();
         assertFalse(classUnderTest.askForImportIfOlderSettingsExist());
+
+    
     }
     
     @Test
