@@ -46,7 +46,7 @@ jobs:
 
   linux-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-linux.yml@master
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-linux.yml@master
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -56,11 +56,11 @@ jobs:
 
   windows-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-windows.yml@master
-    #secrets:
-    #  WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-    #  WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
-    #  WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-windows.yml@master
+    secrets:
+      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+      WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
+      WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -70,14 +70,14 @@ jobs:
 
   mac-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-mac.yml@master
-    #secrets:
-    #  CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-    #  CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
-    #  NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
-    #  NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
-    #  MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
-    #  MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac.yml@master
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
+      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -87,7 +87,7 @@ jobs:
 
   kit-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-kit.yml@master
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -123,7 +123,7 @@ jobs:
       - name: Release with JReleaser
         env:
           VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 

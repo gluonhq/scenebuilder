@@ -51,7 +51,7 @@ jobs:
 
   linux-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-linux.yml@master
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-linux.yml@master
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -61,11 +61,11 @@ jobs:
 
   windows-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-windows.yml@master
-    #secrets:
-    #  WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-    #  WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
-    #  WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-windows.yml@master
+    secrets:
+      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+      WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
+      WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -75,14 +75,14 @@ jobs:
 
   mac-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-mac.yml@master
-    #secrets:
-    #  CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-    #  CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
-    #  NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
-    #  NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
-    #  MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
-    #  MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac.yml@master
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
+      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -92,7 +92,7 @@ jobs:
 
   kit-bundles:
     needs: [precheck]
-    uses: aalmiray/scenebuilder/.github/workflows/bundles-kit.yml@master
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
@@ -133,29 +133,14 @@ jobs:
       - name: Download all build artifacts
         uses: actions/download-artifact@v2
 
-      - name: Update settings.properties
-        if: "!contains(steps.find-tag.outputs.tag, 'RC')"
-        run: |
-          TAG=${{ steps.find-tag.outputs.tag }}
-          printf "latestversion=$TAG" > settings.properties
-          aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --region us-east-1 --debug
-          # Upload version.json. Some older versions still use version-8.4.0.json file
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version.json --acl public-read --region us-east-1 --debug
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --region us-east-1 --debug
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Release with JReleaser
         env:
           VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          JRELEASER_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          JRELEASER_GLUON_REGION: us-east-1
-          JRELEASER_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          JRELEASER_GLUON_PATH: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          JRELEASER_S3_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          JRELEASER_S3_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          JRELEASER_S3_GLUON_REGION: us-east-1
+          JRELEASER_S3_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           TAG: ${{ needs.precheck.outputs.TAG }}
         run: |
           FILES_ACTIVE="RELEASE"

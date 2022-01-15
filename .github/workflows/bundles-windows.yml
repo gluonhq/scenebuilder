@@ -21,13 +21,13 @@ on:
         default: false
         required: false
         type: boolean
-    #secrets:
-    #  WINDOWS_CERTIFICATE:
-    #    required: true
-    #  WINDOWS_PASSWORD:
-    #    required: true
-    #  WINDOWS_CERTNAME:
-    #    required: true
+    secrets:
+      WINDOWS_CERTIFICATE:
+        required: true
+      WINDOWS_PASSWORD:
+        required: true
+      WINDOWS_CERTNAME:
+        required: true
 
 jobs:
   build:
@@ -81,13 +81,13 @@ jobs:
           VERSION: ${{ inputs.version }}
           INSTALL_DIR: app\target\install
 
-      #- name: Codesign
-      #  uses: erwin1/code-sign-action@master
-      #  with:
-      #    certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
-      #    password: '${{ secrets.WINDOWS_PASSWORD }}'
-      #    certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
-      #    folder: 'app/target/install'
+      - name: Codesign
+        uses: erwin1/code-sign-action@master
+        with:
+          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_PASSWORD }}'
+          certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
+          folder: 'app/target/install'
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2

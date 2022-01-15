@@ -25,7 +25,7 @@
         <charm.glisten.version>6.1.0</charm.glisten.version>
         <gluon.attach.version>4.0.13</gluon.attach.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.github.repository>aalmiray/scenebuilder</project.github.repository>
+        <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
     </properties>
@@ -148,8 +148,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>0.10.0</version>
-                <!--version>1.0.0-M1</version-->
+                <version>1.0.0-M1</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -159,6 +158,13 @@
                                 <s3Path>{{tagName}}</s3Path>
                             </properties>
                         </environment>
+                        <project>
+                            <!-- should not exceed 79 chars -->
+                            <name>SceneBuilder</name>
+                            <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
+                            <longDescription>${project.description}</longDescription>
+                            <tags>javafx,gui,tool</tags>
+                        </project>
                         <checksum>
                             <files>false</files>
                         </checksum>
@@ -169,6 +175,7 @@
                                 <files>false</files>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
+                                    <preset>conventional-commits</preset>
                                     <format>- {{commitShortHash}} {{commitTitle}}</format>
                                     <contributors>
                                         <format>* {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}</format>
@@ -184,23 +191,13 @@
                                             <title>Bump</title>
                                             <label>dependencies</label>
                                         </labeler>
-                                        <labeler>
-                                            <title>Merge</title>
-                                            <label>merge</label>
-                                        </labeler>
                                     </labelers>
                                     <categories>
                                         <category>
                                             <key>deps</key>
                                             <title>Dependencies</title>
                                             <labels>dependencies</labels>
-                                            <order>2</order>
-                                        </category>
-                                        <category>
-                                            <key>merge</key>
-                                            <title>merge</title>
-                                            <labels>merge</labels>
-                                            <order>0</order>
+                                            <order>200</order>
                                         </category>
                                     </categories>
                                     <hide>
@@ -209,7 +206,7 @@
                                 </changelog>
                             </github>
                         </release>
-                        <!--upload>
+                        <upload>
                             <s3>
                                 <app>
                                     <active>RELEASE</active>
@@ -218,10 +215,24 @@
                                     <path>scenebuilder/{{artifactFile}}</path>
                                 </app>
                             </s3>
-                        </upload-->
+                        </upload>
                         <distributions>
                             <SceneBuilder>
                                 <type>NATIVE_PACKAGE</type>
+                                <brew>
+                                    <active>NEVER</active>
+                                </brew>
+                                <chocolatey>
+                                    <active>NEVER</active>
+                                    <remoteBuild>true</remoteBuild>
+                                </chocolatey>
+                                <macports>
+                                    <active>NEVER</active>
+                                </macports>
+                                <snap>
+                                    <active>NEVER</active>
+                                    <remoteBuild>true</remoteBuild>
+                                </snap>
                                 <artifacts>
                                     <artifact>
                                         <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.dmg</path>
@@ -242,6 +253,7 @@
                                         <platform>linux-x86_64</platform>
                                         <extraProperties>
                                             <s3GluonPath>scenebuilder/{{s3Path}}/install/linux/{{artifactFile}}</s3GluonPath>
+                                            <skipSnap>true</skipSnap>
                                         </extraProperties>
                                     </artifact>
                                     <artifact>
@@ -266,7 +278,7 @@
                             </scenebuilder-kit>
                         </distributions>
                         <files>
-                            <!--active>${jreleaser.files.active}</active-->
+                            <active>${jreleaser.files.active}</active>
                             <artifacts>
                                 <artifact>
                                     <path>target/settings.properties</path>
