@@ -1,7 +1,8 @@
-name: Release
+name: Early Access
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master ]
 
 env:
   JAVA_VERSION: '17'
@@ -10,12 +11,12 @@ env:
 jobs:
   precheck:
     runs-on: ubuntu-20.04
+    if: startsWith(github.event.head_commit.message, '[maven-release-plugin]') != true
     outputs:
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
       VERSION: ${{ steps.vars.outputs.VERSION }}
       TAG: ${{ steps.vars.outputs.TAG }}
-      S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -37,17 +38,11 @@ jobs:
         id: vars
         shell: bash
         run: |
-          mvn -B versions:set -DremoveSnapshot
           TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           VERSION=$TAG
-          S3_PATH=$TAG
-          if [[ "$TAG" == *-RC* ]]; then
-              VERSION=`echo $TAG | cut -d- -f1`
-              S3_PATH=RC/$TAG
-          fi
+          VERSION=${VERSION%-*}
           echo ::set-output name=VERSION::$VERSION
           echo ::set-output name=TAG::$TAG
-          echo ::set-output name=S3_PATH::$S3_PATH
 
   linux-bundles:
     needs: [precheck]
@@ -99,14 +94,18 @@ jobs:
       version: ${{ needs.precheck.outputs.VERSION }}
       tag: ${{ needs.precheck.outputs.TAG }}
 
-  release:
+  early-access:
     needs: [precheck, linux-bundles, windows-bundles, mac-bundles, kit-bundles]
+    if: endsWith(${{ needs.precheck.outputs.TAG }}, '-SNAPSHOT')
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v2
 
       - name: Set up Java
         uses: actions/setup-java@v2
@@ -121,49 +120,12 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Maven release
-        id: vars
-        shell: bash
-        run: |
-          mvn -B -ntp \
-            -Drepository.url=https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
-            release:prepare
-          mvn -pl :parent process-resources
-
-      - name: Download all build artifacts
-        uses: actions/download-artifact@v2
-
-      - name: Update settings.properties
-        if: "!contains(steps.find-tag.outputs.tag, 'RC')"
-        run: |
-          TAG=${{ steps.find-tag.outputs.tag }}
-          printf "latestversion=$TAG" > settings.properties
-          aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --region us-east-1 --debug
-          # Upload version.json. Some older versions still use version-8.4.0.json file
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version.json --acl public-read --region us-east-1 --debug
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --region us-east-1 --debug
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Release with JReleaser
         env:
           VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          JRELEASER_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          JRELEASER_GLUON_REGION: us-east-1
-          JRELEASER_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          JRELEASER_GLUON_PATH: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TAG: ${{ needs.precheck.outputs.TAG }}
         run: |
-          FILES_ACTIVE="RELEASE"
-          if [[ "$TAG" == *-RC* ]]; then
-              FILES_ACTIVE="NEVER"
-          fi
-          mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \
-            -Djreleaser.files.active=$FILES_ACTIVE jreleaser:release
+          mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
       - name: JReleaser output
         if: always()

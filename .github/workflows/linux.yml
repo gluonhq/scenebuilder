@@ -1,8 +1,6 @@
 name: Scene Builder Linux Bundles
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-20.04

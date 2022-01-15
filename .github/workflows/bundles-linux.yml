@@ -1,0 +1,111 @@
+name: Linux Bundles
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      java-version:
+        default: '17-ea'
+        required: false
+        type: string
+      java-distro:
+        default: 'temurin'
+        required: false
+        type: string
+      test:
+        default: false
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install packages
+        run: sudo apt-get install xdg-utils
+
+      - name: Install test packages
+        if: ${{ inputs.test }}
+        run: |
+          sudo apt-get install xvfb tigervnc-standalone-server tigervnc-common
+
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: ${{ inputs.java-distro }}
+          java-version: ${{ inputs.java-version }}
+
+      - name: Setup JavaFX
+        run: |
+          wget -P /tmp https://download2.gluonhq.com/openjfx/17/openjfx-17_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-17_linux-x64_bin-jmods.zip -d /tmp
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
+        if: ${{ inputs.test }}
+        run: |
+          export DISPLAY=:90
+          mkdir /home/runner/.vnc
+          echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
+          chmod -v 600 /home/runner/.vnc/passwd
+          vncserver :90 -localhost -nolisten tcp
+          mvn -B -ntp clean verify checkstyle:checkstyle --no-transfer-progress
+          vncserver -kill :90
+
+      - name: Build and package JAR
+        run: |
+          mvn -B -ntp -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
+          mvn -B -ntp -q clean package -Dmaven.test.skip=true -X
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Create Bundle using JPackage
+        run: |
+          # Create DEB
+          .github/scripts/jpackage.sh \
+            --icon app/assets/linux/icon-linux.png \
+            --java-options '"-Djdk.gtk.version=2"' \
+            --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --java-options '"-Djava.library.path=/opt/scenebuilder/lib/runtime/bin:/opt/scenebuilder/lib/runtime/lib"' \
+            --resource-dir app/assets/linux \
+            --install-dir /opt \
+            --type deb
+          mv ${{ env.INSTALL_DIR }}/*.deb ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.deb
+          # Create RPM
+          .github/scripts/jpackage.sh \
+            --icon app/assets/linux/icon-linux.png \
+            --java-options '"-Djdk.gtk.version=2"' \
+            --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --resource-dir app/assets/linux \
+            --install-dir /opt \
+            --type rpm
+          mv ${{ env.INSTALL_DIR }}/*.rpm ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.rpm
+          ls ${{ env.INSTALL_DIR }}
+        env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+          JAVAFX_HOME: /tmp/javafx-jmods-17/
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          TAG: ${{ inputs.tag }}
+          VERSION: ${{ inputs.version }}
+          INSTALL_DIR: app/target/install
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: |
+            app/target/install/*.deb
+            app/target/install/*.rpm

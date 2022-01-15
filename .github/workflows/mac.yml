@@ -1,8 +1,6 @@
 name: Scene Builder MacOS Bundles
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: macos-latest
