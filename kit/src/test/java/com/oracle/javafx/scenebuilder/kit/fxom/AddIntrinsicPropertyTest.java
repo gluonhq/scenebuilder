@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -56,7 +56,7 @@ public class AddIntrinsicPropertyTest {
     }
 
     private static void prepareTestData() {
-        final String sourceFile = "test_include.fxml";
+        final String sourceFile = "TestInclude.fxml";
         final String exampleCharset = "UTF-8";
         fxomDocument = new FXOMDocument();
         fxomIntrinsic = new FXOMIntrinsic(fxomDocument, FXOMIntrinsic.Type.FX_INCLUDE, sourceFile);
