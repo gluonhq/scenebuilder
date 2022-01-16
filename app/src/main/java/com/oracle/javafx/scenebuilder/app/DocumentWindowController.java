@@ -41,6 +41,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
+import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -103,6 +104,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -2080,8 +2082,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         // Checks if there are some pending changes
         final boolean closeConfirmed;
         if (isDocumentDirty()) {
-            
             final AlertDialog d = new AlertDialog(getStage());
+            d.setTitle(I18N.getString("alert.save.question.title"));
             d.setMessage(I18N.getString("alert.save.question.message", getStage().getTitle()));
             d.setDetails(I18N.getString("alert.save.question.details"));
             d.setOKButtonTitle(I18N.getString("label.save"));
