@@ -106,13 +106,14 @@ public class FXOMDocument {
         initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
-            if (!Set.of(switches).contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
+            Set<FXOMDocumentSwitch> availableSwitches = Set.of(switches);
+            if (!availableSwitches.contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
                 final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler();
                 fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);
             loader.load(fxmlTextToLoad);
-            if (Set.of(switches).contains(FXOMDocumentSwitch.NORMALIZED)) {
+            if (availableSwitches.contains(FXOMDocumentSwitch.NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
             }
