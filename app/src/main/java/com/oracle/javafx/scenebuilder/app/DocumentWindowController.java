@@ -123,6 +123,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -2089,6 +2090,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             d.setOKButtonTitle(I18N.getString("label.save"));
             d.setActionButtonTitle(I18N.getString("label.do.not.save"));
             d.setActionButtonVisible(true);
+            /* 
+             * AbstractWindowController should reuse the icons from parent but isn't doing so.
+             */
+            d.getStage().getIcons().setAll(((Stage) getStage()).getIcons());
 
             switch(d.showAndWait()) {
                 default:
