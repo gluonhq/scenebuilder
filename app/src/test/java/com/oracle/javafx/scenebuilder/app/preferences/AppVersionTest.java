@@ -57,6 +57,22 @@ public class AppVersionTest {
     }
 
     @Test
+    public void that_snapshotversions_are_always_older_than_release_versions() {
+        AppVersion old = new AppVersion(17, 0, 0, "-SNAPSHOT");
+        AppVersion moreRecent = new AppVersion(17, 0, 0);
+        int result = moreRecent.compareTo(old);
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void that_snapshotversions_are_always_older_than_release_versions_major_minor() {
+        AppVersion old = new AppVersion(17, 0, null, "-SNAPSHOT");
+        AppVersion moreRecent = new AppVersion(17, 0);
+        int result = moreRecent.compareTo(old);
+        assertTrue(result > 0);
+    }
+
+    @Test
     public void that_minor_version_is_used_when_major_is_equal() {
         AppVersion old = new AppVersion(16, 1, 0);
         AppVersion moreRecent = new AppVersion(16, 2, 0);
@@ -82,9 +98,26 @@ public class AppVersionTest {
     }
 
     @Test
+    public void that_snapshot_version_can_be_parsed_from_string() {
+        String validVersion = "42.12.12-SNAPSHOT";
+        AppVersion expected = new AppVersion(42, 12, 12, "-SNAPSHOT");
+        Optional<AppVersion> parsedVersion = AppVersion.fromString(validVersion);
+        assertTrue(parsedVersion.isPresent());
+        assertEquals(expected, parsedVersion.get());
+    }
+
+    @Test
     public void that_2digit_versions_are_parsed() {
         assertTrue(AppVersion.fromString("2.0").isPresent());
         assertTrue(AppVersion.fromString("2.0.").isPresent());
+    }
+
+    @Test
+    public void that_2digit_snapshot_versions_are_parsed() {
+        AppVersion expected = new AppVersion(42, 12, null, "-SNAPSHOT");
+        Optional<AppVersion> parsed = AppVersion.fromString("42.12-SNAPSHOT");
+        assertTrue(parsed.isPresent());
+        assertEquals(expected, parsed.get());
     }
 
     @Test
@@ -93,6 +126,8 @@ public class AppVersionTest {
         assertEquals("1.2", new AppVersion(1, 2).toString());
         assertEquals("1.0.0", new AppVersion(1, 0, 0).toString());
         assertEquals("1.0.1", new AppVersion(1, 0, 1).toString());
+        assertEquals("1.0.1-SNAPSHOT", new AppVersion(1, 0, 1, "-SNAPSHOT").toString());
+        assertEquals("1.0-SNAPSHOT", new AppVersion(1, 0, null, "-SNAPSHOT").toString());
     }
 
     @Test
@@ -102,6 +137,7 @@ public class AppVersionTest {
         assertFalse(AppVersion.fromString("1.-10.-1").isPresent());
         assertFalse(AppVersion.fromString("1.1.-100").isPresent());
         assertFalse(AppVersion.fromString("-1.-1.-1").isPresent());
+        assertFalse(AppVersion.fromString("1.1.-1-SNAPSHOT").isPresent());
         assertFalse(AppVersion.fromString(".1.1.1.").isPresent());
         assertFalse(AppVersion.fromString("1..1").isPresent());
         assertFalse(AppVersion.fromString("11").isPresent());

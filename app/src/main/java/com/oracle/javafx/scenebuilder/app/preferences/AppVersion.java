@@ -32,6 +32,7 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -39,10 +40,17 @@ import java.util.Optional;
  * version schema. Patch versions can be null and will be ignored then.
  * 
  * Version numbers can be sorted, where major beats minor beats patch versions.
- * Version numbers with patch versions will be considered as higher (or newer) than version numbers without patch numbers.
- * This is regardless if there is no patch number or patch version is 0. Patch version 0 is higher than no patch version at all.
+ * Version numbers with patch versions will be considered as higher (or newer)
+ * than version numbers without patch numbers. This is regardless if there is no
+ * patch number or patch version is 0. Patch version 0 is higher than no patch
+ * version at all. If there is any kind of extension such as {@code -SNAPSHOT},
+ * than the same version with an extension is considered as the older version.
+ * 
+ * As of now, Scene Builder release versions follow the schema {@code 17.0.0}
+ * which is {@code major.minor.patch}. Snapshot versions declared such as
+ * {@code 17.0.0-SNAPSHOT}.
  */
-public record AppVersion(int major, int minor, Integer patch) implements Comparable<AppVersion> {
+public record AppVersion(int major, int minor, Integer patch, String extension) implements Comparable<AppVersion> {
     
     /**
      * @return {@link Comparator} sorting {@link AppVersion} instances in descending order.
@@ -50,9 +58,13 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
     public static Comparator<AppVersion> descending() {
         return (a,b) -> b.compareTo(a);
     }
-    
+
+    public AppVersion(int major, int minor, int patch) {
+        this(major, minor, patch, null);
+    }
+
     public AppVersion(int major, int minor) {
-        this(major, minor, null);
+        this(major, minor, null, null);
     }
 
     @Override
@@ -60,8 +72,12 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
         int majorDiff = major - o.major;
         int minorDiff = minor - o.minor;
         int patchDiff = calcPatchDiff(o);
+        int extensionDiff = calcExtensionDiff(o);
         if (majorDiff == 0) {
             if (minorDiff == 0) {
+                if (patchDiff == 0) {
+                    return extensionDiff;
+                }
                 return patchDiff;
             }
             return minorDiff;
@@ -78,6 +94,9 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
         if (patch != null) {
             builder.append(".");
             builder.append(patch);
+        }
+        if (extension != null) {
+            builder.append(extension);
         }
         return builder.toString();
     }
@@ -112,38 +131,54 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
         }
         return patch - o.patch;
     }
-    
+
+    protected int calcExtensionDiff(AppVersion o) {
+        String thisExt = (extension == null) ? "" : extension;
+        String otherExt = (o.extension == null) ? "" : o.extension;
+        return -thisExt.compareToIgnoreCase(otherExt);
+    }
 
     /**
-     * Parses an optional AppVersion from any given String.
-     * Snapshot versions are not considered as valid.
+     * Parses an optional AppVersion from a given String. The supported version
+     * schema must follow: {@code major.minor.patch-extension} whereas major, minor
+     * and patch are supposed to be positive integers and the extension can be an
+     * arbitrary string.
      * 
      * @param validVersion String representing a Scene Builder version.
-     * @return Empty optional when the String does not represent a valid version. If valid, then an optional AppVersion is returned.
+     * @return Empty optional when the String does not represent a valid version. If
+     *         valid, then an optional AppVersion is returned.
      */
     public static Optional<AppVersion> fromString(String validVersion) {
-        String[] elements = validVersion.strip().split("[.]");
+        String versionToParse = validVersion.toUpperCase(Locale.ROOT);
+        String extension = null;
+        int lastDot = validVersion.lastIndexOf('.');
+        int startOfSnapshot = validVersion.indexOf("-");
+        if (startOfSnapshot > lastDot+1) {
+            extension = validVersion.substring(startOfSnapshot, validVersion.length());
+            versionToParse = validVersion.substring(0, startOfSnapshot);
+        }
+        String[] elements = versionToParse.strip().split("[.]");
         return switch (elements.length) {
-            case 2 -> parseMajorMinor(elements);
-            case 3 -> parseMajorMinorPatch(elements);
+            case 2 -> parseMajorMinor(elements, extension);
+            case 3 -> parseMajorMinorPatch(elements, extension);
             default -> Optional.empty();
         };
     }
 
-    private static Optional<AppVersion> parseMajorMinor(String[] elements) {
+    private static Optional<AppVersion> parseMajorMinor(String[] elements, String extension) {
         try {
             int major = Integer.parseInt(elements[0]);
             int minor = Integer.parseInt(elements[1]);
             if (major < 0 || minor < 0) {
                 return Optional.empty();
             }
-            return Optional.of(new AppVersion(major, minor));
+            return Optional.of(new AppVersion(major, minor, null, extension));
         } catch (NumberFormatException nfe) {
             return Optional.empty();
         }
     }
 
-    private static Optional<AppVersion> parseMajorMinorPatch(String[] elements) {
+    private static Optional<AppVersion> parseMajorMinorPatch(String[] elements, String extension) {
         try {
             int major = Integer.parseInt(elements[0]);
             int minor = Integer.parseInt(elements[1]);
@@ -151,7 +186,7 @@ public record AppVersion(int major, int minor, Integer patch) implements Compara
             if (major < 0 || minor < 0 || patch < 0) {
                 return Optional.empty();
             }
-            return Optional.of(new AppVersion(major, minor, patch));
+            return Optional.of(new AppVersion(major, minor, patch, extension));
         } catch (NumberFormatException nfe) {
             return Optional.empty();
         }
