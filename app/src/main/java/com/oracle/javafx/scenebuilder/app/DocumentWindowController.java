@@ -1573,7 +1573,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } else {
             assert isTextInputControlEditing(focusOwner);
             final TextInputControl tic = getTextInputControl(focusOwner);
-            // TODO: Once the issue https://bugs.openjdk.java.net/browse/JDK-8205915
+            // TODO: Once the issue https://bugs.openjdk.java.net/browse/JDK-8280057
             // is solved, this if expression should be removed.
             if (!EditorPlatform.IS_MAC) {
                 tic.paste();
