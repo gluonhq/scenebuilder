@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -282,7 +283,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
             URL location = fxmlTesterFile.toFile().toURI().toURL();
             String fxmlString = getFxmlAsString(fxmlTesterFile);
 
-            fxomDocument = new FXOMDocument(fxmlString, location, null, null);
+            fxomDocument = new FXOMDocument(fxmlString, location, null, null, FXOMDocumentSwitch.NORMALIZED);
         } catch (IOException e) {
             e.printStackTrace();
         }
