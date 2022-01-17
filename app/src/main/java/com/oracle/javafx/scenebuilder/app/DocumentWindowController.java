@@ -1402,7 +1402,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     AppSettings.getTempM2Repository(), PreferencesController.getSingleton(), getStage());
             libraryDialogController.setOnAddJar(() -> onImportJarFxml(libraryDialogController.getStage()));
             libraryDialogController.setOnEditFXML(fxmlPath -> {
-                    if (SceneBuilderApp.getSingleton().lookupUnusedDocumentWindowController() != null) {
+                    if (SceneBuilderApp.getSingleton().findFirstUnusedDocumentWindowController().isPresent()) {
                         libraryDialogController.closeWindow();
                     }
                     SceneBuilderApp.getSingleton().performOpenRecent(this,

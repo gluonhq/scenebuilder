@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -74,6 +74,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -92,12 +93,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- *
+ * This is the SB main entry point.
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
 
     public enum ApplicationControlAction {
-
         ABOUT,
         CHECK_UPDATES,
         REGISTER,
@@ -112,7 +112,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private static SceneBuilderApp singleton;
-    private static String darkToolStylesheet;
     private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
     private final ObservableList<DocumentWindowController> windowList = FXCollections.observableArrayList();
@@ -230,7 +229,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-
     public boolean canPerformControlAction(ApplicationControlAction a, DocumentWindowController source) {
         final boolean result;
         switch (a) {
@@ -306,17 +304,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return result;
     }
 
-    public DocumentWindowController lookupUnusedDocumentWindowController() {
-        DocumentWindowController result = null;
-
-        for (DocumentWindowController dwc : windowList) {
-            if (dwc.isUnused()) {
-                result = dwc;
-                break;
-            }
-        }
-
-        return result;
+    public Optional<DocumentWindowController> findFirstUnusedDocumentWindowController() {
+        return windowList.stream()
+                .filter(DocumentWindowController::isUnused)
+                .findFirst();
     }
 
     public void toggleDebugMenu() {
@@ -336,13 +327,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (EditorPlatform.IS_MAC) {
             MenuBarController.getSystemMenuBarController().setDebugMenuVisible(!visible);
         }
-    }
-
-    public static synchronized String getDarkToolStylesheet() {
-        if (darkToolStylesheet == null) {
-            darkToolStylesheet = ResourceUtils.THEME_DARK_STYLESHEET;
-        }
-        return darkToolStylesheet;
     }
 
     /*
@@ -375,8 +359,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         logTimestamp(ACTION.START);
-
-
     }
 
     /*
@@ -403,7 +385,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
                         shouldShowImportGluonJarAlert = true;
                     }
-
                 }
             }
             if (shouldShowImportGluonJarAlert) {
@@ -449,7 +430,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     } else {
                         showRegistrationDialogIfRequired(newWindow);
                     }
-
                 });
             });
 
@@ -461,7 +441,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
         }
-
     }
 
     private void sendTrackingStartupInfo() {
@@ -537,7 +516,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     @Override
     public void handleQuitAction() {
-
         /*
          * Note : this callback is called on Mac OS X only when the user
          * selects the 'Quit App' command in the Application menu.
@@ -647,7 +625,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
-        final Map<File, IOException> exceptions = new HashMap<>();
+        final Map<File, Exception> exceptions = new HashMap<>();
         for (File fxmlFile : fxmlFiles) {
             try {
                 final DocumentWindowController dwc
@@ -657,18 +635,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     dwc.getStage().toFront();
                 } else {
                     // Open fxmlFile
-                    final DocumentWindowController hostWindow;
-                    final DocumentWindowController unusedWindow
-                            = lookupUnusedDocumentWindowController();
-                    if (unusedWindow != null) {
-                        hostWindow = unusedWindow;
-                    } else {
-                        hostWindow = makeNewWindow();
-                    }
+                    var hostWindow = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                 }
-            } catch (IOException xx) {
+            } catch (Exception xx) {
                 exceptions.put(fxmlFile, xx);
             }
         }
@@ -792,21 +763,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private enum ACTION {START, STOP}
+    private enum ACTION {
+        START("log.start"),
+        STOP("log.stop");
 
-    ;
+        private final String logKey;
+
+        ACTION(String logKey) {
+            this.logKey = logKey;
+        }
+    }
 
     private void logTimestamp(ACTION type) {
-        switch (type) {
-            case START:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.start"));
-                break;
-            case STOP:
-                Logger.getLogger(this.getClass().getName()).info(I18N.getString("log.stop"));
-                break;
-            default:
-                assert false;
-        }
+        Logger.getLogger(this.getClass().getName()).info(I18N.getString(type.logKey));
     }
 
     private void setApplicationUncaughtExceptionHandler() {
@@ -825,7 +794,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-
     private void performUseToolTheme(ToolTheme toolTheme) {
         this.toolTheme = toolTheme;
 
@@ -836,11 +804,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-
     private String getToolStylesheet() {
         return ResourceUtils.getToolStylesheet(toolTheme);
     }
-    
     
     /*
      * Background startup
@@ -1099,5 +1065,4 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             consumer.accept(dwc);
         }
     }
-
 }

@@ -1,4 +1,5 @@
-/*
+/* 
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueInstruction;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
@@ -155,7 +157,8 @@ public class FXOMNodes {
                     fxmlText,
                     targetDocument.getLocation(),
                     targetDocument.getClassLoader(),
-                    targetDocument.getResources());
+                    targetDocument.getResources(),
+                    FXOMDocumentSwitch.NORMALIZED);
             result = transientDoc.getFxomRoot();
             if (result != null) {
                 result.moveToFxomDocument(targetDocument);
@@ -206,7 +209,8 @@ public class FXOMNodes {
                     fxmlText,
                     fxmlURL,
                     targetDocument.getClassLoader(),
-                    targetDocument.getResources());
+                    targetDocument.getResources(),
+                    FXOMDocumentSwitch.NORMALIZED);
             if (transientDoc.getFxomRoot() != null) {
                 final PrefixedValue pv 
                         = PrefixedValue.makePrefixedValue(fxmlURL, targetDocument.getLocation());

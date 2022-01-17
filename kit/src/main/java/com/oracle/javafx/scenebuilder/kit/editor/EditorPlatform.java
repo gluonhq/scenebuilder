@@ -55,6 +55,14 @@ import javafx.scene.shape.Rectangle;
  * @treatAsPrivate
  */
 public class EditorPlatform {
+    
+    public enum OS {
+        LINUX, MAC, WINDOWS;
+
+        public static OS get() {
+            return IS_LINUX ? LINUX : IS_MAC ? MAC : WINDOWS;
+        }
+    }
 
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
