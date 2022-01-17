@@ -1,4 +1,5 @@
-/*
+/* 
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,6 +35,7 @@ package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMArchive;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import java.io.File;
@@ -86,7 +88,7 @@ public class ClipboardDecoder {
                     final ClassLoader classLoader = targetDocument.getClassLoader();
                     final ResourceBundle resources = targetDocument.getResources();
                     final FXOMDocument transientDoc
-                            = new FXOMDocument(fxmlText, location, classLoader, resources);
+                            = new FXOMDocument(fxmlText, location, classLoader, resources, FXOMDocumentSwitch.NORMALIZED);
                     result = Arrays.asList(transientDoc.getFxomRoot());
                 } catch(IOException x) {
                     result = null;
