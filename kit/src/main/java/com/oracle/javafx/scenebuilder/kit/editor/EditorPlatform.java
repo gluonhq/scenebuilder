@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -55,6 +55,14 @@ import javafx.scene.shape.Rectangle;
  * @treatAsPrivate
  */
 public class EditorPlatform {
+    
+    public enum OS {
+        LINUX, MAC, WINDOWS;
+
+        public static OS get() {
+            return IS_LINUX ? LINUX : IS_MAC ? MAC : WINDOWS;
+        }
+    }
 
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 

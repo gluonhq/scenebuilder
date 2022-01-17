@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
 
@@ -214,7 +215,8 @@ public final class PreviewWindowController extends AbstractWindowController {
             clone = new FXOMDocument(fxomDocument.getFxmlText(false),
                     fxomDocument.getLocation(),
                     fxomDocument.getClassLoader(),
-                    fxomDocument.getResources());
+                    fxomDocument.getResources(),
+                    FXOMDocumentSwitch.FOR_PREVIEW, FXOMDocumentSwitch.NORMALIZED);
             clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
         } catch (IOException ex) {
             throw new RuntimeException("Bug in PreviewWindowController::openDialog", ex); //NOI18N
@@ -280,7 +282,8 @@ public final class PreviewWindowController extends AbstractWindowController {
                         clone = new FXOMDocument(fxomDocument.getFxmlText(false),
                                 fxomDocument.getLocation(),
                                 fxomDocument.getClassLoader(),
-                                fxomDocument.getResources());
+                                fxomDocument.getResources(),
+                                FXOMDocumentSwitch.FOR_PREVIEW);
                         clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
                     } catch (IOException ex) {
                         throw new RuntimeException("Bug in PreviewWindowController::requestUpdate", ex); //NOI18N
