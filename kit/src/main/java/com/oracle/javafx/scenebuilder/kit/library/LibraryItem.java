@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,6 +33,8 @@
 package com.oracle.javafx.scenebuilder.kit.library;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -85,7 +87,7 @@ public class LibraryItem {
         FXOMDocument result;
         
         try {
-            result = new FXOMDocument(fxmlText, null, library.getClassLoader(), null);
+            result = new FXOMDocument(fxmlText, null, library.getClassLoader(), null, FXOMDocumentSwitch.NORMALIZED);
         } catch(Error|IOException x) {
             x.printStackTrace();
             result = null;

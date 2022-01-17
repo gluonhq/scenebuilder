@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
@@ -134,7 +136,8 @@ public class AddTooltipToSelectionJob extends BatchSelectionJob {
                 for (FXOMObject fxomObject : osg.getItems()) {
                     final FXOMDocument contextMenuDocument = new FXOMDocument(
                             contextMenuFxmlText,
-                            tooltipFxmlURL, library.getClassLoader(), null);
+                            tooltipFxmlURL, library.getClassLoader(), null,
+                            FXOMDocumentSwitch.NORMALIZED);
 
                     assert contextMenuDocument != null;
                     final FXOMObject contextMenuObject = contextMenuDocument.getFxomRoot();
