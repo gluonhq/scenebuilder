@@ -45,9 +45,9 @@ import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls.DocumentationItem;
 
 public class DocumentationUrlsTest {
-    
+
     private DocumentationUrls classUnderTest;
-    
+
     @BeforeClass
     public static void initJavaFX() {
         JfxInitializer.initialize();
@@ -55,13 +55,12 @@ public class DocumentationUrlsTest {
 
     @Test
     public void that_error_is_raised_when_resource_file_is_missing() {
-        assertThrows(AssertionError.class, 
-                () -> new DocumentationUrls("17.0.0.1","myNotExistingResource.properties"));
+        assertThrows(AssertionError.class, () -> new DocumentationUrls("17.0.0.1", "myNotExistingResource.properties"));
     }
-    
+
     @Test
     public void that_defaults_are_used_with_incomplete_properties_file() {
-        classUnderTest = new DocumentationUrls("17.0.0.1","incomplete_doc_urls.properties");
+        classUnderTest = new DocumentationUrls("17.0.0.1", "incomplete_doc_urls.properties");
         assertFalse(classUnderTest.getOptionalUrl(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE).isPresent());
         assertThrows(AssertionError.class,
                 () -> classUnderTest.getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE));
@@ -70,63 +69,61 @@ public class DocumentationUrlsTest {
     @Test
     public void that_defaults_are_correct_and_useful() {
         classUnderTest = new DocumentationUrls("17.0.0.1", "incomplete_doc_urls.properties");
-        
-        assertEquals("Javadoc home is used in Editor Platform", 
-                     "https://openjfx.io/javadoc/11/", classUnderTest.getJavadocHome());
-        
-        assertEquals("Gluon Java Doc home is used in Editor Platform", 
-                     "https://docs.gluonhq.com/charm/javadoc/latest/", classUnderTest.getGluonJavadocHome());
-                
-        assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javafx/index.html", 
-                     classUnderTest.getOracleDocumentation());
-        
-        assertEquals("The getting started guide", "https://openjfx.io/openjfx-docs/", 
-                     classUnderTest.getOpenjfxGettingStarted());
-        
+
+        assertEquals("Javadoc home is used in Editor Platform", "https://openjfx.io/javadoc/11/",
+                classUnderTest.getJavadocHome());
+
+        assertEquals("Gluon Java Doc home is used in Editor Platform", "https://docs.gluonhq.com/charm/javadoc/latest/",
+                classUnderTest.getGluonJavadocHome());
+
+        assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javafx/index.html",
+                classUnderTest.getOracleDocumentation());
+
+        assertEquals("The getting started guide", "https://openjfx.io/openjfx-docs/",
+                classUnderTest.getOpenjfxGettingStarted());
+
         assertEquals("The getting started guide", "https://docs.tornadofx.io/",
                 classUnderTest.getTornadoFxGettingStartedWithKotlin());
-        
+
         assertEquals("Home of Gluon Scenebuilder", "https://gluonhq.com/products/scene-builder/",
                 classUnderTest.getGluonScenebuilderHome());
-        
-        assertEquals("OpenJFX API docs", "https://openjfx.io/javadoc/16/",
-                     classUnderTest.getOpenjfxJavadocHome());
-        
+
+        assertEquals("OpenJFX API docs", "https://openjfx.io/javadoc/16/", classUnderTest.getOpenjfxJavadocHome());
+
         assertEquals("OpenJFX CSS Reference",
-                     "https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html",
-                     classUnderTest.getOpenjfxCssReference());
-        
-        assertEquals("OpenJFX FXML Reference", 
-                     "https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html", 
-                     classUnderTest.getOpenjfxFxmlReference());
+                "https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html",
+                classUnderTest.getOpenjfxCssReference());
+
+        assertEquals("OpenJFX FXML Reference",
+                "https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html",
+                classUnderTest.getOpenjfxFxmlReference());
     }
-    
+
     @Test
     public void that_default_properties_are_read_correctly_from_resource() {
         classUnderTest = new DocumentationUrls();
-        
-        assertEquals("Javadoc home is used in Editor Platform", 
-                "https://openjfx.io/javadoc/unknown/", classUnderTest.getJavadocHome());
-        
-        assertEquals("This is used as F1 help URL", 
-                "https://docs.oracle.com/javase/8/javase-clienttechnologies.htm", 
+
+        assertEquals("Javadoc home is used in Editor Platform", "https://openjfx.io/javadoc/unknown/",
+                classUnderTest.getJavadocHome());
+
+        assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javase/8/javase-clienttechnologies.htm",
                 classUnderTest.getOracleDocumentation());
     }
-    
+
     @Test
     public void that_major_version_is_properly_extracted() {
         String javaFxVersion = "17.0.1.a";
         String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
         assertEquals("17", majorVersion);
     }
-    
+
     @Test
     public void that_unsupported_version_schema_yields_full_version_string() {
         String javaFxVersion = "17-0-0-1";
         String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
         assertEquals("17-0-0-1", majorVersion);
     }
-    
+
     @Test
     public void that_blank_or_null_strings_yield_unknown_version_value() {
         assertEquals("unknown", DocumentationUrls.getMajorJavaFxVersion(null));
@@ -143,8 +140,7 @@ public class DocumentationUrlsTest {
 
     @Test
     public void that_unknown_is_returned_as_javafx_version_with_empty_props() {
-        assertEquals("unknown",
-                DocumentationUrls.getJavaFxVersion(new Properties()));
+        assertEquals("unknown", DocumentationUrls.getJavaFxVersion(new Properties()));
     }
 
     @Test
