@@ -5,6 +5,6 @@ Exec=APPLICATION_LAUNCHER
 Icon=APPLICATION_ICON
 Terminal=false
 Type=Application
-Categories=DEPLOY_BUNDLE_CATEGORY
+Categories=Development;Building;GUIDesigner;Java;
 DESKTOP_MIMES
 StartupWMClass=com.oracle.javafx.scenebuilder.app.SceneBuilderApp
