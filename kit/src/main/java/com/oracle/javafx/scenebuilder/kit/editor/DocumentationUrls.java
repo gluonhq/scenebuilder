@@ -117,7 +117,7 @@ public class DocumentationUrls {
 
     private final String javaFxVersion;
 
-    DocumentationUrls() {
+    private DocumentationUrls() {
         this(getJavaFxVersion(), "documentation_urls.properties");
     }
 

@@ -101,7 +101,7 @@ public class DocumentationUrlsTest {
 
     @Test
     public void that_default_properties_are_read_correctly_from_resource() {
-        classUnderTest = new DocumentationUrls();
+        classUnderTest = DocumentationUrls.getInstance();
 
         assertEquals("Javadoc home is used in Editor Platform", "https://openjfx.io/javadoc/unknown/",
                 classUnderTest.getJavadocHome());
