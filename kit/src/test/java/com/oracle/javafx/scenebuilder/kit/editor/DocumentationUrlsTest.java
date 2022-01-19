@@ -82,8 +82,8 @@ public class DocumentationUrlsTest {
         assertEquals("The getting started guide", "https://openjfx.io/openjfx-docs/",
                 classUnderTest.getOpenjfxGettingStarted());
 
-        assertEquals("The getting started guide", "https://docs.tornadofx.io/",
-                classUnderTest.getTornadoFxGettingStartedWithKotlin());
+        assertEquals("The getting started guide", "https://kotlinlang.org/docs/getting-started.html",
+                classUnderTest.getGettingStartedWithKotlin());
 
         assertEquals("Home of Gluon Scenebuilder", "https://gluonhq.com/products/scene-builder/",
                 classUnderTest.getGluonScenebuilderHome());

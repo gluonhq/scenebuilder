@@ -188,8 +188,8 @@ public class DocumentationUrls {
         return getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_HOME);
     }
 
-    public String getTornadoFxGettingStartedWithKotlin() {
-        return getAsMandatoryValue(DocumentationItem.TORNADOFX_GETTING_STARTED_KOTLIN);
+    public String getGettingStartedWithKotlin() {
+        return getAsMandatoryValue(DocumentationItem.KOTLIN_GETTING_STARTED);
     }
 
     String getAsMandatoryValue(DocumentationItem item) {
@@ -224,7 +224,7 @@ public class DocumentationUrls {
         OPENJFX_CSS_REFERENCE("https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html"),
         OPENJFX_FXML_REFERENCE("https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"),
 
-        TORNADOFX_GETTING_STARTED_KOTLIN("https://docs.tornadofx.io/"),
+        KOTLIN_GETTING_STARTED("https://kotlinlang.org/docs/getting-started.html"),
 
         GLUON_SCENEBUILDER_CONTRIBUTE;
 

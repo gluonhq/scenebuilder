@@ -869,7 +869,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 break;
 
             case HELP_OPEN_GETTING_STARTED_WITH_KOTLIN:
-                openURL(DocumentationUrls.getInstance().getTornadoFxGettingStartedWithKotlin());
+                openURL(DocumentationUrls.getInstance().getGettingStartedWithKotlin());
                 break;
 
             case HELP_OPEN_OPENJFX_APIDOC:
