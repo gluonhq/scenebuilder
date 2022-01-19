@@ -202,7 +202,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 break;
 
             case OPEN_FILE:
-                performOpenFile(source);
+                performOpenFile();
                 break;
 
             case CLOSE_FRONT_WINDOW:
@@ -571,10 +571,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return Paths.get(pathString).getFileName().toString();
     }
 
-    /*
-     * Private (control actions)
+    /**
+     * Opens a multiple-file dialog for loading projects.
+     * If any files are selected, calls performOpenFiles() on them.
+     *
+     * @return true if at least one file was selected for loading, false if no file selected
      */
-    private void performOpenFile(DocumentWindowController fromWindow) {
+    public boolean performOpenFile() {
         final FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"),
@@ -584,8 +587,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (fxmlFiles != null) {
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
-            performOpenFiles(fxmlFiles, fromWindow);
+            performOpenFiles(fxmlFiles, null);
+            return true;
         }
+
+        return false;
     }
 
     public void performNewTemplate(Template template) {

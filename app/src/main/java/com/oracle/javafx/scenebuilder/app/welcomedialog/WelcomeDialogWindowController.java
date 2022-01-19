@@ -162,10 +162,9 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
     @FXML
     private void openDocument() {
-        // Right now there is only one window open by default
-        DocumentWindowController documentWC = sceneBuilderApp.getDocumentWindowControllers().get(0);
-        sceneBuilderApp.performControlAction(SceneBuilderApp.ApplicationControlAction.OPEN_FILE, documentWC);
-        getStage().hide();
+        if (sceneBuilderApp.performOpenFile()) {
+            getStage().hide();
+        }
     }
 }
 
