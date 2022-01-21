@@ -75,7 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,7 +111,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private static SceneBuilderApp singleton;
-    private static final CountDownLatch launchLatch = new CountDownLatch(1);
 
     private final ObservableList<DocumentWindowController> windowList = FXCollections.observableArrayList();
     private UserLibrary userLibrary;
@@ -147,28 +145,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
             }
         });
-        
-        /*
-         * We spawn our two threads for handling background startup.
-         */
-        final Runnable p0 = () -> backgroundStartPhase0();
-        final Runnable p1 = () -> {
-            try {
-                launchLatch.await();
-                backgroundStartPhase2();
-            } catch (InterruptedException x) {
-                // JavaFX thread has been interrupted. Simply exits.
-            }
-        };
-        final Thread phase0 = new Thread(p0, "Phase 0"); //NOI18N
-        final Thread phase1 = new Thread(p1, "Phase 1"); //NOI18N
-        phase0.setDaemon(true);
-        phase1.setDaemon(true);
 
-        // Note : if you suspect a race condition bug, comment the two next
-        // lines to make startup fully sequential.
-        phase0.start();
-        phase1.start();
+        startInBackground("Phase 0", () -> backgroundStartPhase0()); //NOI18N
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
@@ -334,7 +312,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void start(Stage stage) throws Exception {
-        launchLatch.countDown();
+        startInBackground("Phase 1", () -> backgroundStartPhase1()); //NOI18N
+
         setApplicationUncaughtExceptionHandler();
 
         try {
@@ -370,6 +349,31 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         setApplicationUncaughtExceptionHandler();
 
+        startInBackground("Set up user library", () -> setUpUserLibrary(showWelcomeDialog));
+
+        if (showWelcomeDialog) {
+            // Unless we're on a Mac we're starting SB directly (fresh start)
+            // so we're not opening any file and as such we should show the Welcome Dialog
+            WelcomeDialogWindowController.getInstance().getStage().show();
+
+            // let JavaFX handle above call ASAP and delay empty document window for improved UX
+            createEmptyDocumentWindowOnNextPulse();
+        } else {
+            // Open files passed as arguments by the platform
+            handleOpenFilesAction(files);
+        }
+    }
+
+    /**
+     * Creates and starts a new daemon thread with [taskName] to executive given [task].
+     */
+    private void startInBackground(String taskName, Runnable task) {
+        var t = new Thread(task, taskName + " Thread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void setUpUserLibrary(boolean showWelcomeDialog) {
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
@@ -389,11 +393,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
             if (shouldShowImportGluonJarAlert) {
                 Platform.runLater(() -> {
-                    SceneBuilderApp sceneBuilderApp = SceneBuilderApp.getSingleton();
-                    DocumentWindowController dwc = sceneBuilderApp.getFrontDocumentWindow();
-                    if (dwc == null) {
-                        dwc = sceneBuilderApp.getDocumentWindowControllers().get(0);
-                    }
+                    var dwc = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
                     ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
                     AppSettings.setWindowIcon(alert);
                     if (showWelcomeDialog) {
@@ -410,25 +410,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         userLibrary.startWatching();
 
         sendTrackingStartupInfo();
-
-        if (showWelcomeDialog) {
-            // Show ScenicView Tool when the JVM is started with option -Dscenic.
-            // NetBeans: set it on [VM Options] line in [Run] category of project's Properties.
-            if (System.getProperty("scenic") != null) { //NOI18N
-                // commented out until it is implemented
-                //Platform.runLater(new ScenicViewStarter(newWindow.getScene()));
-            }
-
-            // Unless we're on a Mac we're starting SB directly (fresh start)
-            // so we're not opening any file and as such we should show the Welcome Dialog
-            WelcomeDialogWindowController.getInstance().getStage().show();
-
-            // let JavaFX handle above call ASAP and delay empty document window for improved UX
-            createEmptyDocumentWindowOnNextPulse();
-        } else {
-            // Open files passed as arguments by the platform
-            handleOpenFilesAction(files);
-        }
     }
 
     private void sendTrackingStartupInfo() {
@@ -848,9 +829,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         Metadata.getMetadata();
     }
 
-    private void backgroundStartPhase2() {
-        assert Platform.isFxApplicationThread() == false; // Warning 
-        assert launchLatch.getCount() == 0; // i.e JavaFX is initialized
+    private void backgroundStartPhase1() {
+        assert Platform.isFxApplicationThread() == false; // Warning
 
         BuiltinLibrary.getLibrary();
         if (EditorPlatform.IS_MAC) {
