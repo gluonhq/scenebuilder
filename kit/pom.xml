@@ -66,6 +66,13 @@
             <artifactId>charm-glisten</artifactId>
             <version>${charm.glisten.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.gluonhq.attach</groupId>
+            <artifactId>display</artifactId>
+            <version>${gluon.attach.version}</version>
+            <classifier>desktop</classifier>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Rest API -->
         <dependency>
