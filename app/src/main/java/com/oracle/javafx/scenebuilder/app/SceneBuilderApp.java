@@ -357,7 +357,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             WelcomeDialogWindowController.getInstance().getStage().show();
 
             // let JavaFX handle above call ASAP and delay empty document window for improved UX
-            startInBackground("Set up empty doc", () -> createEmptyDocumentWindowOnNextPulse());
+            startInBackground("Set up empty doc", () -> createEmptyDocumentWindow());
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
@@ -444,19 +444,17 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return sendTrackingInfo;
     }
 
-    private void createEmptyDocumentWindowOnNextPulse() {
-        Platform.runLater(() -> {
-            var newWindow = makeNewWindow();
-            newWindow.updateWithDefaultContent();
+    private void createEmptyDocumentWindow() {
+        var newWindow = makeNewWindow();
+        newWindow.updateWithDefaultContent();
 
-            WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                showUpdateDialogIfRequired(newWindow, () -> {
-                    if (!Platform.isFxApplicationThread()) {
-                        Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
-                    } else {
-                        showRegistrationDialogIfRequired(newWindow);
-                    }
-                });
+        WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
+            showUpdateDialogIfRequired(newWindow, () -> {
+                if (!Platform.isFxApplicationThread()) {
+                    Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
+                } else {
+                    showRegistrationDialogIfRequired(newWindow);
+                }
             });
         });
     }
@@ -536,9 +534,16 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public DocumentWindowController makeNewWindow() {
         final DocumentWindowController result = new DocumentWindowController();
 
-        AppSettings.setWindowIcon(result.getStage());
+        if (Platform.isFxApplicationThread()) {
+            AppSettings.setWindowIcon(result.getStage());
+            windowList.add(result);
+        } else {
+            Platform.runLater(() -> {
+                AppSettings.setWindowIcon(result.getStage());
+                windowList.add(result);
+            });
+        }
 
-        windowList.add(result);
         return result;
     }
 
