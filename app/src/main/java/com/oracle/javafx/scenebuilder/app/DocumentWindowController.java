@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -41,7 +41,6 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
-import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -104,7 +103,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -123,7 +121,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -2090,10 +2087,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             d.setOKButtonTitle(I18N.getString("label.save"));
             d.setActionButtonTitle(I18N.getString("label.do.not.save"));
             d.setActionButtonVisible(true);
-            /* 
-             * AbstractWindowController should reuse the icons from parent but isn't doing so.
-             */
-            d.getStage().getIcons().setAll(((Stage) getStage()).getIcons());
 
             switch(d.showAndWait()) {
                 default:
