@@ -127,7 +127,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
 
         closeWindow();
     }
-    
+
     @FXML
     public void trackUserRegistration() {
         if (!isEmailAddressValid()) {
@@ -137,12 +137,12 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
 
         PreferencesController pc = PreferencesController.getSingleton();
         PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-        
+
         boolean update = recordGlobal.getRegistrationHash() != null;
         String hash = update ? recordGlobal.getRegistrationHash() : getUniqueId();
         String email = tfEmail.getText();
         boolean optIn = cbOptIn.isSelected();
-                
+
         // Update preferences
         recordGlobal.updateRegistrationFields(hash, email, optIn);
 
@@ -163,6 +163,7 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
                 }
             }
         } catch (UnknownHostException | SocketException e) {
+            // Intentionally blank catch
         }
 
         if (uniqueId.isEmpty()) {
@@ -183,11 +184,12 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
             // Convert the byte to hex format
             String hexStr = "";
             for (int i = 0; i < digest.length; i++) {
-                hexStr +=  Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
+                hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
             }
 
             return hexStr;
         } catch (NoSuchAlgorithmException e) {
+            // Intentionally blank catch
         }
 
         return "";
