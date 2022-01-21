@@ -20,10 +20,12 @@
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>6.1.0</charm.glisten.version>
         <gluon.attach.version>4.0.13</gluon.attach.version>
+        <junit.version>4.13.2</junit.version>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>sonatype-snapshots</id>
@@ -34,7 +36,43 @@
             <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
-    
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -70,7 +108,7 @@
                     </configuration>
                     <inherited>false</inherited>
                 </plugin>
-                
+
                 <!-- Enforce code formatting and style -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
