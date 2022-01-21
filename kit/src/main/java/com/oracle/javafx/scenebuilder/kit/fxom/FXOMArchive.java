@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,6 +39,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+
 /**
  *
  */
@@ -72,7 +74,8 @@ public class FXOMArchive implements Serializable {
             final URL location = e.getLocation();
             final String fxmlText = e.getFxmlText();
             final FXOMDocument d = new FXOMDocument(fxmlText, location, 
-                    targetDocument.getClassLoader(), targetDocument.getResources());
+                    targetDocument.getClassLoader(), targetDocument.getResources(),
+                    FXOMDocumentSwitch.NORMALIZED);
             final FXOMObject fxomRoot = d.getFxomRoot();
             assert fxomRoot != null;
             fxomRoot.moveToFxomDocument(targetDocument);
