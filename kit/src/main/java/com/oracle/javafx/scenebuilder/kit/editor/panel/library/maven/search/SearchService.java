@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -111,7 +111,6 @@ public class SearchService extends Service<Void> {
                 tasks = Arrays.asList(
                     createSearchTask(new MavenSearch()),
                     createSearchTask(new NexusSearch(MavenPresets.SONATYPE, "http://oss.sonatype.org", "", "")),
-                    createSearchTask(new JcenterSearch("", "")),
                     createSearchTask(new NexusSearch(MavenPresets.GLUON_NEXUS, "https://nexus.gluonhq.com/nexus", "", "")),
                     createSearchTask(new LocalSearch(userM2Repository)));
                 
@@ -173,18 +172,6 @@ public class SearchService extends Service<Void> {
                     })
                     .get();
             list.add(da);
-        });
-        return list;
-    }
-    
-    // TODO: Return all versions, including snapshots
-    private List<DefaultArtifact> getAllVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
-        List<DefaultArtifact> list = new ArrayList<>();
-        mapArtifacts.forEach((s, l) -> {
-            l.stream()
-                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
-                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
-                .forEach(list::add);
         });
         return list;
     }
