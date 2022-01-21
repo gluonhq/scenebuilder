@@ -90,8 +90,7 @@ import javafx.scene.layout.StackPane;
 /**
  *
  */
-public class MenuBarController
-{
+public class MenuBarController {
 
     private static MenuBarController systemMenuBarController; // For Mac only
 
@@ -676,8 +675,7 @@ public class MenuBarController
         importFxmlMenuItem.setUserData(new DocumentEditActionController(DocumentEditAction.IMPORT_FXML));
         importMediaMenuItem.setUserData(new DocumentEditActionController(DocumentEditAction.IMPORT_MEDIA));
         includeFileMenuItem.setUserData(new DocumentEditActionController(DocumentEditAction.INCLUDE_FXML));
-        editIncludedFileMenuItem.setUserData(new ControlActionController(ControlAction.EDIT_INCLUDED_FILE)
-        {
+        editIncludedFileMenuItem.setUserData(new ControlActionController(ControlAction.EDIT_INCLUDED_FILE) {
 
             @Override
             public String getTitle() {
@@ -691,8 +689,7 @@ public class MenuBarController
                 return title;
             }
         });
-        revealIncludedFileMenuItem.setUserData(new ControlActionController(ControlAction.REVEAL_INCLUDED_FILE)
-        {
+        revealIncludedFileMenuItem.setUserData(new ControlActionController(ControlAction.REVEAL_INCLUDED_FILE) {
 
             @Override
             public String getTitle() {
@@ -767,8 +764,7 @@ public class MenuBarController
         gotoCodeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT3, modifier));
 
         toggleLibraryPanelMenuItem.setUserData(
-                new DocumentControlActionController(DocumentControlAction.TOGGLE_LIBRARY_PANEL)
-        {
+                new DocumentControlActionController(DocumentControlAction.TOGGLE_LIBRARY_PANEL) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -783,8 +779,7 @@ public class MenuBarController
             }
         });
         toggleLibraryPanelMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT4, modifier));
-        toggleHierarchyPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_DOCUMENT_PANEL)
-        {
+        toggleHierarchyPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_DOCUMENT_PANEL) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -799,8 +794,7 @@ public class MenuBarController
             }
         });
         toggleHierarchyPanelMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT5, modifier));
-        toggleCSSPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_CSS_PANEL)
-        {
+        toggleCSSPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_CSS_PANEL) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -815,8 +809,7 @@ public class MenuBarController
             }
         });
         toggleCSSPanelMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT6, modifier));
-        toggleLeftPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_LEFT_PANEL)
-        {
+        toggleLeftPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_LEFT_PANEL) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -831,8 +824,7 @@ public class MenuBarController
             }
         });
         toggleLeftPanelMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT7, modifier));
-        toggleRightPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_RIGHT_PANEL)
-        {
+        toggleRightPanelMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_RIGHT_PANEL) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -847,8 +839,7 @@ public class MenuBarController
             }
         });
         toggleRightPanelMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIGIT8, modifier));
-        toggleOutlinesMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_OUTLINES_VISIBILITY)
-        {
+        toggleOutlinesMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_OUTLINES_VISIBILITY) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -863,8 +854,7 @@ public class MenuBarController
             }
         });
         toggleOutlinesMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.E, modifier));
-        toggleSampleDataMenuItem.setUserData(new ControlActionController(ControlAction.TOGGLE_SAMPLE_DATA)
-        {
+        toggleSampleDataMenuItem.setUserData(new ControlActionController(ControlAction.TOGGLE_SAMPLE_DATA) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -878,8 +868,7 @@ public class MenuBarController
                 return I18N.getString(titleKey);
             }
         });
-        toggleAlignmentGuidesMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_GUIDES_VISIBILITY)
-        {
+        toggleAlignmentGuidesMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.TOGGLE_GUIDES_VISIBILITY) {
             @Override
             public String getTitle() {
                 final String titleKey;
@@ -927,48 +916,42 @@ public class MenuBarController
         increaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.INCREASE_COLUMN_SPAN));
         decreaseColumnSpanMenuItem.setUserData(new EditActionController(EditAction.DECREASE_COLUMN_SPAN));
 
-        phoneSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_335x600)
-        {
+        phoneSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_335x600) {
             @Override
             public void perform() {
                 super.perform();
                 updatePreviewWindowSize(Size.SIZE_335x600);
             }
         });
-        tabletSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_900x600)
-        {
+        tabletSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_900x600) {
             @Override
             public void perform() {
                 super.perform();
                 updatePreviewWindowSize(Size.SIZE_900x600);
             }
         });
-        qvgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_320x240)
-        {
+        qvgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_320x240) {
             @Override
             public void perform() {
                 super.perform();
                 updatePreviewWindowSize(Size.SIZE_320x240);
             }
         });
-        vgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_640x480)
-        {
+        vgaSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_640x480) {
             @Override
             public void perform() {
                 super.perform();
                 updatePreviewWindowSize(Size.SIZE_640x480);
             }
         });
-        touchSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_1280x800)
-        {
+        touchSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_1280x800) {
             @Override
             public void perform() {
                 super.perform();
                 updatePreviewWindowSize(Size.SIZE_1280x800);
             }
         });
-        hdSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_1920x1080)
-        {
+        hdSetSizeMenuItem.setUserData(new EditActionController(EditAction.SET_SIZE_1920x1080) {
             @Override
             public void perform() {
                 super.perform();
@@ -1090,8 +1073,7 @@ public class MenuBarController
         }
 
         setResourceMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SET_RESOURCE));
-        removeResourceMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.REMOVE_RESOURCE)
-        {
+        removeResourceMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.REMOVE_RESOURCE) {
             @Override
             public String getTitle() {
                 String title = I18N.getString("menu.title.remove.resource");
@@ -1104,8 +1086,7 @@ public class MenuBarController
                 return title;
             }
         });
-        revealResourceMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.REVEAL_RESOURCE)
-        {
+        revealResourceMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.REVEAL_RESOURCE) {
 
             @Override
             public String getTitle() {
@@ -1573,8 +1554,7 @@ public class MenuBarController
         return result;
     }
 
-    private static class WindowMenuEventHandler implements EventHandler<ActionEvent>
-    {
+    private static class WindowMenuEventHandler implements EventHandler<ActionEvent> {
 
         private final DocumentWindowController dwc;
 
@@ -1591,8 +1571,7 @@ public class MenuBarController
     /*
      * Private (MenuItemController)
      */
-    abstract class MenuItemController
-    {
+    abstract class MenuItemController {
 
         public abstract boolean canPerform();
 
@@ -1607,8 +1586,7 @@ public class MenuBarController
         }
     }
 
-    class UndoActionController extends MenuItemController
-    {
+    class UndoActionController extends MenuItemController {
 
         @Override
         public boolean canPerform() {
@@ -1640,8 +1618,7 @@ public class MenuBarController
         }
     }
 
-    class RedoActionController extends MenuItemController
-    {
+    class RedoActionController extends MenuItemController {
 
         @Override
         public boolean canPerform() {
@@ -1673,8 +1650,7 @@ public class MenuBarController
         }
     }
 
-    class EditActionController extends MenuItemController
-    {
+    class EditActionController extends MenuItemController {
 
         private final EditAction editAction;
 
@@ -1702,8 +1678,7 @@ public class MenuBarController
 
     }
 
-    class ControlActionController extends MenuItemController
-    {
+    class ControlActionController extends MenuItemController {
 
         private final ControlAction controlAction;
 
@@ -1730,8 +1705,7 @@ public class MenuBarController
 
     }
 
-    class DocumentEditActionController extends MenuItemController
-    {
+    class DocumentEditActionController extends MenuItemController {
 
         private final DocumentEditAction editAction;
 
@@ -1759,8 +1733,7 @@ public class MenuBarController
 
     }
 
-    class DocumentControlActionController extends MenuItemController
-    {
+    class DocumentControlActionController extends MenuItemController {
 
         private final DocumentControlAction controlAction;
 
@@ -1787,8 +1760,7 @@ public class MenuBarController
 
     }
 
-    class ApplicationControlActionController extends MenuItemController
-    {
+    class ApplicationControlActionController extends MenuItemController {
 
         private final ApplicationControlAction controlAction;
 
@@ -1810,8 +1782,7 @@ public class MenuBarController
 
     }
 
-    class AddEffectActionController extends MenuItemController
-    {
+    class AddEffectActionController extends MenuItemController {
 
         private final Class<? extends Effect> effectClass;
 
@@ -1837,8 +1808,7 @@ public class MenuBarController
         }
     }
 
-    class SetZoomActionController extends MenuItemController
-    {
+    class SetZoomActionController extends MenuItemController {
 
         private final double scaling;
 
@@ -1879,8 +1849,7 @@ public class MenuBarController
 
     }
 
-    class ZoomInActionController extends MenuItemController
-    {
+    class ZoomInActionController extends MenuItemController {
 
         @Override
         public boolean canPerform() {
@@ -1910,8 +1879,7 @@ public class MenuBarController
 
     }
 
-    class ZoomOutActionController extends MenuItemController
-    {
+    class ZoomOutActionController extends MenuItemController {
 
         @Override
         public boolean canPerform() {
@@ -1949,8 +1917,7 @@ public class MenuBarController
         }
     }
 
-    class SetSizeActionController extends MenuItemController
-    {
+    class SetSizeActionController extends MenuItemController {
 
         private final EditorController.Size size;
 
@@ -2019,8 +1986,7 @@ public class MenuBarController
         }
     }
 
-    class SetThemeActionController extends MenuItemController
-    {
+    class SetThemeActionController extends MenuItemController {
 
         private final EditorPlatform.Theme theme;
 
@@ -2334,8 +2300,7 @@ public class MenuBarController
         }
     }
 
-    class GluonActionController extends MenuItemController
-    {
+    class GluonActionController extends MenuItemController {
 
         private EditorPlatform.GluonSwatch gluonSwatch;
 
@@ -2371,8 +2336,7 @@ public class MenuBarController
         }
     }
 
-    class RemoveSceneStyleSheetActionController extends MenuItemController
-    {
+    class RemoveSceneStyleSheetActionController extends MenuItemController {
 
         private final File styleSheet;
 
@@ -2397,8 +2361,7 @@ public class MenuBarController
         }
     }
 
-    class OpenSceneStyleSheetActionController extends MenuItemController
-    {
+    class OpenSceneStyleSheetActionController extends MenuItemController {
 
         private final File styleSheet;
 
@@ -2445,8 +2408,7 @@ public class MenuBarController
      * *************************************************************************
      * Static inner class *************************************************************************
      */
-    private static class ClearOpenRecentHandler implements EventHandler<ActionEvent>
-    {
+    private static class ClearOpenRecentHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent t) {
