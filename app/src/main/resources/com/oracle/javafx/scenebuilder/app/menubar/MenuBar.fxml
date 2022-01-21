@@ -301,6 +301,7 @@
           <items>
             <MenuItem fx:id="helpMenuItem" mnemonicParsing="true" text="%menu.title.scene.builder.help" />
             <MenuItem fx:id="checkUpdatesMenuItem" mnemonicParsing="true" text="%menu.title.check.updates" />
+            <MenuItem fx:id="registerMenuItem" mnemonicParsing="false" text="%menu.title.register" />
             <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="%menu.title.about" />
           </items>
         </Menu>

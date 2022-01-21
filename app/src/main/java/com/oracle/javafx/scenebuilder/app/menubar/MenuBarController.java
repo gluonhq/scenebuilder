@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlActi
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -86,12 +87,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  *
  */
 public class MenuBarController {
-    
+
     private static MenuBarController systemMenuBarController; // For Mac only
 
     private Menu insertCustomMenu;
@@ -407,6 +409,8 @@ public class MenuBarController {
     private MenuItem aboutMenuItem;
     @FXML
     private MenuItem checkUpdatesMenuItem;
+    @FXML
+    private MenuItem registerMenuItem;
 
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
@@ -468,15 +472,15 @@ public class MenuBarController {
         }
         return result;
     }
-    
-    
+
+
     public static synchronized MenuBarController getSystemMenuBarController() {
         if (systemMenuBarController == null) {
             systemMenuBarController = new MenuBarController(null);
         }
         return systemMenuBarController;
     }
-    
+
     /*
      * Private
      */
@@ -616,8 +620,9 @@ public class MenuBarController {
         assert helpMenuItem != null;
         assert aboutMenuItem != null;
         assert checkUpdatesMenuItem != null;
+        assert registerMenuItem != null;
 
-        /* 
+        /*
          * To make MenuBar.fxml editable with SB 1.1, the menu bar is enclosed
          * in a StackPane. This stack pane is useless now.
          * So we unwrap the menu bar and make it the panel root.
@@ -1109,7 +1114,7 @@ public class MenuBarController {
         /*
          * Window menu : it is setup after the other menus
          */
-        
+
         /*
          * Help menu
          */
@@ -1117,6 +1122,7 @@ public class MenuBarController {
         helpMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP));
         helpMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F1));
         checkUpdatesMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.CHECK_UPDATES));
+        registerMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.REGISTER));
 
         /*
          * Put some generic handlers on each Menu and MenuItem.
@@ -1125,16 +1131,16 @@ public class MenuBarController {
         for (Menu m : menuBar.getMenus()) {
             setupMenuItemHandlers(m);
         }
-        
+
         /*
          * Insert menu: we set what is statically known.
          */
         constructBuiltinPartOfInsertMenu();
         constructCustomPartOfInsertMenu();
-        
+
         // The handler for Insert menu deals only with Custom sub-menu.
         insertMenu.setOnMenuValidation(onCustomPartOfInsertMenuValidationHandler);
-        
+
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
     }
 
@@ -1180,8 +1186,8 @@ public class MenuBarController {
                     // It avoids to block all the items in the menu in case
                     // of crash in canPerform() (see DTL-6164).
                     canPerform = false;
-                    final Exception xx 
-                            = new Exception(c.getClass().getSimpleName() 
+                    final Exception xx
+                            = new Exception(c.getClass().getSimpleName()
                             + ".canPerform() did break for menu item " + i, x); //NOI18N
                     xx.printStackTrace();
                 }
@@ -1221,13 +1227,13 @@ public class MenuBarController {
         final MenuItemController c = (MenuItemController) i.getUserData();
         c.perform();
     }
-    
+
     /*
      * Private (zoom menu)
      */
-    
+
     final static double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
-    
+
     private void updateZoomMenu() {
         final double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
 
@@ -1235,14 +1241,14 @@ public class MenuBarController {
         zoomInMenuItem.setUserData(new ZoomInActionController());
         zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); //NOI18N
         zoomMenu.getItems().add(zoomInMenuItem);
-        
+
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
         zoomOutMenuItem.setUserData(new ZoomOutActionController());
         zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("/", modifier));  //NOI18N
         zoomMenu.getItems().add(zoomOutMenuItem);
-        
+
         zoomMenu.getItems().add(new SeparatorMenuItem());
-        
+
         for (int i = 0; i < scalingTable.length; i++) {
             final double scaling = scalingTable[i];
             final String title = String.format("%.0f%%", scaling * 100); //NOI18N
@@ -1252,20 +1258,20 @@ public class MenuBarController {
         }
     }
 
-    
+
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
-        
+
         for (int i = 0; i < scalingTable.length; i++) {
             if (MathUtils.equals(zoomScale, scalingTable[i])) {
                 result = i;
                 break;
             }
         }
-        
+
         return result;
     }
-    
+
     private void updateOpenRecentMenuItems() {
 
         final List<MenuItem> menuItems = new ArrayList<>();
@@ -1324,7 +1330,7 @@ public class MenuBarController {
                     menuItems.add(mi);
                 }
             }
-            
+
             // Cleanup recent items preferences if needed
             if (recentItemsToRemove.isEmpty() == false) {
                 recordGlobal.removeRecentItems(recentItemsToRemove);
@@ -1376,17 +1382,17 @@ public class MenuBarController {
         assert t.getSource() == insertMenu;
         updateCustomPartOfInsertMenu();
     };
-    
+
     private void updateCustomPartOfInsertMenu() {
         assert insertMenu != null;
-        assert insertCustomMenu != null;        
+        assert insertCustomMenu != null;
 
         if (documentWindowController != null) {
             final EditorController editorController = documentWindowController.getEditorController();
             assert editorController.getLibrary() != null;
 
             Set<LibraryItem> sectionItems = new TreeSet<>(new LibraryItemNameComparator());
-            
+
             // Collect custom items
             for (LibraryItem li : editorController.getLibrary().getItems()) {
                 if (li.getSection().equals(UserLibrary.TAG_USER_DEFINED)) {
@@ -1397,18 +1403,18 @@ public class MenuBarController {
             // Make custom items visible and accessible via custom menu.
             if (sectionItems.size() > 0) {
                 insertCustomMenu.getItems().clear();
-                
+
                 for (LibraryItem li : sectionItems) {
                     insertCustomMenu.getItems().add(makeMenuItemForLibraryItem(li));
                 }
-                
+
                 insertCustomMenu.setVisible(true);
             } else {
                 insertCustomMenu.setVisible(false);
             }
         }
     }
-    
+
     // At constructing time we dunno if we've custom items then we keep it hidden.
     private void constructCustomPartOfInsertMenu() {
         assert insertMenu != null;
@@ -1416,7 +1422,7 @@ public class MenuBarController {
         insertMenu.getItems().add(0, insertCustomMenu);
         insertCustomMenu.setVisible(false);
     }
-    
+
     // We consider the content of built-in library is static: it cannot change
     // unless its implementation is modified.
     private void constructBuiltinPartOfInsertMenu() {
@@ -1847,7 +1853,7 @@ public class MenuBarController {
         }
 
     }
-    
+
     class ZoomInActionController extends MenuItemController {
 
         @Override
@@ -1877,7 +1883,7 @@ public class MenuBarController {
         }
 
     }
-    
+
 
     class ZoomOutActionController extends MenuItemController {
 
@@ -1908,7 +1914,7 @@ public class MenuBarController {
         }
 
     }
-    
+
     private void updatePreviewWindowSize(Size size) {
         if (documentWindowController != null
                 && documentWindowController.getPreviewWindowController() != null
@@ -1957,19 +1963,19 @@ public class MenuBarController {
                         && ! documentWindowController.getEditorController().is3D()
                         && documentWindowController.getEditorController().isNode();
             }
-            
+
             return res;
         }
-        
+
         @Override
         public String getTitle() {
             if (documentWindowController == null) {
                 return null;
             }
-            
+
             if (size == EditorController.Size.SIZE_PREFERRED) {
                 String title = I18N.getString("menu.title.size.preferred");
-                
+
                 if (documentWindowController.getPreviewWindowController() != null
                         && documentWindowController.getPreviewWindowController().getStage().isShowing()
                         && ! documentWindowController.getEditorController().is3D()
@@ -1978,7 +1984,7 @@ public class MenuBarController {
                                 getStringFromDouble(documentWindowController.getPreviewWindowController().getRoot().prefWidth(-1)),
                                 getStringFromDouble(documentWindowController.getPreviewWindowController().getRoot().prefHeight(-1)));
                 }
-                
+
                 return title;
             } else {
                 return null;
@@ -2022,7 +2028,7 @@ public class MenuBarController {
                     modenaHighContrastYellowonblackThemeMenuItem.setSelected(false);
                 }
             }
-            
+
             return res;
         }
 
@@ -2393,7 +2399,7 @@ public class MenuBarController {
     public Set<KeyCombination> getAccelerators() {
         return keyToMenu.keySet();
     }
-    
+
     // Returns a String with no trailing zero; if decimal part is non zero then
     // it is kept.
     private String getStringFromDouble(double value) {
