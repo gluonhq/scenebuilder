@@ -357,7 +357,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             WelcomeDialogWindowController.getInstance().getStage().show();
 
             // let JavaFX handle above call ASAP and delay empty document window for improved UX
-            createEmptyDocumentWindowOnNextPulse();
+            startInBackground("Set up empty doc", () -> createEmptyDocumentWindowOnNextPulse());
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
