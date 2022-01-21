@@ -83,6 +83,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -115,6 +117,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private final ObservableList<DocumentWindowController> windowList = FXCollections.observableArrayList();
     private UserLibrary userLibrary;
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
+
+    private final ObservableList<Runnable> startupTasks = FXCollections.observableArrayList();
+    private final BooleanBinding startupTasksFinished = Bindings.isEmpty(startupTasks);
 
     static {
         System.setProperty("java.util.logging.config.file", SceneBuilderApp.class.getResource("/logging.properties").getPath());
@@ -354,7 +359,16 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (showWelcomeDialog) {
             // Unless we're on a Mac we're starting SB directly (fresh start)
             // so we're not opening any file and as such we should show the Welcome Dialog
-            WelcomeDialogWindowController.getInstance().getStage().show();
+            var welcomeWindow = WelcomeDialogWindowController.getInstance();
+            welcomeWindow.getStage().show();
+
+            startupTasksFinished.addListener((o, old, isFinished) -> {
+                if (isFinished) {
+                    Platform.runLater(() -> {
+                        welcomeWindow.showTemplates();
+                    });
+                }
+            });
 
             // let JavaFX handle above call ASAP and delay empty document window for improved UX
             startInBackground("Set up empty doc", () -> createEmptyDocumentWindow());
@@ -368,9 +382,15 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * Creates and starts a new daemon thread with [taskName] to executive given [task].
      */
     private void startInBackground(String taskName, Runnable task) {
-        var t = new Thread(task, taskName + " Thread");
+        var t = new Thread(() -> {
+            task.run();
+
+            startupTasks.remove(task);
+        }, taskName + " Thread");
         t.setDaemon(true);
         t.start();
+
+        startupTasks.add(task);
     }
 
     private void setUpUserLibrary(boolean showWelcomeDialog) {

@@ -44,8 +44,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -53,6 +55,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,6 +68,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     @FXML
     private Button emptyApp;
 
+    private List<Node> templates = new ArrayList<>();
 
     private static WelcomeDialogWindowController instance;
 
@@ -78,6 +82,9 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         sceneBuilderApp = SceneBuilderApp.getSingleton();
     }
 
+    public void showTemplates() {
+        templateContainer.getChildren().setAll(templates);
+    }
 
     @Override
     public void onCloseRequest(WindowEvent event) {
@@ -108,6 +115,8 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         setOnTemplateChosen(sceneBuilderApp::performNewTemplate);
         setupTemplateButtonHandlers();
+
+        setupProgressIndicator();
     }
 
     private void loadAndPopulateRecentItemsInBackground() {
@@ -145,6 +154,15 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 });
             }
         }, "Recent Items Loading Thread").start();
+    }
+
+    private void setupProgressIndicator() {
+        templates.addAll(templateContainer.getChildren());
+
+        var progress = new ProgressBar();
+        progress.prefWidthProperty().bind(templateContainer.widthProperty().subtract(140));
+
+        templateContainer.getChildren().setAll(progress);
     }
 
     public static WelcomeDialogWindowController getInstance() {
