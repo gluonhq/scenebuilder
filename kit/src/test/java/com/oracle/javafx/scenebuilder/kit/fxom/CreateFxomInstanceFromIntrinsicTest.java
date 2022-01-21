@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2012, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,20 +31,20 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit test for {@link FXOMIntrinsic#createFxomInstanceFromIntrinsic()}
  */
-public class CreateFxomInstanceFromIntrinsicTest {
+class CreateFxomInstanceFromIntrinsicTest {
 
     private static FXOMIntrinsic fxomIntrinsic;
     private static FXOMDocument fxomDocument;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         prepareTestData();
     }
@@ -60,7 +60,7 @@ public class CreateFxomInstanceFromIntrinsicTest {
     }
 
     @Test
-    public void testCreateFxomInstance() {
+    void testCreateFxomInstance() {
         FXOMInstance fxomInstance = callService();
         assertThat(fxomInstance).isNotNull();
         assertThat(fxomInstance.getFxomDocument()).isEqualTo(fxomIntrinsic.getFxomDocument());
@@ -70,7 +70,7 @@ public class CreateFxomInstanceFromIntrinsicTest {
     }
 
     @Test
-    public void testCreateFxomInstanceWithProperties() {
+    void testCreateFxomInstanceWithProperties() {
         // add at least one property (source)
         fxomIntrinsic.addIntrinsicProperty(fxomDocument);
         FXOMInstance fxomInstance = callService();

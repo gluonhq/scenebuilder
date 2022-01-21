@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,15 +32,15 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit test for {@link FXOMIntrinsic#addIntrinsicProperty(FXOMDocument)}
  */
-public class AddIntrinsicPropertyTest {
+class AddIntrinsicPropertyTest {
 
     private static final String CHARSET_PROPERTY_NAME = "charset";
     private static final String SOURCE_PROPERTY_NAME = "source";
@@ -50,7 +50,7 @@ public class AddIntrinsicPropertyTest {
     private static PropertyName charsetPropertyName;
     private static PropertyName sourcePropertyName;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         prepareTestData();
     }
@@ -70,7 +70,7 @@ public class AddIntrinsicPropertyTest {
     }
 
     @Test
-    public void testAddCharsetProperty() {
+    void testAddCharsetProperty() {
         callService();
         FXOMProperty fxomProperty = fxomIntrinsic.getProperties().get(charsetPropertyName);
         assertThat(fxomProperty).isNotNull();
@@ -78,7 +78,7 @@ public class AddIntrinsicPropertyTest {
     }
 
     @Test
-    public void testAddSourceProperty() {
+    void testAddSourceProperty() {
         callService();
         FXOMProperty fxomProperty = fxomIntrinsic.getProperties().get(sourcePropertyName);
         assertThat(fxomProperty).isNotNull();

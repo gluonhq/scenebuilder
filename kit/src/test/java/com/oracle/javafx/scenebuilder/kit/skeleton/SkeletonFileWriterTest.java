@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2021, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,6 +48,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -57,7 +57,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-class SkeletonFileWriterTest {
+public class SkeletonFileWriterTest {
 
     private SkeletonFileWriter classUnderTest;
     private SimpleStringProperty textProperty = new SimpleStringProperty("TheControllerCode!");
@@ -69,7 +69,7 @@ class SkeletonFileWriterTest {
     public Path temporaryDirectory;
 
     @Test
-    void that_dafaults_in_public_constructor_are_correct() {
+    public void that_dafaults_in_public_constructor_are_correct() {
 
         classUnderTest = new SkeletonFileWriter(stageSupplier, textProperty);
 
@@ -82,7 +82,7 @@ class SkeletonFileWriterTest {
     }
 
     @Test
-    void that_alert_is_raised_in_case_of_error() {
+    public void that_alert_is_raised_in_case_of_error() {
 
         /* GIVEN Scenario:
          * 
@@ -113,7 +113,7 @@ class SkeletonFileWriterTest {
     }
 
     @Test
-    void that_filename_is_properly_derived_from_URL() throws Exception {
+    public void that_filename_is_properly_derived_from_URL() throws Exception {
 
         /* GIVEN Scenario:
          * 
@@ -147,7 +147,7 @@ class SkeletonFileWriterTest {
     }
 
     @Test
-    void that_file_for_newSkeleton_is_not_saved_but_naming_and_directory_are_correct() {
+    public void that_file_for_newSkeleton_is_not_saved_but_naming_and_directory_are_correct() {
 
         /* GIVEN Scenario:
          * 
@@ -176,7 +176,7 @@ class SkeletonFileWriterTest {
     }
 
     @Test
-    void that_java_and_kotlin_versions_of_skeleton_are_saved_and_remembered() throws Exception {
+    public void that_java_and_kotlin_versions_of_skeleton_are_saved_and_remembered() throws Exception {
 
         /*
          * GIVEN Scenario:
@@ -203,7 +203,7 @@ class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN
-        File expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.kt");
+        File expectedFile = temporaryDirectory.resolve("MyVeryNewController.kt").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(0));
@@ -226,7 +226,7 @@ class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN
-        expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.java");
+        expectedFile = temporaryDirectory.resolve("MyVeryNewController.java").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(1));
@@ -247,7 +247,7 @@ class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN:
-        expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.kt");
+        expectedFile = temporaryDirectory.resolve("MyVeryNewController.kt").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(0));
@@ -291,7 +291,7 @@ class SkeletonFileWriterTest {
     private BiFunction<FileChooser, Stage, File> acceptProposedFile() {
         BiFunction<FileChooser, Stage, File> acceptingFileName = (fc, stage) -> {
             // save the proposed file name
-            File proposedFile = new File(temporaryDirectory.getRoot().toString(), fc.getInitialFileName());
+            File proposedFile = temporaryDirectory.resolve(fc.getInitialFileName()).toFile();
             filesProposed.add(proposedFile);
 
             // remember the extension filer which was selected

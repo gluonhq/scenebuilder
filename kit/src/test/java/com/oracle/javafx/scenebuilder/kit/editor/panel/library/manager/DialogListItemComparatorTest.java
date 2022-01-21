@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,21 +32,21 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DialogListItemComparatorTest {
+class DialogListItemComparatorTest {
 
     private DialogListItemComparator classUnderTest = new DialogListItemComparator();
 
     @Test
-    public void testSortingOrArifactItems() {
+    void testSortingOrArifactItems() {
 
         DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
         DialogListItem actuallySameItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
@@ -61,7 +61,7 @@ public class DialogListItemComparatorTest {
     }
 
     @Test
-    public void testLibraryDirectoriesPreceedFiles() throws Exception {
+    void testLibraryDirectoriesPreceedFiles() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libFile = Paths.get(resource.toURI());
@@ -76,7 +76,7 @@ public class DialogListItemComparatorTest {
     }
 
     @Test
-    public void testLibraryFilesPreceedArtifacts() {
+    void testLibraryFilesPreceedArtifacts() {
 
         DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
         DialogListItem libraryFileItem = new LibraryDialogListItem(null,
@@ -88,7 +88,7 @@ public class DialogListItemComparatorTest {
     }
 
     @Test
-    public void testLibraryDirectoriesAreSortedCorrectly() throws Exception {
+    void testLibraryDirectoriesAreSortedCorrectly() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libDir = Paths.get(resource.toURI()).getParent();
@@ -103,7 +103,7 @@ public class DialogListItemComparatorTest {
     }
 
     @Test
-    public void testLibraryFilesAreSortedCorrectly() throws Exception {
+    void testLibraryFilesAreSortedCorrectly() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libFile = Paths.get(resource.toURI());
