@@ -18,7 +18,8 @@
     <properties>
         <javafx.version>17</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>5.0.0-jdk9</charm.glisten.version>
+        <charm.glisten.version>6.1.0</charm.glisten.version>
+        <gluon.attach.version>4.0.13</gluon.attach.version>
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

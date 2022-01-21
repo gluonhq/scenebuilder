@@ -129,8 +129,8 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
-        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.css")),
+        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.css")),
         MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
         MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
@@ -200,7 +200,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".css");
         }
 
         public Color getColor() {
@@ -252,7 +252,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css");
         }
     }
     
