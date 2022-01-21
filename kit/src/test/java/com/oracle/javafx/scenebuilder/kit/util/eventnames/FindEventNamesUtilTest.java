@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,17 +31,17 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.eventnames;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FindEventNamesUtil#findEventName(String)}
  */
-public class FindEventNamesUtilTest {
+class FindEventNamesUtilTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         FindEventNamesUtil.initializeEventsMap();
     }
@@ -51,7 +51,7 @@ public class FindEventNamesUtilTest {
     }
 
     @Test
-    public void testEventNamesPositive() {
+    void testEventNamesPositive() {
         assertThat(callService(EventTypeNames.ON_ACTION)).isEqualTo(EventNames.ACTION_EVENT);
         assertThat(callService(EventTypeNames.ON_DRAG_DETECTED)).isEqualTo(EventNames.MOUSE_EVENT);
         assertThat(callService(EventTypeNames.ON_DRAG_ENTERED)).isEqualTo(EventNames.DRAG_EVENT);
@@ -68,7 +68,7 @@ public class FindEventNamesUtilTest {
     }
 
     @Test
-    public void testEventNamesNegative() {
+    void testEventNamesNegative() {
         final String dummyEventTypeName = "onMyDummyEvent";
         final String dummyEventName = "myDummyEvent";
 

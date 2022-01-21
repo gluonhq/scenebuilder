@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,12 +31,14 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,16 +49,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class SkeletonFileWriterTest {
+class SkeletonFileWriterTest {
 
     private SkeletonFileWriter classUnderTest;
     private SimpleStringProperty textProperty = new SimpleStringProperty("TheControllerCode!");
@@ -64,11 +65,11 @@ public class SkeletonFileWriterTest {
     private List<File> filesProposed = new ArrayList<>();
     private List<ExtensionFilter> fileExtensionFilters = new ArrayList<>();
 
-    @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    @TempDir
+    public Path temporaryDirectory;
 
     @Test
-    public void that_dafaults_in_public_constructor_are_correct() {
+    void that_dafaults_in_public_constructor_are_correct() {
 
         classUnderTest = new SkeletonFileWriter(stageSupplier, textProperty);
 
@@ -81,7 +82,7 @@ public class SkeletonFileWriterTest {
     }
 
     @Test
-    public void that_alert_is_raised_in_case_of_error() {
+    void that_alert_is_raised_in_case_of_error() {
 
         /* GIVEN Scenario:
          * 
@@ -112,7 +113,7 @@ public class SkeletonFileWriterTest {
     }
 
     @Test
-    public void that_filename_is_properly_derived_from_URL() throws Exception {
+    void that_filename_is_properly_derived_from_URL() throws Exception {
 
         /* GIVEN Scenario:
          * 
@@ -125,7 +126,7 @@ public class SkeletonFileWriterTest {
          *    
          */
         String fxmlName = "MyCustomView.fxml";
-        File fxml = new File(temporaryDirectory.getRoot().toString(), fxmlName);
+        File fxml = temporaryDirectory.resolve(fxmlName).toFile();
         URL url = fxml.toURI().toURL();
 
         // WHEN
@@ -146,7 +147,7 @@ public class SkeletonFileWriterTest {
     }
 
     @Test
-    public void that_file_for_newSkeleton_is_not_saved_but_naming_and_directory_are_correct() {
+    void that_file_for_newSkeleton_is_not_saved_but_naming_and_directory_are_correct() {
 
         /* GIVEN Scenario:
          * 
@@ -175,7 +176,7 @@ public class SkeletonFileWriterTest {
     }
 
     @Test
-    public void that_java_and_kotlin_versions_of_skeleton_are_saved_and_remembered() throws Exception {
+    void that_java_and_kotlin_versions_of_skeleton_are_saved_and_remembered() throws Exception {
 
         /*
          * GIVEN Scenario:
