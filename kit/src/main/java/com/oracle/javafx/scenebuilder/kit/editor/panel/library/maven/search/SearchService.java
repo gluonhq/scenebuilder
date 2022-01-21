@@ -176,6 +176,18 @@ public class SearchService extends Service<Void> {
         return list;
     }
     
+    // TODO: Return all versions, including snapshots
+    private List<DefaultArtifact> getAllVersions(Map<String, List<DefaultArtifact>> mapArtifacts) {
+        List<DefaultArtifact> list = new ArrayList<>();
+        mapArtifacts.forEach((s, l) -> {
+            l.stream()
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("javadoc"))
+                .filter(a -> !a.getVersion().toLowerCase(Locale.ROOT).contains("source"))
+                .forEach(list::add);
+        });
+        return list;
+    }
+    
     private Version getVersion(String version) {
         Version v1 = null;
         try {
