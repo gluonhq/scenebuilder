@@ -423,7 +423,6 @@ public class MenuBarController {
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
 
-
     static {
         if (EditorPlatform.IS_MAC) {
             modifier = KeyCombination.META_DOWN;
