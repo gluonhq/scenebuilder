@@ -2123,8 +2123,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         // Checks if there are some pending changes
         final boolean closeConfirmed;
         if (isDocumentDirty()) {
-            
             final AlertDialog d = new AlertDialog(getStage());
+            d.setTitle(I18N.getString("alert.save.question.title"));
             d.setMessage(I18N.getString("alert.save.question.message", getStage().getTitle()));
             d.setDetails(I18N.getString("alert.save.question.details"));
             d.setOKButtonTitle(I18N.getString("label.save"));
