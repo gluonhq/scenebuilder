@@ -31,9 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import java.util.Objects;
-import java.util.Properties;
-
 /**
  * Provides URLs which are supposed to be used in Scene Builder help menu. These
  * URLs point to OpenJFX pages such as Javadoc API / CSS or FXML references.
@@ -67,16 +64,13 @@ public enum DocumentationUrls {
 
     GLUON_SCENEBUILDER_CONTRIBUTE("https://github.com/gluonhq/scenebuilder");
 
-    private static final String UNKNOWN = "unknown";
+    private static final String SAFE_DEFAULT_VERSION = "17";
 
     private static String javaFxMajorVersion = null;
     
     private final String url;
     
     private DocumentationUrls(String defaultValue) {
-        if (defaultValue != null) {
-            assert !defaultValue.isBlank();
-        }
         url = defaultValue;
     }
     
@@ -86,7 +80,7 @@ public enum DocumentationUrls {
     @Override
     public String toString() {
         if (javaFxMajorVersion == null) {
-            javaFxMajorVersion = getMajorJavaFxVersion(getJavaFxVersion());
+            javaFxMajorVersion = getMajorJavaFxVersion();
         }
         return resolveJavaFxVersion(url, javaFxMajorVersion);
     }
@@ -104,26 +98,13 @@ public enum DocumentationUrls {
     }
 
     /**
-     * Detects the used JavaFX version from system properties using
-     * {@code System.getProperty("javafx.version")}. In case this property is
-     * undefined, the String "unknown" is provided.
+     * Detects the used JavaFX version and provides the major version number.
+     * If JavaFX is not detected, a safe value for the major version is returned.
      * 
-     * @return JavaFX version number or "unknown" when property is undefined
+     * @return Provides the major version of the given version String
      */
-    static String getJavaFxVersion() {
-        return getJavaFxVersion(System.getProperties());
-    }
-
-    /**
-     * Detects the used JavaFX version from given properties instance using property
-     * key {@code "javafx.version"}. In case this property is undefined, the String
-     * "unknown" is provided.
-     * 
-     * @return JavaFX version number or "unknown" when property is undefined
-     */
-    static String getJavaFxVersion(Properties systemProperties) {
-        Objects.requireNonNull(systemProperties);
-        return systemProperties.getProperty("javafx.version",UNKNOWN);
+    static String getMajorJavaFxVersion() {
+        return getMajorJavaFxVersion(System.getProperty("javafx.version",SAFE_DEFAULT_VERSION));
     }
 
     /**
@@ -131,9 +112,6 @@ public enum DocumentationUrls {
      * @return Provides the major version of the given version String.
      */
     static String getMajorJavaFxVersion(String version) {
-        if (version == null || version.isBlank()) {
-            return UNKNOWN;
-        }
         int firstDot = version.indexOf('.');
         if (firstDot > 1) {
             return version.substring(0, firstDot);
@@ -141,5 +119,4 @@ public enum DocumentationUrls {
             return version;
         }
     }
-
 }

@@ -34,8 +34,6 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.Properties;
-
 import org.junit.Test;
 
 public class DocumentationUrlsTest {
@@ -50,7 +48,7 @@ public class DocumentationUrlsTest {
         // this should be replaced at the end
         assertFalse(url.toString().contains("{javafx.version.major}"));
 
-        String fxVersion = DocumentationUrls.getJavaFxVersion();
+        String fxVersion = DocumentationUrls.getMajorJavaFxVersion();
         String expectedUrl = "https://openjfx.io/javadoc/{javafx.version.major}/"
                              .replace("{javafx.version.major}", fxVersion);
         assertEquals(expectedUrl, url.toString());
@@ -87,24 +85,4 @@ public class DocumentationUrlsTest {
         String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
         assertEquals("17-0-0-1", majorVersion);
     }
-
-    @Test
-    public void that_blank_or_null_strings_yield_unknown_version_value() {
-        assertEquals("unknown", DocumentationUrls.getMajorJavaFxVersion(null));
-        assertEquals("unknown", DocumentationUrls.getMajorJavaFxVersion(""));
-    }
-
-    @Test
-    public void that_javafx_version_is_obtained_with_correct_properties_key() {
-        Properties props = new Properties();
-        props.setProperty("javafx.version", "18.0.0.ea");
-        String version = DocumentationUrls.getJavaFxVersion(props);
-        assertEquals("18.0.0.ea", version);
-    }
-
-    @Test
-    public void that_unknown_is_returned_as_javafx_version_with_empty_props() {
-        assertEquals("unknown", DocumentationUrls.getJavaFxVersion(new Properties()));
-    }
-
 }
