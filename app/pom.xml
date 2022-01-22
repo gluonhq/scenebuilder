@@ -16,6 +16,7 @@
         <buildDate>${maven.build.timestamp}</buildDate>
         <javaVersion>${java.version}, ${java.runtime.name}</javaVersion>
         <javafxVersion>${javafx.version}</javafxVersion>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     </properties>
 
@@ -42,6 +43,14 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
