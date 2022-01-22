@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.css;
 
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
@@ -962,7 +963,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
             try {
                 // XXX jfdenise, for now can't do better than opening the file, no Anchor per property...
                 // Retrieve defining class
-                EditorPlatform.open(EditorPlatform.JAVADOC_HOME
+                EditorPlatform.open(DocumentationUrls.JAVADOC_HOME.toString()
                         + "javafx.graphics/javafx/scene/doc-files/cssref.html#" + //NOI18N
                         item.getTarget().getClass().getSimpleName().toLowerCase(Locale.ROOT));
             } catch (IOException ex) {
