@@ -31,7 +31,11 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public interface AppPlatformDirectories {
 
@@ -84,6 +88,21 @@ public interface AppPlatformDirectories {
      * @return The directory containing the application log file.
      */
     Path getLogFolder();
+
+    /**
+     * Creates the user library folder when needed.
+     * If the directory cannot be created, the error is logged.
+     */
+    public default void createUserLibraryFolder() {
+        Path libDir = getUserLibraryFolder();
+        if (Files.notExists(libDir)) {
+            try {
+                Files.createDirectories(libDir);
+            } catch (IOException e) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Failed to create user library directory!", e);
+            }
+        }
+    }
 
     /* MessageBox folder is not provided by this as MessageBox folder previously
      * was package private, here all previously public directories are accessible.

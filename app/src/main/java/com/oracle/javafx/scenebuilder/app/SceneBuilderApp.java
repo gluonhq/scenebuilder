@@ -372,11 +372,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         setApplicationUncaughtExceptionHandler();
         PreferencesImporter prefsImporter = PreferencesController.getSingleton().getImporter();
         prefsImporter.askForActionAndRun();
-        
-        UserLibraryImporter userLibImporter = PreferencesController.getSingleton().getUserLibraryImporter();
-        userLibImporter.performImportWhenDesired();
-        
-        // Creates the user library
+
+        AppPlatform.getAppDirectories().createUserLibraryFolder();
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         String userLibDir = AppPlatform.getAppDirectories().getUserLibraryFolder().normalize().toString();
         userLibrary = new UserLibrary(userLibDir,
@@ -415,6 +412,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
 
         userLibrary.startWatching();
+
+        // The import will start as soon as the user library is initialized.
+        // Import status, if triggered, if failed or completed, will be written to log.
+        Platform.runLater(UserLibraryImporter.createImportTask());
 
         sendTrackingStartupInfo();
 

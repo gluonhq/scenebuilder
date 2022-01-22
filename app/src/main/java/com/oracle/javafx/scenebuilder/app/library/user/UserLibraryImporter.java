@@ -48,35 +48,39 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.AppPlatform;
+import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 
-public class UserLibraryImporter {
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+
+public final class UserLibraryImporter {
     protected static final String USER_LIBRARY_IMPORT_COMPLETE = "-userlib-import-done";
     
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Optional<AppVersion> version;
     private final Preferences preferences;
     private final AppPlatformDirectories appDirectories;
-    
+
     public UserLibraryImporter(Preferences applicationPreferences) {
         this(AppPlatform.getAppDirectories(), applicationPreferences);
     }
-    
+
     public UserLibraryImporter(AppPlatformDirectories directories, Preferences applicationPreferences) {
         this(AppVersion.fromString(AppSettings.getSceneBuilderVersion()), directories, applicationPreferences);
     }
-    
+
     public UserLibraryImporter(Optional<AppVersion> appVersion, AppPlatformDirectories appDirectories, Preferences applicationPreferences) {
         this.version = Objects.requireNonNull(appVersion);
         this.preferences = Objects.requireNonNull(applicationPreferences);
         this.appDirectories = Objects.requireNonNull(appDirectories);
     }
     
-    protected AppPlatformDirectories getPlatformDirectories() {
+    AppPlatformDirectories getPlatformDirectories() {
         return this.appDirectories;
     }
 
@@ -86,27 +90,30 @@ public class UserLibraryImporter {
      * or b) the value of {@code ASKED_FOR_IMPORT} does not contain {@code -no-import}
      * or c) the value of {@code ASKED_FOR_IMPORT} does not contain {@code -userlib-import-done}
      * Of course, the import also takes only place if a previous version library folder is found.
+     * 
+     * @param timestamp {@link LocalDateTime} when the import is taking place
+     * @return {@link ImportResult} describing how the activity was completed.
      */
-    public void performImportWhenDesired() {
-        performImportWhenDesired(LocalDateTime.now());
-    }
-    
-    protected void performImportWhenDesired(LocalDateTime timestamp) {
+    ImportResult performImportWhenDesired(LocalDateTime timestamp) {
         Objects.requireNonNull(timestamp);
         String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, "");
         if (importDecision.contains(PreferencesImporter.DECISION_NO_IMPORT)) {
             logger.log(Level.INFO, "Previous version user library will not be imported as user opted out.");
-            return;
+            return ImportResult.SKIPPED;
         }
         
         if (importDecision.contains(USER_LIBRARY_IMPORT_COMPLETE)) {
             logger.log(Level.INFO, "User library already imported.");
-            return;
+            return ImportResult.ALREADY_COMPLETED;
         }
-        importPreviousVersionUserLibrary(timestamp);
+        return importPreviousVersionUserLibrary(timestamp);
     }
     
-    protected void importPreviousVersionUserLibrary(LocalDateTime timestamp) {
+    void clearImportDecision() {
+        preferences.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
+    }
+
+    ImportResult importPreviousVersionUserLibrary(LocalDateTime timestamp) {
         String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, timestamp.toString());
         String importStatus = importDecision+USER_LIBRARY_IMPORT_COMPLETE;
         preferences.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,importStatus);
@@ -115,12 +122,14 @@ public class UserLibraryImporter {
         Optional<Path> oldSettingsDirectory = previousVersionUserLibraryPath(candidates);
         if (oldSettingsDirectory.isPresent()) {
             Path userLib = appDirectories.getUserLibraryFolder();
-            importUserLibraryContentsFrom(oldSettingsDirectory.get(), userLib);
+            return importUserLibraryContentsFrom(oldSettingsDirectory.get(), userLib);
         }
+        return ImportResult.NOTHING_TO_IMPORT;
     }
-    
-    private void importUserLibraryContentsFrom(Path sourceSettings, Path actualLibraryDir) {
+
+    private ImportResult importUserLibraryContentsFrom(Path sourceSettings, Path actualLibraryDir) {
         Path oldLibrary = sourceSettings.resolve("Library");
+        ImportResult status = ImportResult.COMPLETED;
         if (Files.exists(oldLibrary) && Files.isDirectory(oldLibrary)) {
             logger.log(Level.INFO, oldLibrary.toAbsolutePath().toString());
             try {
@@ -129,21 +138,24 @@ public class UserLibraryImporter {
                 String template = "Failed to import user library from %s";
                 String message = String.format(template, oldLibrary);
                 logger.log(Level.SEVERE, message, e);
+                status = ImportResult.COMPLETED_WITH_ERRORS;
             }
         }
+        return status;
     }
 
-    protected void copyDirectory(Path sourceDir, Path destinationDir) throws IOException {
-        Files.walk(sourceDir).forEach(item -> adjustDestinationPathAndTryCopy(sourceDir, destinationDir, item));
+    void copyDirectory(Path sourceDir, Path destinationDir) throws IOException {
+        Files.walk(sourceDir).forEach(item -> 
+            adjustDestinationPathAndTryCopy(sourceDir, destinationDir, item));
     }
 
-    protected void adjustDestinationPathAndTryCopy(Path sourceDir, Path destinationDir, Path source) {
+    void adjustDestinationPathAndTryCopy(Path sourceDir, Path destinationDir, Path source) {
         Path relativeSrc = sourceDir.relativize(source);
         Path destination = destinationDir.resolve(relativeSrc).toAbsolutePath();
         tryFileCopy(source, destination);
     }
 
-    protected void tryFileCopy(Path source, Path destination) {
+    void tryFileCopy(Path source, Path destination) {
         try {
             createDirectoryIfNeeded(destination);
             copyFile(source, destination);
@@ -152,14 +164,14 @@ public class UserLibraryImporter {
         }
     }
 
-    protected void copyFile(Path source, Path destination) throws IOException {
+    void copyFile(Path source, Path destination) throws IOException {
         if (!Files.isDirectory(source)) {
             logger.log(Level.INFO, "Importing {0} into {1}", new Object[] { source, destination });
             Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
-    protected void createDirectoryIfNeeded(Path destination) throws IOException {
+    void createDirectoryIfNeeded(Path destination) throws IOException {
         if (Files.isDirectory(destination) && Files.notExists(destination)) {
             Files.createDirectories(destination);
         }
@@ -169,12 +181,13 @@ public class UserLibraryImporter {
         try (Stream<Path> files = Files.list(appData)) {
             return files.filter(Files::isDirectory).collect(Collectors.toList());
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error while searching previous version user library locations.", e);
+            logger.log(Level.SEVERE,
+                    "Error while searching previous version user library locations.", e);
         }
         return Collections.emptyList();
     }
-    
-    protected Optional<Path> previousVersionUserLibraryPath(List<Path> candidates) {
+
+    Optional<Path> previousVersionUserLibraryPath(List<Path> candidates) {
         Objects.requireNonNull(candidates, "list of path candidates must not be null");
         Map<AppVersion, Path> previousVersionLibDirs = collectPreviousVersionLibraryDirs(candidates);
         return previousVersionLibDirs.entrySet().stream()
@@ -182,8 +195,8 @@ public class UserLibraryImporter {
                                          .map(e -> e.getValue())
                                          .findFirst();
     }
-    
-    protected Map<AppVersion, Path> collectPreviousVersionLibraryDirs(List<Path> candidates) {
+
+    Map<AppVersion, Path> collectPreviousVersionLibraryDirs(List<Path> candidates) {
         if (version.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -210,5 +223,85 @@ public class UserLibraryImporter {
         }
         
         return sceneBuilderDirs;
+    }
+    
+    static class UserLibraryImportTask extends Task<ImportResult> {
+        
+        private final Logger logger = Logger.getLogger(UserLibraryImportTask.class.getName());
+        private final LocalDateTime timestamp;
+        private final UserLibraryImporter userLibImporter;
+        
+        UserLibraryImportTask(LocalDateTime timestamp, UserLibraryImporter userLibImporter) {
+            this.timestamp = timestamp;
+            this.userLibImporter = userLibImporter;
+            
+            setOnFailed(this::logException);
+            setOnSucceeded(this::logSuccess);
+        }
+
+        @Override
+        protected ImportResult call() throws Exception {
+            return userLibImporter.performImportWhenDesired(timestamp);
+        }
+
+        private void logException(WorkerStateEvent event) {
+            if (getException() != null) {
+                logger.log(Level.SEVERE,
+                        "Import of User Library failed with error!", getException());
+            } else {
+                logger.log(Level.SEVERE,
+                        "Import of User Library failed with error!");
+            }
+        }
+
+        private void logSuccess(WorkerStateEvent event) {
+            logger.log(Level.SEVERE, "User Library Import finished with: {0}", getValue());
+        }
+
+        LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+        
+        UserLibraryImporter getUserLibImporter() {
+            return userLibImporter;
+        }
+    }
+
+    public static Task<ImportResult> createImportTask() {
+        return new UserLibraryImportTask(LocalDateTime.now(),
+                                         PreferencesController.getSingleton()
+                                                              .getUserLibraryImporter());
+    }
+
+    public enum ImportResult {
+        /**
+         * User library was successfully imported. 
+         */
+        COMPLETED,
+        
+        /**
+         * User library was previously successfully imported.
+         */
+        ALREADY_COMPLETED,
+        
+        /**
+         * User library import failed with an error.
+         */
+        FAILED,
+        
+        /**
+         * User library import was skipped as user opted out.
+         */
+        SKIPPED,
+
+        /**
+         * No older user library directory found so the import was skipped. 
+         */
+        NOTHING_TO_IMPORT, 
+
+        /**
+         * User library was imported but there were errors importing individual JARs.
+         */
+        COMPLETED_WITH_ERRORS;
     }
 }

@@ -54,10 +54,14 @@ import org.junit.Test;
 
 import com.oracle.javafx.scenebuilder.app.AppPlatformDirectories;
 import com.oracle.javafx.scenebuilder.app.PlatformSpecificDirectories;
+import com.oracle.javafx.scenebuilder.app.library.user.UserLibraryImporter.ImportResult;
 import com.oracle.javafx.scenebuilder.app.OperatingSystem;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
+import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
 import com.oracle.javafx.scenebuilder.app.preferences.PrefsHelper;
+
+import javafx.concurrent.Task;
 
 public class UserLibraryImporterTest {
 
@@ -115,9 +119,9 @@ public class UserLibraryImporterTest {
                 Paths.get(".scenebuilder-8.5.0"),
                 Paths.get(".scenebuilder-8.5.0-SNAPSHOT"),
                 Paths.get("Scene Builder-19.0.1")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get(".scenebuilder-15.0.0"), x.get());
     }
@@ -130,9 +134,9 @@ public class UserLibraryImporterTest {
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
                 Paths.get(".scenebuilder")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get(".scenebuilder"), x.get());
     }
@@ -147,9 +151,9 @@ public class UserLibraryImporterTest {
                 Paths.get("Scene Builder-8.5.0"),
                 Paths.get("Scene Builder-19.0.1"),
                 Paths.get(".scenebuilder")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder-8.5.0"), x.get());
     }
@@ -162,9 +166,9 @@ public class UserLibraryImporterTest {
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
                 Paths.get(".scenebuilder")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder"), x.get());
     }
@@ -206,15 +210,16 @@ public class UserLibraryImporterTest {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
         testNode.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,
                      timestamp.toString()+PreferencesImporter.DECISION_NO_IMPORT);
-        
+
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
         AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        classUnderTest.performImportWhenDesired(timestamp);
-        
+        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
+
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
-        
+
+        assertEquals(ImportResult.SKIPPED, result);
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-no-import", documentedResult);
         assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
@@ -224,15 +229,16 @@ public class UserLibraryImporterTest {
     public void that_import_is_skipped_when_done_before() {
         LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
         testNode.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,timestamp.toString()+UserLibraryImporter.USER_LIBRARY_IMPORT_COMPLETE);
-        
+
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
         AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        classUnderTest.performImportWhenDesired(timestamp);
-        
+        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
+
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
-        
+
+        assertEquals(ImportResult.ALREADY_COMPLETED, result);
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
         assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
@@ -256,15 +262,16 @@ public class UserLibraryImporterTest {
         
         Path userLib = appDirectories.getUserLibraryFolder();
         Files.createDirectories(userLib);
-        
+
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        classUnderTest.performImportWhenDesired(timestamp);
-        
+        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
+
         String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
-        
+
+        assertEquals(ImportResult.COMPLETED, result);
         assertNotNull(documentedResult);
         assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
-        
+
         File[] importedFiles = appDirectories.getUserLibraryFolder().toFile().listFiles(); 
         assertEquals(1, importedFiles.length);
         assertEquals("MyCustomArtifact.txt", importedFiles[0].getName());
@@ -272,11 +279,23 @@ public class UserLibraryImporterTest {
 
     @Test
     public void that_correct_AppDirectories_are_used_by_default() {
-       if (testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null) !=null) {           
+       if (testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null) !=null) {
            testNode.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
        }
        classUnderTest = new UserLibraryImporter(testNode);
        assertTrue(classUnderTest.getPlatformDirectories() instanceof PlatformSpecificDirectories);
+    }
+
+    @Test
+    public void that_import_task_is_created() {
+        Task<ImportResult> task = UserLibraryImporter.createImportTask();
+
+        assertTrue(task instanceof UserLibraryImporter.UserLibraryImportTask);
+
+        UserLibraryImporter.UserLibraryImportTask specialTask = (UserLibraryImporter.UserLibraryImportTask) task;
+
+        assertNotNull(specialTask.getTimestamp());
+        assertNotNull(specialTask.getUserLibImporter());
     }
 
     private static AppPlatformDirectories forLinux(String version) {
@@ -289,5 +308,14 @@ public class UserLibraryImporterTest {
 
     private static AppPlatformDirectories forWindows(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.WINDOWS, version);
+    }
+    
+    /** 
+     * This is only for debugging so that the import decision can be removed if needed 
+     */
+    public static void main(String[] args) {
+        PreferencesController.getSingleton()
+                             .getUserLibraryImporter()
+                             .clearImportDecision();
     }
 }

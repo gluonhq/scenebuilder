@@ -134,6 +134,7 @@ public class PreferencesImporter {
      */
     public boolean askForImport() {
         String lastTimeAsked = target.get(PREF_ASKED_FOR_IMPORT, null);
+        
         return lastTimeAsked == null;
     }
 
