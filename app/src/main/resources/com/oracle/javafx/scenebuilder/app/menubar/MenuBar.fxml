@@ -41,7 +41,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar fx:id="menuBar">
       <menus>
@@ -307,7 +307,6 @@
                         <MenuItem fx:id="apiDocMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.api.docs" />
                         <MenuItem fx:id="cssReferenceGuideMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.css.reference" />
                         <MenuItem fx:id="fxmlIntroductionMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.fxml.reference" />
-                        <MenuItem fx:id="gettingStartedWithKotlinMenuItem" mnemonicParsing="true" text="%menu.title.help.openjfx.getting.started.kotlin" />
                      </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />

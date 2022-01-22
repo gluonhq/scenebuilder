@@ -31,43 +31,76 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 
 /**
- * Documentation URLs are provided in a resource
- * {@code documentation_urls.properties}. These URLs point to OpenJFX pages such
- * as Javadoc API / CSS or FXML references. Those are meant to be used in the
- * Scene Builder help menu to eventually provide quick and easy access to
- * essential JavaFX developer documentation.
+ * Provides URLs which are supposed to be used in Scene Builder help menu. These
+ * URLs point to OpenJFX pages such as Javadoc API / CSS or FXML references.
+ * Some of the pre configured URLs may contain a placeholder for the major
+ * JavaFX version ({@code {javafx.version.major}}). This placeholder is
+ * substituted at runtime with the detected JavaFX version and if no JavaFX is
+ * found, the string unknown is used.
  */
-public class DocumentationUrls {
+public enum DocumentationUrls {
+
+    /**
+     * Javadoc home (for Inspector and CSS Analyzer properties)
+     */
+    JAVADOC_HOME("https://openjfx.io/javadoc/11/"),
+    
+    /**
+     * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
+     */
+    ORACLE_DOCUMENTATION("https://docs.oracle.com/javafx/index.html"),
+    
+    /**
+     * Gluon javadoc home (for Inspector and CSS Analyzer properties)
+     */
+    GLUON_JAVADOC_HOME("https://docs.gluonhq.com/charm/javadoc/latest/"),
+    GLUON_SCENEBUILDER_HOME("https://gluonhq.com/products/scene-builder/"),
+
+    OPENJFX_GETTING_STARTED("https://openjfx.io/openjfx-docs/"),
+    OPENJFX_JAVADOC_HOME("https://openjfx.io/javadoc/{javafx.version.major}/"),
+    OPENJFX_CSS_REFERENCE("https://openjfx.io/javadoc/{javafx.version.major}/javafx.graphics/javafx/scene/doc-files/cssref.html"),
+    OPENJFX_FXML_REFERENCE("https://openjfx.io/javadoc/{javafx.version.major}/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"),
+
+    GLUON_SCENEBUILDER_CONTRIBUTE("https://github.com/gluonhq/scenebuilder");
 
     private static final String UNKNOWN = "unknown";
 
-    private static DocumentationUrls instance = null;
-
-    public static DocumentationUrls getInstance() {
-        if (instance == null) {
-            instance = new DocumentationUrls();
+    private static String javaFxMajorVersion = null;
+    
+    private final String url;
+    
+    private DocumentationUrls(String defaultValue) {
+        if (defaultValue != null) {
+            assert !defaultValue.isBlank();
         }
-        return instance;
+        url = defaultValue;
+    }
+    
+    /**
+     * Provides the desired URL with place holders resolved to their values.
+     */
+    @Override
+    public String toString() {
+        if (javaFxMajorVersion == null) {
+            javaFxMajorVersion = getMajorJavaFxVersion(getJavaFxVersion());
+        }
+        return resolveJavaFxVersion(url, javaFxMajorVersion);
     }
 
-    /**
-     * Verifies if the desired {@link DocumentationItem} is available.
-     * 
-     * @param item {@link DocumentationItem} (usually an URL)
-     * @return true when available in corresponding resource
-     */
-    public static boolean isAvailable(DocumentationItem item) {
-        return getInstance().getOptionalUrl(item).isPresent();
+    String getConfiguredValue() {
+        return url;
+    }
+
+    private static String resolveJavaFxVersion(String url, String majorFxVersion) {
+        String placeHolder = "{javafx.version.major}";
+        if (url.contains(placeHolder)) {
+            return url.replace(placeHolder, majorFxVersion);
+        }
+        return url;
     }
 
     /**
@@ -77,7 +110,7 @@ public class DocumentationUrls {
      * 
      * @return JavaFX version number or "unknown" when property is undefined
      */
-    protected static String getJavaFxVersion() {
+    static String getJavaFxVersion() {
         return getJavaFxVersion(System.getProperties());
     }
 
@@ -88,20 +121,16 @@ public class DocumentationUrls {
      * 
      * @return JavaFX version number or "unknown" when property is undefined
      */
-    protected static String getJavaFxVersion(Properties systemProperties) {
+    static String getJavaFxVersion(Properties systemProperties) {
         Objects.requireNonNull(systemProperties);
-        String fxVersion = systemProperties.getProperty("javafx.version");
-        if (fxVersion == null) {
-            return UNKNOWN;
-        }
-        return fxVersion;
+        return systemProperties.getProperty("javafx.version",UNKNOWN);
     }
 
     /**
      * @param version JavaFX version string
      * @return Provides the major version of the given version String.
      */
-    protected static String getMajorJavaFxVersion(String version) {
+    static String getMajorJavaFxVersion(String version) {
         if (version == null || version.isBlank()) {
             return UNKNOWN;
         }
@@ -113,135 +142,4 @@ public class DocumentationUrls {
         }
     }
 
-    private final Map<DocumentationItem, String> configuredUrls;
-
-    private final String javaFxVersion;
-
-    private DocumentationUrls() {
-        this(getJavaFxVersion(), "documentation_urls.properties");
-    }
-
-    DocumentationUrls(String javaFxVersion, String resourceName) {
-        Objects.requireNonNull(resourceName, "resourceName must not be null");
-        this.configuredUrls = new EnumMap<>(DocumentationItem.class);
-        this.javaFxVersion = Objects.requireNonNull(javaFxVersion, "javaFxVersion must not be null");
-        loadProperties(resourceName);
-    }
-
-    private void loadProperties(String resourceName) {
-        String majorJavaFxVersion = getMajorJavaFxVersion(javaFxVersion);
-        Properties docProps = new Properties();
-        try (InputStream in = getClass().getResourceAsStream(resourceName)) {
-            assert in != null;
-            docProps.load(in);
-            for (DocumentationItem item : DocumentationItem.values()) {
-                String url = docProps.getProperty(item.getKey());
-                if (null != url && !url.isBlank()) {
-                    String resolvedUrl = resolveJavaFxVersion(url, majorJavaFxVersion);
-                    configuredUrls.put(item, resolvedUrl);
-                } else if (item.defaultUrl != null) {
-                    configuredUrls.put(item, item.defaultUrl);
-                }
-            }
-        } catch (IOException cause) {
-            throw new UncheckedIOException(cause);
-        }
-    }
-
-    private String resolveJavaFxVersion(String url, String majorFxVersion) {
-        String placeHolder = "{javafx.version.major}";
-        if (url.contains(placeHolder)) {
-            return url.replace(placeHolder, majorFxVersion);
-        }
-        return url;
-    }
-
-    public String getJavadocHome() {
-        return getAsMandatoryValue(DocumentationItem.JAVADOC_HOME);
-    }
-
-    public String getOracleDocumentation() {
-        return getAsMandatoryValue(DocumentationItem.ORACLE_DOCUMENTATION);
-    }
-
-    public String getGluonJavadocHome() {
-        return getAsMandatoryValue(DocumentationItem.GLUON_JAVADOC_HOME);
-    }
-
-    public String getOpenjfxGettingStarted() {
-        return getAsMandatoryValue(DocumentationItem.OPENJFX_GETTING_STARTED);
-    }
-
-    public String getOpenjfxJavadocHome() {
-        return getAsMandatoryValue(DocumentationItem.OPENJFX_JAVADOC_HOME);
-    }
-
-    public String getOpenjfxCssReference() {
-        return getAsMandatoryValue(DocumentationItem.OPENJFX_CSS_REFERENCE);
-    }
-
-    public String getOpenjfxFxmlReference() {
-        return getAsMandatoryValue(DocumentationItem.OPENJFX_FXML_REFERENCE);
-    }
-
-    public String getGluonScenebuilderHome() {
-        return getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_HOME);
-    }
-
-    public String getGettingStartedWithKotlin() {
-        return getAsMandatoryValue(DocumentationItem.KOTLIN_GETTING_STARTED);
-    }
-
-    String getAsMandatoryValue(DocumentationItem item) {
-        String url = configuredUrls.get(item);
-        assert url != null;
-        return url;
-    }
-
-    public Optional<String> getOptionalUrl(DocumentationItem item) {
-        return Optional.ofNullable(configuredUrls.get(item));
-    }
-
-    /**
-     * The enum item name is used as properties key, therefore all "_" are replaced
-     * with "." and the string is turned lowercase.
-     * 
-     * For some items defaults are defined as those are required in various places
-     * inside SceneBuilder.
-     * 
-     * The items without default are optional. So removing them from the resource
-     * will also lead to removal of these items from GUI.
-     * 
-     */
-    public enum DocumentationItem {
-        JAVADOC_HOME("https://openjfx.io/javadoc/11/"),
-        ORACLE_DOCUMENTATION("https://docs.oracle.com/javafx/index.html"),
-        GLUON_JAVADOC_HOME("https://docs.gluonhq.com/charm/javadoc/latest/"),
-        GLUON_SCENEBUILDER_HOME("https://gluonhq.com/products/scene-builder/"),
-
-        OPENJFX_GETTING_STARTED("https://openjfx.io/openjfx-docs/"),
-        OPENJFX_JAVADOC_HOME("https://openjfx.io/javadoc/16/"),
-        OPENJFX_CSS_REFERENCE("https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html"),
-        OPENJFX_FXML_REFERENCE("https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"),
-
-        KOTLIN_GETTING_STARTED("https://kotlinlang.org/docs/getting-started.html"),
-
-        GLUON_SCENEBUILDER_CONTRIBUTE;
-
-        private final String defaultUrl;
-        
-        private DocumentationItem() {
-            this(null);
-        }
-
-        private DocumentationItem(String defaultValue) {
-            if (defaultValue != null) {
-                assert !defaultValue.isBlank();
-            }
-            defaultUrl = defaultValue;
-        }
-        private String getKey() {
-            return this.name().replace('_', '.').toLowerCase();
-        }
-    }
 }

@@ -33,81 +33,45 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
-import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls.DocumentationItem;
 
 public class DocumentationUrlsTest {
 
-    private DocumentationUrls classUnderTest;
+    @Test
+    public void that_javafx_version_substitution_works_when_required() {
+        DocumentationUrls url = DocumentationUrls.OPENJFX_JAVADOC_HOME;
 
-    @BeforeClass
-    public static void initJavaFX() {
-        JfxInitializer.initialize();
+        // important is, that the configured value contains {javafx.version.major}
+        assertEquals("https://openjfx.io/javadoc/{javafx.version.major}/", url.getConfiguredValue());
+
+        // this should be replaced at the end
+        assertFalse(url.toString().contains("{javafx.version.major}"));
+
+        String fxVersion = DocumentationUrls.getJavaFxVersion();
+        String expectedUrl = "https://openjfx.io/javadoc/{javafx.version.major}/"
+                             .replace("{javafx.version.major}", fxVersion);
+        assertEquals(expectedUrl, url.toString());
+    }
+    
+    @Test
+    public void that_platform_documentation_url_matches_configuration() {
+        assertEquals("https://docs.oracle.com/javafx/index.html", 
+                DocumentationUrls.ORACLE_DOCUMENTATION.toString());
     }
 
     @Test
-    public void that_error_is_raised_when_resource_file_is_missing() {
-        assertThrows(AssertionError.class, () -> new DocumentationUrls("17.0.0.1", "myNotExistingResource.properties"));
+    public void that_platform_gluon_javadoc_url_matches_configuration() {
+        assertEquals("https://docs.gluonhq.com/charm/javadoc/latest/", 
+                DocumentationUrls.GLUON_JAVADOC_HOME.toString());
     }
 
     @Test
-    public void that_defaults_are_used_with_incomplete_properties_file() {
-        classUnderTest = new DocumentationUrls("17.0.0.1", "incomplete_doc_urls.properties");
-        assertFalse(classUnderTest.getOptionalUrl(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE).isPresent());
-        assertThrows(AssertionError.class,
-                () -> classUnderTest.getAsMandatoryValue(DocumentationItem.GLUON_SCENEBUILDER_CONTRIBUTE));
-    }
-
-    @Test
-    public void that_defaults_are_correct_and_useful() {
-        classUnderTest = new DocumentationUrls("17.0.0.1", "incomplete_doc_urls.properties");
-
-        assertEquals("Javadoc home is used in Editor Platform", "https://openjfx.io/javadoc/11/",
-                classUnderTest.getJavadocHome());
-
-        assertEquals("Gluon Java Doc home is used in Editor Platform", "https://docs.gluonhq.com/charm/javadoc/latest/",
-                classUnderTest.getGluonJavadocHome());
-
-        assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javafx/index.html",
-                classUnderTest.getOracleDocumentation());
-
-        assertEquals("The getting started guide", "https://openjfx.io/openjfx-docs/",
-                classUnderTest.getOpenjfxGettingStarted());
-
-        assertEquals("The getting started guide", "https://kotlinlang.org/docs/getting-started.html",
-                classUnderTest.getGettingStartedWithKotlin());
-
-        assertEquals("Home of Gluon Scenebuilder", "https://gluonhq.com/products/scene-builder/",
-                classUnderTest.getGluonScenebuilderHome());
-
-        assertEquals("OpenJFX API docs", "https://openjfx.io/javadoc/16/", classUnderTest.getOpenjfxJavadocHome());
-
-        assertEquals("OpenJFX CSS Reference",
-                "https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html",
-                classUnderTest.getOpenjfxCssReference());
-
-        assertEquals("OpenJFX FXML Reference",
-                "https://openjfx.io/javadoc/16/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html",
-                classUnderTest.getOpenjfxFxmlReference());
-    }
-
-    @Test
-    public void that_default_properties_are_read_correctly_from_resource() {
-        classUnderTest = DocumentationUrls.getInstance();
-
-        assertEquals("Javadoc home is used in Editor Platform", "https://openjfx.io/javadoc/unknown/",
-                classUnderTest.getJavadocHome());
-
-        assertEquals("This is used as F1 help URL", "https://docs.oracle.com/javase/8/javase-clienttechnologies.htm",
-                classUnderTest.getOracleDocumentation());
+    public void that_platform_javadoc_url_matches_configuration() {
+        assertEquals("https://openjfx.io/javadoc/11/",
+                DocumentationUrls.JAVADOC_HOME.toString());
     }
 
     @Test
@@ -143,11 +107,4 @@ public class DocumentationUrlsTest {
         assertEquals("unknown", DocumentationUrls.getJavaFxVersion(new Properties()));
     }
 
-    @Test
-    public void that_by_default_all_items_are_available() {
-        classUnderTest = DocumentationUrls.getInstance();
-        for (DocumentationItem item : DocumentationItem.values()) {
-            assertTrue(DocumentationUrls.isAvailable(item));
-        }
-    }
 }

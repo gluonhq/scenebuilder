@@ -87,21 +87,6 @@ public class EditorPlatform {
     public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
 
     /**
-     * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
-     */
-    public static final String DOCUMENTATION_URL = DocumentationUrls.getInstance().getOracleDocumentation();
-
-    /**
-     * Javadoc home (for Inspector and CSS Analyzer properties)
-     */
-    public final static String JAVADOC_HOME = DocumentationUrls.getInstance().getJavadocHome();
-
-    /**
-     * Gluon javadoc home (for Inspector and CSS Analyzer properties)
-     */
-    public final static String GLUON_JAVADOC_HOME = DocumentationUrls.getInstance().getGluonJavadocHome();
-
-    /**
      * scene builder specific tweaks to Gluon theme
      */
     public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
