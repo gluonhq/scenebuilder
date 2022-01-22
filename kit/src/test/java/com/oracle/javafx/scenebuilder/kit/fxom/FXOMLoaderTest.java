@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
-class FXOMLoaderTest {
+public class FXOMLoaderTest {
 
     @BeforeAll
     public static void init() {
@@ -52,7 +52,7 @@ class FXOMLoaderTest {
     }
 
     @Test
-    void that_LoadException_caused_by_XMLStreamException_is_handled() throws Exception {
+    public void that_LoadException_caused_by_XMLStreamException_is_handled() throws Exception {
         String invalidXmlText = FXOMDocument.readContentFromURL(getClass().getResource("IncompleteXml.fxml"));
         URL validResource = getClass().getResource("CompleteFxml.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(validResource);

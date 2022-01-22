@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for {@link com.oracle.javafx.scenebuilder.kit.util.Deprecation#setStaticLoad(javafx.fxml.FXMLLoader, boolean) }
  */
-class StaticLoadTest {
+public class StaticLoadTest {
     
     private boolean thrown;
     
@@ -54,7 +54,7 @@ class StaticLoadTest {
     }
     
     @Test
-    void testStaticLoadWithoutEventHandler() throws IOException {
+    public void testStaticLoadWithoutEventHandler() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
         final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoadWithoutEventHandler.fxml");
@@ -69,7 +69,7 @@ class StaticLoadTest {
     } 
     
     @Test
-    void testStaticLoad() throws IOException {
+    public void testStaticLoad() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
         final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoad.fxml");

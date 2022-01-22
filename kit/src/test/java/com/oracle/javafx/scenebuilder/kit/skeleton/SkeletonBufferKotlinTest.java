@@ -46,7 +46,7 @@ import java.net.URL;
 import java.nio.file.Files;
 
 
-class SkeletonBufferKotlinTest {
+public class SkeletonBufferKotlinTest {
 
     @BeforeAll
     public static void initialize() {
@@ -54,7 +54,7 @@ class SkeletonBufferKotlinTest {
     }
 
     @Test
-    void skeletonToString_nestedTestFxml() throws IOException {
+    public void skeletonToString_nestedTestFxml() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("TestNested.fxml");
 
@@ -66,7 +66,7 @@ class SkeletonBufferKotlinTest {
     }
 
     @Test
-    void skeletonToString_testFxml_full_withComments() throws IOException {
+    public void skeletonToString_testFxml_full_withComments() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("Test.fxml");
         skeletonBuffer.setFormat(SkeletonSettings.FORMAT_TYPE.FULL);
@@ -80,7 +80,7 @@ class SkeletonBufferKotlinTest {
     }
 
     @Test
-    void skeletonToString_testFxml_withComments() throws IOException {
+    public void skeletonToString_testFxml_withComments() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("Test.fxml");
         skeletonBuffer.setTextType(SkeletonSettings.TEXT_TYPE.WITH_COMMENTS);
@@ -93,7 +93,7 @@ class SkeletonBufferKotlinTest {
     }
 
     @Test
-    void skeletonToString_testFxml_fullFormat() throws IOException {
+    public void skeletonToString_testFxml_fullFormat() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("Test.fxml");
         skeletonBuffer.setFormat(SkeletonSettings.FORMAT_TYPE.FULL);

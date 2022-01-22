@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit test for {@link FXOMIntrinsic#createFxomInstanceFromIntrinsic()}
  */
-class CreateFxomInstanceFromIntrinsicTest {
+public class CreateFxomInstanceFromIntrinsicTest {
 
     private static FXOMIntrinsic fxomIntrinsic;
     private static FXOMDocument fxomDocument;
@@ -60,7 +60,7 @@ class CreateFxomInstanceFromIntrinsicTest {
     }
 
     @Test
-    void testCreateFxomInstance() {
+    public void testCreateFxomInstance() {
         FXOMInstance fxomInstance = callService();
         assertThat(fxomInstance).isNotNull();
         assertThat(fxomInstance.getFxomDocument()).isEqualTo(fxomIntrinsic.getFxomDocument());
@@ -70,7 +70,7 @@ class CreateFxomInstanceFromIntrinsicTest {
     }
 
     @Test
-    void testCreateFxomInstanceWithProperties() {
+    public void testCreateFxomInstanceWithProperties() {
         // add at least one property (source)
         fxomIntrinsic.addIntrinsicProperty(fxomDocument);
         FXOMInstance fxomInstance = callService();

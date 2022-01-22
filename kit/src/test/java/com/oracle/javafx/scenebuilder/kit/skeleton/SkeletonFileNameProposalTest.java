@@ -45,12 +45,12 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonSettings.LANGUAGE;
 
-class SkeletonFileNameProposalTest {
+public class SkeletonFileNameProposalTest {
 
     private SkeletonFileNameProposal classUnderTest;
 
     @Test
-    void that_default_java_file_is_created_on_new_documents() {
+    public void that_default_java_file_is_created_on_new_documents() {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         File result = classUnderTest.create(null, null);
         File expected = new File(System.getProperty("user.home"), "PleaseProvideControllerClassName.java");
@@ -59,7 +59,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_default_kotlin_file_is_created_on_new_documents() {
+    public void that_default_kotlin_file_is_created_on_new_documents() {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.KOTLIN);
         File result = classUnderTest.create(null, null);
         File expected = new File(System.getProperty("user.home"), "PleaseProvideControllerClassName.kt");
@@ -68,7 +68,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_controllerName_is_used_when_available() {
+    public void that_controllerName_is_used_when_available() {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         String fxControllerName = "com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonTest$SkeletonTestController";
         File result = classUnderTest.create(null, fxControllerName);
@@ -78,7 +78,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_controllerName_is_preferred_over_fxmlLocation_and_directory_is_used_from_fxml() throws Exception {
+    public void that_controllerName_is_preferred_over_fxmlLocation_and_directory_is_used_from_fxml() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         String fxControllerName = "com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonTest$SkeletonTestController";
         URL fxmlLocation = new File("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/Empty.fxml").toURI()
@@ -91,7 +91,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_fxmlLocation_in_resources_dir_is_changed_to_java_specific_directory() throws Exception {
+    public void that_fxmlLocation_in_resources_dir_is_changed_to_java_specific_directory() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         String fxControllerName = "com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonTest$SkeletonTestController";
         URL fxmlLocation = new File("src/main/resources/com/oracle/javafx/scenebuilder/kit/skeleton/SkeletonWindow.fxml").toURI().toURL();
@@ -103,7 +103,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_fxmlLocation_in_resources_dir_is_changed_to_kotlin_specific_directory(@TempDir Path temporaryDirectory) throws Exception {
+    public void that_fxmlLocation_in_resources_dir_is_changed_to_kotlin_specific_directory(@TempDir Path temporaryDirectory) throws Exception {
 
         String sourceFolder = "com/oracle/javafx/scenebuilder/kit/skeleton";
         Path resourcesDir = temporaryDirectory.resolve("src/main/resources").resolve(sourceFolder);
@@ -123,7 +123,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_controllerName_is_preferred_over_fxmlLocation_in_user_directory() throws Exception {
+    public void that_controllerName_is_preferred_over_fxmlLocation_in_user_directory() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         String fxControllerName = "com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonTest$SkeletonTestController";
         URL fxmlLocation = new File("not-existing-location/Empty.fxml").toURI().toURL();
@@ -134,7 +134,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_fxmlLocations_is_used_when_controllerName_not_exists() throws Exception {
+    public void that_fxmlLocations_is_used_when_controllerName_not_exists() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         URL fxmlLocation = new File("Empty.fxml").getAbsoluteFile().toURI().toURL();
         File result = classUnderTest.create(fxmlLocation, null);
@@ -144,7 +144,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_incorrectly_named_fxml_can_be_handled() throws Exception {
+    public void that_incorrectly_named_fxml_can_be_handled() throws Exception {
         classUnderTest = new SkeletonFileNameProposal(LANGUAGE.JAVA);
         URL fxmlLocation = new File("EmptyFxml").getAbsoluteFile().toURI().toURL();
         File result = classUnderTest.create(fxmlLocation, null);
@@ -154,7 +154,7 @@ class SkeletonFileNameProposalTest {
     }
 
     @Test
-    void that_fxmllocation_is_used_when_language_specific_resource_dir_not_exists(@TempDir Path temporaryDirectory) throws Exception {
+    public void that_fxmllocation_is_used_when_language_specific_resource_dir_not_exists(@TempDir Path temporaryDirectory) throws Exception {
         File resourcesDir = temporaryDirectory.resolve("src/main/resources").toFile();
         File javaDir = temporaryDirectory.resolve("src/main/java").toFile();
         File kotlinDir = temporaryDirectory.resolve("src/main/kotlin").toFile();

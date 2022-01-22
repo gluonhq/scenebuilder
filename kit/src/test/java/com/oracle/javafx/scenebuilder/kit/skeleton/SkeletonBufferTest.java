@@ -44,10 +44,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for {@link SkeletonBuffer#toString()}.
  */
-class SkeletonBufferTest {
+public class SkeletonBufferTest {
 
     @Test
-    void testControllerWithoutPackageName() throws IOException {
+    public void testControllerWithoutPackageName() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("ControllerWithoutPackage.fxml");
 
@@ -60,7 +60,7 @@ class SkeletonBufferTest {
     }
 
     @Test
-    void testControllerWithSimplePackageName() throws IOException {
+    public void testControllerWithSimplePackageName() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("ControllerWithSimplePackage.fxml");
 
@@ -73,7 +73,7 @@ class SkeletonBufferTest {
     }
 
     @Test
-    void testControllerWithAdvancedPackageName() throws IOException {
+    public void testControllerWithAdvancedPackageName() throws IOException {
         // given
         SkeletonBuffer skeletonBuffer = load("ControllerWithAdvancedPackage.fxml");
 

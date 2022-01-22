@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * Unit test for {@link FindEventNamesUtil#findEventName(String)}
  */
-class FindEventNamesUtilTest {
+public class FindEventNamesUtilTest {
 
     @BeforeAll
     public static void initialize() {
@@ -51,7 +51,7 @@ class FindEventNamesUtilTest {
     }
 
     @Test
-    void testEventNamesPositive() {
+    public void testEventNamesPositive() {
         assertThat(callService(EventTypeNames.ON_ACTION)).isEqualTo(EventNames.ACTION_EVENT);
         assertThat(callService(EventTypeNames.ON_DRAG_DETECTED)).isEqualTo(EventNames.MOUSE_EVENT);
         assertThat(callService(EventTypeNames.ON_DRAG_ENTERED)).isEqualTo(EventNames.DRAG_EVENT);
@@ -68,7 +68,7 @@ class FindEventNamesUtilTest {
     }
 
     @Test
-    void testEventNamesNegative() {
+    public void testEventNamesNegative() {
         final String dummyEventTypeName = "onMyDummyEvent";
         final String dummyEventName = "myDummyEvent";
 

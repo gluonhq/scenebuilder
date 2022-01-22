@@ -40,12 +40,12 @@ import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 
-class FXMLPropertiesDisablerTest {
+public class FXMLPropertiesDisablerTest {
 
     private FXMLPropertiesDisabler classUnderTest;
  
     @Test
-    void that_property_value_is_set_to_false_on_MacOS() throws Exception {
+    public void that_property_value_is_set_to_false_on_MacOS() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.MAC);
         String fxmlText = readResourceText("ContainerWithMenuSystemMenuBarEnabled.fxml");
         assertTrue(fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"),
@@ -65,7 +65,7 @@ class FXMLPropertiesDisablerTest {
     }
 
     @Test
-    void that_property_value_is_not_modified_on_LINUX() throws Exception {
+    public void that_property_value_is_not_modified_on_LINUX() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.LINUX);
         String fxmlText = readResourceText("ContainerWithMenuSystemMenuBarEnabled.fxml");
         assertTrue(fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"),

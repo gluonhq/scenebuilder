@@ -56,7 +56,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * Unit test for {@link FXOMSaver#updateImportInstructions(FXOMDocument)}.
  */
-class FXOMSaverUpdateImportInstructionsTest {
+public class FXOMSaverUpdateImportInstructionsTest {
 
     @TempDir
     public Path temporaryFolder;
@@ -95,7 +95,7 @@ class FXOMSaverUpdateImportInstructionsTest {
     }
 
     @Test
-    void testUnusedImports() {
+    public void testUnusedImports() {
         setupTestCase(FxmlTestInfo.UNUSED_IMPORTS);
 
         Set<String> imports = new TreeSet<>();
@@ -113,7 +113,7 @@ class FXOMSaverUpdateImportInstructionsTest {
     }
 
     @Test
-    void testWithWildcard() {
+    public void testWithWildcard() {
         setupTestCase(FxmlTestInfo.WITH_WILDCARD);
 
         Set<String> imports = new TreeSet<>();

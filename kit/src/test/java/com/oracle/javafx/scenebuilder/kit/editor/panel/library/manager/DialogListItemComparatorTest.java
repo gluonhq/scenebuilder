@@ -41,12 +41,12 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-class DialogListItemComparatorTest {
+public class DialogListItemComparatorTest {
 
     private DialogListItemComparator classUnderTest = new DialogListItemComparator();
 
     @Test
-    void testSortingOrArifactItems() {
+    public void testSortingOrArifactItems() {
 
         DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
         DialogListItem actuallySameItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
@@ -61,7 +61,7 @@ class DialogListItemComparatorTest {
     }
 
     @Test
-    void testLibraryDirectoriesPreceedFiles() throws Exception {
+    public void testLibraryDirectoriesPreceedFiles() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libFile = Paths.get(resource.toURI());
@@ -76,7 +76,7 @@ class DialogListItemComparatorTest {
     }
 
     @Test
-    void testLibraryFilesPreceedArtifacts() {
+    public void testLibraryFilesPreceedArtifacts() {
 
         DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
         DialogListItem libraryFileItem = new LibraryDialogListItem(null,
@@ -88,7 +88,7 @@ class DialogListItemComparatorTest {
     }
 
     @Test
-    void testLibraryDirectoriesAreSortedCorrectly() throws Exception {
+    public void testLibraryDirectoriesAreSortedCorrectly() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libDir = Paths.get(resource.toURI()).getParent();
@@ -103,7 +103,7 @@ class DialogListItemComparatorTest {
     }
 
     @Test
-    void testLibraryFilesAreSortedCorrectly() throws Exception {
+    public void testLibraryFilesAreSortedCorrectly() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
         Path libFile = Paths.get(resource.toURI());

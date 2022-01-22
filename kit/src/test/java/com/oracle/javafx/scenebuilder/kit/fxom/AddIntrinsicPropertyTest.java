@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit test for {@link FXOMIntrinsic#addIntrinsicProperty(FXOMDocument)}
  */
-class AddIntrinsicPropertyTest {
+public class AddIntrinsicPropertyTest {
 
     private static final String CHARSET_PROPERTY_NAME = "charset";
     private static final String SOURCE_PROPERTY_NAME = "source";
@@ -70,7 +70,7 @@ class AddIntrinsicPropertyTest {
     }
 
     @Test
-    void testAddCharsetProperty() {
+    public void testAddCharsetProperty() {
         callService();
         FXOMProperty fxomProperty = fxomIntrinsic.getProperties().get(charsetPropertyName);
         assertThat(fxomProperty).isNotNull();
@@ -78,7 +78,7 @@ class AddIntrinsicPropertyTest {
     }
 
     @Test
-    void testAddSourceProperty() {
+    public void testAddSourceProperty() {
         callService();
         FXOMProperty fxomProperty = fxomIntrinsic.getProperties().get(sourcePropertyName);
         assertThat(fxomProperty).isNotNull();

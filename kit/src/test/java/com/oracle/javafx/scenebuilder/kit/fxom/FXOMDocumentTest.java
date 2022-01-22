@@ -60,7 +60,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuBar;
 
-class FXOMDocumentTest {
+public class FXOMDocumentTest {
 
     private FXOMDocument classUnderTest;
 
@@ -76,7 +76,7 @@ class FXOMDocumentTest {
     }
 
     @BeforeEach
-    void prepareTest() throws Exception {
+    public void prepareTest() throws Exception {
         fxmlName = "ContainerWithMenuSystemMenuBarEnabled.fxml";
         fxmlUrl = getResourceUrl(fxmlName);
         fxmlText = readResourceText(fxmlName);
@@ -85,7 +85,7 @@ class FXOMDocumentTest {
     }
 
     @Test
-    void that_FOR_PREVIEW_useSystemMenuBarProperty_is_enabled() throws Exception {
+    public void that_FOR_PREVIEW_useSystemMenuBarProperty_is_enabled() throws Exception {
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.FOR_PREVIEW);
 
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
