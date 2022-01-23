@@ -17,6 +17,7 @@
         <javaVersion>${java.version}, ${java.runtime.name}</javaVersion>
         <javafxVersion>${javafx.version}</javafxVersion>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <dependencies>
