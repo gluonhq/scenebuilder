@@ -78,6 +78,6 @@
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
 }
 
-.progress:indeterminate > .bar {
-    -fx-background-color: orange;
+.progress {
+    -fx-progress-color: orange;
 }

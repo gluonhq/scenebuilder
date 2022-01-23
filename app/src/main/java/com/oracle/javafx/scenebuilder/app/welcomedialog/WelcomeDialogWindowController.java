@@ -47,7 +47,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -83,6 +83,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     public void showTemplates() {
+        templateContainer.setAlignment(Pos.TOP_LEFT);
         templateContainer.getChildren().setAll(templates);
     }
 
@@ -159,11 +160,17 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     private void setupProgressIndicator() {
         templates.addAll(templateContainer.getChildren());
 
-        var progress = new ProgressBar();
-        progress.getStyleClass().add("progress");
-        progress.prefWidthProperty().bind(templateContainer.widthProperty().subtract(140));
+        var label = new Label();
+        label.setText(I18N.getString("welcome.loading.label"));
+        label.setTranslateY(30);
 
-        templateContainer.getChildren().setAll(progress);
+        var progress = new ProgressIndicator();
+        progress.getStyleClass().add("progress");
+        progress.setScaleX(3);
+        progress.setScaleY(3);
+
+        templateContainer.setAlignment(Pos.CENTER);
+        templateContainer.getChildren().setAll(progress, label);
     }
 
     public static WelcomeDialogWindowController getInstance() {

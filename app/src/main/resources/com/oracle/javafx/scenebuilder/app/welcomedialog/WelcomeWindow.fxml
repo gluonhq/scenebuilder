@@ -93,7 +93,7 @@
    <center>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="templates-pane" BorderPane.alignment="CENTER">
          <content>
-            <VBox fx:id="templateContainer" spacing="30.0" alignment="CENTER" prefHeight="640.0">
+            <VBox fx:id="templateContainer" spacing="30.0" prefHeight="640.0">
                <children>
                   <FlowPane>
                      <children>
