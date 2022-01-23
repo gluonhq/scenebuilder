@@ -36,11 +36,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -129,39 +131,48 @@ public final class UserLibraryImporter {
 
     private ImportResult importUserLibraryContentsFrom(Path sourceSettings, Path actualLibraryDir) {
         Path oldLibrary = sourceSettings.resolve("Library");
-        ImportResult status = ImportResult.COMPLETED;
+        Set<ImportResult> results = EnumSet.noneOf(ImportResult.class);
         if (Files.exists(oldLibrary) && Files.isDirectory(oldLibrary)) {
             logger.log(Level.INFO, oldLibrary.toAbsolutePath().toString());
             try {
-                copyDirectory(oldLibrary, actualLibraryDir);
+                copyDirectory(oldLibrary, actualLibraryDir, results);
             } catch (IOException e) {
                 String template = "Failed to import user library from %s";
                 String message = String.format(template, oldLibrary);
                 logger.log(Level.SEVERE, message, e);
-                status = ImportResult.COMPLETED_WITH_ERRORS;
+                results.add(ImportResult.FAILED);
             }
         }
         documentThatImportIsDone();
-        return status;
+        
+        if (!results.contains(ImportResult.COMPLETED)) {
+            return ImportResult.FAILED;
+        }
+        if (results.contains(ImportResult.FAILED)) {
+            return ImportResult.COMPLETED_WITH_ERRORS;
+        }
+        return ImportResult.COMPLETED;
     }
 
-    void copyDirectory(Path sourceDir, Path destinationDir) throws IOException {
+    void copyDirectory(Path sourceDir, Path destinationDir,Set<ImportResult> results) throws IOException {
         Files.walk(sourceDir).forEach(item -> 
-            adjustDestinationPathAndTryCopy(sourceDir, destinationDir, item));
+            adjustDestinationPathAndTryCopy(sourceDir, destinationDir, item,results));
     }
 
-    void adjustDestinationPathAndTryCopy(Path sourceDir, Path destinationDir, Path source) {
+    void adjustDestinationPathAndTryCopy(Path sourceDir, Path destinationDir, Path source, Set<ImportResult> results) {
         Path relativeSrc = sourceDir.relativize(source);
         Path destination = destinationDir.resolve(relativeSrc).toAbsolutePath();
-        tryFileCopy(source, destination);
+        results.add(tryFileCopy(source, destination));
     }
 
-    void tryFileCopy(Path source, Path destination) {
+    ImportResult tryFileCopy(Path source, Path destination) {
         try {
             createDirectoryIfNeeded(destination);
             copyFile(source, destination);
+            return ImportResult.COMPLETED;
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Import failed", e);
+            return ImportResult.FAILED;
         }
     }
 
@@ -272,12 +283,6 @@ public final class UserLibraryImporter {
          */
         COMPLETED,
 
-        
-        /**
-         * User library import failed with an error.
-         */
-        FAILED,
-
         /**
          * User library import was skipped as user opted out.
          */
@@ -289,7 +294,12 @@ public final class UserLibraryImporter {
         NOTHING_TO_IMPORT, 
 
         /**
-         * User library was imported but there were errors importing individual JARs.
+         * User library import failed.
+         */
+        FAILED, 
+
+        /**
+         * User library import completed but there were errors importing individual JARs. 
          */
         COMPLETED_WITH_ERRORS;
     }
