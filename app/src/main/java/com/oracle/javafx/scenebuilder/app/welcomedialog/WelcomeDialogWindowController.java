@@ -160,6 +160,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         templates.addAll(templateContainer.getChildren());
 
         var progress = new ProgressBar();
+        progress.getStyleClass().add("progress");
         progress.prefWidthProperty().bind(templateContainer.widthProperty().subtract(140));
 
         templateContainer.getChildren().setAll(progress);
