@@ -152,7 +152,7 @@ public final class PreferencesImporter {
      * Attempts to import settings of a previous version if existing.
      * There is no user feedback in case of error. The ope
      */
-    public void tryImportingPreviousVersionSettings() {
+    void tryImportingPreviousVersionSettings() {
         if (this.optionalSourceNode.isPresent()) {
             VersionedPreferences source = this.optionalSourceNode.get();
             try {
@@ -175,7 +175,7 @@ public final class PreferencesImporter {
      * 
      * @return true when previous version settings have been found and user has not yet decided 
      */
-    public boolean askForImportIfOlderSettingsExist() {
+    boolean askForImportIfOlderSettingsExist() {
         boolean previousVersionFound = this.optionalSourceNode.isPresent();
         logger.log(Level.FINE, "older preferences detected: {0}", previousVersionFound);
         if (previousVersionFound) {
@@ -200,13 +200,16 @@ public final class PreferencesImporter {
      * @param action {@link Runnable}
      * @throws NullPointerException when action is null
      */
-    public void runAfterImport(Runnable action) {
+    void runAfterImport(Runnable action) {
         this.actionAfterImport = Objects.requireNonNull(action);
     }
 
     /**
-     * Will raise a JavaFX {@link Alert} to ask the user whether to import previous version settings or not.
-     * The question will only appear in cases where previous version settings exist and the user decision has not been saved yet.
+     * Will raise a JavaFX {@link Alert} to ask the user whether to import previous
+     * version settings or not. The question will only appear in cases where
+     * previous version settings exist and the user decision has not been saved yet.
+     * 
+     * @return true when user decided to do the import.
      */
     public boolean askForActionAndRun() {
         Supplier<Optional<ButtonType>> alertInteraction = () -> {
@@ -214,6 +217,7 @@ public final class PreferencesImporter {
             
             customAlert.setTitle("Gluon Scene Builder");
             customAlert.setHeaderText("Import settings");
+            customAlert.setHeight(350);
             customAlert.setContentText(
                     "Previous version settings found. Do you want to import those?"
                   + "\nScene Builder will also import the JAR files from your library."
