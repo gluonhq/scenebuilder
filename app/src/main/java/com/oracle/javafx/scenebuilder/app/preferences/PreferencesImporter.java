@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 
 import javafx.scene.control.Alert;
@@ -218,6 +219,7 @@ public final class PreferencesImporter {
             customAlert.setTitle("Gluon Scene Builder");
             customAlert.setHeaderText("Import settings");
             customAlert.setHeight(350);
+            customAlert.setIcons(AppSettings.APP_ICON_16, AppSettings.APP_ICON_32); 
             customAlert.setContentText(
                     "Previous version settings found. Do you want to import those?"
                   + "\nScene Builder will also import the JAR files from your library."

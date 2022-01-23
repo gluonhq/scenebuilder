@@ -31,8 +31,13 @@
  */
 package com.oracle.javafx.scenebuilder.kit.alert;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -58,6 +63,15 @@ public class SBAlert extends Alert {
     private void setIcons(Stage owner) {
         Stage alertStage = (Stage) getDialogPane().getScene().getWindow();
         alertStage.getIcons().setAll(owner.getIcons());
+    }
+
+    public void setIcons(String... iconResources) {
+        List<Image> icons = Stream.of(iconResources)
+                              .map(Image::new)
+                              .collect(Collectors.toList());
+        
+        Stage alertStage = (Stage) getDialogPane().getScene().getWindow();
+        alertStage.getIcons().addAll(icons);
     }
 
 
