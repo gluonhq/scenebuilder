@@ -424,13 +424,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
 
             WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-                showUpdateDialogIfRequired(newWindow, () -> {
-                    if (!Platform.isFxApplicationThread()) {
-                        Platform.runLater(() -> showRegistrationDialogIfRequired(newWindow));
-                    } else {
-                        showRegistrationDialogIfRequired(newWindow);
-                    }
-                });
+                showUpdateDialogIfRequired(newWindow);
             });
 
             // Unless we're on a Mac we're starting SB directly (fresh start)
@@ -900,7 +894,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
     }
 
-    private void showUpdateDialogIfRequired(DocumentWindowController dwc, Runnable runAfterUpdateDialog) {
+    private void showUpdateDialogIfRequired(DocumentWindowController dwc) {
         AppSettings.getLatestVersion(latestVersion -> {
             if (latestVersion == null) {
                 // This can be because the url was not reachable so we don't show the update dialog.
@@ -931,11 +925,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     Platform.runLater(() -> {
                         UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
                                 latestVersionAnnouncementURL, dwc.getStage());
-                        dialog.setOnHidden(event -> runAfterUpdateDialog.run());
                         dialog.showAndWait();
                     });
-                } else {
-                    runAfterUpdateDialog.run();
                 }
             } catch (NumberFormatException ex) {
                 Platform.runLater(() -> showVersionNumberFormatError(dwc));
@@ -1000,20 +991,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             return true;
         } else {
             return false;
-        }
-    }
-
-    private void showRegistrationDialogIfRequired(DocumentWindowController dwc) {
-        PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-        String registrationHash = recordGlobal.getRegistrationHash();
-        if (registrationHash == null) {
-            performControlAction(ApplicationControlAction.REGISTER, dwc);
-        } else {
-            String registrationEmail = recordGlobal.getRegistrationEmail();
-            if (registrationEmail == null && Math.random() > 0.8) {
-                performControlAction(ApplicationControlAction.REGISTER, dwc);
-            }
         }
     }
 
