@@ -62,7 +62,7 @@ import javafx.concurrent.WorkerStateEvent;
 public final class UserLibraryImporter {
 
     protected static final String PREF_IMPORT_USER_LIBRARY = "IMPORT_USER_LIBRARY";
-    
+
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Optional<AppVersion> version;
     private final Preferences preferences;
@@ -81,7 +81,7 @@ public final class UserLibraryImporter {
         this.preferences = Objects.requireNonNull(applicationPreferences);
         this.appDirectories = Objects.requireNonNull(appDirectories);
     }
-    
+
     AppPlatformDirectories getPlatformDirectories() {
         return this.appDirectories;
     }
@@ -144,7 +144,7 @@ public final class UserLibraryImporter {
             }
         }
         documentThatImportIsDone();
-        
+
         if (!results.contains(ImportResult.COMPLETED)) {
             return ImportResult.FAILED;
         }
@@ -191,7 +191,8 @@ public final class UserLibraryImporter {
 
     private List<Path> collectLibraryCandidates(Path appData) {
         try (Stream<Path> files = Files.list(appData)) {
-            return files.filter(Files::isDirectory).collect(Collectors.toList());
+            return files.filter(Files::isDirectory)
+                        .collect(Collectors.toList());
         } catch (IOException e) {
             logger.log(Level.SEVERE,
                     "Error while searching previous version user library locations.", e);
@@ -233,12 +234,11 @@ public final class UserLibraryImporter {
                 }
             }
         }
-        
         return sceneBuilderDirs;
     }
 
     static class UserLibraryImportTask extends Task<ImportResult> {
-        
+
         private final Logger logger = Logger.getLogger(UserLibraryImportTask.class.getName());
         private final UserLibraryImporter userLibImporter;
 
