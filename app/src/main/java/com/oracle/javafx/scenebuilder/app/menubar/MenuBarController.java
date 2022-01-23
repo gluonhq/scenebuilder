@@ -483,6 +483,7 @@ public class MenuBarController {
         return result;
     }
 
+    
     public static synchronized MenuBarController getSystemMenuBarController() {
         if (systemMenuBarController == null) {
             systemMenuBarController = new MenuBarController(null);
@@ -1148,7 +1149,6 @@ public class MenuBarController {
         fxmlIntroductionMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F5));
         sceneBuilderHomeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GLUON_SCENEBUILDER_HOME));
         communityContributeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER));
-
         /*
          * Put some generic handlers on each Menu and MenuItem.
          * For Insert and Window menu, we override with specific handlers.
@@ -1256,8 +1256,9 @@ public class MenuBarController {
     /*
      * Private (zoom menu)
      */
+    
     final static double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
-
+    
     private void updateZoomMenu() {
         final double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
 
@@ -1282,9 +1283,10 @@ public class MenuBarController {
         }
     }
 
+    
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
-
+        
         for (int i = 0; i < scalingTable.length; i++) {
             if (MathUtils.equals(zoomScale, scalingTable[i])) {
                 result = i;
@@ -1907,6 +1909,7 @@ public class MenuBarController {
 
     }
 
+
     class ZoomOutActionController extends MenuItemController {
 
         @Override
@@ -2434,7 +2437,8 @@ public class MenuBarController {
 
     /**
      * *************************************************************************
-     * Static inner class *************************************************************************
+     * Static inner class
+     * *************************************************************************
      */
     private static class ClearOpenRecentHandler implements EventHandler<ActionEvent> {
 
