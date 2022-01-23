@@ -91,7 +91,7 @@ public final class UserLibraryImporter {
      * @return {@link ImportResult} describing how the activity was completed.
      */
     ImportResult performImportWhenDesired() {
-        boolean forcedImport = importForced();
+        boolean forcedImport = isImportForced();
         boolean requiresImport = preferences.getBoolean(PREF_IMPORT_USER_LIBRARY, true);
         if (requiresImport || forcedImport) {
             if (forcedImport) {
@@ -103,7 +103,7 @@ public final class UserLibraryImporter {
         return ImportResult.SKIPPED;
     }
 
-    private boolean importForced() {
+    private boolean isImportForced() {
         String forceImport = System.getProperty("forceImport", "false");
         return "true".equalsIgnoreCase(forceImport);
     }
