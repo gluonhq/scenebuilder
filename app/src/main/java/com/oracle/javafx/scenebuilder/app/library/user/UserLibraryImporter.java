@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +58,8 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 
 public final class UserLibraryImporter {
-    protected static final String USER_LIBRARY_IMPORT_COMPLETE = "-userlib-import-done";
+
+    protected static final String PREF_IMPORT_USER_LIBRARY = "IMPORT_USER_LIBRARY";
     
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Optional<AppVersion> version;
@@ -85,38 +85,38 @@ public final class UserLibraryImporter {
     }
 
     /**
-     * The library import is only performed when following condition is met:
-     * a) the key {@code ASKED_FOR_IMPORT} does not exist in application preferences
-     * or b) the value of {@code ASKED_FOR_IMPORT} does not contain {@code -no-import}
-     * or c) the value of {@code ASKED_FOR_IMPORT} does not contain {@code -userlib-import-done}
-     * Of course, the import also takes only place if a previous version library folder is found.
-     * 
-     * @param timestamp {@link LocalDateTime} when the import is taking place
+     * The library import is only performed when the property key
+     * {@code IMPORT_USER_LIBRARY} does not exist or is defined as "true".
+     *  
      * @return {@link ImportResult} describing how the activity was completed.
      */
-    ImportResult performImportWhenDesired(LocalDateTime timestamp) {
-        Objects.requireNonNull(timestamp);
-        String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, "");
-        if (importDecision.contains(PreferencesImporter.DECISION_NO_IMPORT)) {
-            logger.log(Level.INFO, "Previous version user library will not be imported as user opted out.");
-            return ImportResult.SKIPPED;
+    ImportResult performImportWhenDesired() {
+        boolean forcedImport = importForced();
+        boolean requiresImport = preferences.getBoolean(PREF_IMPORT_USER_LIBRARY, true);
+        if (requiresImport || forcedImport) {
+            if (forcedImport) {
+                logger.log(Level.FINE, "detected -DforceImport=true");
+            }
+            return importPreviousVersionUserLibrary();
         }
-        
-        if (importDecision.contains(USER_LIBRARY_IMPORT_COMPLETE)) {
-            logger.log(Level.INFO, "User library already imported.");
-            return ImportResult.ALREADY_COMPLETED;
-        }
-        return importPreviousVersionUserLibrary(timestamp);
+        logger.log(Level.INFO, "Previous version user library will not be imported.");
+        return ImportResult.SKIPPED;
+    }
+
+    private boolean importForced() {
+        String forceImport = System.getProperty("forceImport", "false");
+        return "true".equalsIgnoreCase(forceImport);
     }
     
     void clearImportDecision() {
-        preferences.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
+        preferences.remove(PREF_IMPORT_USER_LIBRARY);
     }
 
-    ImportResult importPreviousVersionUserLibrary(LocalDateTime timestamp) {
-        String importDecision = preferences.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, timestamp.toString());
-        String importStatus = importDecision+USER_LIBRARY_IMPORT_COMPLETE;
-        preferences.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,importStatus);
+    private void documentThatImportIsDone() {
+        preferences.putBoolean(PREF_IMPORT_USER_LIBRARY, false);
+    }
+
+    ImportResult importPreviousVersionUserLibrary() {
         Path appData = appDirectories.getApplicationDataRoot();
         List<Path> candidates = collectLibraryCandidates(appData);
         Optional<Path> oldSettingsDirectory = previousVersionUserLibraryPath(candidates);
@@ -141,6 +141,7 @@ public final class UserLibraryImporter {
                 status = ImportResult.COMPLETED_WITH_ERRORS;
             }
         }
+        documentThatImportIsDone();
         return status;
     }
 
@@ -224,24 +225,21 @@ public final class UserLibraryImporter {
         
         return sceneBuilderDirs;
     }
-    
+
     static class UserLibraryImportTask extends Task<ImportResult> {
         
         private final Logger logger = Logger.getLogger(UserLibraryImportTask.class.getName());
-        private final LocalDateTime timestamp;
         private final UserLibraryImporter userLibImporter;
-        
-        UserLibraryImportTask(LocalDateTime timestamp, UserLibraryImporter userLibImporter) {
-            this.timestamp = timestamp;
+
+        UserLibraryImportTask(UserLibraryImporter userLibImporter) {
             this.userLibImporter = userLibImporter;
-            
             setOnFailed(this::logException);
             setOnSucceeded(this::logSuccess);
         }
 
         @Override
         protected ImportResult call() throws Exception {
-            return userLibImporter.performImportWhenDesired(timestamp);
+            return userLibImporter.performImportWhenDesired();
         }
 
         private void logException(WorkerStateEvent event) {
@@ -258,37 +256,28 @@ public final class UserLibraryImporter {
             logger.log(Level.SEVERE, "User Library Import finished with: {0}", getValue());
         }
 
-        LocalDateTime getTimestamp() {
-            return timestamp;
-        }
-        
         UserLibraryImporter getUserLibImporter() {
             return userLibImporter;
         }
     }
 
     public static Task<ImportResult> createImportTask() {
-        return new UserLibraryImportTask(LocalDateTime.now(),
-                                         PreferencesController.getSingleton()
+        return new UserLibraryImportTask(PreferencesController.getSingleton()
                                                               .getUserLibraryImporter());
     }
 
-    public enum ImportResult {
+    enum ImportResult {
         /**
          * User library was successfully imported. 
          */
         COMPLETED,
-        
-        /**
-         * User library was previously successfully imported.
-         */
-        ALREADY_COMPLETED,
+
         
         /**
          * User library import failed with an error.
          */
         FAILED,
-        
+
         /**
          * User library import was skipped as user opted out.
          */

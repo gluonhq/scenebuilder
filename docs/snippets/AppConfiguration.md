@@ -5,7 +5,6 @@
 | Location                | Responsible Classes                                        | Description | 
 | :---------------------- | :--------------------------------------------------------- | :---------- |
 | applicationDataFolder   | `c.o.j.scenebuilder.app.AppPlatform`                       | Message box and user library folders are located here |
-| messageBoxFolder        | `c.o.j.scenebuilder.app.AppPlatform`                       | Contents of message box |
 | userLibraryFolder       | `c.o.j.scenebuilder.app.AppPlatform`                       | May contain JAR file with a JavaFX controls inside |
 | logsFolder              | `c.o.j.scenebuilder.app.AppPlatform`                       | Here the `scenebuilder-x.y.z.log` file is stored, usually inside the users profiles directory |
 | Java Preferences        | `c.o.j.scenebuilder.app.preferences.PreferencesController` | Standardized persistent storage of application settings |
@@ -31,27 +30,35 @@
 | ---------------------- |
 | `applicationDataFolder/MB`  |
 
-### LogsFolder
+### Log File
 
 | Version | Location |
 | ------- | ---------------------------------- |
-| <= 17   | `%USERPROFILE%\.scenebuilder\logs`       |
-| >= 18   | `%USERPROFILE%\.scenebuilder-18.0.0\logs` |
+| <= 17   | `%USERPROFILE%\.scenebuilder\logs\scenebuilder.log`       |
+| >= 18   | `%USERPROFILE%\.scenebuilder\logs\scenebuilder-18.0.0.log` |
 
 ### Preferences
 
-Node Structure until version 17:
+Scene Builder stores its preferences in following root node:
 
-Root Node:	`com.oracle.javafx.scenebuilder.app.preferences`
- * SB_2.0 (`IMPORTED_GLUON_JARS`, `LAST_SENT_TRACKING_INFO_DATE`, `RECENT_ITEMS`, `REGISTRATION_EMAIL`, `REGISTRATION_HASH`, `REGISTRATION_OPT_IN`)
-   * ARTIFACTS
-   * DOCUMENTS (separate node for each document's settings)
-   * REPOSITIRIES
-   
-Structure with versions >= 18.0.0:
+| Node | Description |
+|------|-------------|
+| `com.oracle.javafx.scenebuilder.app.preferences` | root node |
+| `com.oracle.javafx.scenebuilder.app.preferences.SB_2.0` | Preferences for all versions <= 17 |
+| `com.oracle.javafx.scenebuilder.app.preferences.SB_18.0.0` | Preferences for all versions > 17 |
 
-Root Node:	`com.oracle.javafx.scenebuilder.app.preferences`
- * SB_18.0.0 
-   * ARTIFACTS
-   * DOCUMENTS
-   * REPOSITIRIES
+Each node may hold following child nodes:
+
+| Child Node | Description |
+|------------|-------------|
+| `ARTIFACTS` | tbd.       |
+| `DOCUMENTS` | one child node per recent document |
+| `REPOSITORIES` | tbd.       |
+
+SB_2.0 preference keys:
+* `IMPORTED_GLUON_JARS`, `LAST_SENT_TRACKING_INFO_DATE`, `RECENT_ITEMS`, `REGISTRATION_EMAIL`, `REGISTRATION_HASH`, `REGISTRATION_OPT_IN`
+
+SB_18.0.0 preference keys:
+* same like 2.0 and:
+* `PERFORM_IMPORT` = `true|false`  , if missing or true, app preferences will be imported
+* `IMPORT_USER_LIBRARY` = `true|false`  , if missing or true, user library directory will be imported

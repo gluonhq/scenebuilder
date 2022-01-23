@@ -48,25 +48,26 @@ import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 
 public class PreferencesControllerTest {
-    
+
     private static Preferences testNode;
-    
     private static PreferencesController classUnderTest;
-    
+
     @BeforeClass
     public static void setup() {
         testNode = Preferences.userRoot()
                               .node("PREFS_CONTROLLER_TEST")
                               .node("com/oracle/javafx/scenebuilder/app/preferences");
+
         PrefsHelper.removeAllChildNodes(testNode);
+        PrefsHelper.setToNull(PreferencesController.getSingleton(),"singleton");
         classUnderTest = PreferencesController.getSingleton(testNode);
     }
-    
+
     @AfterClass
     public static void cleanup() throws Exception {
         Preferences.userRoot().node("PREFS_CONTROLLER_TEST").removeNode();
+        PrefsHelper.setToNull(PreferencesController.getSingleton(),"singleton");
     }
-    
 
     @Test
     public void that_preferences_are_stored_per_version() {
@@ -83,7 +84,7 @@ public class PreferencesControllerTest {
         String expectedPrefsNode = "/PREFS_CONTROLLER_TEST/com/oracle/javafx/scenebuilder/app/preferences/" + versionSpecificNode;
         assertEquals(expectedPrefsNode, prefsNodeUsed);
     }
-    
+
     @Test
     public void that_most_recent_previous_version_is_detected() {
         PrefsHelper.removeAllNonReleaseNodes(testNode);
@@ -95,7 +96,7 @@ public class PreferencesControllerTest {
         assertEquals(new AppVersion(8, 5), mostRecentPreviousVersion.get().version());
         assertEquals("SB_8.5", mostRecentPreviousVersion.get().node().name());
     }
-    
+
     @Test
     public void that_no_version_is_detected_in_case_that_only_newer_versions_exist() {
         PrefsHelper.removeAllNonReleaseNodes(testNode);
@@ -103,15 +104,14 @@ public class PreferencesControllerTest {
         Optional<VersionedPreferences> mostRecentPreviousVersion = classUnderTest.getPreviousVersionSettings();
         assertTrue(mostRecentPreviousVersion.isEmpty());
     }
-    
+
     @Test
     public void that_previous_version_settings_can_be_imported() {
         PrefsHelper.removeAllNonReleaseNodes(testNode);
 
         // GIVEN
-        
         testNode.node("SB_8.9.9").put("RECENT_ITEMS", "/folder/file.fxml");
-        
+
         Preferences mavenLib = testNode.node("SB_8.9.9").node("ARTIFACTS").node("org.name:library:0.0.1");
         mavenLib.put("path",         "/location/of/file.jar");
         mavenLib.put("groupID",      "org.name");
@@ -119,37 +119,36 @@ public class PreferencesControllerTest {
         mavenLib.put("dependencies", "");
         mavenLib.put("artifactId",   "library");
         mavenLib.put("version",      "0.0.1");
-        
+
         Preferences repository = testNode.node("SB_8.9.9").node("REPOSITORIES").node("custom-repository");
         repository.put("ID",        "custom-repository");
         repository.put("URL",       "http://localhost/myrepo");
         repository.put("type",      "default");
         repository.put("User",      "username");
         repository.put("Password",  "password");
-        
-        
+
         // WHEN
         PreferencesImporter importer = classUnderTest.getImporter();
         importer.tryImportingPreviousVersionSettings();
-        
+
         // THEN
         String appVersion = AppSettings.getSceneBuilderVersion();
         String versionSpecificNode = "SB_" + appVersion;
         Preferences targetNode = testNode.node(versionSpecificNode);
-        
+
         // User Decision is memorized
-        assertNotNull(targetNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null));
-        
+        assertNotNull(targetNode.get(PreferencesImporter.PREF_PERFORM_IMPORT, null));
+
         // Maven Repositories are initialized properly
         List<String> artifacts = classUnderTest.getMavenPreferences().getArtifactsCoordinates();
         assertFalse(artifacts.isEmpty());
         assertTrue(artifacts.contains("org.name:library:0.0.1"));
-        
+
         // User Repositories are properly initialized
         List<Repository> repositories = classUnderTest.getRepositoryPreferences().getRepositories();
         assertFalse(repositories.isEmpty());
         assertEquals("http://localhost/myrepo", repositories.get(0).getURL());
-        
+
         // Recent items 
         List<String> recentItems = classUnderTest.getRecordGlobal().getRecentItems();
         assertFalse(recentItems.isEmpty());

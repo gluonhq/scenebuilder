@@ -119,6 +119,8 @@ final class VersionedPreferencesFinder {
     public Optional<VersionedPreferences> previousVersionPrefs() {
         List<VersionedPreferences> previousVersions = getPreviousVersions();
         if (previousVersions.isEmpty()) {
+            Logger.getLogger(VersionedPreferencesFinder.class.getName()).log(Level.FINE,
+                    "No previous versions preferences found!");
             return Optional.empty();
         }
         return Optional.of(previousVersions.get(0));

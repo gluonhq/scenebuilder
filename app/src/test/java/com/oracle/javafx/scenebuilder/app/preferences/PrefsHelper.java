@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
+import java.lang.reflect.Field;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -40,10 +41,13 @@ import com.oracle.javafx.scenebuilder.app.util.AppSettings;
  * Utility Class to help preparing Preferences nodes for tests
  */
 public class PrefsHelper {
+
     private PrefsHelper() {
         /* not intended for instantiation */
     }
+
     public static void removeAllNonReleaseNodes(Preferences prefs) {
+        System.out.println(prefs);
         String appVersion = AppSettings.getSceneBuilderVersion();
         String versionSpecificNode = PreferencesController.SB_RELEASE_NODE_PREFIX + appVersion;
         try {
@@ -58,7 +62,7 @@ public class PrefsHelper {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static void removeAllChildNodes(Preferences prefs) {
         try {
             String[] childnodes = prefs.childrenNames();
@@ -68,6 +72,17 @@ public class PrefsHelper {
             }
         } catch (BackingStoreException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static synchronized void setToNull(Object source, String fieldName) {
+        try {
+            Class<?> sourceClass = source.getClass();
+            Field field = sourceClass.getDeclaredField(fieldName); 
+            field.setAccessible(true);
+            field.set(source, null);
+        } catch (Exception error) {
+            throw new RuntimeException(error);
         }
     }
 }

@@ -43,7 +43,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
@@ -58,7 +57,6 @@ import com.oracle.javafx.scenebuilder.app.library.user.UserLibraryImporter.Impor
 import com.oracle.javafx.scenebuilder.app.OperatingSystem;
 import com.oracle.javafx.scenebuilder.app.preferences.AppVersion;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
-import com.oracle.javafx.scenebuilder.app.preferences.PreferencesImporter;
 import com.oracle.javafx.scenebuilder.app.preferences.PrefsHelper;
 
 import javafx.concurrent.Task;
@@ -68,7 +66,7 @@ public class UserLibraryImporterTest {
     private static Preferences testNode;
     private UserLibraryImporter classUnderTest;
     private AppPlatformDirectories appDirectories;
-    
+
     @BeforeClass
     public static void setup() {
         testNode = Preferences.userRoot()
@@ -183,9 +181,9 @@ public class UserLibraryImporterTest {
                 Paths.get("Scene Builder-8.5.0"),
                 Paths.get("Scene Builder-19.0.1"),
                 Paths.get(".scenebuilder")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder-8.5.0"), x.get());
     }
@@ -198,56 +196,34 @@ public class UserLibraryImporterTest {
                 Paths.get("Scene Builder"),
                 Paths.get("Scene Builder-19.0.1"),
                 Paths.get(".scenebuilder")); 
-        
+
         Optional<Path> x = classUnderTest.previousVersionUserLibraryPath(candidates);
-        
+
         assertFalse(x.isEmpty());
         assertEquals(Paths.get("Scene Builder"), x.get());
     }
 
     @Test
     public void that_import_is_skipped_when_user_opted_out() {
-        LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
-        testNode.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,
-                     timestamp.toString()+PreferencesImporter.DECISION_NO_IMPORT);
+        testNode.putBoolean(UserLibraryImporter.PREF_IMPORT_USER_LIBRARY, false);
 
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
         AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
+        ImportResult result = classUnderTest.performImportWhenDesired();
 
-        String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
+        String documentedResult = testNode.get(UserLibraryImporter.PREF_IMPORT_USER_LIBRARY, null);
 
         assertEquals(ImportResult.SKIPPED, result);
         assertNotNull(documentedResult);
-        assertEquals("2022-01-05T20:14-no-import", documentedResult);
-        assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
-    }
-
-    @Test
-    public void that_import_is_skipped_when_done_before() {
-        LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
-        testNode.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,timestamp.toString()+UserLibraryImporter.USER_LIBRARY_IMPORT_COMPLETE);
-
-        String version = "17.0.0";
-        OperatingSystem os = OperatingSystem.LINUX;
-        AppPlatformDirectories appDirectories = new TestAppDirectories(os, version);
-        classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
-
-        String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
-
-        assertEquals(ImportResult.ALREADY_COMPLETED, result);
-        assertNotNull(documentedResult);
-        assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
+        assertEquals("false", documentedResult);
         assertNull(appDirectories.getUserLibraryFolder().toFile().listFiles());
     }
 
     @Test
     public void that_old_files_are_imported() throws Exception {
-        LocalDateTime timestamp = LocalDateTime.of(2022, 1, 5, 20, 14);
-        testNode.put(PreferencesImporter.PREF_ASKED_FOR_IMPORT,timestamp.toString());
+        testNode.remove(UserLibraryImporter.PREF_IMPORT_USER_LIBRARY);
 
         String version = "17.0.0";
         OperatingSystem os = OperatingSystem.LINUX;
@@ -264,13 +240,12 @@ public class UserLibraryImporterTest {
         Files.createDirectories(userLib);
 
         classUnderTest = new UserLibraryImporter(AppVersion.fromString(version), appDirectories, testNode);
-        ImportResult result = classUnderTest.performImportWhenDesired(timestamp);
+        ImportResult result = classUnderTest.performImportWhenDesired();
 
-        String documentedResult = testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null);
+        String documentedResult = testNode.get(UserLibraryImporter.PREF_IMPORT_USER_LIBRARY, "");
 
         assertEquals(ImportResult.COMPLETED, result);
-        assertNotNull(documentedResult);
-        assertEquals("2022-01-05T20:14-userlib-import-done", documentedResult);
+        assertEquals("false", documentedResult);
 
         File[] importedFiles = appDirectories.getUserLibraryFolder().toFile().listFiles(); 
         assertEquals(1, importedFiles.length);
@@ -279,9 +254,6 @@ public class UserLibraryImporterTest {
 
     @Test
     public void that_correct_AppDirectories_are_used_by_default() {
-       if (testNode.get(PreferencesImporter.PREF_ASKED_FOR_IMPORT, null) !=null) {
-           testNode.remove(PreferencesImporter.PREF_ASKED_FOR_IMPORT);
-       }
        classUnderTest = new UserLibraryImporter(testNode);
        assertTrue(classUnderTest.getPlatformDirectories() instanceof PlatformSpecificDirectories);
     }
@@ -294,7 +266,6 @@ public class UserLibraryImporterTest {
 
         UserLibraryImporter.UserLibraryImportTask specialTask = (UserLibraryImporter.UserLibraryImportTask) task;
 
-        assertNotNull(specialTask.getTimestamp());
         assertNotNull(specialTask.getUserLibImporter());
     }
 
@@ -309,7 +280,7 @@ public class UserLibraryImporterTest {
     private static AppPlatformDirectories forWindows(String version) {
         return new PlatformSpecificDirectories(OperatingSystem.WINDOWS, version);
     }
-    
+
     /** 
      * This is only for debugging so that the import decision can be removed if needed 
      */

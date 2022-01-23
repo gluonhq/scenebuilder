@@ -408,6 +408,8 @@ public class MenuBarController {
     @FXML
     private MenuItem checkUpdatesMenuItem;
     @FXML
+    private MenuItem registerMenuItem;
+    @FXML
     private MenuItem sceneBuilderHomeMenuItem;
     @FXML
     private MenuItem gettingStartedMenuItem;
@@ -480,7 +482,7 @@ public class MenuBarController {
         }
         return result;
     }
-    
+
     
     public static synchronized MenuBarController getSystemMenuBarController() {
         if (systemMenuBarController == null) {
@@ -628,6 +630,7 @@ public class MenuBarController {
         assert helpMenuItem != null;
         assert aboutMenuItem != null;
         assert checkUpdatesMenuItem != null;
+        assert registerMenuItem != null;
         assert gettingStartedMenuItem != null;
         assert apiDocMenuItem != null;
         assert cssReferenceGuideMenuItem != null;
@@ -1135,6 +1138,7 @@ public class MenuBarController {
         helpMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP));
         helpMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F1));
         checkUpdatesMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.CHECK_UPDATES));
+        registerMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.REGISTER));
         gettingStartedMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GETTING_STARTED_GUIDE));
         gettingStartedMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F2));
         apiDocMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_OPENJFX_APIDOC));
@@ -1904,7 +1908,7 @@ public class MenuBarController {
         }
 
     }
-    
+
 
     class ZoomOutActionController extends MenuItemController {
 

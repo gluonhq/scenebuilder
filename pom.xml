@@ -46,6 +46,7 @@
                         <mainClass>${main.class.name}</mainClass>
                         <options>
                             <option>--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED</option>
+                            <option>-DforceImport=true</option>
                         </options>
                     </configuration>
                 </plugin>

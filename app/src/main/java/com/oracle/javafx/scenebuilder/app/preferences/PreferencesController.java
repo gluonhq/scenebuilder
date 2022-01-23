@@ -159,10 +159,11 @@ public class PreferencesController extends PreferencesControllerBase{
      * The custom node is only set with the first call, when the {@link PreferencesController} was initialized before, t
      * the Preferences node to be used cannot be changed anymore.
      * 
+     * @treatAsPrivate
      * @param prefs {@link Preferences} node to be used, can be null.
      * @return The one and only PreferencesController instance.
      */
-    protected static synchronized PreferencesController getSingleton(Preferences prefs) {
+    static synchronized PreferencesController getSingleton(Preferences prefs) {
         if (singleton == null) {
             singleton = new PreferencesController(prefs);
             singleton.getRecordGlobal().readFromJavaPreferences();
@@ -250,6 +251,6 @@ public class PreferencesController extends PreferencesControllerBase{
     }
     
     public UserLibraryImporter getUserLibraryImporter() {
-        return new UserLibraryImporter(applicationPreferences);
+        return new UserLibraryImporter(applicationRootPreferences);
     }
 }

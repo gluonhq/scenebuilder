@@ -50,8 +50,9 @@ public class VersionedPreferencesFinderTest {
     @BeforeClass
     public static void setup() {
         testNode = Preferences.userRoot()
-                              .node("/SBTEST")
-                              .node("/com/oracle/javafx/scenebuilder/app/preferences");
+                              .node("SBTEST")
+                              .node("com/oracle/javafx/scenebuilder/app/preferences");
+
         PrefsHelper.removeAllChildNodes(testNode);
         classUnderTest = new VersionedPreferencesFinder("SB_", testNode);
     }

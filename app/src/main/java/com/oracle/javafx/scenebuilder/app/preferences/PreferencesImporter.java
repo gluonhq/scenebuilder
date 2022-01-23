@@ -31,7 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -50,25 +49,23 @@ import javafx.scene.control.ButtonType;
  * Imports all keys and children (including keys) from an arbitrary
  * {@link Preferences} node into the predefined applicationPreferences node.
  */
-public class PreferencesImporter {
+public final class PreferencesImporter {
 
     /***************************************************************************
      *                                                                         *
      * Static fields                                                           *
      *                                                                         *
      **************************************************************************/
-    
+
     // GLOBAL PREFERENCES
-    public static final String PREF_ASKED_FOR_IMPORT = "ASKED_FOR_IMPORT";
-    
-    public static final String DECISION_NO_IMPORT = "-no-import";
-    
+    public static final String PREF_PERFORM_IMPORT = "PERFORM_IMPORT";
+
     /***************************************************************************
      *                                                                         *
      * Instance fields                                                         *
      *                                                                         *
      **************************************************************************/
-    
+
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Preferences target;
     private final Optional<VersionedPreferences> optionalSourceNode;
@@ -100,17 +97,17 @@ public class PreferencesImporter {
      * @throws BackingStoreException in case of problems accessing the Preferences
      *                               store.
      */
-    protected void importFrom(Preferences importSourceNode) throws BackingStoreException {
+    void importFrom(Preferences importSourceNode) throws BackingStoreException {
         copyChildren(importSourceNode,target);
     }
-    
-    protected void importFrom(VersionedPreferences importSourceNode) throws BackingStoreException {
+
+    void importFrom(VersionedPreferences importSourceNode) throws BackingStoreException {
         importFrom(importSourceNode.node());
     }
     
 
     private void copyChildren(Preferences source, Preferences targetNode) throws BackingStoreException {
-        logger.log(Level.INFO, String.format("from node %s", source.name()));
+        logger.log(Level.INFO, "from node {0}", source.name());
         String[] keys = source.keys();
         for (String key : keys) {
             String value = source.get(key, null);
@@ -126,35 +123,34 @@ public class PreferencesImporter {
     }
 
     /**
-     * Decides if the user shall be asked to import settings of previous Scene
-     * Builder version. Once the user made a decision, the preferences key
-     * ASKED_FOR_IMPORT is set, then this method will return false.
+     * Decides if Preferences need to be imported. If the key
+     * {@code PREF_PERFORM_IMPORT} is not defined, then true is returned, otherwise
+     * the configured value.
      * 
-     * @return true in case the import decision was not yet made.
+     * @return true in case the key is not {@code PREF_PERFORM_IMPORT} set.
      */
-    public boolean askForImport() {
-        String lastTimeAsked = target.get(PREF_ASKED_FOR_IMPORT, null);
-        
-        return lastTimeAsked == null;
+    boolean askForImport() {
+        boolean importRequired = target.getBoolean(PREF_PERFORM_IMPORT, true);
+        logger.log(Level.FINE, "preferences import required; {0}", importRequired);
+        return importRequired;
     }
 
     /**
-     * Stores the preferences key ASKED_FOR_IMPORT upon request. If this key does
-     * not exist, Scene Builder will ask user to import settings from previous
-     * version during application startup.
-     * 
+     * By default, Scene Builder will attempt to import preferences from a previous
+     * version. After an attempt to import, Scene Builder will store a preference to
+     * document that another import attempt is not needed.
      */
-    public void saveTimestampWhenAskedForImport() {
-        target.put(PREF_ASKED_FOR_IMPORT, LocalDateTime.now().toString());
+    void documentThatNoImportIsDesired() {
+        target.putBoolean(PREF_PERFORM_IMPORT, false);
     }
-    
-    public void documentThatNoImportIsDesired() {
-        target.put(PREF_ASKED_FOR_IMPORT, LocalDateTime.now().toString()+DECISION_NO_IMPORT);
+
+    void clearImportDecision() {
+        target.remove(PREF_PERFORM_IMPORT);
     }
 
     /**
      * Attempts to import settings of a previous version if existing.
-     * There is no user feedback in case of error.
+     * There is no user feedback in case of error. The ope
      */
     public void tryImportingPreviousVersionSettings() {
         if (this.optionalSourceNode.isPresent()) {
@@ -169,7 +165,7 @@ public class PreferencesImporter {
             } catch (Exception postImportActionError) {
                 logger.log(Level.SEVERE, String.format("Error while running post-import action!", postImportActionError));
             }
-            saveTimestampWhenAskedForImport();
+            documentThatNoImportIsDesired();
         }
     }
 
@@ -180,9 +176,24 @@ public class PreferencesImporter {
      * @return true when previous version settings have been found and user has not yet decided 
      */
     public boolean askForImportIfOlderSettingsExist() {
-        return this.optionalSourceNode.isPresent() && askForImport();
+        boolean previousVersionFound = this.optionalSourceNode.isPresent();
+        logger.log(Level.FINE, "older preferences detected: {0}", previousVersionFound);
+        if (previousVersionFound) {
+            VersionedPreferences prefs = this.optionalSourceNode.get();
+            logger.log(Level.FINE, "Version: {0}", prefs.version());
+            logger.log(Level.FINE, "Node   : {0}", prefs.node());
+        }
+        boolean forcedImport = importForced();
+        if (forcedImport) {
+            logger.log(Level.FINE, "detected -DforceImport=true");
+        }
+        return previousVersionFound && (forcedImport || askForImport());
     }
 
+    private boolean importForced() {
+        String forceImport = System.getProperty("forceImport", "false");
+        return "true".equalsIgnoreCase(forceImport);
+    }
     /**
      * Defines an activity which will be executed after import of settings.
      * 
@@ -197,31 +208,38 @@ public class PreferencesImporter {
      * Will raise a JavaFX {@link Alert} to ask the user whether to import previous version settings or not.
      * The question will only appear in cases where previous version settings exist and the user decision has not been saved yet.
      */
-    public void askForActionAndRun() {
+    public boolean askForActionAndRun() {
         Supplier<Optional<ButtonType>> alertInteraction = () -> {
             SBAlert customAlert = new SBAlert(AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO);
-            customAlert.initOwner(null);
+            
             customAlert.setTitle("Gluon Scene Builder");
             customAlert.setHeaderText("Import settings");
-            customAlert.setContentText("Previous version settings found.\nDo you want to import those?\n\nScene Builder will remember your decision and not ask again.");
+            customAlert.setContentText(
+                    "Previous version settings found. Do you want to import those?"
+                  + "\nScene Builder will also import the JAR files from your library."
+                  + "\n\nYour decision will be remembered so you won't be asked again.");
             return customAlert.showAndWait();
         };
-        askForActionAndRun(alertInteraction);
+        return askForActionAndRun(alertInteraction);
     }
-    
-    protected void askForActionAndRun(Supplier<Optional<ButtonType>> alertInteraction) {
+
+    boolean askForActionAndRun(Supplier<Optional<ButtonType>> alertInteraction) {
         if (askForImportIfOlderSettingsExist()) {
-            executeInteractionAndImport(alertInteraction);
+            return executeInteractionAndImport(alertInteraction);
         }
+        return false;
     }
-    
-    protected void executeInteractionAndImport(Supplier<Optional<ButtonType>> alertInteraction) {
+
+    boolean executeInteractionAndImport(Supplier<Optional<ButtonType>> alertInteraction) {
         Optional<ButtonType> response = alertInteraction.get();
         if (response.isPresent() && ButtonType.YES.equals(response.get())) {
             logger.log(Level.INFO, "User decided to import previous version settings.");
             tryImportingPreviousVersionSettings();
+            return true;
         } else {
             documentThatNoImportIsDesired();
         }
+        return false;
     }
+
 }

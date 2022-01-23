@@ -60,8 +60,7 @@ public class AppPlatform {
         assert platformSpecificDirectories != null;
         return platformSpecificDirectories;
     }
-    
-    
+
     /*
      * TODO: 
      * How to deal with snapshot versions? 
