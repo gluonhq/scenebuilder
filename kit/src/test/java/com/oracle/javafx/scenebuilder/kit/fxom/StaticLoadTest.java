@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -57,7 +57,7 @@ public class StaticLoadTest {
     public void testStaticLoadWithoutEventHandler() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoadWithoutEventHandler.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoadWithoutEventHandler.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
@@ -72,7 +72,7 @@ public class StaticLoadTest {
     public void testStaticLoad() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoad.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoad.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);

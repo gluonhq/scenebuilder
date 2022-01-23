@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowCo
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -48,6 +50,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -271,6 +274,7 @@ public abstract class AbstractModalDialog extends AbstractFxmlWindowController {
             // Dialog will be window modal
             getStage().initOwner(this.owner);
             getStage().initModality(Modality.WINDOW_MODAL);
+            getStage().getIcons().addAll(((Stage) this.owner).getIcons());
         }
     }
     

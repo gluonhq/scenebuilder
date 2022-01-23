@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -55,6 +55,14 @@ import javafx.scene.shape.Rectangle;
  * @treatAsPrivate
  */
 public class EditorPlatform {
+    
+    public enum OS {
+        LINUX, MAC, WINDOWS;
+
+        public static OS get() {
+            return IS_LINUX ? LINUX : IS_MAC ? MAC : WINDOWS;
+        }
+    }
 
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
@@ -77,21 +85,6 @@ public class EditorPlatform {
      * Gluon Glisten package
      */
     public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
-
-    /**
-     * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
-     */
-    public static final String DOCUMENTATION_URL = "https://docs.oracle.com/javafx/index.html"; //NOI18N
-
-    /**
-     * Javadoc home (for Inspector and CSS Analyzer properties)
-     */
-    public final static String JAVADOC_HOME = "https://openjfx.io/javadoc/11/"; //NOI18N
-
-    /**
-     * Gluon javadoc home (for Inspector and CSS Analyzer properties)
-     */
-    public final static String GLUON_JAVADOC_HOME = "http://docs.gluonhq.com/charm/javadoc/" + "latest" +"/"; //NOI18N
 
     /**
      * scene builder specific tweaks to Gluon theme
@@ -121,8 +114,8 @@ public class EditorPlatform {
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.gls")),
-        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.gls")),
+        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.css")),
+        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.css")),
         MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
         MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
         MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
@@ -192,7 +185,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".css");
         }
 
         public Color getColor() {
@@ -244,7 +237,7 @@ public class EditorPlatform {
 
         @Override
         public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".gls");
+            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css");
         }
     }
     

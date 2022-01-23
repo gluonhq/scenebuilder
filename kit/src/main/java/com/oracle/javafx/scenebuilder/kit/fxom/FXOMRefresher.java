@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -64,8 +64,7 @@ class FXOMRefresher {
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),
                     document.getClassLoader(),
-                    document.getResources(),
-                    false /* normalized */);
+                    document.getResources());
             final TransientStateBackup backup = new TransientStateBackup(document);
             // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
             if (newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {

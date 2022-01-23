@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -36,26 +36,141 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.MenuBar;
 
 public class FXOMDocumentTest {
 
-    @Before
-    public void init() {
+    private FXOMDocument classUnderTest;
+
+    private String fxmlName;
+    private URL fxmlUrl;
+    private String fxmlText;
+    private ClassLoader loader;
+    private ResourceBundle resourceBundle;
+
+    @BeforeClass
+    public static void init() {
         JfxInitializer.initialize();
+    }
+
+    @Before
+    public void prepareTest() throws Exception {
+        fxmlName = "ContainerWithMenuSystemMenuBarEnabled.fxml";
+        fxmlUrl = getResourceUrl(fxmlName);
+        fxmlText = readResourceText(fxmlName);
+        loader = this.getClass().getClassLoader();
+        resourceBundle = null;
+    }
+
+    @Test
+    public void that_FOR_PREVIEW_useSystemMenuBarProperty_is_enabled() throws Exception {
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.FOR_PREVIEW);
+
+        FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+
+        assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+        assertTrue("for preview, useSystemMenu is expected to be enabled",
+                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+        String generatedFxml = classUnderTest.getFxmlText(false);
+        assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
+    }
+
+    @Test
+    public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
+        assumeTrue("MacOS", OS.get() == OS.MAC);
+        
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+
+        FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+
+        assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+        assertFalse("for preview, useSystemMenu is expected to be enabled",
+                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+        String generatedFxml = classUnderTest.getFxmlText(false);
+        assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
+    }
+
+    @Test
+    public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
+        assumeTrue("Windows or Linux", Set.of(OS.LINUX, OS.WINDOWS).contains(OS.get()));
+
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+
+        FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
+
+        assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
+        assertTrue("for preview, useSystemMenu is expected to be enabled",
+                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+
+        String generatedFxml = classUnderTest.getFxmlText(false);
+        assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
+    }
+
+    @Test
+    public void that_normalization_is_applied_only_when_NORMALIZED_is_set() throws Exception {
+        fxmlText = readResourceText("NonNormalizedAccordion.fxml");
+        fxmlUrl = getResourceUrl("NonNormalizedAccordion.fxml");
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle, FXOMDocumentSwitch.NORMALIZED);
+
+        String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NormalizedAccordion.fxml"));
+        assertEquals(expectedFxml, generatedFxml);
+    }
+
+    @Test
+    public void that_normalization_is_disabled_when_NORMALIZED_is_not_set() throws Exception {
+        fxmlText = readResourceText("NonNormalizedAccordion.fxml");
+        fxmlUrl = getResourceUrl("NonNormalizedAccordion.fxml");
+        classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
+
+        String generatedFxml = extractContentsOfFirstChildrenTag(classUnderTest.getFxmlText(false));
+        String expectedFxml = extractContentsOfFirstChildrenTag(readResourceText("NonNormalizedAccordion.fxml"));
+        assertEquals(expectedFxml, generatedFxml);
+    }
+
+    private String readResourceText(String resourceName) throws Exception {
+        File fxmlFileName = new File(getResourceUrl(resourceName).toURI());
+        return useOnlyNewLine(Files.readString(fxmlFileName.toPath()));
+    }
+
+    private URL getResourceUrl(String resourceName) {
+        return getClass().getResource(resourceName);
+    }
+
+    private String useOnlyNewLine(String source) {
+        return source.replace("\r\n", "\n");
+    }
+    
+    private String extractContentsOfFirstChildrenTag(String source) {
+        String openingTag = "<children>";
+        String closingTag = "</children>";
+        int open = source.indexOf(openingTag);
+        int close = source.lastIndexOf(closingTag) + closingTag.length();
+        return source.substring(open, close);
     }
 
     @Test
@@ -90,8 +205,9 @@ public class FXOMDocumentTest {
     public void that_no_exception_is_created_with_empty_FXML() throws Exception {
         URL resource = getClass().getResource("Empty.fxml");
         String fxmlText = "";
-        boolean normalizeFxom = false;
-        FXOMDocument classUnderTest = new FXOMDocument(fxmlText, resource, null, null, normalizeFxom);
+
+        // FXOM will only apply normalization when FXOMDocumentSwitch.NORMALIZED is set 
+        FXOMDocument classUnderTest = new FXOMDocument(fxmlText, resource, null, null);
         assertNotNull(classUnderTest);
     }
 
@@ -147,7 +263,8 @@ public class FXOMDocumentTest {
         URL resource = getClass().getResource("DynamicScreenSize.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(resource);
 
-        FXOMDocument classUnderTest = waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null, false));
+        // Non-normalizing by default
+        FXOMDocument classUnderTest = waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null));
         String beforeNormalization = classUnderTest.getFxmlText(false);
         assertFalse(beforeNormalization.isBlank());
     }
@@ -158,7 +275,7 @@ public class FXOMDocumentTest {
         String validFxmlText = FXOMDocument.readContentFromURL(resource);
 
         Throwable t = assertThrows(Throwable.class,
-                       () -> waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null, true /* normalization enabled */)));
+                       () -> waitFor(() -> new FXOMDocument(validFxmlText, resource, null, null, FXOMDocumentSwitch.NORMALIZED)));
         
         if (t.getCause() != null) {
             t = t.getCause();
@@ -167,7 +284,7 @@ public class FXOMDocumentTest {
         assertEquals(IllegalStateException.class, t.getClass());
         assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
-        
+
     private <T> T waitFor(Callable<T> callable) throws Exception {
         FutureTask<T> task = new FutureTask<T>(callable);
         if (Platform.isFxApplicationThread()) {

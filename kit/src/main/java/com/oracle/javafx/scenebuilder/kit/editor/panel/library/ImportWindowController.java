@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2020, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -56,6 +56,7 @@ import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
@@ -557,7 +558,8 @@ public class ImportWindowController extends AbstractModalDialog {
             previewGroup.getChildren().clear();
             final String fxmlText = BuiltinLibrary.makeFxmlText(t1.getJarReportEntry().getKlass());
             try {
-                FXOMDocument fxomDoc = new FXOMDocument(fxmlText, null, importClassLoader, null);
+                FXOMDocument fxomDoc = new FXOMDocument(fxmlText, null, importClassLoader, null,
+                                           FXOMDocumentSwitch.NORMALIZED);
                 zeNode = (Node) fxomDoc.getSceneGraphRoot();
             } catch (IOException ioe) {
                 showErrorDialog(ioe);
