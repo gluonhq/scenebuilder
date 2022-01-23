@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.oracle.javafx.scenebuilder.app.library.user.UserLibraryImporter;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 
@@ -178,17 +179,27 @@ public final class PreferencesImporter {
      */
     boolean askForImportIfOlderSettingsExist() {
         boolean previousVersionFound = this.optionalSourceNode.isPresent();
-        logger.log(Level.FINE, "older preferences detected: {0}", previousVersionFound);
-        if (previousVersionFound) {
-            VersionedPreferences prefs = this.optionalSourceNode.get();
-            logger.log(Level.FINE, "Version: {0}", prefs.version());
-            logger.log(Level.FINE, "Node   : {0}", prefs.node());
+        if (!previousVersionFound) {
+            return false;
         }
+
+        logger.log(Level.FINE, "Importing previous version preferences");
+        VersionedPreferences prefs = this.optionalSourceNode.get();
+        logger.log(Level.FINE, "Version: {0}", prefs.version());
+        logger.log(Level.FINE, "Node   : {0}", prefs.node());
+
         boolean forcedImport = importForced();
         if (forcedImport) {
             logger.log(Level.FINE, "detected -DforceImport=true");
+            return true;
         }
-        return previousVersionFound && (forcedImport || askForImport());
+
+        boolean importRequired = askForImport();
+        if (!importRequired) {
+            logger.log(Level.FINE, "Import was already performed, disabling user library import.");
+            UserLibraryImporter.disableImport(target);
+        }
+        return importRequired;
     }
 
     private boolean importForced() {
@@ -209,10 +220,11 @@ public final class PreferencesImporter {
      * Will raise a JavaFX {@link Alert} to ask the user whether to import previous
      * version settings or not. The question will only appear in cases where
      * previous version settings exist and the user decision has not been saved yet.
-     * 
-     * @return true when user decided to do the import.
+     * <p>
+     * If the user declines to perform the import, it will also prevent the user
+     * library import by setting the corresponding preference value.
      */
-    public boolean askForActionAndRun() {
+    public void askForActionAndRun() {
         Supplier<Optional<ButtonType>> alertInteraction = () -> {
             SBAlert customAlert = new SBAlert(AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO);
             
@@ -226,14 +238,13 @@ public final class PreferencesImporter {
                   + "\n\nYour decision will be remembered so you won't be asked again.");
             return customAlert.showAndWait();
         };
-        return askForActionAndRun(alertInteraction);
+        askForActionAndRun(alertInteraction);
     }
 
-    boolean askForActionAndRun(Supplier<Optional<ButtonType>> alertInteraction) {
+    void askForActionAndRun(Supplier<Optional<ButtonType>> alertInteraction) {
         if (askForImportIfOlderSettingsExist()) {
-            return executeInteractionAndImport(alertInteraction);
+            executeInteractionAndImport(alertInteraction);
         }
-        return false;
     }
 
     boolean executeInteractionAndImport(Supplier<Optional<ButtonType>> alertInteraction) {

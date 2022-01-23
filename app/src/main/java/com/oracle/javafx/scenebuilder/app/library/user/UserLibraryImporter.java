@@ -34,7 +34,6 @@ package com.oracle.javafx.scenebuilder.app.library.user;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -60,6 +59,14 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 
 public final class UserLibraryImporter {
+
+    public static void forceImport(Preferences target) {
+        target.remove(PREF_IMPORT_USER_LIBRARY);
+    }
+
+    public static void disableImport(Preferences target) {
+        target.putBoolean(PREF_IMPORT_USER_LIBRARY, false);
+    }
 
     protected static final String PREF_IMPORT_USER_LIBRARY = "IMPORT_USER_LIBRARY";
 
@@ -88,8 +95,13 @@ public final class UserLibraryImporter {
 
     /**
      * The library import is only performed when the property key
-     * {@code IMPORT_USER_LIBRARY} does not exist or is defined as "true".
-     *  
+     * {@code IMPORT_USER_LIBRARY} does not exist or is defined as "true". Only
+     * files which do not already exist in target library directory will be copied
+     * from source directory.
+     * 
+     * There will be no error message, the process is fully silent. In case of
+     * errors the log file shall be consulted.
+     * 
      * @return {@link ImportResult} describing how the activity was completed.
      */
     ImportResult performImportWhenDesired() {
@@ -178,8 +190,12 @@ public final class UserLibraryImporter {
 
     void copyFile(Path source, Path destination) throws IOException {
         if (!Files.isDirectory(source)) {
-            logger.log(Level.INFO, "Importing {0} into {1}", new Object[] { source, destination });
-            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            if (!Files.exists(destination)) {
+                logger.log(Level.INFO, "Importing {0} into {1}", new Object[] { source, destination });
+                Files.copy(source, destination);
+            } else {
+                logger.log(Level.INFO, "skipping {0} as it already exists", new Object[] { destination.getFileName() });
+            }
         }
     }
 
@@ -244,8 +260,8 @@ public final class UserLibraryImporter {
 
         UserLibraryImportTask(UserLibraryImporter userLibImporter) {
             this.userLibImporter = userLibImporter;
-            setOnFailed(this::logException);
-            setOnSucceeded(this::logSuccess);
+            setOnFailed(this::completedWithError);
+            setOnSucceeded(this::completedSuccessful);
         }
 
         @Override
@@ -253,7 +269,7 @@ public final class UserLibraryImporter {
             return userLibImporter.performImportWhenDesired();
         }
 
-        private void logException(WorkerStateEvent event) {
+        private void completedWithError(WorkerStateEvent event) {
             if (getException() != null) {
                 logger.log(Level.SEVERE,
                         "Import of User Library failed with error!", getException());
@@ -263,7 +279,7 @@ public final class UserLibraryImporter {
             }
         }
 
-        private void logSuccess(WorkerStateEvent event) {
+        private void completedSuccessful(WorkerStateEvent event) {
             logger.log(Level.SEVERE, "User Library Import finished with: {0}", getValue());
         }
 
