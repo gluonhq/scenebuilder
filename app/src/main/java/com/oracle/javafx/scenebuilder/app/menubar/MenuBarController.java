@@ -409,6 +409,18 @@ public class MenuBarController {
     private MenuItem checkUpdatesMenuItem;
     @FXML
     private MenuItem registerMenuItem;
+    @FXML
+    private MenuItem sceneBuilderHomeMenuItem;
+    @FXML
+    private MenuItem gettingStartedMenuItem;
+    @FXML
+    private MenuItem apiDocMenuItem;
+    @FXML
+    private MenuItem cssReferenceGuideMenuItem;
+    @FXML
+    private MenuItem fxmlIntroductionMenuItem;
+    @FXML
+    private MenuItem communityContributeMenuItem;
 
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
@@ -618,6 +630,12 @@ public class MenuBarController {
         assert aboutMenuItem != null;
         assert checkUpdatesMenuItem != null;
         assert registerMenuItem != null;
+        assert gettingStartedMenuItem != null;
+        assert apiDocMenuItem != null;
+        assert cssReferenceGuideMenuItem != null;
+        assert fxmlIntroductionMenuItem != null;
+        assert sceneBuilderHomeMenuItem != null;
+        assert communityContributeMenuItem != null;
 
         /*
          * To make MenuBar.fxml editable with SB 1.1, the menu bar is enclosed
@@ -1120,6 +1138,16 @@ public class MenuBarController {
         helpMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F1));
         checkUpdatesMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.CHECK_UPDATES));
         registerMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.REGISTER));
+        gettingStartedMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GETTING_STARTED_GUIDE));
+        gettingStartedMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F2));
+        apiDocMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_OPENJFX_APIDOC));
+        apiDocMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F3));
+        cssReferenceGuideMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_OPENJFX_CSS_REFERENCE));
+        cssReferenceGuideMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F4));
+        fxmlIntroductionMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_OPENJFX_FXML_REFERENCE));
+        fxmlIntroductionMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F5));
+        sceneBuilderHomeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GLUON_SCENEBUILDER_HOME));
+        communityContributeMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER));
 
         /*
          * Put some generic handlers on each Menu and MenuItem.
