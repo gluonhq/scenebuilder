@@ -68,7 +68,19 @@ public final class UserLibraryImporter {
         target.putBoolean(PREF_IMPORT_USER_LIBRARY, false);
     }
 
-    protected static final String PREF_IMPORT_USER_LIBRARY = "IMPORT_USER_LIBRARY";
+    /***************************************************************************
+     *                                                                         *
+     * Static fields                                                           *
+     *                                                                         *
+     **************************************************************************/
+
+    static final String PREF_IMPORT_USER_LIBRARY = "IMPORT_USER_LIBRARY";
+
+    /***************************************************************************
+     *                                                                         *
+     * Instance fields                                                         *
+     *                                                                         *
+     **************************************************************************/
 
     private final Logger logger = Logger.getLogger(PreferencesImporter.class.getName());
     private final Optional<AppVersion> version;
@@ -79,11 +91,11 @@ public final class UserLibraryImporter {
         this(AppPlatform.getAppDirectories(), applicationPreferences);
     }
 
-    public UserLibraryImporter(AppPlatformDirectories directories, Preferences applicationPreferences) {
+    UserLibraryImporter(AppPlatformDirectories directories, Preferences applicationPreferences) {
         this(AppVersion.fromString(AppSettings.getSceneBuilderVersion()), directories, applicationPreferences);
     }
 
-    public UserLibraryImporter(Optional<AppVersion> appVersion, AppPlatformDirectories appDirectories, Preferences applicationPreferences) {
+    UserLibraryImporter(Optional<AppVersion> appVersion, AppPlatformDirectories appDirectories, Preferences applicationPreferences) {
         this.version = Objects.requireNonNull(appVersion);
         this.preferences = Objects.requireNonNull(applicationPreferences);
         this.appDirectories = Objects.requireNonNull(appDirectories);

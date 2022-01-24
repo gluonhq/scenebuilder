@@ -59,7 +59,6 @@ public final class PreferencesImporter {
      *                                                                         *
      **************************************************************************/
 
-    // GLOBAL PREFERENCES
     public static final String PREF_PERFORM_IMPORT = "PERFORM_IMPORT";
 
     /***************************************************************************
@@ -72,6 +71,7 @@ public final class PreferencesImporter {
     private final Preferences target;
     private final Optional<VersionedPreferences> optionalSourceNode;
     private Runnable actionAfterImport;
+
     /**
      * Creates a new Preferences importer.
      * 
