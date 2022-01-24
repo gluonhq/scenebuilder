@@ -584,8 +584,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     public void performNewTemplate(Template template) {
-        DocumentWindowController documentWC = getDocumentWindowControllers().get(0);
-        loadTemplateInWindow(template, documentWC);
+        var targetWindow = findFirstUnusedDocumentWindowController()
+                .orElse(makeNewWindow());
+        loadTemplateInWindow(template, targetWindow);
     }
 
     public void performNewTemplateInNewWindow(Template template) {
