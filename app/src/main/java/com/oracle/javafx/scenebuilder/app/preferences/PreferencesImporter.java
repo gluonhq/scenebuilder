@@ -188,7 +188,7 @@ public final class PreferencesImporter {
         logger.log(Level.FINE, "Version: {0}", prefs.version());
         logger.log(Level.FINE, "Node   : {0}", prefs.node());
 
-        boolean forcedImport = importForced();
+        boolean forcedImport = isForcedImport();
         if (forcedImport) {
             logger.log(Level.FINE, "detected -DforceImport=true");
             return true;
@@ -202,7 +202,7 @@ public final class PreferencesImporter {
         return importRequired;
     }
 
-    private boolean importForced() {
+    private boolean isForcedImport() {
         String forceImport = System.getProperty("forceImport", "false");
         return "true".equalsIgnoreCase(forceImport);
     }
