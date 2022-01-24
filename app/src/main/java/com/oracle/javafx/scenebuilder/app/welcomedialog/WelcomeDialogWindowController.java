@@ -49,7 +49,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -63,10 +67,15 @@ import java.util.List;
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
 
     @FXML
+    private BorderPane rootPane;
+
+    @FXML
     private VBox recentDocuments;
 
     @FXML
     private Button emptyApp;
+
+    private VBox masker;
 
     private final List<Node> templates = new ArrayList<>();
 
@@ -118,7 +127,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         emptyApp.setUserData(Template.EMPTY_APP);
 
-        setOnTemplateChosen(sceneBuilderApp::performNewTemplate);
+        setOnTemplateChosen(this::fireSelectTemplate);
         setupTemplateButtonHandlers();
 
         setupProgressIndicator();
@@ -162,8 +171,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void setupProgressIndicator() {
-        templates.addAll(templateContainer.getChildren());
-
         var label = new Label();
         label.getStyleClass().add("progress-label");
         label.setText(I18N.getString("welcome.loading.label"));
@@ -171,8 +178,9 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         var progress = new ProgressIndicator();
         progress.getStyleClass().add("progress");
 
-        templateContainer.setAlignment(Pos.CENTER);
-        templateContainer.getChildren().setAll(progress, label);
+        masker = new VBox(progress, label);
+        masker.setAlignment(Pos.CENTER);
+        masker.getStylesheets().setAll(rootPane.getStylesheets());
     }
 
     public static WelcomeDialogWindowController getInstance() {
@@ -183,16 +191,61 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         return instance;
     }
 
+    private void fireSelectTemplate(Template template) {
+        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
+            sceneBuilderApp.performNewTemplate(template);
+            getStage().hide();
+        } else {
+            showMasker(() -> {
+                sceneBuilderApp.performNewTemplate(template);
+                getStage().hide();
+            });
+        }
+
+        // hide is called automatically by parent class
+    }
+
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
-        sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
-        getStage().hide();
+        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
+            sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
+            getStage().hide();
+        } else {
+            showMasker(() -> {
+                sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
+                getStage().hide();
+            });
+        }
     }
 
     @FXML
     private void openDocument() {
-        if (sceneBuilderApp.performOpenFile()) {
-            getStage().hide();
+        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
+            if (sceneBuilderApp.performOpenFile()) {
+                getStage().hide();
+            }
+        } else {
+            showMasker(() -> {
+                if (sceneBuilderApp.performOpenFile()) {
+                    getStage().hide();
+                } else {
+                    hideMasker();
+                }
+            });
         }
+    }
+
+    private void showMasker(Runnable onEndAction) {
+        getScene().setRoot(masker);
+
+        sceneBuilderApp.startupTasksFinishedProperty().addListener((o, old, isFinished) -> {
+            if (isFinished) {
+                Platform.runLater(onEndAction);
+            }
+        });
+    }
+
+    private void hideMasker() {
+        getScene().setRoot(rootPane);
     }
 }
 

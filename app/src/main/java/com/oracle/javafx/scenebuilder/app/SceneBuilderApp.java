@@ -75,6 +75,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,6 +86,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -119,9 +121,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
     private final ObservableList<Runnable> startupTasks = FXCollections.observableArrayList();
-
-    // in the case where welcome dialog is not shown, this will remain null
-    private BooleanBinding startupTasksFinished = null;
+    private BooleanBinding startupTasksFinished = Bindings.isEmpty(startupTasks);
 
     static {
         System.setProperty("java.util.logging.config.file", SceneBuilderApp.class.getResource("/logging.properties").getPath());
@@ -152,8 +152,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
             }
         });
+    }
 
-        startInBackground("Phase 0", this::backgroundStartPhase0); //NOI18N
+    public BooleanBinding startupTasksFinishedProperty() {
+        return startupTasksFinished;
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
@@ -319,7 +321,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void start(Stage stage) throws Exception {
-        startInBackground("Phase 1", this::backgroundStartPhase1); //NOI18N
+        //startInBackground("Phase 0", this::backgroundStartPhase0);
+        //startInBackground("Phase 1", this::backgroundStartPhase1);
 
         setApplicationUncaughtExceptionHandler();
 
@@ -352,30 +355,54 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void handleLaunch(List<String> files) {
+        var latch = new CountDownLatch(1);
+
+        startupTasksFinished.addListener((observableValue, aBoolean, isFinished) -> {
+            if (isFinished) {
+                latch.countDown();
+            }
+        });
+
+
+
+
+
+
         boolean showWelcomeDialog = files.isEmpty();
 
         setApplicationUncaughtExceptionHandler();
 
-        startInBackground("Set up user library", () -> setUpUserLibrary(showWelcomeDialog));
+        startInBackground("Set up user library", () -> {
+
+            setUpUserLibrary(showWelcomeDialog);
+        });
+        //startInBackground("Set up empty document window", this::createEmptyDocumentWindow);
 
         if (showWelcomeDialog) {
             // Unless we're on a Mac we're starting SB directly (fresh start)
             // so we're not opening any file and as such we should show the Welcome Dialog
             var welcomeWindow = WelcomeDialogWindowController.getInstance();
             welcomeWindow.getStage().show();
-
-            startupTasksFinished = Bindings.isEmpty(startupTasks);
-            startupTasksFinished.addListener((o, old, isFinished) -> {
-                if (isFinished) {
-                    Platform.runLater(welcomeWindow::showTemplates);
-                }
-            });
-
-            // let JavaFX handle above call ASAP and delay empty document window for improved UX
-            startInBackground("Set up empty document window", this::createEmptyDocumentWindow);
         } else {
             // Open files passed as arguments by the platform
-            handleOpenFilesAction(files);
+
+            // running from the command line
+
+            // we need an extra thread so synchronized AppPlatform.getUserLibraryFolder() can finish
+            new Thread(
+                    () -> {
+                        if (!startupTasksFinished.get()) {
+                            // no blocking threads, so block manually
+                            try {
+                                latch.await();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Platform.runLater(() -> handleOpenFilesAction(files));
+                    }
+            ).start();
         }
     }
 
@@ -397,6 +424,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void setUpUserLibrary(boolean showWelcomeDialog) {
+        backgroundStartPhase0();
+
         MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         // Creates the user library
         userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
@@ -433,6 +462,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         userLibrary.startWatching();
 
         sendTrackingStartupInfo();
+
+        createEmptyDocumentWindow();
     }
 
     private void sendTrackingStartupInfo() {
@@ -471,9 +502,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         var newWindow = makeNewWindow();
         newWindow.updateWithDefaultContent();
 
-        WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
-            showUpdateDialogIfRequired(newWindow);
-        });
+        // TODO:
+//        WelcomeDialogWindowController.getInstance().getStage().setOnHidden(event -> {
+//            showUpdateDialogIfRequired(newWindow);
+//        });
     }
 
     @Override
@@ -487,7 +519,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-        
+
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
             performOpenFiles(fileObjs, null);
@@ -607,7 +639,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         loadTemplateInWindow(template, documentWC);
     }
 
-    public void performNewTemplateInNewWindow(Template template) {
+    private void performNewTemplateInNewWindow(Template template) {
         final DocumentWindowController newTemplateWindow = makeNewWindow();
         loadTemplateInWindow(template, newTemplateWindow);
     }
@@ -849,6 +881,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         PreferencesController.getSingleton();
         Metadata.getMetadata();
+
+        backgroundStartPhase1();
     }
 
     private void backgroundStartPhase1() {
