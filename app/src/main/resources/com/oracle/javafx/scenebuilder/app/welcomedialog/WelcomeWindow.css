@@ -78,6 +78,12 @@
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
 }
 
+.progress-label {
+    -fx-translate-y: 30;
+}
+
 .progress {
-    -fx-progress-color: orange;
+    -fx-progress-color: #f68a1f;
+    -fx-scale-x: 3;
+    -fx-scale-y: 3;
 }

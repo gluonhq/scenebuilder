@@ -151,7 +151,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
         });
 
-        startInBackground("Phase 0", () -> backgroundStartPhase0()); //NOI18N
+        startInBackground("Phase 0", this::backgroundStartPhase0); //NOI18N
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
@@ -317,7 +317,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void start(Stage stage) throws Exception {
-        startInBackground("Phase 1", () -> backgroundStartPhase1()); //NOI18N
+        startInBackground("Phase 1", this::backgroundStartPhase1); //NOI18N
 
         setApplicationUncaughtExceptionHandler();
 
@@ -364,14 +364,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             startupTasksFinished.addListener((o, old, isFinished) -> {
                 if (isFinished) {
-                    Platform.runLater(() -> {
-                        welcomeWindow.showTemplates();
-                    });
+                    Platform.runLater(welcomeWindow::showTemplates);
                 }
             });
 
             // let JavaFX handle above call ASAP and delay empty document window for improved UX
-            startInBackground("Set up empty doc", () -> createEmptyDocumentWindow());
+            startInBackground("Set up empty document window", this::createEmptyDocumentWindow);
         } else {
             // Open files passed as arguments by the platform
             handleOpenFilesAction(files);
@@ -380,6 +378,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     /**
      * Creates and starts a new daemon thread with [taskName] to executive given [task].
+     * The [task] is added to [startupTasks] to keep track of active background tasks.
+     * When the [task] is finished, it is removed from [startupTasks].
      */
     private void startInBackground(String taskName, Runnable task) {
         var t = new Thread(() -> {

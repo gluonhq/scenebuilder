@@ -68,7 +68,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     @FXML
     private Button emptyApp;
 
-    private List<Node> templates = new ArrayList<>();
+    private final List<Node> templates = new ArrayList<>();
 
     private static WelcomeDialogWindowController instance;
 
@@ -82,6 +82,10 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         sceneBuilderApp = SceneBuilderApp.getSingleton();
     }
 
+    /**
+     * This is called when SB background startup tasks finish,
+     * so that the UI is updated to show built-in templates.
+     */
     public void showTemplates() {
         templateContainer.setAlignment(Pos.TOP_LEFT);
         templateContainer.getChildren().setAll(templates);
@@ -161,13 +165,11 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         templates.addAll(templateContainer.getChildren());
 
         var label = new Label();
+        label.getStyleClass().add("progress-label");
         label.setText(I18N.getString("welcome.loading.label"));
-        label.setTranslateY(30);
 
         var progress = new ProgressIndicator();
         progress.getStyleClass().add("progress");
-        progress.setScaleX(3);
-        progress.setScaleY(3);
 
         templateContainer.setAlignment(Pos.CENTER);
         templateContainer.getChildren().setAll(progress, label);
