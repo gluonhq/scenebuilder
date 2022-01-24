@@ -119,7 +119,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
     private final ObservableList<Runnable> startupTasks = FXCollections.observableArrayList();
-    private final BooleanBinding startupTasksFinished = Bindings.isEmpty(startupTasks);
+
+    // in the case where welcome dialog is not shown, this will remain null
+    private BooleanBinding startupTasksFinished = null;
 
     static {
         System.setProperty("java.util.logging.config.file", SceneBuilderApp.class.getResource("/logging.properties").getPath());
@@ -362,6 +364,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             var welcomeWindow = WelcomeDialogWindowController.getInstance();
             welcomeWindow.getStage().show();
 
+            startupTasksFinished = Bindings.isEmpty(startupTasks);
             startupTasksFinished.addListener((o, old, isFinished) -> {
                 if (isFinished) {
                     Platform.runLater(welcomeWindow::showTemplates);
