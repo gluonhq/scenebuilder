@@ -5,6 +5,7 @@ on:
     branches: [ master ]
 
 env:
+  JAVAFX_VERSION: '17'
   JAVA_VERSION: '17.0.2'
   JAVA_DISTRO: 'temurin'
 
@@ -13,6 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     if: startsWith(github.event.head_commit.message, '[maven-release-plugin]') != true
     outputs:
+      JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
       VERSION: ${{ steps.vars.outputs.VERSION }}
@@ -50,6 +52,7 @@ jobs:
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
+      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       version: ${{ needs.precheck.outputs.VERSION }}
       tag: ${{ needs.precheck.outputs.TAG }}
       test: true
@@ -64,6 +67,7 @@ jobs:
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
+      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       version: ${{ needs.precheck.outputs.VERSION }}
       tag: ${{ needs.precheck.outputs.TAG }}
       test: true
@@ -81,6 +85,7 @@ jobs:
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
+      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       version: ${{ needs.precheck.outputs.VERSION }}
       tag: ${{ needs.precheck.outputs.TAG }}
       test: true

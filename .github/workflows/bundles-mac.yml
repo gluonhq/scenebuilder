@@ -13,6 +13,10 @@ on:
         default: '17.0.2'
         required: false
         type: string
+      javafx-version:
+        default: '17'
+        required: false
+        type: string
       java-distro:
         default: 'temurin'
         required: false
@@ -53,8 +57,8 @@ jobs:
 
       - name: Setup JavaFX
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/17/openjfx-17_osx-x64_bin-jmods.zip
-          unzip /tmp/openjfx-17_osx-x64_bin-jmods.zip -d /tmp
+          wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip
+          unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip -d /tmp
 
       - name: Cache Maven packages
         uses: actions/cache@v2
@@ -92,7 +96,7 @@ jobs:
           echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
-          JAVAFX_HOME: /tmp/javafx-jmods-17/
+          JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           MACSIGN_PREFIX: ${{ secrets.MACSIGN_USER }}
           MACSIGN_USER: ${{ secrets.MACSIGN_PREFIX }}
