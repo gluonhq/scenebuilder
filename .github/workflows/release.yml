@@ -15,8 +15,8 @@ jobs:
       JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
-      VERSION: ${{ steps.vars.outputs.VERSION }}
-      TAG: ${{ steps.vars.outputs.TAG }}
+      APP_VERSION: ${{ steps.vars.outputs.APP_VERSION }}
+      PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
       S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
     steps:
       - name: Check out repository
@@ -40,15 +40,15 @@ jobs:
         shell: bash
         run: |
           mvn -B versions:set -DremoveSnapshot
-          TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          VERSION=$TAG
-          S3_PATH=$TAG
-          if [[ "$TAG" == *-RC* ]]; then
-              VERSION=`echo $TAG | cut -d- -f1`
-              S3_PATH=RC/$TAG
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          APP_VERSION=$PROJECT_VERSION
+          S3_PATH=$PROJECT_VERSION
+          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
+              APP_VERSION=`echo $PROJECT_VERSION | cut -d- -f1`
+              S3_PATH=RC/$PROJECT_VERSION
           fi
-          echo ::set-output name=VERSION::$VERSION
-          echo ::set-output name=TAG::$TAG
+          echo ::set-output name=APP_VERSION::$APP_VERSION
+          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
           echo ::set-output name=S3_PATH::$S3_PATH
 
   linux-bundles:
@@ -58,8 +58,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   windows-bundles:
@@ -73,8 +73,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   mac-bundles:
@@ -91,8 +91,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   kit-bundles:
@@ -101,8 +101,7 @@ jobs:
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   release:
     needs: [precheck, linux-bundles, windows-bundles, mac-bundles, kit-bundles]
@@ -140,16 +139,14 @@ jobs:
 
       - name: Release with JReleaser
         env:
-          VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           JRELEASER_S3_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           JRELEASER_S3_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           JRELEASER_S3_GLUON_REGION: us-east-1
           JRELEASER_S3_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          TAG: ${{ needs.precheck.outputs.TAG }}
         run: |
           FILES_ACTIVE="RELEASE"
-          if [[ "$TAG" == *-RC* ]]; then
+          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
               FILES_ACTIVE="NEVER"
           fi
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \

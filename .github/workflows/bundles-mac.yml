@@ -3,10 +3,10 @@ name: MacOs Bundles
 on:
   workflow_call:
     inputs:
-      version:
+      app-version:
         required: true
         type: string
-      tag:
+      project-version:
         required: true
         type: string
       java-version:
@@ -74,10 +74,10 @@ jobs:
 
       - name: Build and package JAR
         run: |
-          mvn -B -ntp -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
+          mvn -B -ntp -q versions:set -DnewVersion=${{ env.APP_VERSION }} -DgenerateBackupPoms=false
           mvn -B -ntp -q clean package -Dmaven.test.skip=true
         env:
-          VERSION: ${{ inputs.version }}
+          APP_VERSION: ${{ inputs.app-version }}
 
       - name: Create Bundle using JPackage
         id: outputfile
@@ -91,17 +91,17 @@ jobs:
             --mac-package-signing-prefix "${{ env.MACSIGN_PREFIX }}" \
             --mac-signing-key-user-name "${{ env.MACSIGN_USER }}" \
             --mac-sign
-          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.dmg
+          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
           ls ${{ env.INSTALL_DIR }}
-          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.dmg
+          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           MACSIGN_PREFIX: ${{ secrets.MACSIGN_USER }}
           MACSIGN_USER: ${{ secrets.MACSIGN_PREFIX }}
-          TAG: ${{ inputs.tag }}
-          VERSION: ${{ inputs.version }}
+          PROJECT_VERSION: ${{ inputs.project-version }}
+          APP_VERSION: ${{ inputs.app-version }}
           INSTALL_DIR: app/target/install
 
       - name: Notarize Release Build

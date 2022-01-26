@@ -17,8 +17,8 @@ jobs:
       JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
-      VERSION: ${{ steps.vars.outputs.VERSION }}
-      TAG: ${{ steps.vars.outputs.TAG }}
+      VERSION: ${{ steps.vars.outputs.APP_VERSION }}
+      PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -40,11 +40,11 @@ jobs:
         id: vars
         shell: bash
         run: |
-          TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          VERSION=$TAG
-          VERSION=${VERSION%-*}
-          echo ::set-output name=VERSION::$VERSION
-          echo ::set-output name=TAG::$TAG
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          APP_VERSION=$PROJECT_VERSION
+          APP_VERSION=${APP_VERSION%-*}
+          echo ::set-output name=APP_VERSION::$APP_VERSION
+          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
 
   linux-bundles:
     needs: [precheck]
@@ -53,8 +53,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   windows-bundles:
@@ -68,8 +68,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   mac-bundles:
@@ -86,8 +86,8 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
   kit-bundles:
@@ -96,12 +96,12 @@ jobs:
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
-      version: ${{ needs.precheck.outputs.VERSION }}
-      tag: ${{ needs.precheck.outputs.TAG }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   early-access:
     needs: [precheck, linux-bundles, windows-bundles, mac-bundles, kit-bundles]
-    if: endsWith(${{ needs.precheck.outputs.TAG }}, '-SNAPSHOT')
+    if: endsWith(${{ needs.precheck.outputs.PROJECT_VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
@@ -127,7 +127,6 @@ jobs:
 
       - name: Release with JReleaser
         env:
-          VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release

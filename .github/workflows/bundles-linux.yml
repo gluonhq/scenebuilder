@@ -3,10 +3,10 @@ name: Linux Bundles
 on:
   workflow_call:
     inputs:
-      version:
+      app-version:
         required: true
         type: string
-      tag:
+      project-version:
         required: true
         type: string
       java-version:
@@ -71,10 +71,10 @@ jobs:
 
       - name: Build and package JAR
         run: |
-          mvn -B -ntp -q versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false
+          mvn -B -ntp -q versions:set -DnewVersion=${{ env.APP_VERSION }} -DgenerateBackupPoms=false
           mvn -B -ntp -q clean package -Dmaven.test.skip=true -X
         env:
-          VERSION: ${{ inputs.version }}
+          APP_VERSION: ${{ inputs.app-version }}
 
       - name: Create Bundle using JPackage
         run: |
@@ -88,7 +88,7 @@ jobs:
             --resource-dir app/assets/linux \
             --install-dir /opt \
             --type deb
-          mv ${{ env.INSTALL_DIR }}/*.deb ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.deb
+          mv ${{ env.INSTALL_DIR }}/*.deb ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.deb
           # Create RPM
           .github/scripts/jpackage.sh \
             --icon app/assets/linux/icon-linux.png \
@@ -98,14 +98,14 @@ jobs:
             --resource-dir app/assets/linux \
             --install-dir /opt \
             --type rpm
-          mv ${{ env.INSTALL_DIR }}/*.rpm ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.TAG }}.rpm
+          mv ${{ env.INSTALL_DIR }}/*.rpm ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.rpm
           ls ${{ env.INSTALL_DIR }}
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
-          TAG: ${{ inputs.tag }}
-          VERSION: ${{ inputs.version }}
+          PROJECT_VERSION: ${{ inputs.project-version }}
+          APP_VERSION: ${{ inputs.app-version }}
           INSTALL_DIR: app/target/install
 
       - name: Upload Artifact
