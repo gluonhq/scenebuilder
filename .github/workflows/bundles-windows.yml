@@ -1,0 +1,100 @@
+name: Windows Bundles
+
+on:
+  workflow_call:
+    inputs:
+      app-version:
+        required: true
+        type: string
+      project-version:
+        required: true
+        type: string
+      java-version:
+        default: '17.0.2'
+        required: false
+        type: string
+      javafx-version:
+        default: '17'
+        required: false
+        type: string
+      java-distro:
+        default: 'temurin'
+        required: false
+        type: string
+      test:
+        default: false
+        required: false
+        type: boolean
+    secrets:
+      WINDOWS_CERTIFICATE:
+        required: true
+      WINDOWS_PASSWORD:
+        required: true
+      WINDOWS_CERTNAME:
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: ${{ inputs.java-distro }}
+          java-version: ${{ inputs.java-version }}
+
+      - name: Setup JavaFX
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip -OutFile D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip
+          Expand-Archive -Force D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip D:\
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
+        if: ${{ inputs.test }}
+        run: |
+          mvn -B -ntp clean verify checkstyle:checkstyle --no-transfer-progress
+
+      - name: Build and package JAR
+        shell: cmd
+        run: |
+          call mvn -B -ntp versions:set -DnewVersion=${{ env.APP_VERSION }} -DgenerateBackupPoms=false
+          call mvn -B -ntp package -Dmaven.test.skip=true
+        env:
+          APP_VERSION: ${{ inputs.app-version }}
+
+      - name: Create Bundle using JPackage
+        shell: cmd
+        run: |
+          call .github\scripts\jpackage.bat
+          call ren ${{ env.INSTALL_DIR }}\SceneBuilder-${{ env.APP_VERSION }}.msi SceneBuilder-${{ env.PROJECT_VERSION }}.msi
+          call dir ${{ env.INSTALL_DIR }}
+        env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+          JAVAFX_HOME: D:\javafx-jmods-${{ inputs.javafx-version }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          PROJECT_VERSION: ${{ inputs.project-version }}
+          APP_VERSION: ${{ inputs.app-version }}
+          INSTALL_DIR: app\target\install
+
+      - name: Codesign
+        uses: erwin1/code-sign-action@master
+        with:
+          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_PASSWORD }}'
+          certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
+          folder: 'app/target/install'
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: app/target/install/*.msi

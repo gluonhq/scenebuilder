@@ -1,0 +1,6 @@
+{
+  "announcement": {
+    "url": "https://gluonhq.com/scene-builder-${parsedVersion.majorVersion}-release/",
+    "text": "Scene Builder ${parsedVersion.majorVersion} has been released. Download and install it now, or select 'Learn more' to visit https://gluonhq.com/scene-builder-${parsedVersion.majorVersion}-release/ for more information."
+  }
+}
