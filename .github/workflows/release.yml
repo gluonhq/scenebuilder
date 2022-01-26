@@ -55,9 +55,9 @@ jobs:
     needs: [precheck]
     uses: gluonhq/scenebuilder/.github/workflows/bundles-linux.yml@master
     with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
-      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
@@ -70,9 +70,9 @@ jobs:
       WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
       WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
-      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
@@ -88,9 +88,9 @@ jobs:
       MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
-      javafx-distro: ${{ needs.precheck.outputs.JAVAFX_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
