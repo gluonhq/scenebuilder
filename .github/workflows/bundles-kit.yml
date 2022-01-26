@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       java-version:
-        default: '17.0.2'
+        default: '17.0.1'
         required: false
         type: string
       java-distro:
