@@ -31,23 +31,19 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.colorpicker;
 
+import com.oracle.javafx.scenebuilder.kit.util.PaintConvertUtil;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.Mode;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPickerController;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPicker;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPickerStop;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ScrollPane;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -57,6 +53,10 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.shape.Circle;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller class for the color part of the paint editor.
@@ -95,6 +95,12 @@ public class ColorPicker extends VBox {
     private TextField alpha_textfield;
     @FXML
     private TextField hexa_textfield;
+    @FXML
+    private ComboBox<String> paintCombobox;
+    @FXML
+    private Button copyPaintButton;
+    private static final String JAVA_CODE = "Java Code";
+    private static final String CSS_CODE = "CSS Code";
 
     private final PaintPickerController paintPickerController;
     private boolean updating = false;
@@ -242,6 +248,9 @@ public class ColorPicker extends VBox {
         picker_region.pressedProperty().addListener(liveUpdateListener);
         hue_slider.pressedProperty().addListener(liveUpdateListener);
         alpha_slider.pressedProperty().addListener(liveUpdateListener);
+        // paint combobox add values
+        paintCombobox.getItems().setAll(CSS_CODE,JAVA_CODE);
+        paintCombobox.getSelectionModel().select(0);
     }
 
     /**
@@ -537,5 +546,21 @@ public class ColorPicker extends VBox {
         assert color != null;
         updateUI(color);
         hexa_textfield.selectAll();
+    }
+
+    @FXML
+    void onActionCopyPaint(ActionEvent event) {
+        String item = paintCombobox.getSelectionModel().getSelectedItem();
+        String paintStr;
+        Paint paint = paintPickerController.getPaintProperty();
+        if (JAVA_CODE.equals(item)) {
+            paintStr = PaintConvertUtil.convertPaintToJavaCode(paint);
+        } else { //CSS_CODE.equals(item);
+            paintStr = PaintConvertUtil.convertPaintToCss(paint);
+        }
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(paintStr);
+        clipboard.setContent(content);
     }
 }
