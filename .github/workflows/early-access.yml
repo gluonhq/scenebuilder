@@ -127,7 +127,7 @@ jobs:
 
       - name: Release with JReleaser
         env:
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
