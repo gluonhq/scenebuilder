@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2018 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.PropertyEditor.LayoutFormat;
@@ -440,9 +441,9 @@ public class EditorUtils {
 
         String url;
         if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-            url = EditorPlatform.GLUON_JAVADOC_HOME;
+            url = DocumentationUrls.GLUON_JAVADOC_HOME.toString();
         } else {
-            url = EditorPlatform.JAVADOC_HOME + clazz.getModule().getName() + "/";
+            url = DocumentationUrls.JAVADOC_HOME.toString() + clazz.getModule().getName() + "/";
         }
         url += clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
         url += "#" + methodName; //NOI18N

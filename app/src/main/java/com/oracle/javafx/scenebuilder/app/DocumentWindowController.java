@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,6 +42,7 @@ import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -125,11 +126,12 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
- *
+ * Handles all editing and control actions in the Scene Builder editor window.
+ * Editing action are used to modify a document (cut, paste, delete, import).
+ * Control actions in most cases do not cause document structure modifications. 
  */
 public class DocumentWindowController extends AbstractFxmlWindowController {
-    
-    
+
     public enum DocumentControlAction {
         COPY,
         SELECT_ALL,
@@ -157,7 +159,14 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         REMOVE_RESOURCE,
         REVEAL_RESOURCE,
         HELP,
-        SHOW_SAMPLE_CONTROLLER
+        SHOW_SAMPLE_CONTROLLER,
+        HELP_OPEN_GETTING_STARTED_GUIDE,
+        HELP_OPEN_GETTING_STARTED_WITH_KOTLIN,
+        HELP_OPEN_OPENJFX_APIDOC,
+        HELP_OPEN_OPENJFX_CSS_REFERENCE,
+        HELP_OPEN_OPENJFX_FXML_REFERENCE,
+        HELP_OPEN_GLUON_SCENEBUILDER_HOME,
+        HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER,
     }
     
     public enum DocumentEditAction {
@@ -638,7 +647,17 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case HELP:
                 result = true;
                 break;
-                
+
+            case HELP_OPEN_GETTING_STARTED_GUIDE:
+            case HELP_OPEN_GETTING_STARTED_WITH_KOTLIN:
+            case HELP_OPEN_OPENJFX_APIDOC:
+            case HELP_OPEN_OPENJFX_CSS_REFERENCE:
+            case HELP_OPEN_OPENJFX_FXML_REFERENCE:
+            case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
+            case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
+                result = true;
+                break;
+
             default:
                 result = false;
                 assert false;
@@ -809,12 +828,12 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 
             case TOGGLE_OUTLINES_VISIBILITY:
                 contentPanelController.setOutlinesVisible(
-                        ! contentPanelController.isOutlinesVisible());
+                        !contentPanelController.isOutlinesVisible());
                 break;
                 
             case TOGGLE_GUIDES_VISIBILITY:
                 contentPanelController.setGuidesVisible(
-                        ! contentPanelController.isGuidesVisible());
+                        !contentPanelController.isGuidesVisible());
                 break;
                 
             case ADD_SCENE_STYLE_SHEET:
@@ -839,6 +858,30 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 
             case HELP:
                 performHelp();
+                break;
+
+            case HELP_OPEN_GETTING_STARTED_GUIDE:
+                openURL(DocumentationUrls.OPENJFX_GETTING_STARTED.toString());
+                break;
+
+            case HELP_OPEN_OPENJFX_APIDOC:
+                openURL(DocumentationUrls.OPENJFX_JAVADOC_HOME.toString());
+                break;
+
+            case HELP_OPEN_OPENJFX_CSS_REFERENCE:
+                openURL(DocumentationUrls.OPENJFX_CSS_REFERENCE.toString());
+                break;
+
+            case HELP_OPEN_OPENJFX_FXML_REFERENCE:
+                openURL(DocumentationUrls.OPENJFX_FXML_REFERENCE.toString());
+                break;
+
+            case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
+                openURL(DocumentationUrls.GLUON_SCENEBUILDER_HOME.toString());
+                break;
+            
+            case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
+                openURL(DocumentationUrls.GLUON_SCENEBUILDER_CONTRIBUTE.toString());
                 break;
                 
             case SHOW_SAMPLE_CONTROLLER:
@@ -1952,7 +1995,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                 // Below we ask the user if the extension shall be added or not.
                 // See DTL-5948.
                 final String path = fxmlFile.getPath();
-                if (! path.endsWith(".fxml")) { //NOI18N
+                if (!path.endsWith(".fxml")) { //NOI18N
                     try {
                         URL alternateURL = new URL(fxmlFile.toURI().toURL().toExternalForm() + ".fxml"); //NOI18N
                         File alternateFxmlFile = new File(alternateURL.toURI());
@@ -2091,8 +2134,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         // Checks if there are some pending changes
         final boolean closeConfirmed;
         if (isDocumentDirty()) {
-            
             final AlertDialog d = new AlertDialog(getStage());
+            d.setTitle(I18N.getString("alert.save.question.title"));
             d.setMessage(I18N.getString("alert.save.question.message", getStage().getTitle()));
             d.setDetails(I18N.getString("alert.save.question.details"));
             d.setOKButtonTitle(I18N.getString("label.save"));
@@ -2215,18 +2258,25 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         return result;
     }
-    
         
     private void performHelp() {
+        openURL(DocumentationUrls.ORACLE_DOCUMENTATION.toString());
+    }
+    
+    private void openURL(String url) {
         try {
-            EditorPlatform.open(EditorPlatform.DOCUMENTATION_URL);
+            EditorPlatform.open(url);
         } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setMessage(I18N.getString("alert.help.failure.message", EditorPlatform.DOCUMENTATION_URL));
-            errorDialog.setDetails(I18N.getString("alert.messagebox.failure.details"));
-            errorDialog.setDebugInfoWithThrowable(ioe);
-            errorDialog.showAndWait();
+            handleErrorWhenOpeningURL(ioe, url);
         }
+    }
+
+    private void handleErrorWhenOpeningURL(IOException ioe, String url) {
+        final ErrorDialog errorDialog = new ErrorDialog(null);
+        errorDialog.setMessage(I18N.getString("alert.help.failure.message", url));
+        errorDialog.setDetails(I18N.getString("alert.messagebox.failure.details"));
+        errorDialog.setDebugInfoWithThrowable(ioe);
+        errorDialog.showAndWait();
     }
 
     private PreferencesRecordGlobal getPreferencesRecordGlobal() {
