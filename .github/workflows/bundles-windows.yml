@@ -26,11 +26,11 @@ on:
         required: false
         type: boolean
     secrets:
-      WINDOWS_CERTIFICATE:
+      windows-certificate:
         required: true
-      WINDOWS_PASSWORD:
+      windows-password:
         required: true
-      WINDOWS_CERTNAME:
+      windows-certname:
         required: true
 
 jobs:
@@ -88,10 +88,10 @@ jobs:
       - name: Codesign
         uses: erwin1/code-sign-action@master
         with:
-          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
-          password: '${{ secrets.WINDOWS_PASSWORD }}'
-          certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
-          folder: 'app/target/install'
+          certificate: ${{ secrets.windows-certificate }}
+          password: ${{ secrets.windows-password }}
+          certificatename: ${{ secrets.windows-certname }}
+          folder: app/target/install
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2

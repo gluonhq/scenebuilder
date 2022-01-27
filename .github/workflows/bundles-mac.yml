@@ -26,17 +26,17 @@ on:
         required: false
         type: boolean
     secrets:
-      CERTIFICATES_FILE_BASE64:
+      certificates-file-base64:
         required: true
-      CERTIFICATES_PASSWORD:
+      certificates-password:
         required: true
-      NOTARIZATION_USERNAME:
+      notarization-username:
         required: true
-      NOTARIZATION_PASSWORD:
+      notarization-password:
         required: true
-      MACSIGN_USER:
+      macsign-user:
         required: true
-      MACSIGN_PREFIX:
+      macsign-prefix:
         required: true
 jobs:
   build:
@@ -52,8 +52,8 @@ jobs:
 
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
-          p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+          p12-file-base64: ${{ secrets.certificates-file-base64 }}
+          p12-password: ${{ secrets.certificates-password }}
 
       - name: Setup JavaFX
         run: |
@@ -98,8 +98,8 @@ jobs:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
-          MACSIGN_PREFIX: ${{ secrets.MACSIGN_USER }}
-          MACSIGN_USER: ${{ secrets.MACSIGN_PREFIX }}
+          MACSIGN_PREFIX: ${{ secrets.macsign-user }}
+          MACSIGN_USER: ${{ secrets.macsign-prefix }}
           PROJECT_VERSION: ${{ inputs.project-version }}
           APP_VERSION: ${{ inputs.app-version }}
           INSTALL_DIR: app/target/install
@@ -108,10 +108,10 @@ jobs:
         uses: erwin1/xcode-notarize@main
         with:
           product-path: ${{ steps.outputfile.outputs.path }}
-          appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
-          appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
+          appstore-connect-username: ${{ secrets.notarization-username }}
+          appstore-connect-password: ${{ secrets.notarization-password }}
           primary-bundle-id: com.gluonhq.scenebuilder
-          asc-provider: ${{ secrets.MACSIGN_PREFIX }}
+          asc-provider: ${{ secrets.macsign-prefix }}
           verbose: true
 
       - name: Upload Artifact

@@ -61,9 +61,9 @@ jobs:
     needs: [precheck]
     uses: gluonhq/scenebuilder/.github/workflows/bundles-windows.yml@master
     secrets:
-      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-      WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
-      WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
+      windows-certificate: ${{ secrets.WINDOWS_CERTIFICATE }}
+      windows-password: ${{ secrets.WINDOWS_PASSWORD }}
+      windows-certname: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
@@ -76,12 +76,12 @@ jobs:
     needs: [precheck]
     uses: gluonhq/scenebuilder/.github/workflows/bundles-mac.yml@master
     secrets:
-      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
-      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
-      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
-      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
-      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+      certificates-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      certificates-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+      notarization-username: ${{ secrets.NOTARIZATION_USERNAME }}
+      notarization-password: ${{ secrets.NOTARIZATION_PASSWORD }}
+      macsign-user: ${{ secrets.GLUON_MACSIGN_USER }}
+      macsign-prefix: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
