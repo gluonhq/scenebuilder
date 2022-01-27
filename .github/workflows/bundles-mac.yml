@@ -98,8 +98,8 @@ jobs:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
-          MACSIGN_PREFIX: ${{ secrets.MACSIGN_USER }}
-          MACSIGN_USER: ${{ secrets.MACSIGN_PREFIX }}
+          MACSIGN_PREFIX: ${{ secrets.MACSIGN_PREFIX }}
+          MACSIGN_USER: ${{ secrets.MACSIGN_USER }}
           PROJECT_VERSION: ${{ inputs.project-version }}
           APP_VERSION: ${{ inputs.app-version }}
           INSTALL_DIR: app/target/install
