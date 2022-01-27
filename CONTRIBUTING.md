@@ -15,7 +15,7 @@ Contribution of any form is welcome! Please see the list below on how you can co
 3. A maintainer will confirm the issue is valid and can be assigned to you for a fix.
 4. You produce a Pull Request following the Standards below.
 5. Once you tick all check boxes on the Pull Request template, it will be reviewed by a maintainer or a community member.
-6. Once a Pull Request has at least one approval, it will be ready for a merge.
+6. Once the Pull Request has at least one approval, it will be ready for a merge.
 
 ## Coding Standards
 
