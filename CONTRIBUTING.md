@@ -35,6 +35,3 @@ The project uses the following Pull Request message guidelines, based on [Conven
 * **test: message** -- change that adds new or updates existing tests and mostly affects the `test` package
 
 For concrete examples, see [latest merged requests](https://github.com/gluonhq/scenebuilder/commits/master).
-
-
-
