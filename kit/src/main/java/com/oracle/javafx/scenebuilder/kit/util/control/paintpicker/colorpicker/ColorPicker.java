@@ -468,7 +468,7 @@ public class ColorPicker extends VBox {
         sb.append("%, "); //NOI18N
         sb.append(brightness * 100);
         sb.append("%, "); //NOI18N
-        sb.append(alpha);
+        sb.append(alpha_rounded);//Fix #503
         sb.append(")"); //NOI18N
         final String hsbCssValue = sb.toString();
         final String chipStyle = "-fx-background-color: " + hsbCssValue; //NOI18N
@@ -562,5 +562,6 @@ public class ColorPicker extends VBox {
         ClipboardContent content = new ClipboardContent();
         content.putString(paintStr);
         clipboard.setContent(content);
+        event.consume();
     }
 }

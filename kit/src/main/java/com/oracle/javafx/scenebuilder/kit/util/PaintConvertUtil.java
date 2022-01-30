@@ -2,8 +2,6 @@ package com.oracle.javafx.scenebuilder.kit.util;
 
 import javafx.scene.paint.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -11,14 +9,11 @@ import java.util.List;
  */
 public class PaintConvertUtil {
 
-    /**
-     * Round to 3 decimal places
-     */
-    private static final int DOUBLE_SCALE = 3;
+    private static final int ROUNDING_FACTOR = 10000;//Use for round to 4 decimal places
 
     public static String convertPaintToCss(Paint fxPaint) {
         if (fxPaint == null) {
-            return null;
+            return "";
         }
         if (fxPaint instanceof LinearGradient) {
             LinearGradient paint = (LinearGradient) fxPaint;
@@ -28,7 +23,7 @@ public class PaintConvertUtil {
                     .append(" to ").append(lenToStr(paint.getEndX(), paint.isProportional()))
                     .append(" ").append(lenToStr(paint.getEndY(), paint.isProportional()))
                     .append(", ");
-            appendStr(strBuilder, paint.getCycleMethod(), paint.getStops());
+            connectCycleMethodAndStops(strBuilder, paint.getCycleMethod(), paint.getStops());
             return strBuilder.toString();
         } else if (fxPaint instanceof RadialGradient) {
             RadialGradient paint = (RadialGradient) fxPaint;
@@ -38,17 +33,17 @@ public class PaintConvertUtil {
                     .append(" ").append(lenToStr(paint.getCenterY(), paint.isProportional()))
                     .append(", radius ").append(lenToStr(paint.getRadius(), paint.isProportional()))
                     .append(", ");
-            appendStr(strBuilder, paint.getCycleMethod(), paint.getStops());
+            connectCycleMethodAndStops(strBuilder, paint.getCycleMethod(), paint.getStops());
             return strBuilder.toString();
         } else if (fxPaint instanceof Color) {
             return toHex((Color) fxPaint);
         }
-        return null;
+        return "";
     }
 
     public static String convertPaintToJavaCode(Paint fxPaint) {
         if (fxPaint == null) {
-            return null;
+            return "";
         }
         if (fxPaint instanceof LinearGradient) {
             LinearGradient paint = (LinearGradient) fxPaint;
@@ -67,10 +62,31 @@ public class PaintConvertUtil {
                     + cycleMethodToStr(paint.getCycleMethod()) + System.lineSeparator() + ","
                     + stopsToString(paint.getStops()) + ");";
         } else if (fxPaint instanceof Color) {
-            Color color = (Color) fxPaint;
-            return String.format("Color paint = new Color( %s, %s, %s, %s);", round(color.getRed()), round(color.getGreen()), round(color.getBlue()), round(color.getOpacity()));
+            return "Color paint = " + colorToJavaStr((Color) fxPaint) + ";";
         }
-        return null;
+        return "";
+    }
+
+    private static void connectCycleMethodAndStops(StringBuilder strBuilder, CycleMethod cycleMethod, List<Stop> stops) {
+        switch (cycleMethod) {
+            case REFLECT:
+                strBuilder.append("reflect").append(", ");
+                break;
+            case REPEAT:
+                strBuilder.append("repeat").append(", ");
+                break;
+            default:
+                break;
+        }
+        int len = stops.size();
+        for (int i = 0; i < len; i++) {
+            Stop stop = stops.get(i);
+            strBuilder.append(toHex(stop.getColor())).append(" ").append(round(stop.getOffset() * 100.0D)).append("%");
+            if (i < len - 1) {
+                strBuilder.append(", ");
+            }
+        }
+        strBuilder.append(")");
     }
 
     private static String cycleMethodToStr(CycleMethod cycleMethod) {
@@ -92,35 +108,17 @@ public class PaintConvertUtil {
             Stop stop = stops.get(i);
             Color color = stop.getColor();
             double offset = round(stop.getOffset());
-            String strColor = String.format("new Color( %s, %s, %s, %s)", round(color.getRed()), round(color.getGreen()), round(color.getBlue()), round(color.getOpacity()));
+            String strColor = colorToJavaStr(color);
             stopsBuilder.append("new Stop(").append(offset).append(",").append(strColor).append(")");
-            if (i != len - 1) {
+            if (i < len - 1) {
                 stopsBuilder.append(",").append(System.lineSeparator());
             }
         }
         return stopsBuilder.toString();
     }
 
-    private static void appendStr(StringBuilder strBuilder, CycleMethod cycleMethod, List<Stop> stops) {
-        switch (cycleMethod) {
-            case REFLECT:
-                strBuilder.append("reflect").append(", ");
-                break;
-            case REPEAT:
-                strBuilder.append("repeat").append(", ");
-                break;
-            default:
-                break;
-        }
-        int len = stops.size();
-        for (int i = 0; i < len; i++) {
-            Stop stop = stops.get(i);
-            strBuilder.append(toHex(stop.getColor())).append(" ").append(round(stop.getOffset() * 100.0D)).append("%");
-            if (i != len - 1) {
-                strBuilder.append(", ");
-            }
-        }
-        strBuilder.append(")");
+    private static String colorToJavaStr(Color color) {
+        return String.format("new Color(%s, %s, %s, %s)", round(color.getRed()), round(color.getGreen()), round(color.getBlue()), round(color.getOpacity()));
     }
 
     private static String lenToStr(double num, boolean isProportional) {
@@ -128,15 +126,20 @@ public class PaintConvertUtil {
     }
 
     private static double round(double num) {
-        return new BigDecimal(num).setScale(DOUBLE_SCALE, RoundingMode.HALF_UP).doubleValue();
+        double doubleRounded = Math.round(num * ROUNDING_FACTOR);
+        return doubleRounded / ROUNDING_FACTOR;
     }
 
-    public static String toHex(Color color) {
+    private static String toHex(Color color) {
         int red = (int) Math.round(color.getRed() * 255.0D);
         int green = (int) Math.round(color.getGreen() * 255.0D);
         int blue = (int) Math.round(color.getBlue() * 255.0D);
         int alpha = (int) Math.round(color.getOpacity() * 255.0D);
-        return String.format("#%02x%02x%02x%02x", red, green, blue, alpha);
+        if (alpha == 255) {
+            return String.format("#%02x%02x%02x", red, green, blue);
+        } else {
+            return String.format("#%02x%02x%02x%02x", red, green, blue, alpha);
+        }
     }
 
 }
