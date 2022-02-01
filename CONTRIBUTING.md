@@ -1,12 +1,11 @@
 ## How to Contribute to Scene Builder
 
-Contribution of any form is welcome! Please see the list below on how you can contribute to the project. 
+Contribution of any form is welcome! Please see workflows below on how you can contribute to the project.
 
-* Provide or suggest an implementation of an issue from [GitHub Issues](https://github.com/gluonhq/scenebuilder/issues).
-* Proof read the [public documentation](https://github.com/gluonhq/scenebuilder/wiki) for errors, ambiguities and typos.
-* Create an issue or suggest a feature backed up by a use case.
-* Add missing tests.
-* Quality-test early release builds.
+## Feature Request Workflow
+
+1. Open a [discussion](https://github.com/gluonhq/scenebuilder/discussions) to suggest a feature backed up by a use case.
+2. A maintainer will confirm the feature is beneficial for Scene Builder and will convert the discussion into a feature-request issue.
 
 ## Contribution Workflow
 
@@ -15,7 +14,13 @@ Contribution of any form is welcome! Please see the list below on how you can co
 3. A maintainer will confirm the issue is valid and can be assigned to you for a fix.
 4. You produce a Pull Request following the Standards below.
 5. Once you tick all check boxes on the Pull Request template, it will be reviewed by a maintainer or a community member.
-6. Once the Pull Request has at least one approval, it will be ready for a merge.
+6. Once the Pull Request is approved (`minor` requires at least 1, `major` requires at least 2), it will be ready for a merge.
+
+## QA Test Workflow
+
+1. Grab an [early release package](https://github.com/gluonhq/scenebuilder/releases/tag/early-access).
+2. Test newly merged features since the latest stable version, paying attention to the functionality of existing features, OR proof read the [public documentation](https://github.com/gluonhq/scenebuilder/wiki) for errors, ambiguities and typos.
+3. Report any bugs, odd behavior, or inconsistencies to the maintainers as appropriate.
 
 ## Coding Standards
 
