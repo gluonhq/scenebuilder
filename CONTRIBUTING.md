@@ -12,7 +12,7 @@ Contribution of any form is welcome! Please see workflows below on how you can c
 1. Pick an unassigned [open issue](https://github.com/gluonhq/scenebuilder/issues).
 2. Comment on it to say you would like to contribute to fixing it and propose a plan (if appropriate).
 3. A maintainer will confirm the issue is valid and can be assigned to you for a fix.
-4. You produce a Pull Request following the Standards below.
+4. You produce a Pull Request following the Standards below. It is expected that you will also provide accompanying tests.
 5. Once you tick all check boxes on the Pull Request template, it will be reviewed by a maintainer or a community member.
 6. Once the Pull Request is approved (`minor` requires at least 1, `major` requires at least 2), it will be ready for a merge.
 
