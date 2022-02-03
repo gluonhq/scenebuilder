@@ -14,7 +14,7 @@ Contribution of any form is welcome! Please see workflows below on how you can c
 3. A maintainer will confirm the issue is valid and can be assigned to you for a fix.
 4. You produce a Pull Request following the Standards below. It is expected that you will also provide accompanying tests.
 5. Once you tick all check boxes on the Pull Request template, it will be reviewed by a maintainer or a community member.
-6. Once the Pull Request is approved (`minor` requires at least 1, `major` requires at least 2), it will be ready for a merge.
+6. Once the Pull Request is approved (`minor` requires at least 1, `major` requires at least 2), it will be ready for a squashed merge.
 
 ## QA Test Workflow
 
@@ -31,12 +31,12 @@ Contribution of any form is welcome! Please see workflows below on how you can c
 
 The project uses the following Pull Request message guidelines, based on [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
 
-* **build: message** -- change affects the build system, configuration files, scripts, or external dependencies
-* **docs: message** -- change affects documentation **only**, including LICENSE, CONTRIBUTING, README
-* **feat: message** -- change adds a new or modifies an existing feature
-* **fix: message** -- change fixes a bug
-* **perf: message** -- change is related to performance
-* **refactor: message** -- change cleans up or restructures code, including formatting only changes
-* **test: message** -- change that adds new or updates existing tests and mostly affects the `test` package
+* **build: Message** -- change affects the build system, configuration files, scripts, or external dependencies
+* **docs: Message** -- change affects documentation **only**, including LICENSE, CONTRIBUTING, README
+* **feat: Message** -- change adds a new or modifies an existing feature
+* **fix: Message** -- change fixes a bug
+* **perf: Message** -- change is related to performance
+* **refactor: Message** -- change cleans up or restructures code, including formatting only changes
+* **test: Message** -- change that adds new or updates existing tests and mostly affects the `test` package
 
 For concrete examples, see [latest merged requests](https://github.com/gluonhq/scenebuilder/commits/master).
