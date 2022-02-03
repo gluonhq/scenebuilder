@@ -43,7 +43,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -55,7 +54,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,8 +70,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     private Button emptyApp;
 
     private VBox masker;
-
-    private final List<Node> templates = new ArrayList<>();
 
     private static WelcomeDialogWindowController instance;
 
