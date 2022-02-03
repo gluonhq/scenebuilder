@@ -32,14 +32,13 @@
 
 package com.oracle.javafx.scenebuilder.app.welcomedialog;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,10 +49,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -89,15 +85,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 null); // We want it to be a top level window so we're setting the owner to null.
 
         sceneBuilderApp = SceneBuilderApp.getSingleton();
-    }
-
-    /**
-     * This is called when SB background startup tasks finish,
-     * so that the UI is updated to show built-in templates.
-     */
-    public void showTemplates() {
-        templateContainer.setAlignment(Pos.TOP_LEFT);
-        templateContainer.getChildren().setAll(templates);
     }
 
     @Override
