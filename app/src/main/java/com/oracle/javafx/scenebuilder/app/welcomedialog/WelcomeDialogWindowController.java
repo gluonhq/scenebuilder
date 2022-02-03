@@ -201,8 +201,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 getStage().hide();
             });
         }
-
-        // hide is called automatically by parent class
     }
 
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
