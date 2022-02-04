@@ -1,0 +1,9 @@
+# Defines valid PR titles
+types:
+  - build
+  - docs
+  - feat
+  - fix
+  - perf
+  - refactor
+  - test
