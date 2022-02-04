@@ -1,4 +1,4 @@
-name: Scene Builder Verify
+name: Scene Builder PR Verify
 on:
   pull_request:
 
