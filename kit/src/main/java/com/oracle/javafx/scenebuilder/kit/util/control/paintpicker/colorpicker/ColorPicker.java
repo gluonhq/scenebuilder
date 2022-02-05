@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -41,7 +42,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
@@ -249,7 +254,7 @@ public class ColorPicker extends VBox {
         hue_slider.pressedProperty().addListener(liveUpdateListener);
         alpha_slider.pressedProperty().addListener(liveUpdateListener);
         // paint combobox add values
-        paintCombobox.getItems().setAll(CSS_CODE,JAVA_CODE);
+        paintCombobox.getItems().setAll(CSS_CODE, JAVA_CODE);
         paintCombobox.getSelectionModel().select(0);
     }
 
@@ -443,9 +448,9 @@ public class ColorPicker extends VBox {
         alpha = PaintPickerController.clamp(0, alpha, 1);
         // make an rgb color from the hsb
         final Color color = Color.hsb(hue, saturation, brightness, alpha);
-        int red   = (int) Math.round(color.getRed() * 255);
+        int red = (int) Math.round(color.getRed() * 255);
         int green = (int) Math.round(color.getGreen() * 255);
-        int blue  = (int) Math.round(color.getBlue() * 255);
+        int blue = (int) Math.round(color.getBlue() * 255);
         final String hexa = String.format("#%02x%02x%02x", red, green, blue); //NOI18N
 
         // Set TextFields value
