@@ -1,0 +1,121 @@
+name: MacOs Bundles
+
+on:
+  workflow_call:
+    inputs:
+      app-version:
+        required: true
+        type: string
+      project-version:
+        required: true
+        type: string
+      java-version:
+        default: '17.0.1'
+        required: false
+        type: string
+      javafx-version:
+        default: '17'
+        required: false
+        type: string
+      java-distro:
+        default: 'temurin'
+        required: false
+        type: string
+      test:
+        default: false
+        required: false
+        type: boolean
+    secrets:
+      CERTIFICATES_FILE_BASE64:
+        required: true
+      CERTIFICATES_PASSWORD:
+        required: true
+      NOTARIZATION_USERNAME:
+        required: true
+      NOTARIZATION_PASSWORD:
+        required: true
+      MACSIGN_USER:
+        required: true
+      MACSIGN_PREFIX:
+        required: true
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: ${{ inputs.java-distro }}
+          java-version: ${{ inputs.java-version }}
+
+      - uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+          p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+
+      - name: Setup JavaFX
+        run: |
+          wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip
+          unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip -d /tmp
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
+        if: ${{ inputs.test }}
+        run: |
+          mvn -B -ntp clean verify checkstyle:checkstyle --no-transfer-progress
+
+      - name: Build and package JAR
+        run: |
+          mvn -B -ntp -q versions:set -DnewVersion=${{ env.APP_VERSION }} -DgenerateBackupPoms=false
+          mvn -B -ntp -q clean package -Dmaven.test.skip=true
+        env:
+          APP_VERSION: ${{ inputs.app-version }}
+
+      - name: Create Bundle using JPackage
+        id: outputfile
+        run: |
+          .github/scripts/jpackage.sh \
+            --icon app/assets/osx/icon-mac.icns \
+            --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --type dmg \
+            --mac-package-identifier com.gluonhq.scenebuilder \
+            --mac-package-name 'Scene Builder' \
+            --mac-package-signing-prefix "${{ env.MACSIGN_PREFIX }}" \
+            --mac-signing-key-user-name "${{ env.MACSIGN_USER }}" \
+            --mac-sign
+          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
+          ls ${{ env.INSTALL_DIR }}
+          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
+        env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+          JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          MACSIGN_PREFIX: ${{ secrets.MACSIGN_PREFIX }}
+          MACSIGN_USER: ${{ secrets.MACSIGN_USER }}
+          PROJECT_VERSION: ${{ inputs.project-version }}
+          APP_VERSION: ${{ inputs.app-version }}
+          INSTALL_DIR: app/target/install
+
+      - name: Notarize Release Build
+        uses: erwin1/xcode-notarize@main
+        with:
+          product-path: ${{ steps.outputfile.outputs.path }}
+          appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
+          appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
+          primary-bundle-id: com.gluonhq.scenebuilder
+          asc-provider: ${{ secrets.MACSIGN_PREFIX }}
+          verbose: true
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: ${{ steps.outputfile.outputs.path }}
