@@ -37,6 +37,7 @@ import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
 import javafx.application.Platform;
@@ -48,17 +49,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
+
+    private StackPane newRoot;
 
     @FXML
     private BorderPane rootPane;
@@ -112,15 +117,20 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         setOnTemplateChosen(this::fireSelectTemplate);
         setupTemplateButtonHandlers();
-
-        setupProgressIndicator();
     }
 
     private void loadAndPopulateRecentItemsInBackground() {
+        Label loadingRecentItems = new Label(I18N.getString("welcome.recent.items.loading"));
+        loadingRecentItems.getStyleClass().add("no-recent-items-label");
+
+        recentDocuments.getChildren().add(loadingRecentItems);
+
         new Thread(() -> {
             PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
                     .getSingleton().getRecordGlobal();
             List<String> recentItems = preferencesRecordGlobal.getRecentItems();
+
+            Platform.runLater(() -> recentDocuments.getChildren().clear());
 
             if (recentItems.size() == 0) {
                 Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
@@ -153,19 +163,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         }, "Recent Items Loading Thread").start();
     }
 
-    private void setupProgressIndicator() {
-        var label = new Label();
-        label.getStyleClass().add("progress-label");
-        label.setText(I18N.getString("welcome.loading.label"));
-
-        var progress = new ProgressIndicator();
-        progress.getStyleClass().add("progress");
-
-        masker = new VBox(progress, label);
-        masker.setAlignment(Pos.CENTER);
-        masker.getStylesheets().setAll(rootPane.getStylesheets());
-    }
-
     public static WelcomeDialogWindowController getInstance() {
         if (instance == null){
             instance = new WelcomeDialogWindowController();
@@ -187,46 +184,84 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
-        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
-            sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
-            getStage().hide();
-        } else {
-            showMasker(() -> {
-                sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
-                getStage().hide();
-            });
-        }
+        handleOpen(List.of(projectPath));
     }
 
     @FXML
     private void openDocument() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"), "*.fxml")
+        );
+        fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(null);
+
+        // no file was selected, so nothing to do
+        if (fxmlFiles == null)
+            return;
+
+        List<String> paths = fxmlFiles
+                .stream()
+                .map(File::toString)
+                .collect(Collectors.toList());
+
+        handleOpen(paths);
+    }
+
+    private void handleOpen(List<String> paths) {
         if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
-            if (sceneBuilderApp.performOpenFile()) {
-                getStage().hide();
-            }
+            sceneBuilderApp.handleOpenFilesAction(paths);
+            getStage().hide();
         } else {
             showMasker(() -> {
-                if (sceneBuilderApp.performOpenFile()) {
-                    getStage().hide();
-                } else {
-                    hideMasker();
-                }
+                sceneBuilderApp.handleOpenFilesAction(paths);
+                getStage().hide();
             });
         }
     }
 
     private void showMasker(Runnable onEndAction) {
-        getScene().setRoot(masker);
+        // swap roots to allow adding masker if running for the first time
+        if (newRoot == null) {
+            initMasker();
+        }
+
+        rootPane.setDisable(true);
+        newRoot.getChildren().add(masker);
 
         sceneBuilderApp.startupTasksFinishedProperty().addListener((o, old, isFinished) -> {
             if (isFinished) {
-                Platform.runLater(onEndAction);
+                Platform.runLater(() -> {
+                    onEndAction.run();
+
+                    // restore root in case welcome dialog is opened again
+                    rootPane.setDisable(false);
+                    newRoot.getChildren().remove(masker);
+                });
             }
         });
     }
 
-    private void hideMasker() {
-        getScene().setRoot(rootPane);
+    private void initMasker() {
+        newRoot = new StackPane();
+        newRoot.getStylesheets().setAll(rootPane.getStylesheets());
+
+        var label = new Label();
+        label.getStyleClass().add("progress-label");
+        label.setText(I18N.getString("welcome.loading.label"));
+
+        var progress = new ProgressIndicator();
+        progress.getStyleClass().add("progress");
+
+        masker = new VBox(progress, label);
+        masker.setAlignment(Pos.CENTER);
+
+        getScene().setRoot(newRoot);
+
+        rootPane.prefWidthProperty().bind(getScene().widthProperty());
+        rootPane.prefHeightProperty().bind(getScene().heightProperty());
+        newRoot.getChildren().add(rootPane);
     }
 }
 
