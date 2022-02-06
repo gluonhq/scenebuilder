@@ -36,24 +36,22 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
 import javafx.application.Platform;
@@ -98,10 +96,9 @@ public class FXOMDocumentTest {
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
+    @EnabledOnOs(value=org.junit.jupiter.api.condition.OS.MAC)
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
-        assumeTrue(OS.get() == OS.MAC, "MacOS");
-        
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
@@ -114,10 +111,10 @@ public class FXOMDocumentTest {
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
+    @EnabledOnOs(value= {org.junit.jupiter.api.condition.OS.LINUX,
+                         org.junit.jupiter.api.condition.OS.WINDOWS})
     @Test
     public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
-        assumeTrue(Set.of(OS.LINUX, OS.WINDOWS).contains(OS.get()), "Windows or Linux");
-
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
