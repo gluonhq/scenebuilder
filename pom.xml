@@ -107,7 +107,7 @@
                     </configuration>
                     <inherited>false</inherited>
                 </plugin>
-
+                
                 <!-- Enforce code formatting and style -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
