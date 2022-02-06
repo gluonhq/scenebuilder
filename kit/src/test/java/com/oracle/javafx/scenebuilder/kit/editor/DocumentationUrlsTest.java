@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
-class DocumentationUrlsTest {
+public class DocumentationUrlsTest {
 
     @Test
     public void that_javafx_version_substitution_works_when_required() {
@@ -55,32 +55,32 @@ class DocumentationUrlsTest {
     }
     
     @Test
-    void that_platform_documentation_url_matches_configuration() {
+    public void that_platform_documentation_url_matches_configuration() {
         assertEquals("https://docs.oracle.com/javafx/index.html", 
                 DocumentationUrls.ORACLE_DOCUMENTATION.toString());
     }
 
     @Test
-    void that_platform_gluon_javadoc_url_matches_configuration() {
+    public void that_platform_gluon_javadoc_url_matches_configuration() {
         assertEquals("https://docs.gluonhq.com/charm/javadoc/latest/", 
                 DocumentationUrls.GLUON_JAVADOC_HOME.toString());
     }
 
     @Test
-    void that_platform_javadoc_url_matches_configuration() {
+    public void that_platform_javadoc_url_matches_configuration() {
         assertEquals("https://openjfx.io/javadoc/11/",
                 DocumentationUrls.JAVADOC_HOME.toString());
     }
 
     @Test
-    void that_major_version_is_properly_extracted() {
+    public void that_major_version_is_properly_extracted() {
         String javaFxVersion = "17.0.1.a";
         String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
         assertEquals("17", majorVersion);
     }
 
     @Test
-    void that_unsupported_version_schema_yields_full_version_string() {
+    public void that_unsupported_version_schema_yields_full_version_string() {
         String javaFxVersion = "17-0-0-1";
         String majorVersion = DocumentationUrls.getMajorJavaFxVersion(javaFxVersion);
         assertEquals("17-0-0-1", majorVersion);
