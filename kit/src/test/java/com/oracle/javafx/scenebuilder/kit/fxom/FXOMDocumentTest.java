@@ -49,6 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
@@ -96,7 +97,7 @@ public class FXOMDocumentTest {
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
-    @EnabledOnOs(value=org.junit.jupiter.api.condition.OS.MAC)
+    @EnabledOnOs(value=OS.MAC)
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
@@ -111,8 +112,7 @@ public class FXOMDocumentTest {
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
-    @EnabledOnOs(value= {org.junit.jupiter.api.condition.OS.LINUX,
-                         org.junit.jupiter.api.condition.OS.WINDOWS})
+    @EnabledOnOs(value= {OS.LINUX, OS.WINDOWS})
     @Test
     public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
