@@ -93,6 +93,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -145,6 +146,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private CheckBox alternatePasteBehavior;
     @FXML
     private Label alternatePasteBehaviorLabel;
+    @FXML
+    private Pane alternatePasteBehaviorPane;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -265,14 +268,16 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Wildcard Imports
         wildcardImports.setSelected(recordGlobal.isWildcardImports());
         wildcardImports.selectedProperty().addListener(new WildcardImportListener());
-        
+
         if (EditorPlatform.IS_MAC) {
             // Alternate paste behavior for Text Input Controls
             alternatePasteBehavior.setSelected(recordGlobal.isAlternateTextInputControlPaste());
             alternatePasteBehavior.selectedProperty().addListener(new AlternatePasteListener());
         } else {
-            alternatePasteBehavior.setDisable(true);
-            alternatePasteBehaviorLabel.setDisable(true);
+            // This setting is supposed to to be invisible on other platforms.
+            alternatePasteBehaviorPane.setDisable(true);
+            alternatePasteBehaviorPane.setVisible(false);
+            alternatePasteBehaviorPane.setManaged(false);
         }
     }
 
