@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -38,14 +38,12 @@ import java.util.List;
 public class MavenPresets {
     
     public static final String MAVEN = "Maven Central";
-    public static final String JCENTER = "Jcenter";
     public static final String SONATYPE = "Sonatype";
     public static final String GLUON_NEXUS = "Gluon Nexus";
     public static final String LOCAL = "Local";
     
     private static final List<Repository> REPOSITORIES = Arrays.asList(
             new Repository(MAVEN, "default", "https://repo1.maven.org/maven2/"),
-            new Repository(JCENTER, "default", "https://jcenter.bintray.com"),
             new Repository(SONATYPE + " (snapshots)", "default", "https://oss.sonatype.org/content/repositories/snapshots"),
             new Repository(SONATYPE + " (releases)", "default", "https://oss.sonatype.org/content/repositories/releases"),
             new Repository(GLUON_NEXUS + " (releases)", "default", "https://nexus.gluonhq.com/nexus/content/repositories/releases"));
