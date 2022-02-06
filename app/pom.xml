@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
-        <version>17.0.0</version>
+        <version>18.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -23,10 +23,10 @@
         <dependency>
             <groupId>com.gluonhq.scenebuilder</groupId>
             <artifactId>kit</artifactId>
-            <version>17.0.0</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <resources>
             <resource>

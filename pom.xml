@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>17.0.0</version>
+    <version>18.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -16,12 +16,18 @@
     </modules>
 
     <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <javafx.version>17</javafx.version>
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>6.1.0</charm.glisten.version>
         <gluon.attach.version>4.0.13</gluon.attach.version>
-        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.github.repository>gluonhq/scenebuilder</project.github.repository>
+        <repository.url>github.com:${project.github.repository}</repository.url>
+        <jreleaser.files.active>RELEASE</jreleaser.files.active>
     </properties>
     
     <repositories>
@@ -90,8 +96,205 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <id>parse-version</id>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/files</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>1.0.0-M1</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <jreleaser>
+                        <environment>
+                            <properties>
+                                <artifactsDir>artifacts</artifactsDir>
+                                <s3Path>{{tagName}}</s3Path>
+                            </properties>
+                        </environment>
+                        <project>
+                            <!-- should not exceed 79 chars -->
+                            <name>SceneBuilder</name>
+                            <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
+                            <longDescription>${project.description}</longDescription>
+                            <tags>javafx,gui,tool</tags>
+                        </project>
+                        <checksum>
+                            <files>false</files>
+                        </checksum>
+                        <release>
+                            <github>
+                                <branch>master</branch>
+                                <tagName>{{projectVersion}}</tagName>
+                                <files>false</files>
+                                <changelog>
+                                    <formatted>ALWAYS</formatted>
+                                    <preset>conventional-commits</preset>
+                                    <format>- {{commitShortHash}} {{commitTitle}}</format>
+                                    <contributors>
+                                        <format>* {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}</format>
+                                    </contributors>
+                                    <hide>
+                                        <contributors>
+                                            <contributor>GitHub</contributor>
+                                            <contributor>bot</contributor>
+                                        </contributors>
+                                    </hide>
+                                    <labelers>
+                                        <labeler>
+                                            <title>Bump</title>
+                                            <label>dependencies</label>
+                                        </labeler>
+                                    </labelers>
+                                    <categories>
+                                        <category>
+                                            <key>deps</key>
+                                            <title>Dependencies</title>
+                                            <labels>dependencies</labels>
+                                            <order>200</order>
+                                        </category>
+                                    </categories>
+                                    <hide>
+                                        <categories>merge</categories>
+                                    </hide>
+                                </changelog>
+                            </github>
+                        </release>
+                        <upload>
+                            <s3>
+                                <app>
+                                    <active>RELEASE</active>
+                                    <checksums>false</checksums>
+                                    <signatures>false</signatures>
+                                    <path>scenebuilder/{{artifactFile}}</path>
+                                </app>
+                            </s3>
+                        </upload>
+                        <distributions>
+                            <SceneBuilder>
+                                <type>NATIVE_PACKAGE</type>
+                                <brew>
+                                    <active>NEVER</active>
+                                </brew>
+                                <chocolatey>
+                                    <active>NEVER</active>
+                                    <remoteBuild>true</remoteBuild>
+                                </chocolatey>
+                                <macports>
+                                    <active>NEVER</active>
+                                </macports>
+                                <snap>
+                                    <active>NEVER</active>
+                                    <remoteBuild>true</remoteBuild>
+                                </snap>
+                                <artifacts>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.dmg</path>
+                                        <platform>osx-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.msi</path>
+                                        <platform>windows-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/win/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.rpm</path>
+                                        <platform>linux-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/linux/{{artifactFile}}</s3GluonPath>
+                                            <skipSnap>true</skipSnap>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.deb</path>
+                                        <platform>linux-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/linux/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                </artifacts>
+                            </SceneBuilder>
+                            <scenebuilder-kit>
+                                <type>SINGLE_JAR</type>
+                                <artifacts>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.jar</path>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                </artifacts>
+                            </scenebuilder-kit>
+                        </distributions>
+                        <files>
+                            <active>${jreleaser.files.active}</active>
+                            <artifacts>
+                                <artifact>
+                                    <path>target/settings.properties</path>
+                                </artifact>
+                                <artifact>
+                                    <path>target/version.json</path>
+                                </artifact>
+                                <artifact>
+                                    <path>target/version-8.4.0.json</path>
+                                </artifact>
+                            </artifacts>
+                        </files>
+                    </jreleaser>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <organization>
@@ -134,9 +337,9 @@
     </developers>
 
     <scm>
-        <url>https://github.com/gluonhq/scenebuilder</url>
-        <connection>scm:git:git://github.com/gluonhq/scenebuilder.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:gluonhq/scenebuilder.git</developerConnection>
+        <url>${repository.url}</url>
+        <connection>scm:git:${repository.url}.git</connection>
+        <developerConnection>scm:git:${repository.url}.git</developerConnection>
     </scm>
 
     <distributionManagement>
