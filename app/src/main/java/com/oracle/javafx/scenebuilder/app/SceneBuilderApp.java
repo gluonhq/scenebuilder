@@ -153,7 +153,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         });
     }
 
-    public BooleanBinding startupTasksFinishedProperty() {
+    public BooleanBinding startupTasksFinishedBinding() {
         return startupTasksFinished;
     }
 
@@ -254,7 +254,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         final List<File> fxmlFiles = new ArrayList<>();
         fxmlFiles.add(fxmlFile);
-        performOpenFiles(fxmlFiles, source);
+        performOpenFiles(fxmlFiles);
     }
 
     public void documentWindowRequestClose(DocumentWindowController fromWindow) {
@@ -502,14 +502,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            performOpenFiles(fileObjs, null);
+            performOpenFiles(fileObjs);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
                 @Override
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
-                        performOpenFiles(fileObjs, null);
+                        performOpenFiles(fileObjs);
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
                     }
                 }
@@ -589,10 +589,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     /**
      * Opens a multiple-file dialog for loading projects.
      * If any files are selected, calls performOpenFiles() on them.
-     *
-     * @return true if at least one file was selected for loading, false if no file selected
      */
-    public boolean performOpenFile() {
+    private void performOpenFile() {
         final FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"),
@@ -602,11 +600,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (fxmlFiles != null) {
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
-            performOpenFiles(fxmlFiles, null);
-            return true;
+            performOpenFiles(fxmlFiles);
         }
-
-        return false;
     }
 
     public void performNewTemplate(Template template) {
@@ -651,8 +646,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return null;
     }
 
-    private void performOpenFiles(List<File> fxmlFiles,
-                                  DocumentWindowController fromWindow) {
+    private void performOpenFiles(List<File> fxmlFiles) {
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 

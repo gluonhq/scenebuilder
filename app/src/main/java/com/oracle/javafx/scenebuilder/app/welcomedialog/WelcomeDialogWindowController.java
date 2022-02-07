@@ -57,13 +57,12 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
-
-    private StackPane newRoot;
 
     @FXML
     private BorderPane rootPane;
@@ -76,9 +75,11 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
     private VBox masker;
 
+    private StackPane newRoot;
+
     private static WelcomeDialogWindowController instance;
 
-    private SceneBuilderApp sceneBuilderApp;
+    private final SceneBuilderApp sceneBuilderApp;
 
     private WelcomeDialogWindowController() {
         super(WelcomeDialogWindowController.class.getResource("WelcomeWindow.fxml"), //NOI18N
@@ -125,7 +126,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         recentDocuments.getChildren().add(loadingRecentItems);
 
-        new Thread(() -> {
+        var t = new Thread(() -> {
             PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
                     .getSingleton().getRecordGlobal();
             List<String> recentItems = preferencesRecordGlobal.getRecentItems();
@@ -140,6 +141,8 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                     recentDocuments.getChildren().add(noRecentItems);
                 });
             }
+
+            List<Button> recentDocumentButtons = new ArrayList<>();
 
             for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
                 if (recentItems.size() < row + 1) {
@@ -156,11 +159,15 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
                 recentDocument.setTooltip(new Tooltip(recentItem));
 
-                Platform.runLater(() -> {
-                    recentDocuments.getChildren().add(recentDocument);
-                });
+                recentDocumentButtons.add(recentDocument);
             }
-        }, "Recent Items Loading Thread").start();
+
+            Platform.runLater(() -> {
+                recentDocumentButtons.forEach(btn -> recentDocuments.getChildren().add(btn));
+            });
+        }, "Recent Items Loading Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     public static WelcomeDialogWindowController getInstance() {
@@ -172,7 +179,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void fireSelectTemplate(Template template) {
-        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
+        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
             sceneBuilderApp.performNewTemplate(template);
             getStage().hide();
         } else {
@@ -210,7 +217,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void handleOpen(List<String> paths) {
-        if (sceneBuilderApp.startupTasksFinishedProperty().get()) {
+        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
             sceneBuilderApp.handleOpenFilesAction(paths);
             getStage().hide();
         } else {
@@ -230,7 +237,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         rootPane.setDisable(true);
         newRoot.getChildren().add(masker);
 
-        sceneBuilderApp.startupTasksFinishedProperty().addListener((o, old, isFinished) -> {
+        sceneBuilderApp.startupTasksFinishedBinding().addListener((o, old, isFinished) -> {
             if (isFinished) {
                 Platform.runLater(() -> {
                     onEndAction.run();
