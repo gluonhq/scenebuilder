@@ -48,9 +48,6 @@ public class PaintConvertUtil {
     private static final int ROUNDING_FACTOR = 10000;//Use for round to 4 decimal places
 
     public static String convertPaintToCss(Paint fxPaint) {
-        if (fxPaint == null) {
-            return "";
-        }
         if (fxPaint instanceof LinearGradient) {
             LinearGradient paint = (LinearGradient) fxPaint;
             StringBuilder strBuilder = new StringBuilder("linear-gradient(from ")
@@ -78,9 +75,6 @@ public class PaintConvertUtil {
     }
 
     public static String convertPaintToJavaCode(Paint fxPaint) {
-        if (fxPaint == null) {
-            return "";
-        }
         if (fxPaint instanceof LinearGradient) {
             LinearGradient paint = (LinearGradient) fxPaint;
             return "LinearGradient paint = new LinearGradient(" + System.lineSeparator() +
@@ -177,5 +171,4 @@ public class PaintConvertUtil {
             return String.format("#%02x%02x%02x%02x", red, green, blue, alpha);
         }
     }
-
 }

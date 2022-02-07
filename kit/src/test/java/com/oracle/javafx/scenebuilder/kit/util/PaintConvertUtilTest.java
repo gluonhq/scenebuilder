@@ -48,11 +48,9 @@ public class PaintConvertUtilTest {
         Color c1 = Color.rgb(255, 255, 255);
         String css1 = PaintConvertUtil.convertPaintToCss(c1);
         assertEquals("#ffffff", css1);
-
         Color c2 = Color.rgb(108, 178, 225, 0.62);
         String css2 = PaintConvertUtil.convertPaintToCss(c2);
         assertEquals("#6cb2e19e", css2);
-
         //2. convert LinearGradient to css
         LinearGradient lg1 = new LinearGradient(
                 0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE,
@@ -61,7 +59,6 @@ public class PaintConvertUtilTest {
                 new Stop(1.0, new Color(1.0, 0.48, 0.52, 1.0)));
         String cssLg1 = PaintConvertUtil.convertPaintToCss(lg1);
         assertEquals("linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #24d1f2 0.0%, #d691fa 50.0%, #ff7a85 100.0%)", cssLg1);
-
         //3. convert RadialGradient to css
         RadialGradient rg1 = new RadialGradient(
                 0.0, 0.0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE
@@ -69,7 +66,6 @@ public class PaintConvertUtilTest {
                 new Stop(1.0, new Color(0.68, 0.05, 0.93, 1.0)));
         String cssRg1 = PaintConvertUtil.convertPaintToCss(rg1);
         assertEquals("radial-gradient(focus-angle 0.0deg, focus-distance 0.0% , center 50.0% 50.0%, radius 50.0%, #1c85ed 0.0%, #ad0ded 100.0%)", cssRg1);
-
     }
 
     @Test
@@ -78,11 +74,9 @@ public class PaintConvertUtilTest {
         Color c1 = Color.rgb(255, 255, 255, 1.0);
         String code1 = PaintConvertUtil.convertPaintToJavaCode(c1);
         assertEquals("Color paint = new Color(1.0, 1.0, 1.0, 1.0);", code1);
-
         Color c2 = new Color(0.4235, 0.698, 0.8824, 0.62);
         String code2 = PaintConvertUtil.convertPaintToJavaCode(c2);
         assertEquals("Color paint = new Color(0.4235, 0.698, 0.8824, 0.62);", code2);
-
         String newLine = System.lineSeparator();
         //2. convert LinearGradient to java code
         LinearGradient lg1 = new LinearGradient(
@@ -96,7 +90,6 @@ public class PaintConvertUtilTest {
                 "new Stop(0.0, new Color(0.14, 0.82, 0.95, 1.0))," + newLine +
                 "new Stop(0.5, new Color(0.84, 0.57, 0.98, 1.0))," + newLine +
                 "new Stop(1.0, new Color(1.0, 0.48, 0.52, 1.0)));", codeLg1);
-
         //3. convert RadialGradient to java code
         RadialGradient rg1 = new RadialGradient(
                 0.0, 0.0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
