@@ -195,7 +195,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         );
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
 
-        List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(null);
+        List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(getStage());
 
         // no file was selected, so nothing to do
         if (fxmlFiles == null)
