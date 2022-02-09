@@ -31,27 +31,26 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
 public class FXOMLoaderTest {
 
-    private FXOMLoader classUnderTest;
-    
-    @Before
-    public void init() {
+    @BeforeAll
+    public static void init() {
         JfxInitializer.initialize();
     }
-    
+
     @Test
     public void that_LoadException_caused_by_XMLStreamException_is_handled() throws Exception {
         String invalidXmlText = FXOMDocument.readContentFromURL(getClass().getResource("IncompleteXml.fxml"));
@@ -71,8 +70,8 @@ public class FXOMLoaderTest {
             }
         };
 
-        classUnderTest = new FXOMLoader(document, errorHandler);
-        classUnderTest.load(invalidXmlText);
+        FXOMLoader classUnderTest = new FXOMLoader(document, errorHandler);
+        assertDoesNotThrow(()->classUnderTest.load(invalidXmlText));
 
         assertTrue(handledErrors.containsKey(javax.xml.stream.XMLStreamException.class));
         assertTrue(handledErrors.containsKey(javafx.fxml.LoadException.class));

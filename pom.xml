@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
@@ -24,13 +24,13 @@
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>6.1.0</charm.glisten.version>
         <gluon.attach.version>4.0.13</gluon.attach.version>
-        <maven.compiler.release>17</maven.compiler.release>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>sonatype-snapshots</id>
@@ -41,7 +41,37 @@
             <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
-    
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
