@@ -14,6 +14,7 @@
         <main.class.name>com.oracle.javafx.scenebuilder.app.SceneBuilderApp</main.class.name>
         <!-- For about.properties file -->
         <buildDate>${maven.build.timestamp}</buildDate>
+        <java.version>${java.version.app}</java.version>
         <javaVersion>${java.version.app}, ${java.runtime.name}</javaVersion>
         <javafxVersion>${javafx.version}</javafxVersion>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
