@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2016, 2019, Gluon and/or its affiliates.
-  Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2015, Gluon.
+  Copyright (c) 2015, 2022, Gluon and/or its affiliates.
+  Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
   This file is available and licensed under the following license:
@@ -37,18 +37,18 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.ColumnConstraints?>
 
-<GridPane fx:id="vbox" alignment="CENTER" hgap="10" style="-fx-background-color: white;" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="vbox" alignment="CENTER" hgap="10" styleClass="theme-presets" vgap="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.vgrow="NEVER">
       <image>
         <Image preserveRatio="true" smooth="true" url="@../SB_Logo.png" />
       </image>
     </ImageView>
-    <ImageView onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" GridPane.vgrow="NEVER">
+    <ImageView fitHeight="78.0" fitWidth="78.0" onMousePressed="#onMousePressed" pickOnBounds="true" GridPane.columnIndex="0" GridPane.vgrow="NEVER">
       <image>
         <Image preserveRatio="true" smooth="true" url="@scenebuilder-logo.png" />
       </image>

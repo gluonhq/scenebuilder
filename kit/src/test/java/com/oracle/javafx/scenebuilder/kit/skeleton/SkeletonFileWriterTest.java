@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,12 +31,13 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +48,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.FileChooser;
@@ -64,8 +65,8 @@ public class SkeletonFileWriterTest {
     private List<File> filesProposed = new ArrayList<>();
     private List<ExtensionFilter> fileExtensionFilters = new ArrayList<>();
 
-    @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    @TempDir
+    public Path temporaryDirectory;
 
     @Test
     public void that_dafaults_in_public_constructor_are_correct() {
@@ -125,7 +126,7 @@ public class SkeletonFileWriterTest {
          *    
          */
         String fxmlName = "MyCustomView.fxml";
-        File fxml = new File(temporaryDirectory.getRoot().toString(), fxmlName);
+        File fxml = temporaryDirectory.resolve(fxmlName).toFile();
         URL url = fxml.toURI().toURL();
 
         // WHEN
@@ -202,7 +203,7 @@ public class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN
-        File expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.kt");
+        File expectedFile = temporaryDirectory.resolve("MyVeryNewController.kt").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(0));
@@ -225,7 +226,7 @@ public class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN
-        expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.java");
+        expectedFile = temporaryDirectory.resolve("MyVeryNewController.java").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(1));
@@ -246,7 +247,7 @@ public class SkeletonFileWriterTest {
         classUnderTest.run(null, controllerName, language);
 
         // THEN:
-        expectedFile = new File(temporaryDirectory.getRoot().toString(), "MyVeryNewController.kt");
+        expectedFile = temporaryDirectory.resolve("MyVeryNewController.kt").toFile();
 
         assertTrue(expectedFile.exists());
         assertEquals(expectedFile, filesProposed.get(0));
@@ -290,7 +291,7 @@ public class SkeletonFileWriterTest {
     private BiFunction<FileChooser, Stage, File> acceptProposedFile() {
         BiFunction<FileChooser, Stage, File> acceptingFileName = (fc, stage) -> {
             // save the proposed file name
-            File proposedFile = new File(temporaryDirectory.getRoot().toString(), fc.getInitialFileName());
+            File proposedFile = temporaryDirectory.resolve(fc.getInitialFileName()).toFile();
             filesProposed.add(proposedFile);
 
             // remember the extension filer which was selected
