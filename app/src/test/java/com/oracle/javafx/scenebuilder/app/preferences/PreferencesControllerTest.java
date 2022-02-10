@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
@@ -52,7 +52,7 @@ public class PreferencesControllerTest {
     private static Preferences testNode;
     private static PreferencesController classUnderTest;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         testNode = Preferences.userRoot()
                               .node("PREFS_CONTROLLER_TEST")
@@ -63,7 +63,7 @@ public class PreferencesControllerTest {
         classUnderTest = PreferencesController.getSingleton(testNode);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws Exception {
         Preferences.userRoot().node("PREFS_CONTROLLER_TEST").removeNode();
         PrefsHelper.setToNull(PreferencesController.getSingleton(),"singleton");

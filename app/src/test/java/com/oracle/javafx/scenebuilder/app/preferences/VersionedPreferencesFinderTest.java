@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class VersionedPreferencesFinderTest {
 
@@ -47,7 +47,7 @@ public class VersionedPreferencesFinderTest {
     
     private static VersionedPreferencesFinder classUnderTest;
     
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         testNode = Preferences.userRoot()
                               .node("SBTEST")

@@ -39,7 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 
