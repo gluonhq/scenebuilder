@@ -49,7 +49,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -61,11 +60,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
 
     @FXML
-    private BorderPane rootPane;
+    private BorderPane contentPane;
 
     @FXML
     private VBox recentDocuments;
@@ -73,9 +71,11 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     @FXML
     private Button emptyApp;
 
+    @FXML
     private VBox masker;
 
-    private StackPane newRoot;
+    @FXML
+    private ProgressIndicator progress;
 
     private static WelcomeDialogWindowController instance;
 
@@ -229,46 +229,23 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void showMasker(Runnable onEndAction) {
-        // swap roots to allow adding masker if running for the first time
-        if (newRoot == null) {
-            initMasker();
-        }
+        contentPane.setDisable(true);
+        masker.setVisible(true);
 
-        rootPane.setDisable(true);
-        newRoot.getChildren().add(masker);
+        // force progress indicator to render
+        progress.setProgress(-1);
 
         sceneBuilderApp.startupTasksFinishedBinding().addListener((o, old, isFinished) -> {
             if (isFinished) {
                 Platform.runLater(() -> {
                     onEndAction.run();
 
-                    // restore root in case welcome dialog is opened again
-                    rootPane.setDisable(false);
-                    newRoot.getChildren().remove(masker);
+                    // restore state in case welcome dialog is opened again
+                    contentPane.setDisable(false);
+                    masker.setVisible(false);
                 });
             }
         });
-    }
-
-    private void initMasker() {
-        newRoot = new StackPane();
-        newRoot.getStylesheets().setAll(rootPane.getStylesheets());
-
-        var label = new Label();
-        label.getStyleClass().add("progress-label");
-        label.setText(I18N.getString("welcome.loading.label"));
-
-        var progress = new ProgressIndicator();
-        progress.getStyleClass().add("progress");
-
-        masker = new VBox(progress, label);
-        masker.setAlignment(Pos.CENTER);
-
-        getScene().setRoot(newRoot);
-
-        rootPane.prefWidthProperty().bind(getScene().widthProperty());
-        rootPane.prefHeightProperty().bind(getScene().heightProperty());
-        newRoot.getChildren().add(rootPane);
     }
 }
 
