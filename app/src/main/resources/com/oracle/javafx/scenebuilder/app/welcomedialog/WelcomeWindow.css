@@ -77,3 +77,15 @@
     -fx-font-size: 1em;
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
 }
+
+.progress-label {
+    -fx-translate-y: 90;
+    -fx-text-fill: black;
+    -fx-font-size: 1.65em;
+}
+
+.progress {
+    -fx-progress-color: #f68a1f;
+    -fx-scale-x: 3.5;
+    -fx-scale-y: 3.5;
+}
