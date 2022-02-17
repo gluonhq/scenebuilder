@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,31 +32,38 @@
 
 package com.oracle.javafx.scenebuilder.app.welcomedialog;
 
-import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
-import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
+
+    @FXML
+    private BorderPane contentPane;
 
     @FXML
     private VBox recentDocuments;
@@ -64,10 +71,15 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     @FXML
     private Button emptyApp;
 
+    @FXML
+    private VBox masker;
+
+    @FXML
+    private ProgressIndicator progress;
 
     private static WelcomeDialogWindowController instance;
 
-    private SceneBuilderApp sceneBuilderApp;
+    private final SceneBuilderApp sceneBuilderApp;
 
     private WelcomeDialogWindowController() {
         super(WelcomeDialogWindowController.class.getResource("WelcomeWindow.fxml"), //NOI18N
@@ -76,7 +88,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         sceneBuilderApp = SceneBuilderApp.getSingleton();
     }
-
 
     @Override
     public void onCloseRequest(WindowEvent event) {
@@ -101,36 +112,62 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         super.controllerDidLoadFxml();
         assert recentDocuments != null;
 
-        PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
-                .getSingleton().getRecordGlobal();
-        List<String> recentItems = preferencesRecordGlobal.getRecentItems();
-        if (recentItems.size() == 0) {
-            Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
-            noRecentItems.getStyleClass().add("no-recent-items-label");
-            recentDocuments.getChildren().add(noRecentItems);
-        }
-        for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
-            if (recentItems.size() < row + 1) {
-                break;
-            }
-
-            String recentItem = recentItems.get(row);
-            File recentItemFile = new File(recentItems.get(row));
-            String recentItemTitle = recentItemFile.getName();
-            Button recentDocument = new Button(recentItemTitle);
-            recentDocument.getStyleClass().add("recent-document");
-            recentDocument.setMaxWidth(Double.MAX_VALUE);
-            recentDocument.setAlignment(Pos.BASELINE_LEFT);
-            recentDocuments.getChildren().add(recentDocument);
-
-            recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
-            recentDocument.setTooltip(new Tooltip(recentItem));
-        }
+        loadAndPopulateRecentItemsInBackground();
 
         emptyApp.setUserData(Template.EMPTY_APP);
 
-        setOnTemplateChosen(sceneBuilderApp::performNewTemplate);
+        setOnTemplateChosen(this::fireSelectTemplate);
         setupTemplateButtonHandlers();
+    }
+
+    private void loadAndPopulateRecentItemsInBackground() {
+        Label loadingRecentItems = new Label(I18N.getString("welcome.recent.items.loading"));
+        loadingRecentItems.getStyleClass().add("no-recent-items-label");
+
+        recentDocuments.getChildren().add(loadingRecentItems);
+
+        var t = new Thread(() -> {
+            PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
+                    .getSingleton().getRecordGlobal();
+            List<String> recentItems = preferencesRecordGlobal.getRecentItems();
+
+            Platform.runLater(() -> recentDocuments.getChildren().clear());
+
+            if (recentItems.size() == 0) {
+                Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
+                noRecentItems.getStyleClass().add("no-recent-items-label");
+
+                Platform.runLater(() -> {
+                    recentDocuments.getChildren().add(noRecentItems);
+                });
+            }
+
+            List<Button> recentDocumentButtons = new ArrayList<>();
+
+            for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
+                if (recentItems.size() < row + 1) {
+                    break;
+                }
+
+                String recentItem = recentItems.get(row);
+                File recentItemFile = new File(recentItems.get(row));
+                String recentItemTitle = recentItemFile.getName();
+                Button recentDocument = new Button(recentItemTitle);
+                recentDocument.getStyleClass().add("recent-document");
+                recentDocument.setMaxWidth(Double.MAX_VALUE);
+                recentDocument.setAlignment(Pos.BASELINE_LEFT);
+                recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
+                recentDocument.setTooltip(new Tooltip(recentItem));
+
+                recentDocumentButtons.add(recentDocument);
+            }
+
+            Platform.runLater(() -> {
+                recentDocumentButtons.forEach(btn -> recentDocuments.getChildren().add(btn));
+            });
+        }, "Recent Items Loading Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     public static WelcomeDialogWindowController getInstance() {
@@ -141,17 +178,74 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         return instance;
     }
 
+    private void fireSelectTemplate(Template template) {
+        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
+            sceneBuilderApp.performNewTemplate(template);
+            getStage().hide();
+        } else {
+            showMasker(() -> {
+                sceneBuilderApp.performNewTemplate(template);
+                getStage().hide();
+            });
+        }
+    }
+
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
-        sceneBuilderApp.handleOpenFilesAction(Arrays.asList(projectPath));
-        getStage().hide();
+        handleOpen(List.of(projectPath));
     }
 
     @FXML
     private void openDocument() {
-        // Right now there is only one window open by default
-        DocumentWindowController documentWC = sceneBuilderApp.getDocumentWindowControllers().get(0);
-        sceneBuilderApp.performControlAction(SceneBuilderApp.ApplicationControlAction.OPEN_FILE, documentWC);
-        getStage().hide();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"), "*.fxml")
+        );
+        fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
+
+        List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(getStage());
+
+        // no file was selected, so nothing to do
+        if (fxmlFiles == null)
+            return;
+
+        List<String> paths = fxmlFiles
+                .stream()
+                .map(File::toString)
+                .collect(Collectors.toList());
+
+        handleOpen(paths);
+    }
+
+    private void handleOpen(List<String> paths) {
+        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
+            sceneBuilderApp.handleOpenFilesAction(paths);
+            getStage().hide();
+        } else {
+            showMasker(() -> {
+                sceneBuilderApp.handleOpenFilesAction(paths);
+                getStage().hide();
+            });
+        }
+    }
+
+    private void showMasker(Runnable onEndAction) {
+        contentPane.setDisable(true);
+        masker.setVisible(true);
+
+        // force progress indicator to render
+        progress.setProgress(-1);
+
+        sceneBuilderApp.startupTasksFinishedBinding().addListener((o, old, isFinished) -> {
+            if (isFinished) {
+                Platform.runLater(() -> {
+                    onEndAction.run();
+
+                    // restore state in case welcome dialog is opened again
+                    contentPane.setDisable(false);
+                    masker.setVisible(false);
+                });
+            }
+        });
     }
 }
 
