@@ -113,7 +113,7 @@
 
 .templates-pane .scroll-bar .track {
     -fx-background-color: transparent;
-	-fx-border-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .templates-pane .scroll-bar .track-background {
@@ -132,13 +132,13 @@
 
 .templates-pane .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
     -fx-background-color:transparent;
-	-fx-padding:0 12.5 0 0;
+    -fx-padding:0 12.5 0 0;
 }
 
 .templates-pane .scroll-bar .increment-arrow,
 .templates-pane .scroll-bar .decrement-arrow {
-	-fx-shape: " ";
-	-fx-padding:0;
+    -fx-shape: " ";
+    -fx-padding:0;
 }
 
 #templateContainer {
