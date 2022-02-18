@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2022, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -32,36 +31,25 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library;
 
-import java.util.Comparator;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import org.junit.jupiter.api.Test;
 
-/**
- * A collection of [LibraryItem].
- */
-public abstract class Library {
-    
-    private final ObservableList<LibraryItem> itemsProperty = FXCollections.observableArrayList();
-    private final ObjectProperty<ClassLoader> classLoaderProperty = new SimpleObjectProperty<>();
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-    public ObservableList<LibraryItem> getItems() {
-        return itemsProperty;
-    }
-    
-    public ReadOnlyProperty<ClassLoader> classLoaderProperty() {
-        return classLoaderProperty;
-    }
+public class BuiltinLibraryTest {
 
-    public ClassLoader getClassLoader() {
-        return classLoaderProperty.getValue();
-    }
+    @Test
+    public void builtin_lib_has_default_items() {
+        var lib = BuiltinLibrary.getLibrary();
 
-    protected void setClassLoader(ClassLoader loader) {
-        classLoaderProperty.set(loader);
+        assertNull(lib.getClassLoader());
+        assertFalse(lib.getItems().isEmpty());
+
+        for (var item : lib.getItems()) {
+            assertThat(item.getLibrary()).isEqualTo(lib);
+            assertFalse(item.getName().isEmpty());
+            assertFalse(item.getSection().isEmpty());
+            assertFalse(item.getFxmlText().isEmpty());
+        }
     }
-    
-    public abstract Comparator<String> getSectionComparator();
 }

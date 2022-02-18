@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2020, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -403,7 +403,7 @@ public class BuiltinLibrary extends Library {
     private void addItem(String name, String fxmlText, String section, String iconName) {
         final URL iconURL = ImageUtils.getNodeIconURL(iconName + ".png"); //NOI18N
         final LibraryItem item = new LibraryItem(name, section, fxmlText, iconURL, this);
-        itemsProperty.add(item);
+        getItems().add(item);
     }
     
     
