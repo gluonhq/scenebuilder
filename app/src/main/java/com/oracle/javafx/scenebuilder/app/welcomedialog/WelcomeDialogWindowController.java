@@ -173,7 +173,10 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     public static WelcomeDialogWindowController getInstance() {
         if (instance == null){
             instance = new WelcomeDialogWindowController();
-            AppSettings.setWindowIcon((Stage)instance.getStage());
+            var stage = instance.getStage();
+            stage.setMinWidth(800);
+            stage.setMinHeight(650);
+            AppSettings.setWindowIcon(stage);
         }
         return instance;
     }
