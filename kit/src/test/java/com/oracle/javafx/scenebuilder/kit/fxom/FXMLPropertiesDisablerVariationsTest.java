@@ -31,64 +31,40 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 
-@RunWith(Parameterized.class)
 public class FXMLPropertiesDisablerVariationsTest {
 
-    @Parameters(name = "{index}: fxml({0})={1}")
-    public static List<String[]> data() {
-        return Arrays.asList(new String[][] { 
-                 { "1", "MAC", "<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  "
-                             + "useSystemMenuBar=\"true\">", 
-                             "<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  "
-                           + "useSystemMenuBar=\"false\">"}, 
-                 
-                 { "2", "MAC","<MenuBar useSystemMenuBar=\t\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\""
-                             + " otherProperty=\"true\">",
-                             "<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\""
-                             + " otherProperty=\"true\">"},
-                 
-                 { "3", "MAC","<MenuBar useSystemMenuBar=\"true\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">",
-                              "<MenuBar useSystemMenuBar=\"false\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"}, 
-                 
-                 { "4", "MAC","<MenuBar  useSystemMenuBar  =  \"true\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">",
-                              "<MenuBar  useSystemMenuBar=\"false\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"},
-                 
-                 { "5", "WINDOWS","<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">",
-                                  "<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">"},
-                 
-                 { "6", "LINUX",  "<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">",
-                                  "<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">"},
-           });
-    }
+    @ParameterizedTest
+    @CsvSource({
+        "1, MAC, <MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"true\">,"
+              + "<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"false\">",
 
-    private String id;
-    private OS os;
-    private String input;
-    private String expected;
+        "2, MAC, <MenuBar useSystemMenuBar=\t\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"true\">,"
+              + "<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"false\">",
 
-    public FXMLPropertiesDisablerVariationsTest(String id, String osName, String input, String expected) {
-        this.id = id;
-        this.input = input;
-        this.expected = expected;
-        this.os = OS.valueOf(osName);
-    }
-    
-    @Test
-    public void that_property_is_disabled_when_required() {
+        "3, MAC, <MenuBar useSystemMenuBar=\"true\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"true\">,"
+              + "<MenuBar useSystemMenuBar=\"false\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\"  useSystemMenuBar=\"false\">",
+
+        "4, MAC, <MenuBar  useSystemMenuBar  =  \"true\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">,"
+              + "<MenuBar  useSystemMenuBar=\"false\"\\t VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">",
+
+        "5, WINDOWS, <MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">,"
+                  + "<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">",
+
+        "6, LINUX,   <MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">,"
+                  + "<MenuBar    useSystemMenuBar  =  \"true\"\\t fx:id=\"theMenuBar\">",
+    })
+    public void that_property_is_disabled_when_required(String id, String osName, String input, String expected) {
+        OS os = OS.valueOf(osName);        
         FXMLPropertiesDisabler classUnderTest = new FXMLPropertiesDisabler(os);
         String modified = classUnderTest.disableProperties(input);
-        assertEquals(id, expected, modified);
+        assertEquals(expected, modified, id);
     }
+
 }

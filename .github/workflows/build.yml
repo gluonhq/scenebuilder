@@ -1,11 +1,6 @@
-name: Scene Builder Verify
+name: Scene Builder PR Verify
 on:
-  push:
-    branches:
-      - master
   pull_request:
-    branches:
-      - master
 
 jobs:
   verify:
@@ -19,7 +14,6 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install xvfb tigervnc-standalone-server tigervnc-common
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -39,15 +33,7 @@ jobs:
           vncserver :90 -localhost -nolisten tcp
           mvn clean verify checkstyle:checkstyle --no-transfer-progress -X
           vncserver -kill :90
-
       - name: Run Tests (MacOS / Windows)
         if: runner.os != 'Linux'
         run: |
           mvn clean verify checkstyle:checkstyle --no-transfer-progress
-
-      - name: Draft release
-        if: github.ref == 'refs/heads/master'
-        # Drafts your next Release notes as Pull Requests are merged into "master"
-        uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

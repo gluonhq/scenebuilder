@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,27 +31,23 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonSettings.LANGUAGE;
 
 public class SkeletonFileNameProposalTest {
 
     private SkeletonFileNameProposal classUnderTest;
-
-    @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
     @Test
     public void that_default_java_file_is_created_on_new_documents() {
@@ -107,11 +103,11 @@ public class SkeletonFileNameProposalTest {
     }
 
     @Test
-    public void that_fxmlLocation_in_resources_dir_is_changed_to_kotlin_specific_directory() throws Exception {
+    public void that_fxmlLocation_in_resources_dir_is_changed_to_kotlin_specific_directory(@TempDir Path temporaryDirectory) throws Exception {
 
         String sourceFolder = "com/oracle/javafx/scenebuilder/kit/skeleton";
-        Path resourcesDir = temporaryDirectory.getRoot().toPath().resolve("src/main/resources").resolve(sourceFolder);
-        Path kotlinDir = temporaryDirectory.getRoot().toPath().resolve("src/main/kotlin").resolve(sourceFolder);
+        Path resourcesDir = temporaryDirectory.resolve("src/main/resources").resolve(sourceFolder);
+        Path kotlinDir = temporaryDirectory.resolve("src/main/kotlin").resolve(sourceFolder);
 
         Files.createDirectories(resourcesDir);
         Files.createDirectories(kotlinDir);
@@ -158,10 +154,10 @@ public class SkeletonFileNameProposalTest {
     }
 
     @Test
-    public void that_fxmllocation_is_used_when_language_specific_resource_dir_not_exists() throws Exception {
-        File resourcesDir = new File(temporaryDirectory.getRoot(), "src/main/resources");
-        File javaDir = new File(temporaryDirectory.getRoot(), "src/main/java");
-        File kotlinDir = new File(temporaryDirectory.getRoot(), "src/main/kotlin");
+    public void that_fxmllocation_is_used_when_language_specific_resource_dir_not_exists(@TempDir Path temporaryDirectory) throws Exception {
+        File resourcesDir = temporaryDirectory.resolve("src/main/resources").toFile();
+        File javaDir = temporaryDirectory.resolve("src/main/java").toFile();
+        File kotlinDir = temporaryDirectory.resolve("src/main/kotlin").toFile();
         URL fxmlLocation = new File(resourcesDir.toString(), "SkeletonWindow.fxml").toURI().toURL();
 
         Files.createDirectories(javaDir.toPath());

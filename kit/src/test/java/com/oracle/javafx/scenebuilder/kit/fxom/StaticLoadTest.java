@@ -37,9 +37,9 @@ import java.net.URL;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
-import static org.junit.Assert.assertFalse;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link com.oracle.javafx.scenebuilder.kit.util.Deprecation#setStaticLoad(javafx.fxml.FXMLLoader, boolean) }
@@ -48,7 +48,7 @@ public class StaticLoadTest {
     
     private boolean thrown;
     
-    @BeforeClass
+    @BeforeAll
     public static void initJFX() {
         JfxInitializer.initialize();
     }

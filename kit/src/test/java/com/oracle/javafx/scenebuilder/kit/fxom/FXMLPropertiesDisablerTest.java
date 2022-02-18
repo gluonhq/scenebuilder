@@ -31,12 +31,12 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 
@@ -48,8 +48,8 @@ public class FXMLPropertiesDisablerTest {
     public void that_property_value_is_set_to_false_on_MacOS() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.MAC);
         String fxmlText = readResourceText("ContainerWithMenuSystemMenuBarEnabled.fxml");
-        assertTrue("ensures that test resource is correct",
-                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        assertTrue(fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"),
+                "ensures that test resource is correct");
         String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
         assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"false\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
@@ -58,8 +58,8 @@ public class FXMLPropertiesDisablerTest {
     public void that_property_value_is_not_modified_on_Windows() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.WINDOWS);
         String fxmlText = readResourceText("ContainerWithMenuSystemMenuBarEnabled.fxml");
-        assertTrue("ensures that test resource is correct",
-                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        assertTrue(fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"),
+                "ensures that test resource is correct");
         String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
         assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
@@ -68,8 +68,8 @@ public class FXMLPropertiesDisablerTest {
     public void that_property_value_is_not_modified_on_LINUX() throws Exception {
         classUnderTest = new FXMLPropertiesDisabler(OS.LINUX);
         String fxmlText = readResourceText("ContainerWithMenuSystemMenuBarEnabled.fxml");
-        assertTrue("ensures that test resource is correct",
-                fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
+        assertTrue(fxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"),
+                "ensures that test resource is correct");
         String modfiedFxmlText = classUnderTest.disableProperties(fxmlText);
         assertTrue(modfiedFxmlText.contains("<MenuBar useSystemMenuBar=\"true\" VBox.vgrow=\"NEVER\" fx:id=\"theMenuBar\">"));
     }
