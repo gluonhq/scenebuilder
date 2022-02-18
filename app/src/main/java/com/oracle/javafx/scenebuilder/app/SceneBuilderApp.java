@@ -110,7 +110,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         USE_DEFAULT_THEME,
         USE_DARK_THEME,
         SHOW_PREFERENCES,
-        EXIT
+        EXIT,
+        SHOW_WELCOME
     }
 
     private static SceneBuilderApp singleton;
@@ -212,6 +213,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case EXIT:
                 performExit();
                 break;
+
+            case SHOW_WELCOME:
+                WelcomeDialogWindowController.getInstance().getStage().show();
+                break;
         }
     }
 
@@ -226,6 +231,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case OPEN_FILE:
             case SHOW_PREFERENCES:
             case EXIT:
+            case SHOW_WELCOME:
                 result = true;
                 break;
 

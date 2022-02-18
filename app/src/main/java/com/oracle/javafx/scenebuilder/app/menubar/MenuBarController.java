@@ -404,6 +404,8 @@ public class MenuBarController {
     @FXML
     private MenuItem helpMenuItem;
     @FXML
+    private MenuItem showWelcomeItem;
+    @FXML
     private MenuItem aboutMenuItem;
     @FXML
     private MenuItem checkUpdatesMenuItem;
@@ -628,6 +630,7 @@ public class MenuBarController {
         assert preferredPreviewSizeMenuItem != null;
 
         assert helpMenuItem != null;
+        assert showWelcomeItem != null;
         assert aboutMenuItem != null;
         assert checkUpdatesMenuItem != null;
         assert registerMenuItem != null;
@@ -1137,6 +1140,7 @@ public class MenuBarController {
         aboutMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.ABOUT));
         helpMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP));
         helpMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F1));
+        showWelcomeItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.SHOW_WELCOME));
         checkUpdatesMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.CHECK_UPDATES));
         registerMenuItem.setUserData(new ApplicationControlActionController(ApplicationControlAction.REGISTER));
         gettingStartedMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.HELP_OPEN_GETTING_STARTED_GUIDE));
