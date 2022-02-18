@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -31,23 +31,23 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.colorpicker;
 
+import com.oracle.javafx.scenebuilder.kit.util.PaintConvertUtil;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.Mode;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPickerController;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPicker;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPickerStop;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ScrollPane;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -57,6 +57,10 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.shape.Circle;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller class for the color part of the paint editor.
@@ -95,6 +99,12 @@ public class ColorPicker extends VBox {
     private TextField alpha_textfield;
     @FXML
     private TextField hexa_textfield;
+    @FXML
+    private ComboBox<String> paintCombobox;
+    @FXML
+    private Button copyPaintButton;
+    private static final String JAVA_CODE = "Java Code";
+    private static final String CSS_CODE = "CSS Code";
 
     private final PaintPickerController paintPickerController;
     private boolean updating = false;
@@ -242,6 +252,9 @@ public class ColorPicker extends VBox {
         picker_region.pressedProperty().addListener(liveUpdateListener);
         hue_slider.pressedProperty().addListener(liveUpdateListener);
         alpha_slider.pressedProperty().addListener(liveUpdateListener);
+        // paint combobox add values
+        paintCombobox.getItems().setAll(CSS_CODE, JAVA_CODE);
+        paintCombobox.getSelectionModel().select(0);
     }
 
     /**
@@ -434,9 +447,9 @@ public class ColorPicker extends VBox {
         alpha = PaintPickerController.clamp(0, alpha, 1);
         // make an rgb color from the hsb
         final Color color = Color.hsb(hue, saturation, brightness, alpha);
-        int red   = (int) Math.round(color.getRed() * 255);
+        int red = (int) Math.round(color.getRed() * 255);
         int green = (int) Math.round(color.getGreen() * 255);
-        int blue  = (int) Math.round(color.getBlue() * 255);
+        int blue = (int) Math.round(color.getBlue() * 255);
         final String hexa = String.format("#%02x%02x%02x", red, green, blue); //NOI18N
 
         // Set TextFields value
@@ -459,7 +472,7 @@ public class ColorPicker extends VBox {
         sb.append("%, "); //NOI18N
         sb.append(brightness * 100);
         sb.append("%, "); //NOI18N
-        sb.append(alpha);
+        sb.append(alpha_rounded);//Fix #503
         sb.append(")"); //NOI18N
         final String hsbCssValue = sb.toString();
         final String chipStyle = "-fx-background-color: " + hsbCssValue; //NOI18N
@@ -537,5 +550,22 @@ public class ColorPicker extends VBox {
         assert color != null;
         updateUI(color);
         hexa_textfield.selectAll();
+    }
+
+    @FXML
+    void onActionCopyPaint(ActionEvent event) {
+        String item = paintCombobox.getSelectionModel().getSelectedItem();
+        String paintStr;
+        Paint paint = paintPickerController.getPaintProperty();
+        if (JAVA_CODE.equals(item)) {
+            paintStr = PaintConvertUtil.convertPaintToJavaCode(paint);
+        } else { //CSS_CODE.equals(item);
+            paintStr = PaintConvertUtil.convertPaintToCss(paint);
+        }
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(paintStr);
+        clipboard.setContent(content);
+        event.consume();
     }
 }
