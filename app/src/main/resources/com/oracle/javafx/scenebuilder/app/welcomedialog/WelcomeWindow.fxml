@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Copyright (c) 2017, Gluon and/or its affiliates.
+    Copyright (c) 2017, 2022, Gluon and/or its affiliates.
     All rights reserved. Use is subject to license terms.
 
     This file is available and licensed under the following license:
@@ -37,8 +37,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -72,22 +70,10 @@
                </ScrollPane>
                <VBox prefHeight="98.0" prefWidth="236.0">
                   <children>
-                     <ToggleButton alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" styleClass="action-button" text="%welcome.new.project.label" textFill="WHITE">
-                        <font>
-                           <Font size="16.0" />
-                        </font>
-                        <toggleGroup>
-                           <ToggleGroup fx:id="actions" />
-                        </toggleGroup>
-                     </ToggleButton>
-                     <ToggleButton alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openDocument" styleClass="action-button" text="%welcome.open.project.label" textFill="WHITE" toggleGroup="$actions">
-                        <font>
-                           <Font size="16.0" />
-                        </font>
-                     </ToggleButton>
+                     <Button id="open-project-button" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openDocument" styleClass="action-button" text="%welcome.open.project.label" textFill="WHITE" />
                   </children>
                   <padding>
-                     <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
+                     <Insets top="65.0" />
                   </padding>
                </VBox>
             </children>
