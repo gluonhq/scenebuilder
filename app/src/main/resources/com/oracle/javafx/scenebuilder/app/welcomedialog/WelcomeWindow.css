@@ -35,6 +35,10 @@
     -fx-background-color: #f68a1f;
 }
 
+.top-pane {
+    -fx-background-color: #d67718;
+}
+
 .recent-documents-scrollpane{
     -fx-background-color: transparent;
     -fx-background-insets: 0;
@@ -53,7 +57,7 @@
 .recent-document {
     -fx-text-fill: white;
     -fx-font-size: 1em;
-
+    -fx-cursor: hand;
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
 }
 
@@ -97,6 +101,7 @@
     -fx-text-fill: white;
     -fx-border-radius: 0;
     -fx-background-radius: 0;
+    -fx-cursor: hand;
 }
 
 #open-project-button:hover {
@@ -143,4 +148,10 @@
 
 #templateContainer {
     -fx-background-color: rgb(254, 254, 254);
+}
+
+.template {
+    -fx-font-size: 14px;
+    -fx-text-fill: #735405;
+    -fx-cursor: hand;
 }
