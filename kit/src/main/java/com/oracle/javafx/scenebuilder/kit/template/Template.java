@@ -32,9 +32,6 @@
 
 package com.oracle.javafx.scenebuilder.kit.template;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-
 import java.net.URL;
 
 import static com.oracle.javafx.scenebuilder.kit.template.Type.DESKTOP;
@@ -42,7 +39,7 @@ import static com.oracle.javafx.scenebuilder.kit.template.Type.PHONE;
 
 public enum Template {
 
-    EMPTY_APP(DESKTOP, null),
+    EMPTY_APP(DESKTOP, "EmptyApplication.fxml"),
     BASIC_DESKTOP_APP (DESKTOP, "BasicDesktopApplication.fxml"),
     COMPLEX_DESKTOP_APP (DESKTOP, "ComplexDesktopApplication.fxml"),
     EMPTY_PHONE_APP (PHONE, "EmptyPhoneApplication.fxml"),
@@ -60,22 +57,7 @@ public enum Template {
         return type;
     }
 
-    public String getFXMLFileName() {
-        return fxmlFileName;
-    }
-
     public URL getFXMLURL() {
-        final String name = getFXMLFileName();
-        if (name == null) {
-            return null;
-        }
-        return Template.class.getResource(name);
-    }
-
-    public static void prepareDocument(EditorController editorController, Template template) {
-        if (template.getType() == Type.PHONE) {
-            editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
-            editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
-        }
+        return Template.class.getResource(fxmlFileName);
     }
 }
