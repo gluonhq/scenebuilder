@@ -29,6 +29,7 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
+        <jreleaser.previousTagName>17.0.0</jreleaser.previousTagName>
     </properties>
 
     <repositories>
@@ -195,6 +196,9 @@
                             <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
                             <longDescription>${project.description}</longDescription>
                             <tags>javafx,gui,tool</tags>
+                            <snapshot>
+                                <fullChangelog>true</fullChangelog>
+                            </snapshot>
                         </project>
                         <checksum>
                             <files>false</files>
@@ -203,6 +207,7 @@
                             <github>
                                 <branch>master</branch>
                                 <tagName>{{projectVersion}}</tagName>
+                                <previousTagName>${jreleaser.previousTagName}</previousTagName>
                                 <files>false</files>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
