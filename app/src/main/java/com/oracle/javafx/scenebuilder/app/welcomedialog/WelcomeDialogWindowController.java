@@ -117,7 +117,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         setOnTemplateChosen(this::fireSelectTemplate);
         setupTemplateButtonHandlers();
-        setupTemplateTooltips();
     }
 
     private void loadAndPopulateRecentItemsInBackground() {
@@ -168,14 +167,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         }, "Recent Items Loading Thread");
         t.setDaemon(true);
         t.start();
-    }
-
-    private void setupTemplateTooltips() {
-        Tooltip.install(emptyApp, new Tooltip(I18N.getString("template.description.new.empty.app")));
-        Tooltip.install(basicDesktopApp, new Tooltip(I18N.getString("template.description.new.basic.desktop.app")));
-        Tooltip.install(complexDesktopApp, new Tooltip(I18N.getString("template.description.new.complex.desktop.app")));
-        Tooltip.install(emptyPhoneApp, new Tooltip(I18N.getString("template.description.new.empty.phone.app")));
-        Tooltip.install(basicPhoneApp, new Tooltip(I18N.getString("template.description.new.basic.phone.app")));
     }
 
     public static WelcomeDialogWindowController getInstance() {

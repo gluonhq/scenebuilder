@@ -87,29 +87,10 @@
                      </Label>
                   </children>
                </StackPane>
-               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="templates-pane" VBox.vgrow="ALWAYS">
+               <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="templates-pane" VBox.vgrow="ALWAYS">
                   <content>
                      <VBox fx:id="templateContainer" spacing="30.0">
                         <children>
-                           <FlowPane>
-                              <children>
-                                 <Button fx:id="emptyApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.empty.app">
-                                    <graphic>
-                                       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="160.0" stroke="#ffffff00" strokeType="INSIDE" width="256.0">
-                                          <effect>
-                                             <DropShadow color="#0000004d" />
-                                          </effect>
-                                       </Rectangle>
-                                    </graphic>
-                                    <padding>
-                                       <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                 </Button>
-                              </children>
-                              <VBox.margin>
-                                 <Insets left="-15.0" />
-                              </VBox.margin>
-                           </FlowPane>
                            <Label text="%template.title.header.desktop" textFill="#f68a1f">
                               <font>
                                  <Font size="30.0" />
@@ -117,36 +98,74 @@
                            </Label>
                            <FlowPane hgap="70.0" prefHeight="215.0" vgap="20.0">
                               <children>
-                                 <Button fx:id="basicDesktopApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.basic.desktop.app">
-                                    <graphic>
-                                       <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                             <Image url="@/com/oracle/javafx/scenebuilder/kit/template/basic_desktop.png" />
-                                          </image>
-                                          <effect>
-                                             <DropShadow color="#0000004d" />
-                                          </effect>
-                                       </ImageView>
-                                    </graphic>
-                                    <padding>
-                                       <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                 </Button>
-                                 <Button fx:id="complexDesktopApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.complex.desktop.app">
-                                    <graphic>
-                                       <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                             <Image url="@/com/oracle/javafx/scenebuilder/kit/template/complex_desktop.png" />
-                                          </image>
-                                          <effect>
-                                             <DropShadow color="#0000004d" />
-                                          </effect>
-                                       </ImageView>
-                                    </graphic>
-                                    <padding>
-                                       <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                 </Button>
+                                 <VBox alignment="TOP_CENTER">
+                                    <children>
+                                       <Button fx:id="emptyApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.empty.app">
+                                          <graphic>
+                                             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="160.0" stroke="#ffffff00" strokeType="INSIDE" width="256.0">
+                                                <effect>
+                                                   <DropShadow color="#0000004d" />
+                                                </effect>
+                                             </Rectangle>
+                                          </graphic>
+                                          <padding>
+                                             <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                                          </padding>
+                                       </Button>
+                                       <Label text="%template.description.new.empty.app" wrapText="true">
+                                          <padding>
+                                             <Insets bottom="20.0" top="-5.0" />
+                                          </padding></Label>
+                                    </children>
+                                 </VBox>
+                                 <VBox alignment="TOP_CENTER">
+                                    <children>
+                                       <Button fx:id="basicDesktopApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.basic.desktop.app">
+                                          <graphic>
+                                             <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                   <Image url="@/com/oracle/javafx/scenebuilder/kit/template/basic_desktop.png" />
+                                                </image>
+                                                <effect>
+                                                   <DropShadow color="#0000004d" />
+                                                </effect>
+                                             </ImageView>
+                                          </graphic>
+                                          <padding>
+                                             <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                                          </padding>
+                                       </Button>
+                                       <Label text="%template.description.new.basic.desktop.app" wrapText="true">
+                                          <padding>
+                                             <Insets bottom="20.0" top="-5.0" />
+                                          </padding>
+                                       </Label>
+                                    </children>
+                                 </VBox>
+                                 <VBox alignment="TOP_CENTER">
+                                    <children>
+                                       <Button fx:id="complexDesktopApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.complex.desktop.app">
+                                          <graphic>
+                                             <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                   <Image url="@/com/oracle/javafx/scenebuilder/kit/template/complex_desktop.png" />
+                                                </image>
+                                                <effect>
+                                                   <DropShadow color="#0000004d" />
+                                                </effect>
+                                             </ImageView>
+                                          </graphic>
+                                          <padding>
+                                             <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                                          </padding>
+                                       </Button>
+                                       <Label text="%template.description.new.complex.desktop.app" wrapText="true">
+                                          <padding>
+                                             <Insets bottom="20.0" top="-5.0" />
+                                          </padding>
+                                       </Label>
+                                    </children>
+                                 </VBox>
                               </children>
                               <padding>
                                  <Insets left="-15.0" />
@@ -159,33 +178,51 @@
                            </Label>
                            <FlowPane hgap="115.0" prefHeight="200.0" prefWidth="200.0" vgap="20.0">
                               <children>
-                                 <Button fx:id="emptyPhoneApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.empty.phone.app">
-                                    <graphic>
-                                       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="198.0" stroke="#ffffff00" strokeType="INSIDE" width="111.0">
-                                          <effect>
-                                             <DropShadow color="#0000004d" />
-                                          </effect>
-                                       </Rectangle>
-                                    </graphic>
-                                    <padding>
-                                       <Insets bottom="10.0" left="13.0" right="13.0" top="13.0" />
-                                    </padding>
-                                 </Button>
-                                 <Button fx:id="basicPhoneApp" contentDisplay="TOP" graphicTextGap="30.0" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.basic.phone.app">
-                                    <graphic>
-                                       <ImageView fitHeight="198.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                             <Image url="@/com/oracle/javafx/scenebuilder/kit/template/basic_mobile.png" />
-                                          </image>
-                                          <effect>
-                                             <DropShadow color="#0000004d" />
-                                          </effect>
-                                       </ImageView>
-                                    </graphic>
-                                    <padding>
-                                       <Insets bottom="10.0" left="13.0" right="13.0" top="13.0" />
-                                    </padding>
-                                 </Button>
+                                 <VBox alignment="TOP_CENTER">
+                                    <children>
+                                       <Button fx:id="emptyPhoneApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.empty.phone.app">
+                                          <graphic>
+                                             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="198.0" stroke="#ffffff00" strokeType="INSIDE" width="111.0">
+                                                <effect>
+                                                   <DropShadow color="#0000004d" />
+                                                </effect>
+                                             </Rectangle>
+                                          </graphic>
+                                          <padding>
+                                             <Insets bottom="10.0" left="13.0" right="13.0" top="13.0" />
+                                          </padding>
+                                       </Button>
+                                       <Label text="%template.description.new.empty.phone.app" wrapText="true">
+                                          <padding>
+                                             <Insets bottom="20.0" top="-5.0" />
+                                          </padding>
+                                       </Label>
+                                    </children>
+                                 </VBox>
+                                 <VBox alignment="TOP_CENTER">
+                                    <children>
+                                       <Button fx:id="basicPhoneApp" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" text="%template.title.new.basic.phone.app">
+                                          <graphic>
+                                             <ImageView fitHeight="198.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                   <Image url="@/com/oracle/javafx/scenebuilder/kit/template/basic_mobile.png" />
+                                                </image>
+                                                <effect>
+                                                   <DropShadow color="#0000004d" />
+                                                </effect>
+                                             </ImageView>
+                                          </graphic>
+                                          <padding>
+                                             <Insets bottom="10.0" left="13.0" right="13.0" top="13.0" />
+                                          </padding>
+                                       </Button>
+                                       <Label text="%template.description.new.basic.phone.app" wrapText="true">
+                                          <padding>
+                                             <Insets bottom="20.0" top="-5.0" />
+                                          </padding>
+                                       </Label>
+                                    </children>
+                                 </VBox>
                               </children>
                               <padding>
                                  <Insets left="-13.0" />
