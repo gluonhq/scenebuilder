@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp.ApplicationControlActi
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
@@ -56,6 +57,7 @@ import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +83,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.effect.Effect;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -1171,6 +1175,35 @@ public class MenuBarController {
         insertMenu.setOnMenuValidation(onCustomPartOfInsertMenuValidationHandler);
         
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
+
+        // Add icon that reflects the update status to the checkUpdate menu item.
+        AppSettings.getLatestVersion(latestVersion -> {
+            if (latestVersion != null) {
+                try (
+                    // Icons by Font Awesome (https://fontawesome.com/license/free) under CC BY 4.0 License
+                    InputStream downloadStream = MenuBarController.class.getResourceAsStream("download_icon.png");
+                    InputStream checkStream = MenuBarController.class.getResourceAsStream("check_icon.png");
+                    InputStream warnStream = MenuBarController.class.getResourceAsStream("warn_icon.png");
+                ) {
+                    Image icon;
+                    try {
+                        if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                            icon = new Image(downloadStream);
+                        } else {
+                            icon = new Image(checkStream);
+                        }
+                    } catch (NumberFormatException ex) {
+                        icon = new Image(warnStream);
+                    }
+                    ImageView iconView = new ImageView(icon);
+                    iconView.setFitHeight(16);
+                    iconView.setFitWidth(16);
+                    checkUpdatesMenuItem.setGraphic(iconView);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
