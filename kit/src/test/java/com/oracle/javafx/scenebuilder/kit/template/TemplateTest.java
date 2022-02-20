@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2022, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,38 +29,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.library;
+package com.oracle.javafx.scenebuilder.kit.template;
 
-import java.util.Comparator;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-/**
- * A collection of [LibraryItem].
- */
-public abstract class Library {
-    
-    private final ObservableList<LibraryItem> itemsProperty = FXCollections.observableArrayList();
-    private final ObjectProperty<ClassLoader> classLoaderProperty = new SimpleObjectProperty<>();
+import static org.junit.jupiter.api.Assertions.*;
 
-    public ObservableList<LibraryItem> getItems() {
-        return itemsProperty;
+public class TemplateTest {
+
+    @ParameterizedTest
+    @EnumSource(Template.class)
+    public void template_fields_are_not_null(Template template) {
+        assertNotNull(template.getType());
+        assertNotNull(template.getFXMLURL());
     }
-    
-    public ReadOnlyProperty<ClassLoader> classLoaderProperty() {
-        return classLoaderProperty;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoaderProperty.getValue();
-    }
-
-    protected void setClassLoader(ClassLoader loader) {
-        classLoaderProperty.set(loader);
-    }
-    
-    public abstract Comparator<String> getSectionComparator();
 }
