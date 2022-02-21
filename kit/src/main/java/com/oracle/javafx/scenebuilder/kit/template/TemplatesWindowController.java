@@ -50,10 +50,7 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     @Override
     protected void controllerDidLoadFxml() {
         super.controllerDidLoadFxml();
-
-        setupTemplateButtonHandlers();
     }
-
 
     @Override
     public void onCloseRequest(WindowEvent event) {

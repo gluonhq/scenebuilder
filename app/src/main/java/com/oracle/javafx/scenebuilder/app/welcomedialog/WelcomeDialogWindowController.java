@@ -113,10 +113,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         loadAndPopulateRecentItemsInBackground();
 
-        emptyApp.setUserData(Template.EMPTY_APP);
-
         setOnTemplateChosen(this::fireSelectTemplate);
-        setupTemplateButtonHandlers();
     }
 
     private void loadAndPopulateRecentItemsInBackground() {
