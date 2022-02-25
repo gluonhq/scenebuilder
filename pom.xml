@@ -29,7 +29,6 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
-        <jreleaser.previousTagName>17.0.0</jreleaser.previousTagName>
     </properties>
 
     <repositories>
@@ -207,7 +206,6 @@
                             <github>
                                 <branch>master</branch>
                                 <tagName>{{projectVersion}}</tagName>
-                                <previousTagName>${jreleaser.previousTagName}</previousTagName>
                                 <files>false</files>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
