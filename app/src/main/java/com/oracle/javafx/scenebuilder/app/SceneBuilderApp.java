@@ -225,7 +225,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
             case REGISTER:
-            case CHECK_UPDATES:
             case NEW_FILE:
             case NEW_TEMPLATE:
             case OPEN_FILE:
@@ -233,6 +232,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case EXIT:
             case SHOW_WELCOME:
                 result = true;
+                break;
+
+            case CHECK_UPDATES:
+                result = AppSettings.isUpdateAvailable();
                 break;
 
             case CLOSE_FRONT_WINDOW:

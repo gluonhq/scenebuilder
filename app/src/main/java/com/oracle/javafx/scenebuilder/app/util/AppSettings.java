@@ -64,9 +64,9 @@ public class AppSettings {
 
     private static String sceneBuilderVersion;
     private static String latestVersion;
-
     private static String latestVersionText;
     private static String latestVersionAnnouncementURL;
+    private static boolean isUpdateAvailable = false;
 
     private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
@@ -114,6 +114,10 @@ public class AppSettings {
         return false;
     }
 
+    public static boolean isUpdateAvailable() {
+        return isUpdateAvailable;
+    }
+
     public static void getLatestVersion(Consumer<String> consumer) {
 
         if (latestVersion == null) {
@@ -136,6 +140,13 @@ public class AppSettings {
                     ex.printStackTrace();
                 }
                 latestVersion = onlineVersionNumber;
+
+                try {
+                    isUpdateAvailable = isCurrentVersionLowerThan(latestVersion);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
                 consumer.accept(latestVersion);
             }, "GetLatestVersion").start();
         } else {

@@ -68,6 +68,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -1176,33 +1177,22 @@ public class MenuBarController {
         
         windowMenu.setOnMenuValidation(onWindowMenuValidationHandler);
 
-        // Add icon that reflects the update status to the checkUpdate menu item.
+        // Modify the Check Updates menu item if there is an update available.
+        // Icons by Font Awesome (https://fontawesome.com/license/free) under CC BY 4.0 License
         AppSettings.getLatestVersion(latestVersion -> {
-            if (latestVersion != null) {
-                try (
-                    // Icons by Font Awesome (https://fontawesome.com/license/free) under CC BY 4.0 License
-                    InputStream downloadStream = MenuBarController.class.getResourceAsStream("download_icon.png");
-                    InputStream checkStream = MenuBarController.class.getResourceAsStream("check_icon.png");
-                    InputStream warnStream = MenuBarController.class.getResourceAsStream("warn_icon.png");
-                ) {
-                    Image icon;
-                    try {
-                        if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                            icon = new Image(downloadStream);
-                        } else {
-                            icon = new Image(checkStream);
-                        }
-                    } catch (NumberFormatException ex) {
-                        icon = new Image(warnStream);
-                    }
-                    ImageView iconView = new ImageView(icon);
-                    iconView.setFitHeight(16);
-                    iconView.setFitWidth(16);
-                    checkUpdatesMenuItem.setGraphic(iconView);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            var updateAvailable = AppSettings.isUpdateAvailable();
+            Image icon = new Image(MenuBarController.class
+                    .getResource(updateAvailable ? "download_icon.png" : "check_icon.png")
+                    .toExternalForm());
+            ImageView iconView = new ImageView(icon);
+
+            Platform.runLater(() -> {
+                checkUpdatesMenuItem.setGraphic(iconView);
+                checkUpdatesMenuItem.disableProperty().setValue(!updateAvailable);
+                checkUpdatesMenuItem.setText(updateAvailable
+                        ? I18N.getString("menu.title.check.updates.available")
+                        : I18N.getString("menu.title.check.updates.ok"));
+            });
         });
     }
 
