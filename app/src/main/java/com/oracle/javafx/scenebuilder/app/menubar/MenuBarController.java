@@ -1180,19 +1180,18 @@ public class MenuBarController {
         // Modify the Check Updates menu item if there is an update available.
         // Icons by Font Awesome (https://fontawesome.com/license/free) under CC BY 4.0 License
         AppSettings.getLatestVersion(latestVersion -> {
-            var updateAvailable = AppSettings.isUpdateAvailable();
-            Image icon = new Image(MenuBarController.class
-                    .getResource(updateAvailable ? "download_icon.png" : "check_icon.png")
-                    .toExternalForm());
-            ImageView iconView = new ImageView(icon);
+            if (AppSettings.isUpdateAvailable()) {
+                Image icon = new Image(MenuBarController.class
+                        .getResource("download_icon.png")
+                        .toExternalForm());
+                ImageView iconView = new ImageView(icon);
 
-            Platform.runLater(() -> {
-                checkUpdatesMenuItem.setGraphic(iconView);
-                checkUpdatesMenuItem.disableProperty().setValue(!updateAvailable);
-                checkUpdatesMenuItem.setText(updateAvailable
-                        ? I18N.getString("menu.title.check.updates.available")
-                        : I18N.getString("menu.title.check.updates.ok"));
-            });
+                Platform.runLater(() -> {
+                    checkUpdatesMenuItem.setGraphic(iconView);
+                    checkUpdatesMenuItem.disableProperty().setValue(false);
+                    checkUpdatesMenuItem.setText(I18N.getString("menu.title.check.updates.available"));
+                });
+            }
         });
     }
 
