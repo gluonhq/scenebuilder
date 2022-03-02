@@ -36,37 +36,63 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="templatesRoot" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="750.0" prefWidth="791.0" styleClass="templates-pane" stylesheets="@TemplatesWindow.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <content>
-      <VBox fx:id="templateContainer" prefHeight="747.0" prefWidth="776.0" spacing="30.0">
+<VBox stylesheets="@TemplatesWindow.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" styleClass="template-top-pane">
          <children>
-            <Label text="%template.title.header.desktop" textFill="#f68a1f">
+            <Label text="%template.new.project.label" textFill="white">
                <font>
-                  <Font size="30.0" />
+                  <Font size="18.0" />
                </font>
-            </Label>
-            <FlowPane fx:id="desktopPane" hgap="70.0" prefHeight="215.0" vgap="20.0">
                <padding>
-                  <Insets left="-15.0" />
+                  <Insets left="15.0" />
                </padding>
-            </FlowPane>
-            <Label layoutX="80.0" layoutY="30.0" text="%template.title.header.phone" textFill="#f68a1f">
-               <font>
-                  <Font size="30.0" />
-               </font>
             </Label>
-            <FlowPane fx:id="mobilePane" hgap="115.0" prefHeight="200.0" prefWidth="200.0" vgap="20.0">
-               <padding>
-                  <Insets left="-15.0" />
-               </padding>
-            </FlowPane>
          </children>
-         <padding>
-            <Insets bottom="40.0" left="70.0" top="20.0" />
-         </padding>
-      </VBox>
-   </content>
-</ScrollPane>
+      </StackPane>
+      <ScrollPane fx:id="templatesRoot" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="750.0" prefWidth="791.0" styleClass="templates-pane">
+         <content>
+            <VBox fx:id="templateContainer" prefHeight="747.0" prefWidth="776.0" spacing="30.0">
+               <children>
+                  <Label text="%template.title.header.desktop" textFill="#f68a1f">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <FlowPane fx:id="desktopPane" hgap="70.0" prefHeight="215.0" vgap="20.0">
+                     <padding>
+                        <Insets left="-15.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </FlowPane>
+                  <Label layoutX="80.0" layoutY="30.0" text="%template.title.header.phone" textFill="#f68a1f">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <FlowPane fx:id="mobilePane" hgap="115.0" prefHeight="200.0" prefWidth="200.0" vgap="20.0">
+                     <padding>
+                        <Insets left="-15.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </FlowPane>
+               </children>
+               <padding>
+                  <Insets bottom="40.0" left="70.0" top="20.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

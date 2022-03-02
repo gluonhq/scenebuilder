@@ -35,10 +35,6 @@
     -fx-background-color: #f68a1f;
 }
 
-.top-pane {
-    -fx-background-color: #d67718;
-}
-
 .recent-documents-scrollpane{
     -fx-background-color: transparent;
     -fx-background-insets: 0;

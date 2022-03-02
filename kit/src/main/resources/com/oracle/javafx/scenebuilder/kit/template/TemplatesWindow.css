@@ -38,6 +38,10 @@
     -fx-background-color: white;
 }
 
+.template-top-pane {
+    -fx-background-color: #d67718;
+}
+
 .template {
     -fx-background-color: transparent;
     -fx-background-radius: 0;

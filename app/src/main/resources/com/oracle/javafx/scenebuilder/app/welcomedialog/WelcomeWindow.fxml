@@ -60,7 +60,10 @@
                      <Insets left="10.0" right="5.0" top="15.0" />
                   </padding>
                   <content>
-                     <VBox fx:id="recentDocuments" prefHeight="200.0" prefWidth="100.0" />
+                     <VBox fx:id="recentDocuments" prefHeight="200.0" prefWidth="100.0">
+                        <padding>
+                           <Insets left="10.0" />
+                        </padding></VBox>
                   </content>
                </ScrollPane>
                <Button id="open-project-button" alignment="BASELINE_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openDocument" text="%welcome.open.project.label" textFill="WHITE">
@@ -71,23 +74,7 @@
          </VBox>
       </left>
       <center>
-         <VBox BorderPane.alignment="CENTER">
-            <children>
-               <StackPane alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" styleClass="top-pane">
-                  <children>
-                     <Label text="%welcome.new.project.label" textFill="white">
-                        <font>
-                           <Font size="18.0" />
-                        </font>
-                        <padding>
-                           <Insets left="15.0" />
-                        </padding>
-                     </Label>
-                  </children>
-               </StackPane>
-               <fx:include source="/com/oracle/javafx/scenebuilder/kit/template/TemplatesWindow.fxml" VBox.vgrow="ALWAYS" />
-            </children>
-         </VBox>
+         <fx:include source="/com/oracle/javafx/scenebuilder/kit/template/TemplatesWindow.fxml" />
       </center>
    </BorderPane>
    <VBox fx:id="masker" alignment="CENTER" visible="false">

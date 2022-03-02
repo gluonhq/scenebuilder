@@ -39,7 +39,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox styleClass="template-wrapper" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" styleClass="template-wrapper" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <Button fx:id="button" contentDisplay="TOP" graphicTextGap="30.0" mnemonicParsing="false" styleClass="template" textAlignment="CENTER">
       <graphic>
          <ImageView fitHeight="160.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
@@ -57,4 +57,7 @@
          <Insets bottom="20.0" top="-5.0" />
       </padding>
    </Label>
+   <padding>
+      <Insets left="15.0" right="15.0" />
+   </padding>
 </VBox>
