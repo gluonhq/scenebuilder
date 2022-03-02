@@ -61,6 +61,8 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     protected void controllerDidCreateStage() {
         super.controllerDidCreateStage();
         getStage().setTitle(I18N.getString("template.dialog.title"));
+        getStage().setMinWidth(800);
+        getStage().setMinHeight(650);
 
         if (this.owner == null) {
             // Window will be application modal
