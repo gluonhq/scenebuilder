@@ -53,6 +53,9 @@
                </padding>
             </Label>
          </children>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
       </StackPane>
       <ScrollPane fx:id="templatesRoot" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="750.0" prefWidth="791.0" styleClass="templates-pane">
          <content>
