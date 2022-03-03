@@ -46,6 +46,8 @@ import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowController {
 
@@ -89,8 +91,7 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
             desktopPane = (FlowPane) templatesRoot.getContent().lookup("#desktopPane");
             mobilePane = (FlowPane) templatesRoot.getContent().lookup("#mobilePane");
         } catch (Exception e) {
-            System.out.println("Failed to lookup() [desktopPane] and [mobilePane]: ");
-            e.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to lookup() [desktopPane] and [mobilePane]:", e);
             return;
         }
 
@@ -115,8 +116,7 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
                     mobilePane.getChildren().add(btnRoot);
                 }
             } catch (Exception e) {
-                System.out.println("Failed to load template: " + template);
-                e.printStackTrace();
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to load template: " + template, e);
 
                 // do not rethrow since SB is completely functional without templates
             }
