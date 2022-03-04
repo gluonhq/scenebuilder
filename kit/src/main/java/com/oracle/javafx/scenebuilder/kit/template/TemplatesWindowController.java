@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -50,10 +50,7 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     @Override
     protected void controllerDidLoadFxml() {
         super.controllerDidLoadFxml();
-
-        setupTemplateButtonHandlers();
     }
-
 
     @Override
     public void onCloseRequest(WindowEvent event) {
@@ -64,6 +61,8 @@ public class TemplatesWindowController extends TemplatesBaseWindowController {
     protected void controllerDidCreateStage() {
         super.controllerDidCreateStage();
         getStage().setTitle(I18N.getString("template.dialog.title"));
+        getStage().setMinWidth(750);
+        getStage().setMinHeight(650);
 
         if (this.owner == null) {
             // Window will be application modal

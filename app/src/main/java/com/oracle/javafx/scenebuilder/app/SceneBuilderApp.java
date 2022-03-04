@@ -184,7 +184,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_TEMPLATE:
                 final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
-                templatesWindowController.setOnTemplateChosen(this::performNewTemplateInNewWindow);
+                templatesWindowController.setOnTemplateChosen(template -> {
+                    templatesWindowController.getStage().hide();
+                    performNewTemplateInNewWindow(template);
+                });
                 templatesWindowController.openWindow();
                 break;
 
