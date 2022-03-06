@@ -179,7 +179,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.0.0-M1</version>
+                <version>1.0.0-M3</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
