@@ -35,6 +35,9 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.css;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
@@ -155,8 +158,8 @@ public class CssUtils {
             CssMetaData<Node, Object> raw = (CssMetaData<Node, Object>) sp;
             final StyleableProperty<Object> val = raw.getStyleableProperty(node);
             property = CssInternal.getBeanPropertyName(val);
-        } catch (RuntimeException ex) {
-            System.out.println("Can't retrieve property " + ex); //NOI18N
+        } catch (RuntimeException e) {
+            Logger.getLogger(CssUtils.class.getName()).log(Level.WARNING, "Failed to retrieve property: ", e);
         }
         return property;
     }

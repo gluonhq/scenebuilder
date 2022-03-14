@@ -69,6 +69,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -777,7 +780,7 @@ implements AbstractGesture.Observer {
             inlineEditController.startEditingSession(inlineEditor,
                     inlineEditingBounds, requestCommit, requestRevert);
         } else {
-            System.out.println("Beep");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Inline editing bounds object is null");
         }
         
         assert contentPanelController.getEditorController().isTextEditingSessionOnGoing() 
@@ -825,7 +828,7 @@ implements AbstractGesture.Observer {
                 if (RelocateSelectionJob.isSelectionMovable(contentPanelController.getEditorController())) {
                     activateGesture(new MoveWithKeyGesture(contentPanelController), e);
                 } else {
-                    System.out.println("Selection is not movable");
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Selection is not movable");
                 }
                 e.consume();
                 break;

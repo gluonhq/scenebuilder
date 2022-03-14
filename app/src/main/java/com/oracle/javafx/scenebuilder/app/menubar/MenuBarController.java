@@ -455,8 +455,12 @@ public class MenuBarController {
                 loader.load();
                 controllerDidLoadFxml();
             } catch (RuntimeException | IOException x) {
-                System.out.println("loader.getController()=" + loader.getController()); //NOI18N
-                System.out.println("loader.getLocation()=" + loader.getLocation()); //NOI18N
+                var logMessage = "Failed to load MenuBar.fxml:\n"
+                        + "loader.getController()=" + loader.getController() + "\n"
+                        + "loader.getLocation()=" + loader.getLocation() + ":";
+
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, logMessage, x);
+
                 throw new RuntimeException("Failed to load " + fxmlURL.getFile(), x); //NOI18N
             }
         }
