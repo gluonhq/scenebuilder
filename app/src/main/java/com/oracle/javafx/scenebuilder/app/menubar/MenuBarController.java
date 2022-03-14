@@ -65,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
@@ -1218,7 +1220,8 @@ public class MenuBarController {
                     final Exception xx 
                             = new Exception(c.getClass().getSimpleName() 
                             + ".canPerform() did break for menu item " + i, x); //NOI18N
-                    xx.printStackTrace();
+
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, xx.getMessage(), xx);
                 }
                 disable = !canPerform;
                 title = c.getTitle();

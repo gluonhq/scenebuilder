@@ -50,6 +50,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
@@ -81,8 +83,8 @@ public class AppSettings {
                 sbProps.load(in);
                 sceneBuilderVersion = sbProps.getProperty("build.version", "UNSET");
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            Logger.getLogger(AppSettings.class.getName()).log(Level.WARNING, "Cannot init SB version:", e);
         }
     }
 
@@ -125,15 +127,15 @@ public class AppSettings {
                 try {
                     url = new URL(LATEST_VERSION_CHECK_URL);
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(AppSettings.class.getName()).log(Level.WARNING, "Failed to construct version check URL: ", e);
                 }
 
                 try (InputStream inputStream = url.openStream()) {
                     prop.load(inputStream);
                     onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                } catch (IOException e) {
+                    Logger.getLogger(AppSettings.class.getName()).log(Level.WARNING, "Failed to load latest version number property: ", e);
                 }
                 latestVersion = onlineVersionNumber;
                 consumer.accept(latestVersion);
@@ -160,10 +162,10 @@ public class AppSettings {
                 latestVersionText = announcementObject.getString("text");
                 latestVersionAnnouncementURL = announcementObject.getString("url");
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(AppSettings.class.getName()).log(Level.WARNING, "Failed to read latest version json: ", e);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Logger.getLogger(AppSettings.class.getName()).log(Level.WARNING, "Failed to construct latest version info URL: ", e);
         }
     }
 

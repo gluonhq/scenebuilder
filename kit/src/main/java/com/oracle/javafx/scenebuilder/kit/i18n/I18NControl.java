@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class I18NControl extends ResourceBundle.Control {
     @Override
@@ -17,8 +19,8 @@ public class I18NControl extends ResourceBundle.Control {
              InputStreamReader isr = new InputStreamReader(is, "UTF-8");
              BufferedReader reader = new BufferedReader(isr)) {
             return new PropertyResourceBundle(reader);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to create ResourceBundle: ", e);
             return null;
         }
     }

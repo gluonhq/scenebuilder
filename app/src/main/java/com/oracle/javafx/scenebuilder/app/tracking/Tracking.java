@@ -40,6 +40,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Tracking {
     public static final String SCENEBUILDER_TYPE = "scenebuilder";
@@ -71,10 +73,8 @@ public class Tracking {
                     while (in.read() > -1) {
                     }
                 }
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                Logger.getLogger(Tracking.class.getName()).log(Level.WARNING, "Failed to send tracking info: ", e);
             }
         }, "UserRegistrationThread").start();
     }

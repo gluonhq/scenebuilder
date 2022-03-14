@@ -69,6 +69,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.paint.Color;
@@ -296,7 +298,7 @@ class MetadataIntrospector {
                         }
                     }
                 } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to find method: " + methodName, e);
                 }
             } else {
                 result = null;

@@ -42,6 +42,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class implements an simple IPC.
@@ -121,9 +123,9 @@ public class MessageBox<T extends Serializable> {
         
         try {
             boxMutex.unlock();
-        } catch(IOException x) {
+        } catch(IOException e) {
             // Strange
-            x.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to unlock message box mutex: ", e);
         }
     }
     
