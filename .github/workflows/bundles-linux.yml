@@ -10,11 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '17.0.1'
+        default: '18'
         required: false
         type: string
       javafx-version:
-        default: '17'
+        default: '18'
         required: false
         type: string
       java-distro:

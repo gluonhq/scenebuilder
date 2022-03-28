@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '17-ea'
+          java-version: '18'
 
       - name: Run Tests (Linux)
         if: runner.os == 'Linux'

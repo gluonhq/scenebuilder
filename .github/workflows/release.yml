@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  JAVAFX_VERSION: '17'
-  JAVA_VERSION: '17.0.1'
+  JAVAFX_VERSION: '18'
+  JAVA_VERSION: '18'
   JAVA_DISTRO: 'temurin'
 
 jobs:
