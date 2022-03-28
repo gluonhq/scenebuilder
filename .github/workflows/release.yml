@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  JAVAFX_VERSION: '17'
-  JAVA_VERSION: '17.0.1'
-  JAVA_DISTRO: 'temurin'
+  JAVAFX_VERSION: '18'
+  JAVA_VERSION: '18'
 
 jobs:
   precheck:
@@ -14,7 +13,6 @@ jobs:
     outputs:
       JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
-      JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
       APP_VERSION: ${{ steps.vars.outputs.APP_VERSION }}
       PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
       S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
@@ -23,10 +21,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: oracle-actions/setup-java@v1
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          website: jdk.java.net
+          release: ${{ env.JAVA_VERSION }}
 
       - name: Cache Maven packages
         uses: actions/cache@v2
@@ -57,7 +55,6 @@ jobs:
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
@@ -72,7 +69,6 @@ jobs:
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
@@ -90,7 +86,6 @@ jobs:
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
@@ -100,7 +95,6 @@ jobs:
     uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   release:
@@ -113,10 +107,10 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: oracle-actions/setup-java@v1
         with:
-          java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-          distribution: ${{ needs.precheck.outputs.JAVA_DISTRO }}
+          website: jdk.java.net
+          release: ${{ needs.precheck.outputs.JAVA_VERSION }}
 
       - name: Cache Maven packages
         uses: actions/cache@v2
