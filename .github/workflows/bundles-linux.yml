@@ -17,10 +17,6 @@ on:
         default: '18'
         required: false
         type: string
-      java-distro:
-        default: 'temurin'
-        required: false
-        type: string
       test:
         default: false
         required: false
@@ -41,10 +37,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: oracle-actions/setup-java@v1
         with:
-          distribution: ${{ inputs.java-distro }}
-          java-version: ${{ inputs.java-version }}
+          website: jdk.java.net
+          release: ${{ inputs.java-version }}
 
       - name: Setup JavaFX
         run: |
