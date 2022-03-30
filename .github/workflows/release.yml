@@ -122,13 +122,9 @@ jobs:
       - name: Download all build artifacts
         uses: actions/download-artifact@v2
 
-      - name: Version
+      - name: Set Release Version
         run: |
-          mvn -B -ntp versions:set versions:commit -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }}
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version ${{ needs.precheck.outputs.PROJECT_VERSION }}"
-          git push origin master
+          mvn -B -ntp -q versions:set -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }} -DgenerateBackupPoms=false
 
       - name: Release with JReleaser
         env:
