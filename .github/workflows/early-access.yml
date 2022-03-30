@@ -11,7 +11,7 @@ env:
 jobs:
   precheck:
     runs-on: ubuntu-20.04
-    if: startsWith(github.event.head_commit.message, '[maven-release-plugin]') != true
+    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
     outputs:
       JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}

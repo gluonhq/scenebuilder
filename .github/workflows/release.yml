@@ -119,17 +119,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Maven release
-        id: vars
-        shell: bash
-        run: |
-          mvn -B -ntp \
-            -Drepository.url=https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
-            release:prepare
-          mvn -pl :parent process-resources
-
       - name: Download all build artifacts
         uses: actions/download-artifact@v2
+
+      - name: Version
+        run: |
+          mvn -B -ntp versions:set versions:commit -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }}
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing version ${{ needs.precheck.outputs.PROJECT_VERSION }}"
+          git push origin master
 
       - name: Release with JReleaser
         env:
