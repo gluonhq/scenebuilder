@@ -909,8 +909,9 @@ public class ContentPanelController extends AbstractFxmlPanelController
         final ContextMenuController contextMenuController
                 = getEditorController().getContextMenuController();
         scrollPane.setContextMenu(contextMenuController.getContextMenu());
-        scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            
+        
+        scrollPane.setOnKeyPressed(e -> {
+        	
             if (e.getCode() == KeyCode.ESCAPE) {
                 // on ESC we select the parent of current selected item
                 Selection selection = getEditorController().getSelection();
@@ -920,8 +921,6 @@ public class ContentPanelController extends AbstractFxmlPanelController
                     selection.clear();
                     selection.select(parent);
                 }
-                
-                e.consume();
             }
         });
         

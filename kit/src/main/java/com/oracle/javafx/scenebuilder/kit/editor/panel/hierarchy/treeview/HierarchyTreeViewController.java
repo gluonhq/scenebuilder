@@ -90,9 +90,9 @@ public class HierarchyTreeViewController extends AbstractHierarchyPanelControlle
         treeView.setEditable(false);
         
         treeView.setOnKeyPressed(event -> {
-            // on ESC we select the parent of current selected item
+            
             if (event.getCode() == KeyCode.ESCAPE) {
-                
+            	// on ESC we select the parent of current selected item
                 MultipleSelectionModel<TreeItem<HierarchyItem>> selectionModel = treeView.getSelectionModel();
                 TreeItem<HierarchyItem> item = selectionModel.getSelectedItem();
                 if (item != null) {
