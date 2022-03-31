@@ -239,12 +239,12 @@
                         </release>
                         <upload>
                             <s3>
-                                <app>
+                                <gluon>
                                     <active>RELEASE</active>
                                     <checksums>false</checksums>
                                     <signatures>false</signatures>
                                     <path>scenebuilder/{{artifactFile}}</path>
-                                </app>
+                                </gluon>
                             </s3>
                         </upload>
                         <distributions>
