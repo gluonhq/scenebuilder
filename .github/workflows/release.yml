@@ -125,6 +125,7 @@ jobs:
       - name: Set Release Version
         run: |
           mvn -B -ntp -q versions:set -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }} -DgenerateBackupPoms=false
+          mvn -pl :parent process-resources
 
       - name: Release with JReleaser
         env:
