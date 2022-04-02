@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -38,12 +38,61 @@
     -fx-background-color: white;
 }
 
+.template-top-pane {
+    -fx-background-color: #d67718;
+}
+
 .template {
     -fx-background-color: transparent;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
+    -fx-font-size: 18px;
+    -fx-text-fill: #735405;
+    -fx-cursor: hand;
 }
 
-.template:hover {
+.template-wrapper:hover {
     -fx-background-color: rgba(248, 164, 82, 0.6);
+}
+
+.templates-pane {
+    -fx-background-insets: 0;
+}
+
+.templates-pane .scroll-bar {
+    -fx-background-color: rgb(240,240,240);
+}
+
+.templates-pane .scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.templates-pane .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.templates-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #f68a1f;
+}
+
+.templates-pane .scroll-bar:vertical:focused,
+.templates-pane .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent, rgb(96,96,96), rgb(96,96,96);
+}
+
+.templates-pane .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+    -fx-padding:0 12.5 0 0;
+}
+
+.templates-pane .scroll-bar .increment-arrow,
+.templates-pane .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding:0;
+}
+
+#templateContainer {
+    -fx-background-color: rgb(254, 254, 254);
 }
