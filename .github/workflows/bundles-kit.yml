@@ -15,9 +15,6 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: Install packages
-        run: sudo apt-get install xdg-utils xvfb tigervnc-standalone-server tigervnc-common
-
       - uses: actions/checkout@v2
 
       - name: Setup Java
