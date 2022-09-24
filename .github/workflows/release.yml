@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  JAVAFX_VERSION: '18'
-  JAVA_VERSION: '18'
+  JAVAFX_VERSION: '19'
+  JAVA_VERSION: '19'
 
 jobs:
   precheck:
