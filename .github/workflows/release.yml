@@ -90,6 +90,23 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
+  mac_aarch64-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac_aarch64.yml@master
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
+      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+    with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+      test: true
+
   kit-bundles:
     needs: [precheck]
     uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
@@ -98,7 +115,7 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   release:
-    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, kit-bundles]
+    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
