@@ -87,9 +87,9 @@ jobs:
             --mac-package-signing-prefix "${{ env.MACSIGN_PREFIX }}" \
             --mac-signing-key-user-name "${{ env.MACSIGN_USER }}" \
             --mac-sign
-          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
+          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
           ls ${{ env.INSTALL_DIR }}
-          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}.dmg
+          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
