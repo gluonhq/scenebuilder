@@ -57,6 +57,7 @@ jobs:
 
       - name: Setup JavaFX
         run: |
+          rm -rf /tmp/javafx-jmods-${{ inputs.javafx-version }}
           wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
