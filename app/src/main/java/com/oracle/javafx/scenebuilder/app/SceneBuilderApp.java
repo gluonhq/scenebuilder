@@ -228,7 +228,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         switch (a) {
             case ABOUT:
             case REGISTER:
-            case CHECK_UPDATES:
             case NEW_FILE:
             case NEW_TEMPLATE:
             case OPEN_FILE:
@@ -236,6 +235,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case EXIT:
             case SHOW_WELCOME:
                 result = true;
+                break;
+
+            case CHECK_UPDATES:
+                result = AppSettings.isUpdateAvailable();
                 break;
 
             case CLOSE_FRONT_WINDOW:
@@ -996,11 +999,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                             dialog.showAndWait();
                         });
                     } else {
-                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                        alert.showAndWait();
+                        Platform.runLater(()->{
+                            SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
+                            alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                            alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
+                            alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                            alert.showAndWait();
+                        });
                     }
                 } catch (NumberFormatException ex) {
                     Platform.runLater(() -> showVersionNumberFormatError(source));

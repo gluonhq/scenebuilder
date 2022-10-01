@@ -41,6 +41,9 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
 <StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar fx:id="menuBar">
@@ -313,7 +316,15 @@
                   <MenuItem fx:id="communityContributeMenuItem" mnemonicParsing="false" text="%menu.title.help.scenebuilder.contribute" />
                   <MenuItem fx:id="sceneBuilderHomeMenuItem" mnemonicParsing="false" text="%menu.title.help.scenebuilder.home" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="checkUpdatesMenuItem" mnemonicParsing="true" text="%menu.title.check.updates" />
+            <MenuItem fx:id="checkUpdatesMenuItem" disable="true" mnemonicParsing="true" text="%menu.title.check.updates.ok">
+              <graphic>
+                <ImageView>
+                  <image>
+                    <Image url="@check_icon.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+            </MenuItem>
             <MenuItem fx:id="registerMenuItem" mnemonicParsing="false" text="%menu.title.register" />
             <MenuItem fx:id="showWelcomeItem" mnemonicParsing="false" text="%menu.title.show.welcome" />
             <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="%menu.title.about" />

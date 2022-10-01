@@ -50,6 +50,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
@@ -64,9 +66,9 @@ public class AppSettings {
 
     private static String sceneBuilderVersion;
     private static String latestVersion;
-
     private static String latestVersionText;
     private static String latestVersionAnnouncementURL;
+    private static boolean isUpdateAvailable = false;
 
     private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
@@ -82,7 +84,7 @@ public class AppSettings {
                 sceneBuilderVersion = sbProps.getProperty("build.version", "UNSET");
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed to load \"about.propertties\" resource.", ex);
         }
     }
 
@@ -114,6 +116,10 @@ public class AppSettings {
         return false;
     }
 
+    public static boolean isUpdateAvailable() {
+        return isUpdateAvailable;
+    }
+
     public static void getLatestVersion(Consumer<String> consumer) {
 
         if (latestVersion == null) {
@@ -124,8 +130,8 @@ public class AppSettings {
                 URL url = null;
                 try {
                     url = new URL(LATEST_VERSION_CHECK_URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed to parse latest version check URL.", ex);
                 }
 
                 try (InputStream inputStream = url.openStream()) {
@@ -133,9 +139,16 @@ public class AppSettings {
                     onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed retrieve latest version information.", ex);
                 }
                 latestVersion = onlineVersionNumber;
+
+                try {
+                    isUpdateAvailable = isCurrentVersionLowerThan(latestVersion);
+                } catch (NumberFormatException ex) {
+                    Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed to load parse latest version number.", ex);
+                }
+
                 consumer.accept(latestVersion);
             }, "GetLatestVersion").start();
         } else {
@@ -159,11 +172,11 @@ public class AppSettings {
                 JsonObject announcementObject = object.getJsonObject("announcement");
                 latestVersionText = announcementObject.getString("text");
                 latestVersionAnnouncementURL = announcementObject.getString("url");
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed to retrieve or decode latest version information.", ex);
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(AppSettings.class.getName()).log(Level.SEVERE, "Failed to parse latest version information URL", ex);
         }
     }
 
