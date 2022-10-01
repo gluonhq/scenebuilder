@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -326,17 +326,17 @@ public class UserLibrary extends Library {
     
     void setItems(Collection<LibraryItem> items) {
         if (Platform.isFxApplicationThread()) {
-            itemsProperty.setAll(items);
+            getItems().setAll(items);
         } else {
-            Platform.runLater(() -> itemsProperty.setAll(items));
+            Platform.runLater(() -> getItems().setAll(items));
         }
     }
     
     void addItems(Collection<LibraryItem> items) {
         if (Platform.isFxApplicationThread()) {
-            itemsProperty.addAll(items);
+            getItems().addAll(items);
         } else {
-            Platform.runLater(() -> itemsProperty.addAll(items));
+            Platform.runLater(() -> getItems().addAll(items));
         }
     }
     
@@ -404,7 +404,7 @@ public class UserLibrary extends Library {
          * we invoke URLClassLoader.close() on the existing one
          * so that it releases its associated jar files.
          */
-        final ClassLoader classLoader = classLoaderProperty.get();
+        final ClassLoader classLoader = getClassLoader();
         if (classLoader instanceof URLClassLoader) {
             final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
             try {
@@ -415,7 +415,7 @@ public class UserLibrary extends Library {
         }
         
         // Now moves to the new class loader
-        classLoaderProperty.set(newClassLoader);
+        setClassLoader(newClassLoader);
     }
     
     /*

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,8 +32,8 @@
 
 package com.oracle.javafx.scenebuilder.kit.template;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import javafx.scene.image.Image;
 
 import java.net.URL;
 
@@ -42,40 +42,81 @@ import static com.oracle.javafx.scenebuilder.kit.template.Type.PHONE;
 
 public enum Template {
 
-    EMPTY_APP(DESKTOP, null),
-    BASIC_DESKTOP_APP (DESKTOP, "BasicDesktopApplication.fxml"),
-    COMPLEX_DESKTOP_APP (DESKTOP, "ComplexDesktopApplication.fxml"),
-    EMPTY_PHONE_APP (PHONE, "EmptyPhoneApplication.fxml"),
-    BASIC_PHONE_APP (PHONE, "BasicPhoneApplication.fxml");
+    EMPTY_APP(
+            DESKTOP,
+            "EmptyApplication.fxml",
+            "empty_desktop.png",
+            "template.title.new.empty.app",
+            "template.description.new.empty.app"
+    ),
+
+    BASIC_DESKTOP_APP(
+            DESKTOP,
+            "BasicDesktopApplication.fxml",
+            "basic_desktop.png",
+            "template.title.new.basic.desktop.app",
+            "template.description.new.basic.desktop.app"
+    ),
+
+    COMPLEX_DESKTOP_APP(
+            DESKTOP,
+            "ComplexDesktopApplication.fxml",
+            "complex_desktop.png",
+            "template.title.new.complex.desktop.app",
+            "template.description.new.complex.desktop.app"
+    ),
+
+    EMPTY_PHONE_APP(
+            PHONE,
+            "EmptyPhoneApplication.fxml",
+            "empty_mobile.png",
+            "template.title.new.empty.phone.app",
+            "template.description.new.empty.phone.app"
+    ),
+
+    BASIC_PHONE_APP(
+            PHONE,
+            "BasicPhoneApplication.fxml",
+            "basic_mobile.png",
+            "template.title.new.basic.phone.app",
+            "template.description.new.basic.phone.app"
+    );
 
     private Type type;
     private String fxmlFileName;
+    private String imageFileName;
+    private String uiNameKey;
+    private String descriptionKey;
 
-    Template(Type type, String fxmlFileName) {
+    Template(Type type, String fxmlFileName, String imageFileName, String uiNameKey, String descriptionKey) {
         this.type = type;
         this.fxmlFileName = fxmlFileName;
+        this.imageFileName = imageFileName;
+        this.uiNameKey = uiNameKey;
+        this.descriptionKey = descriptionKey;
     }
 
     public Type getType() {
         return type;
     }
 
-    public String getFXMLFileName() {
-        return fxmlFileName;
+    public boolean isDesktop() {
+        return type == DESKTOP;
     }
 
     public URL getFXMLURL() {
-        final String name = getFXMLFileName();
-        if (name == null) {
-            return null;
-        }
-        return Template.class.getResource(name);
+        return Template.class.getResource(fxmlFileName);
     }
 
-    public static void prepareDocument(EditorController editorController, Template template) {
-        if (template.getType() == Type.PHONE) {
-            editorController.performEditAction(EditorController.EditAction.SET_SIZE_335x600);
-            editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
-        }
+    public Image getImage() {
+        return new Image(Template.class.getResource(imageFileName).toExternalForm());
+    }
+
+    public String getUiName() {
+        return I18N.getString(uiNameKey);
+    }
+
+    public String getDescription() {
+        return I18N.getString(descriptionKey);
     }
 }

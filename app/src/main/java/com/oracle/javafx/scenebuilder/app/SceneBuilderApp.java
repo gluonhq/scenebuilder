@@ -110,7 +110,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         USE_DEFAULT_THEME,
         USE_DARK_THEME,
         SHOW_PREFERENCES,
-        EXIT
+        EXIT,
+        SHOW_WELCOME
     }
 
     private static SceneBuilderApp singleton;
@@ -183,7 +184,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_TEMPLATE:
                 final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
-                templatesWindowController.setOnTemplateChosen(this::performNewTemplateInNewWindow);
+                templatesWindowController.setOnTemplateChosen(template -> {
+                    templatesWindowController.getStage().hide();
+                    performNewTemplateInNewWindow(template);
+                });
                 templatesWindowController.openWindow();
                 break;
 
@@ -212,6 +216,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case EXIT:
                 performExit();
                 break;
+
+            case SHOW_WELCOME:
+                WelcomeDialogWindowController.getInstance().getStage().show();
+                break;
         }
     }
 
@@ -226,6 +234,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             case OPEN_FILE:
             case SHOW_PREFERENCES:
             case EXIT:
+            case SHOW_WELCOME:
                 result = true;
                 break;
 
@@ -620,11 +629,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
-        final URL url = template.getFXMLURL();
-        if (url != null) {
-            documentWindowController.loadFromURL(url, template.getType() != Type.PHONE);
+        documentWindowController.loadFromURL(template.getFXMLURL(), template.getType() != Type.PHONE);
+
+        if (template.getType() == Type.PHONE) {
+            documentWindowController.getEditorController().performEditAction(EditorController.EditAction.SET_SIZE_335x600);
+            documentWindowController.getEditorController().setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
         }
-        Template.prepareDocument(documentWindowController.getEditorController(), template);
+
         documentWindowController.openWindow();
     }
 

@@ -36,7 +36,10 @@ on:
         required: true
 jobs:
   build:
-    runs-on: macos-latest
+    name: macOS on M1
+    runs-on: [macOS, ARM64]
+    env:
+      KEYCHAIN: job-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v2
 
@@ -48,13 +51,15 @@ jobs:
 
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
+          keychain: ${{ env.KEYCHAIN }}
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
       - name: Setup JavaFX
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip
-          unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip -d /tmp
+          rm -rf /tmp/javafx-jmods-${{ inputs.javafx-version }}
+          wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip
+          unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
       - name: Cache Maven packages
         uses: actions/cache@v2
@@ -87,9 +92,9 @@ jobs:
             --mac-package-signing-prefix "${{ env.MACSIGN_PREFIX }}" \
             --mac-signing-key-user-name "${{ env.MACSIGN_USER }}" \
             --mac-sign
-          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
+          mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-aarch64.dmg
           ls ${{ env.INSTALL_DIR }}
-          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
+          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-aarch64.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
@@ -115,3 +120,7 @@ jobs:
         with:
           name: artifacts
           path: ${{ steps.outputfile.outputs.path }}
+
+      - name: Delete keychain
+        run: |
+          security delete-keychain "${{ env.KEYCHAIN }}".keychain

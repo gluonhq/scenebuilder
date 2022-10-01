@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>18.0.0-SNAPSHOT</version>
+    <version>19.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -16,14 +16,14 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>17</javafx.version>
+        <javafx.version>19</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>6.1.0</charm.glisten.version>
-        <gluon.attach.version>4.0.13</gluon.attach.version>
+        <charm.glisten.version>6.2.0</charm.glisten.version>
+        <gluon.attach.version>4.0.15</gluon.attach.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
@@ -239,12 +239,12 @@
                         </release>
                         <upload>
                             <s3>
-                                <app>
+                                <gluon>
                                     <active>RELEASE</active>
                                     <checksums>false</checksums>
                                     <signatures>false</signatures>
                                     <path>scenebuilder/{{artifactFile}}</path>
-                                </app>
+                                </gluon>
                             </s3>
                         </upload>
                         <distributions>
@@ -266,8 +266,15 @@
                                 </snap>
                                 <artifacts>
                                     <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.dmg</path>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-amd64.dmg</path>
                                         <platform>osx-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64.dmg</path>
+                                        <platform>osx-aarch64</platform>
                                         <extraProperties>
                                             <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
                                         </extraProperties>

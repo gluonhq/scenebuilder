@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2022, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -30,38 +29,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.library;
 
-import java.util.Comparator;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+package com.oracle.javafx.scenebuilder.kit.editor.job;
 
-/**
- * A collection of [LibraryItem].
- */
-public abstract class Library {
-    
-    private final ObservableList<LibraryItem> itemsProperty = FXCollections.observableArrayList();
-    private final ObjectProperty<ClassLoader> classLoaderProperty = new SimpleObjectProperty<>();
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-    public ObservableList<LibraryItem> getItems() {
-        return itemsProperty;
-    }
-    
-    public ReadOnlyProperty<ClassLoader> classLoaderProperty() {
-        return classLoaderProperty;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class RelocateSelectionJobTest {
+
+    @BeforeAll
+    public static void init() {
+        JfxInitializer.initialize();
     }
 
-    public ClassLoader getClassLoader() {
-        return classLoaderProperty.getValue();
-    }
+    @Test
+    public void executing_job_relocates_fxom_object() throws Exception {
+        var editor = new EditorController();
+        editor.setFxmlText(
+                Files.readString(Paths.get(getClass().getResource("basic.fxml").toURI())),
+                false
+        );
 
-    protected void setClassLoader(ClassLoader loader) {
-        classLoaderProperty.set(loader);
+        var fxomObject = editor.getFxomDocument().searchWithFxId("button");
+        var node = (Node) fxomObject.getSceneGraphObject();
+
+        assertThat(node.getLayoutX()).isEqualTo(233.0);
+        assertThat(node.getLayoutY()).isEqualTo(152.0);
+
+        var job = new RelocateSelectionJob(Map.of(fxomObject, new Point2D(111, 222)), editor);
+
+        editor.getJobManager().push(job);
+
+        fxomObject = editor.getFxomDocument().searchWithFxId("button");
+        node = (Node) fxomObject.getSceneGraphObject();
+
+        assertThat(node.getLayoutX()).isEqualTo(111.0);
+        assertThat(node.getLayoutY()).isEqualTo(222.0);
     }
-    
-    public abstract Comparator<String> getSectionComparator();
 }

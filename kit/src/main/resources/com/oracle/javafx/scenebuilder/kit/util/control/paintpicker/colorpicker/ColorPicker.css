@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -58,4 +59,11 @@
 }
 .saturationRect {
     -fx-background-color: linear-gradient(to bottom right, white, transparent);
+}
+.copy-region {
+    -fx-shape: "M44.3,19.7v39.4H4.9V19.7H44.3 M49.2,14.8H0V64h49.2V14.8zM64,0H14.8v9.8h4.9V4.9h39.4v44.3h-4.9v4.9H64V0zM34.6,34.5h-20v-5h20V34.5zM34.6,49.2h-20v-5h20V49.2z";
+    -fx-background-color: #6E6E6E;
+}
+.copy-paint-button:hover > .copy-region {
+    -fx-background-color: #5E5E5E;
 }
