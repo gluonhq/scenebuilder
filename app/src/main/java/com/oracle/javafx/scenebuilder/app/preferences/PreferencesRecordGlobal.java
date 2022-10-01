@@ -99,7 +99,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
     static final boolean DEFAULT_ACCORDION_ANIMATION = true;
     static final boolean DEFAULT_WILDCARD_IMPORTS = false;
-    static final boolean DEFAULT_ALTERNATE_TEXT_INPUT_PASTE = !EditorPlatform.IS_MAC;
+    static final boolean DEFAULT_ALTERNATE_TEXT_INPUT_PASTE = EditorPlatform.IS_MAC;
     
     /***************************************************************************
      *                                                                         *
@@ -128,7 +128,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
 
     private LocalDate lastSentTrackingInfoDate = null;
 
-    private boolean alternatePasteBehavior = false;
+    private boolean alternatePasteBehavior = true;
 
     final static Integer[] recentItemsSizes = {5, 10, 15, 20};
 
