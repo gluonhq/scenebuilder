@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -98,6 +98,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
     static final boolean DEFAULT_ACCORDION_ANIMATION = true;
     static final boolean DEFAULT_WILDCARD_IMPORTS = false;
+    static final boolean DEFAULT_PRESERVE_UNRESOLVED_IMPORTS = true;
 
     /***************************************************************************
      *                                                                         *
@@ -113,6 +114,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     private int recentItemsSize = DEFAULT_RECENT_ITEMS_SIZE;
     private boolean accordionAnimation = DEFAULT_ACCORDION_ANIMATION;
     private boolean wildcardImports = DEFAULT_WILDCARD_IMPORTS;
+    private boolean preserveUnresolvedImports = DEFAULT_PRESERVE_UNRESOLVED_IMPORTS;
     private final List<String> recentItems = new ArrayList<>();
 
     private LocalDate showUpdateDialogDate = null;
@@ -382,6 +384,14 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         this.wildcardImports = wildcardImports;
     }
 
+    public boolean isPreserveUnresolvedImports() {
+        return this.preserveUnresolvedImports;
+    }
+
+    public void setPreserveUnresolvedImports(boolean preserveUnresolvedImports) {
+        this.preserveUnresolvedImports = preserveUnresolvedImports;
+    }
+
     /**
      * Read data from the java preferences DB and initialize properties.
      */
@@ -468,7 +478,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
 
         // Wildcard imports
         setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, DEFAULT_WILDCARD_IMPORTS));
-
+        setPreserveUnresolvedImports(applicationRootPreferences.getBoolean(PRESERVE_UNRESOLVED_IMPORTS, DEFAULT_PRESERVE_UNRESOLVED_IMPORTS));
     }
 
     public void writeToJavaPreferences(String key) {
@@ -534,6 +544,9 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
                 break;
             case WILDCARD_IMPORT:
                 applicationRootPreferences.putBoolean(WILDCARD_IMPORT, isWildcardImports());
+                break;
+            case PRESERVE_UNRESOLVED_IMPORTS:
+                applicationRootPreferences.putBoolean(PRESERVE_UNRESOLVED_IMPORTS, isPreserveUnresolvedImports());
                 break;
             default:
                 super.writeToJavaPreferences(key);

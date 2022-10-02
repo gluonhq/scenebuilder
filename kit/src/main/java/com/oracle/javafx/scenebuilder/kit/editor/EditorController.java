@@ -103,6 +103,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -758,10 +759,11 @@ public class EditorController {
      * @param fxmlLocation null or the location of the fxml text being edited
      * @param checkTheme if set to true a check will be made if the fxml contains
      *                           Gluon controls and if so, the correct theme is set
+     * @param switches Optional switches to configure FXOM and FXML processes
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */
-    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation, boolean checkTheme) throws IOException {
-        updateFxomDocument(fxmlText, fxmlLocation, getResources(), checkTheme);
+    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation, boolean checkTheme, FXOMDocumentSwitch ... switches) throws IOException {
+        updateFxomDocument(fxmlText, fxmlLocation, getResources(), checkTheme, switches);
         this.fxmlLocationProperty.setValue(fxmlLocation);
     }
 
@@ -2554,11 +2556,13 @@ public class EditorController {
         return true;
     }
 
-    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources, boolean checkTheme) throws IOException {
+    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources, boolean checkTheme, FXOMDocumentSwitch ... switches) throws IOException {
         final FXOMDocument newFxomDocument;
         
         if (fxmlText != null) {
-            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, FXOMDocumentSwitch.NORMALIZED);
+            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
+            options.addAll(Set.of(switches));
+            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, options.toArray(new FXOMDocumentSwitch[0]));
         } else {
             newFxomDocument = null;
         }

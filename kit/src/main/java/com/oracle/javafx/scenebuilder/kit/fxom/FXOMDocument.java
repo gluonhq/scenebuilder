@@ -50,6 +50,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
@@ -77,6 +78,7 @@ public class FXOMDocument {
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
     private int updateDepth;
+    private List<String> missingClasses = new ArrayList<>();
 
     private boolean hasGluonControls;
     
@@ -112,7 +114,7 @@ public class FXOMDocument {
                 fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);
-            loader.load(fxmlTextToLoad);
+            loader.load(fxmlTextToLoad, switches);
             if (availableSwitches.contains(FXOMDocumentSwitch.NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
@@ -125,6 +127,24 @@ public class FXOMDocument {
         }
 
         hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
+    }
+
+    /**
+     * Adds the name of a class or a name space which could not be resolved by FXMLLoader.
+     * 
+     * @param missingClassName Either a class namr from an import or a name space from a wild card import.
+     */
+    public void addMissingClass(String missingClassName) {
+        this.missingClasses.add(missingClassName);
+    }
+
+    /**
+     * If there were unresolved FXML import statements, affected class names and package name spaces are provided here.
+     * 
+     * @return list of unresolved FXML import class names or name spaces.
+     */
+    public List<String> getMissingClasses() {
+        return this.missingClasses;
     }
         
     public FXOMDocument() {
@@ -159,7 +179,7 @@ public class FXOMDocument {
         this.classLoader = classLoader;
         endUpdate();
     }    
-    
+
     public List<Class<?>> getInitialDeclaredClasses() {
         return initialDeclaredClasses;
     }
@@ -201,8 +221,8 @@ public class FXOMDocument {
                 sampleDataGenerator.assignSampleData(fxomRoot);
             }
         }
-    }    
-    
+    }
+
     public FXOMObject getFxomRoot() {
         return fxomRoot;
     }
@@ -480,6 +500,12 @@ public class FXOMDocument {
          * configuration. One possible example here is the option to use the MacOS
          * system menu bar.
          */
-        FOR_PREVIEW;
+        FOR_PREVIEW,
+        
+        /**
+         * This flag ensures that the {@link FXOMLoader} preserves imports which were not resolvable by {@link FXMLLoader}.
+         * This behavior is controlled using Preferences-API.
+         */
+        PRESERVE_UNRESOLVED_IMPORTS;
     }
 }

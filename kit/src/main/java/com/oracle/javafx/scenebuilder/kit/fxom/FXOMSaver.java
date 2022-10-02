@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -114,6 +114,9 @@ class FXOMSaver {
         // gets list of the imports to be added to the FXML document.
         List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
 
+        List<GlueInstruction> missingImports = getMissingClassesImports(fxomDocument);;
+        importList.addAll(missingImports);
+
         // synchronizes the glue with the list of glue instructions
         synchronizeHeader(fxomDocument.getGlue(), importList);
     }
@@ -134,6 +137,12 @@ class FXOMSaver {
         imports.addAll(findPropertyClasses(root.getChildObjects().toArray(FXOMObject[]::new)));
         imports.addAll(findPropertyClasses(root));
 
+        return createGlueInstructionsForImports(fxomDocument, imports);
+    }
+    
+    private List<GlueInstruction> getMissingClassesImports(FXOMDocument fxomDocument) {
+        final Set<String> imports = new TreeSet<>(); // Sorted
+        imports.addAll(fxomDocument.getMissingClasses());
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
 

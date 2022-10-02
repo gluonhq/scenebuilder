@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import javafx.fxml.LoadListener;
@@ -47,9 +48,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 /**
@@ -58,6 +65,7 @@ import java.util.function.Consumer;
  */
 class FXOMLoader implements LoadListener {
 
+    private static final Logger LOGGER = Logger.getLogger(FXOMLoader.class.getName());
     private final FXOMDocument document;
     private final Consumer<Exception> knownErrorsHandler;
     private TransientNode currentTransientNode;
@@ -78,7 +86,7 @@ class FXOMLoader implements LoadListener {
         this.knownErrorsHandler = Objects.requireNonNull(knownErrorsHandler);
     }
 
-    public void load(String fxmlText) throws java.io.IOException {
+    public void load(String fxmlText, FXOMDocumentSwitch ... switches) throws java.io.IOException {
         assert fxmlText != null;
 
         final ClassLoader classLoader;
@@ -103,8 +111,34 @@ class FXOMLoader implements LoadListener {
             is.reset();
             setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
-            handleFxmlLoadingError(x);
+            Throwable cause = x.getCause();
+            if (cause instanceof ClassNotFoundException missingClass 
+                && Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS)) {
+                String missingClassName = missingClass.getMessage();
+                String modifiedFxml = removeMissingClassesImports(fxmlText, missingClassName);
+                LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. Try loading FXML without {0}", missingClassName);
+                load(modifiedFxml, switches);
+            } else {                
+                handleFxmlLoadingError(x);
+            }
         }
+    }
+
+    
+
+    private String removeMissingClassesImports(String fxmlText, String missingClass) {
+        List<String> lines = new ArrayList<>(fxmlText.lines().toList());
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).matches("^\s?[<]\s?[?]\s?import\s?.*")) {
+                    if (lines.get(i).contains(missingClass)) {
+                        document.addMissingClass(missingClass);
+                        lines.set(i, "");
+                        break;
+                    }
+            }
+        }
+        return lines.stream()
+                    .collect(Collectors.joining(System.lineSeparator()));
     }
 
     private void handleFxmlLoadingError(Exception x) throws IOException {
