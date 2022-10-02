@@ -74,6 +74,7 @@
                               <RadioMenuItem fx:id="libraryViewAsSections" mnemonicParsing="false" onAction="#onLibraryViewAsSections" text="%library.panel.menu.view.sections" toggleGroup="$libraryDisplayOptionTG" />
                             <SeparatorMenuItem mnemonicParsing="false" />
                             <MenuItem mnemonicParsing="false" onAction="#onManageJarFxml" text="%library.panel.menu.manage.jar.fxml" />
+                            <MenuItem mnemonicParsing="false" onAction="#onLibraryRefresh" text="%library.panel.menu.refresh" />
                             <MenuItem fx:id="libraryImportSelection" mnemonicParsing="false" onAction="#onLibraryImportSelection" text="%library.panel.menu.import.selection" />
                             <SeparatorMenuItem mnemonicParsing="false" />
                             <Menu fx:id="customLibraryMenu" mnemonicParsing="false" text="%library.panel.menu.custom">

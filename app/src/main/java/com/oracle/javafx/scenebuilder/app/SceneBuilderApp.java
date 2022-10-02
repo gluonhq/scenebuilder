@@ -455,7 +455,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
 
-        userLibrary.startWatching();
+        userLibrary.startExplorer();
 
         sendTrackingStartupInfo();
     }

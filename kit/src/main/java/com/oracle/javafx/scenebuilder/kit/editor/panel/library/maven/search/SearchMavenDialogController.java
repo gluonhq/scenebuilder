@@ -31,15 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,8 +39,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.version.Version;
+
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenRepositorySystem;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
@@ -66,12 +72,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.version.Version;
 
 
 /**
@@ -108,6 +109,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private DefaultArtifact artifact;
     private final Stage owner;
     private final PreferencesControllerBase preferencesControllerBase;
+    private boolean confirmed;
     
     public SearchMavenDialogController(EditorController editorController, String userM2Repository,
                                        String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
@@ -329,14 +331,12 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
             return;
         }
         
-        userLibrary.stopWatching();
-        
         // Update record artifact
         final PreferencesRecordArtifact recordArtifact = preferencesControllerBase.
                 getRecordArtifact(mavenArtifact);
         recordArtifact.writeToJavaPreferences();
-
-        userLibrary.startWatching();
+        
+        confirmed = true;
     }
     
     private void addVersion() {
@@ -349,5 +349,9 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         map.put("Repository", maven.getRemoteRepository(version).getId());
         artifact = new DefaultArtifact(artifact.getGroupId()+ ":" + artifact.getArtifactId() + ":" +version.toString(), map);
         remoteRepository = maven.getRemoteRepository(version);
+    }
+    
+    public boolean isConfirmed() {
+        return confirmed;
     }
 }

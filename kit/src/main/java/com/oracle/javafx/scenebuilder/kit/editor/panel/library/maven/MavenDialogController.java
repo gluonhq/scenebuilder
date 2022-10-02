@@ -109,6 +109,7 @@ public class MavenDialogController extends AbstractFxmlWindowController {
     };
 
     private final PreferencesControllerBase preferencesControllerBase;
+    private boolean confirmed;
     
     public MavenDialogController(EditorController editorController, String userM2Repository,
             String tempM2Repository, PreferencesControllerBase preferencesControllerBase, Stage owner) {
@@ -318,14 +319,16 @@ public class MavenDialogController extends AbstractFxmlWindowController {
             return;
         }
         
-        userLibrary.stopWatching();
-        
         // Update record artifact
         final PreferencesRecordArtifact recordArtifact = preferencesControllerBase.
                 getRecordArtifact(mavenArtifact);
         recordArtifact.writeToJavaPreferences();
-
-        userLibrary.startWatching();
+        
+        confirmed = true;
+    }
+    
+    public boolean isConfirmed() {
+        return confirmed;
     }
     
 }
