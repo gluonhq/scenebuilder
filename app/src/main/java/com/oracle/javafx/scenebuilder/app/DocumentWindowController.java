@@ -166,7 +166,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         HELP_OPEN_OPENJFX_CSS_REFERENCE,
         HELP_OPEN_OPENJFX_FXML_REFERENCE,
         HELP_OPEN_GLUON_SCENEBUILDER_HOME,
-        HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER,
+        HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER, 
+        HELP_OPEN_JFXCENTRAL_HOMEPAGE,
     }
     
     public enum DocumentEditAction {
@@ -654,6 +655,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case HELP_OPEN_OPENJFX_CSS_REFERENCE:
             case HELP_OPEN_OPENJFX_FXML_REFERENCE:
             case HELP_OPEN_GLUON_SCENEBUILDER_HOME:
+            case HELP_OPEN_JFXCENTRAL_HOMEPAGE:
             case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
                 result = true;
                 break;
@@ -883,7 +885,11 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             case HELP_COMMUNITY_CONTRIBUTE_SCENEBUILDER:
                 openURL(DocumentationUrls.GLUON_SCENEBUILDER_CONTRIBUTE.toString());
                 break;
-                
+
+            case HELP_OPEN_JFXCENTRAL_HOMEPAGE:
+                openURL(DocumentationUrls.JFXCENTRAL_HOMEPAGE.toString());
+                break;
+
             case SHOW_SAMPLE_CONTROLLER:
                 if (skeletonWindowController == null) {
                     skeletonWindowController = new SkeletonWindowController(editorController,
