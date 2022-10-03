@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
@@ -180,8 +182,8 @@ public class UserLibrary extends Library {
             
             try {
                 watcherThread.join();
-            } catch(InterruptedException x) {
-                x.printStackTrace();
+            } catch(InterruptedException e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to join watcher thread: ", e);
             } finally {
                 watcher = null;
                 watcherThread = null;
@@ -409,8 +411,8 @@ public class UserLibrary extends Library {
             final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
             try {
                 urlClassLoader.close();
-            } catch(IOException x) {
-                x.printStackTrace();
+            } catch(IOException e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to close URL classloader: ", e);
             }
         }
         
