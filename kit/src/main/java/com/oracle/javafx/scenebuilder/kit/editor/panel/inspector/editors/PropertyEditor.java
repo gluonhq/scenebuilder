@@ -47,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.BooleanProperty;
@@ -561,7 +563,7 @@ public abstract class PropertyEditor extends Editor {
                             try {
                                 EditorPlatform.open(cssInfo.getMainUrl().toString());
                             } catch (IOException ex) {
-                                System.out.println(ex.getMessage() + ex);
+                                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to open css file:", ex);
                             }
                         }
                     }
