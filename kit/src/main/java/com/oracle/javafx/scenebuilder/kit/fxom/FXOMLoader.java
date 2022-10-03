@@ -124,8 +124,6 @@ class FXOMLoader implements LoadListener {
         }
     }
 
-    
-
     private String removeMissingClassesImports(String fxmlText, String missingClass) {
         List<String> lines = new ArrayList<>(fxmlText.lines().toList());
         for (int i = 0; i < lines.size(); i++) {

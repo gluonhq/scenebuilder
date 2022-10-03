@@ -108,6 +108,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -2577,8 +2578,35 @@ public class EditorController {
         if (checkTheme) {
             WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
         }
+        
+        if (unresolvedImportsFound(newFxomDocument)) {
+            showUnresolvedImportsDialog(newFxomDocument);
+        }
     }
-    
+
+    private boolean unresolvedImportsFound(final FXOMDocument newFxomDocument) {
+        return newFxomDocument != null && newFxomDocument.isClassesMissing();
+    }
+
+    private void showUnresolvedImportsDialog(FXOMDocument document) {
+        final ErrorDialog errorDialog = new ErrorDialog(ownerWindow);
+        List<String> missingClasses = document.getMissingClasses();
+        String first10 = missingClasses.stream()
+                                       .limit(10)
+                                       .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports", Integer.toString(missingClasses.size())));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+
+        String allMissing = document.getMissingClasses()
+                                    .stream()
+                                    .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice", allMissing, missingClasses.size()));
+        errorDialog.setTitle(I18N.getString("alert.title.open"));
+        errorDialog.showAndWait();
+    }
+
     private final ChangeListener<ClassLoader> libraryClassLoaderListener
             = (ov, t, t1) -> libraryClassLoaderDidChange();
     

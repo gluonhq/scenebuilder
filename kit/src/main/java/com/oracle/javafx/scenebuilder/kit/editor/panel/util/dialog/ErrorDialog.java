@@ -88,9 +88,10 @@ public class ErrorDialog extends AlertDialog {
     private void updateActionButtonVisibility() {
         setActionButtonVisible(debugInfo != null);
     }
-    
+
     private void showDetailsDialog() {
-        final TextViewDialog detailDialog = new TextViewDialog(null);
+        final TextViewDialog detailDialog = new TextViewDialog(super.getStage());
+        detailDialog.setTitle(I18N.getString("alert.title.details"));
         detailDialog.setText(debugInfo);
         detailDialog.showAndWait();
     }

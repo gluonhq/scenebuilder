@@ -146,7 +146,11 @@ public class FXOMDocument {
     public List<String> getMissingClasses() {
         return this.missingClasses;
     }
-        
+
+    public boolean isClassesMissing() {
+        return !this.missingClasses.isEmpty();
+    }
+
     public FXOMDocument() {
         this.glue = new GlueDocument();
     }
