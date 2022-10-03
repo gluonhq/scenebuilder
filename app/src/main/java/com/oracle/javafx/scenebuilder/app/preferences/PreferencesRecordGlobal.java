@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
 import java.io.File;
@@ -100,6 +101,8 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     static final boolean DEFAULT_WILDCARD_IMPORTS = false;
     static final boolean DEFAULT_PRESERVE_UNRESOLVED_IMPORTS = true;
 
+    static final boolean DEFAULT_ALTERNATE_TEXT_INPUT_PASTE = EditorPlatform.IS_MAC;
+
     /***************************************************************************
      *                                                                         *
      * Instance fields                                                         *
@@ -127,6 +130,8 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     private boolean registrationOptIn = false;
 
     private LocalDate lastSentTrackingInfoDate = null;
+
+    private boolean alternatePasteBehavior = true;
 
     final static Integer[] recentItemsSizes = {5, 10, 15, 20};
 
@@ -392,6 +397,14 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         this.preserveUnresolvedImports = preserveUnresolvedImports;
     }
 
+    public boolean isAlternateTextInputControlPaste() {
+        return alternatePasteBehavior;
+    }
+
+    public void setAlternateTextInputControlPaste(boolean alternatePasteBehavior) {
+        this.alternatePasteBehavior = alternatePasteBehavior;
+    }
+
     /**
      * Read data from the java preferences DB and initialize properties.
      */
@@ -479,6 +492,9 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         // Wildcard imports
         setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, DEFAULT_WILDCARD_IMPORTS));
         setPreserveUnresolvedImports(applicationRootPreferences.getBoolean(PRESERVE_UNRESOLVED_IMPORTS, DEFAULT_PRESERVE_UNRESOLVED_IMPORTS));
+
+        // Alternate paste behavior for Text Input Controls
+        setAlternateTextInputControlPaste(applicationRootPreferences.getBoolean(ALTERNATE_TEXT_INPUT_PASTE, DEFAULT_ALTERNATE_TEXT_INPUT_PASTE));
     }
 
     public void writeToJavaPreferences(String key) {
@@ -547,6 +563,8 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
                 break;
             case PRESERVE_UNRESOLVED_IMPORTS:
                 applicationRootPreferences.putBoolean(PRESERVE_UNRESOLVED_IMPORTS, isPreserveUnresolvedImports());
+            case ALTERNATE_TEXT_INPUT_PASTE:
+                applicationRootPreferences.putBoolean(ALTERNATE_TEXT_INPUT_PASTE,isAlternateTextInputControlPaste());
                 break;
             default:
                 super.writeToJavaPreferences(key);

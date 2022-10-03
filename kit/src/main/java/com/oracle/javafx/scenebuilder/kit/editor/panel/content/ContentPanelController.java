@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,6 +39,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -1049,8 +1051,8 @@ public class ContentPanelController extends AbstractFxmlPanelController
             sb.append(", keyCode="); //NOI18N
             sb.append(ke.getCode());
         }
-        
-        System.out.println(sb.toString());
+
+        Logger.getLogger(getClass().getName()).log(Level.INFO, sb.toString());
     }
     
     private final EventHandler<Event> eventTracingFilter

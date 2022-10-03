@@ -38,6 +38,8 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -88,8 +90,8 @@ public class LibraryItem {
         
         try {
             result = new FXOMDocument(fxmlText, null, library.getClassLoader(), null, FXOMDocumentSwitch.NORMALIZED);
-        } catch(Error|IOException x) {
-            x.printStackTrace();
+        } catch(Error|IOException e) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to instantiate a library item: ", e);
             result = null;
         }
         

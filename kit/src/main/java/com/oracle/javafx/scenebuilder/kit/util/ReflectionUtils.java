@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -35,6 +35,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXMLLoader;
 
 /**
@@ -55,7 +58,7 @@ public class ReflectionUtils {
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                Logger.getLogger(ReflectionUtils.class.getName()).log(Level.WARNING, "Failed to find method setStaticLoad: ", e);
             }
             return null;
         });
@@ -63,7 +66,7 @@ public class ReflectionUtils {
             try {
                 setStaticLoadMethod.invoke(loader, staticLoad);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                Logger.getLogger(ReflectionUtils.class.getName()).log(Level.WARNING, "Failed to invoke method setStaticLoad: ", e);
             }
         }
     }

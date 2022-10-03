@@ -54,6 +54,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PRESERVE_UNRESOLVED_IMPORTS;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALTERNATE_TEXT_INPUT_PASTE;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
@@ -91,7 +92,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -142,6 +145,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private CheckBox wildcardImports;
     @FXML
     private CheckBox preserveUnresolvedImports;
+    @FXML
+    private CheckBox alternatePasteBehavior;
+    @FXML
+    private Label alternatePasteBehaviorLabel;
+    @FXML
+    private Pane alternatePasteBehaviorPane;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -262,9 +271,19 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Wildcard Imports
         wildcardImports.setSelected(recordGlobal.isWildcardImports());
         wildcardImports.selectedProperty().addListener(new WildcardImportListener());
-        
         preserveUnresolvedImports.setSelected(recordGlobal.isPreserveUnresolvedImports());
         preserveUnresolvedImports.selectedProperty().addListener(new PreserveUnresolvedImportListener());
+
+        if (EditorPlatform.IS_MAC) {
+            // Alternate paste behavior for Text Input Controls
+            alternatePasteBehavior.setSelected(recordGlobal.isAlternateTextInputControlPaste());
+            alternatePasteBehavior.selectedProperty().addListener(new AlternatePasteListener());
+        } else {
+            // This setting is supposed to to be invisible on other platforms.
+            alternatePasteBehaviorPane.setDisable(true);
+            alternatePasteBehaviorPane.setVisible(false);
+            alternatePasteBehaviorPane.setManaged(false);
+        }
     }
 
     /*
@@ -584,12 +603,27 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     }
 
     private static class PreserveUnresolvedImportListener implements ChangeListener<Boolean> {
+
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             final PreferencesController preferencesController = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
             recordGlobal.setPreserveUnresolvedImports(newValue);
             recordGlobal.writeToJavaPreferences(PRESERVE_UNRESOLVED_IMPORTS);
+        }
+    }
+
+    private static class AlternatePasteListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setAlternateTextInputControlPaste(newValue);
+            recordGlobal.writeToJavaPreferences(ALTERNATE_TEXT_INPUT_PASTE);
         }
     }
 }
