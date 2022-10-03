@@ -1622,7 +1622,18 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         } else {
             assert isTextInputControlEditing(focusOwner);
             final TextInputControl tic = getTextInputControl(focusOwner);
-            tic.paste();
+            boolean alternatePaste = PreferencesController.getSingleton()
+                                                          .getRecordGlobal()
+                                                          .isAlternateTextInputControlPaste();
+            if (alternatePaste) {
+                /*
+                 * TODO: Once the issue https://bugs.openjdk.java.net/browse/JDK-8280057
+                 * is solved this condition should be removed. Also the corresponding
+                 * preference can be removed then.
+                 */
+            } else {
+                tic.paste();
+            }
         }
     }
 

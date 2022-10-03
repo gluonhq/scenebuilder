@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -62,6 +62,7 @@ public abstract class PreferencesControllerBase {
     public static final String HIERARCHY_DISPLAY_OPTION = "HIERARCHY_DISPLAY_OPTION"; //NOI18N
     public static final String ACCORDION_ANIMATION = "ACCORDION_ANIMATION"; //NOI18N
     public static final String WILDCARD_IMPORT = "WILDCARD_IMPORT"; //NOI18N
+    public static final String ALTERNATE_TEXT_INPUT_PASTE = "ALTERNATE_TEXT_INPUT_PASTE"; //NOI18N
 
     // DOCUMENT SPECIFIC PREFERENCES
     public static final String PATH = "path"; //NOI18N

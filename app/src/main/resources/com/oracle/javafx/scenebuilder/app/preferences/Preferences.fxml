@@ -37,28 +37,29 @@
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.CustomMenuItem?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <Label text="%prefs.doc.width" GridPane.columnIndex="0" GridPane.rowIndex="0" />
     <DoubleField fx:id="rootContainerWidth" prefWidth="200.0" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" />
     <Label text="%prefs.doc.height" GridPane.columnIndex="0" GridPane.rowIndex="1" />
     <DoubleField fx:id="rootContainerHeight" prefWidth="200.0" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
 
-    <Label text="%prefs.background" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Label text="%prefs.background" GridPane.columnIndex="0" GridPane.rowIndex="3" />
     <ChoiceBox fx:id="backgroundImage" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     <Label text="%prefs.alignment.guides" GridPane.columnIndex="0" GridPane.rowIndex="4" />
     <MenuButton fx:id="alignmentGuidesButton" mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="4">
@@ -79,9 +80,9 @@
       </items>
     </MenuButton>
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+                <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" />
 
-    <Label text="%prefs.tooltheme" GridPane.rowIndex="7" />
+                <Label text="%prefs.tooltheme" GridPane.rowIndex="7" />
     <ChoiceBox fx:id="scenebuilderTheme" GridPane.columnIndex="1" GridPane.rowIndex="7" />
     <Label text="%prefs.library.displayoption" GridPane.columnIndex="0" GridPane.rowIndex="8" />
     <ChoiceBox fx:id="libraryDisplayOption" GridPane.columnIndex="1" GridPane.rowIndex="8" />
@@ -98,16 +99,16 @@
       </items>
     </ChoiceBox>
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="11" />
+                <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="11" />
 
-    <Label text="%prefs.document.theme" GridPane.rowIndex="12" />
+                <Label text="%prefs.document.theme" GridPane.rowIndex="12" />
     <ChoiceBox fx:id="themes" GridPane.columnIndex="1" GridPane.rowIndex="12" />
     <Label text="%prefs.document.gluonswatch" GridPane.rowIndex="13" />
     <ChoiceBox fx:id="gluonSwatch" GridPane.columnIndex="1" GridPane.rowIndex="13" />
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="14" />
+                <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="14" />
 
-    <Label text="%prefs.recent.items" GridPane.columnIndex="0" GridPane.rowIndex="15" />
+                <Label text="%prefs.recent.items" GridPane.columnIndex="0" GridPane.rowIndex="15" />
     <ChoiceBox fx:id="recentItemsSize" GridPane.columnIndex="1" GridPane.rowIndex="15">
       <items>
         <FXCollections fx:factory="observableArrayList">
@@ -118,40 +119,75 @@
       </items>
     </ChoiceBox>
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="16" />
+                <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="16" />
 
-    <Label text="%prefs.animate.accordion" GridPane.columnIndex="0" GridPane.rowIndex="17" />
-    <CheckBox fx:id="animateAccordion" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="17"/>
+                <Label text="%prefs.animate.accordion" GridPane.columnIndex="0" GridPane.rowIndex="17" />
+    <CheckBox fx:id="animateAccordion" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="17" />
 
-    <Label text="%prefs.wildcard.import" GridPane.columnIndex="0" GridPane.rowIndex="18" />
-    <CheckBox fx:id="wildcardImports" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="18"/>
+                <Label text="%prefs.wildcard.import" GridPane.columnIndex="0" GridPane.rowIndex="18" />
+    <CheckBox fx:id="wildcardImports" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="18" />
 
-    <Separator prefWidth="-1.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="19" />
-
-    <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="20" />
+                <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="21">
+         <GridPane.margin>
+            <Insets top="-10.0" />
+         </GridPane.margin></Button>
+      <GridPane fx:id="alternatePasteBehaviorPane" hgap="5.0" vgap="10.0" GridPane.columnSpan="2" GridPane.rowIndex="20">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="50.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" percentWidth="50.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label fx:id="alternatePasteBehaviorLabel" text="%prefs.tic.paste.alternate.behavior">
+               <tooltip>
+                  <Tooltip text="%prefs.tic.paste.alternate.behavior.tooltip" />
+               </tooltip>
+            </Label>
+            <CheckBox fx:id="alternatePasteBehavior" selected="true" GridPane.columnIndex="1">
+               <tooltip>
+                  <Tooltip text="%prefs.tic.paste.alternate.behavior.tooltip" />
+               </tooltip>
+            </CheckBox>
+            <Separator prefWidth="-1.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="10.0" />
+               </GridPane.margin></Separator>
+         </children>
+      </GridPane>
+      <Separator layoutX="30.0" layoutY="500.0" prefWidth="-1.0" GridPane.columnSpan="2" GridPane.rowIndex="19" />
   </children>
   <columnConstraints>
-    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
-    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="177.0" minWidth="-Infinity" prefWidth="-1.0" />
+    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" percentWidth="50.0" />
+    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="177.0" minWidth="-Infinity" percentWidth="50.0" prefWidth="-1.0" />
   </columnConstraints>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
   <rowConstraints>
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
   </rowConstraints>
 </GridPane>
