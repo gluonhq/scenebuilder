@@ -64,6 +64,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ObjectProperty;
@@ -966,8 +968,8 @@ public class CssPanelController extends AbstractFxmlPanelController {
                 EditorPlatform.open(DocumentationUrls.JAVADOC_HOME.toString()
                         + "javafx.graphics/javafx/scene/doc-files/cssref.html#" + //NOI18N
                         item.getTarget().getClass().getSimpleName().toLowerCase(Locale.ROOT));
-            } catch (IOException ex) {
-                System.out.println(ex.getMessage());
+            } catch (IOException e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to open JAVADOC_HOME: ", e);
             }
         }
     }

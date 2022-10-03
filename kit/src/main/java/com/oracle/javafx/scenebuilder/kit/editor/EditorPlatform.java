@@ -42,6 +42,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.scene.Node;
@@ -208,7 +210,7 @@ public class EditorPlatform {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to get color from stylesheet: ", e);
                 }
             }
             return color;

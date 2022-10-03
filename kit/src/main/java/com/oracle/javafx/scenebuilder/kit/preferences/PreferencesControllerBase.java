@@ -63,6 +63,7 @@ public abstract class PreferencesControllerBase {
     public static final String ACCORDION_ANIMATION = "ACCORDION_ANIMATION"; //NOI18N
     public static final String WILDCARD_IMPORT = "WILDCARD_IMPORT"; //NOI18N
     public static final String PRESERVE_UNRESOLVED_IMPORTS = "PRESERVE_UNRESOLVED_IMPORTS"; //NOI18N
+    public static final String ALTERNATE_TEXT_INPUT_PASTE = "ALTERNATE_TEXT_INPUT_PASTE"; //NOI18N
 
     // DOCUMENT SPECIFIC PREFERENCES
     public static final String PATH = "path"; //NOI18N
