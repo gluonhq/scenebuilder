@@ -65,7 +65,7 @@ public class AppPlatform {
                 AppSettings.getSceneBuilderVersion());
     }
     
-    protected static synchronized String getApplicationDataFolder(Map<String, String> sysenv, Properties system,
+    static synchronized String getApplicationDataFolder(Map<String, String> sysenv, Properties system,
             OS operatingSystem, String version) {
         if (applicationDataFolder == null) {
             final String appName = "Scene Builder"; // NOI18N
@@ -88,7 +88,10 @@ public class AppPlatform {
         return applicationDataFolder;
     }
     
-    
+    /**
+     * Clears application data folder, user library folder, message box folder and logs folder.
+     * Those locations will be determined on next occasion.
+     */
     protected static synchronized void clear() {
         applicationDataFolder = null;
         userLibraryFolder = null;
@@ -100,7 +103,7 @@ public class AppPlatform {
         return getUserLibraryFolder(OS.get());
     }
     
-    public static synchronized String getUserLibraryFolder(OS operatingSystem) {
+    static synchronized String getUserLibraryFolder(OS operatingSystem) {
         if (userLibraryFolder == null) {
             if (OS.WINDOWS.equals(operatingSystem)) {
                 userLibraryFolder = getApplicationDataFolder() + "\\" + "Library"; // NOI18N
@@ -121,7 +124,7 @@ public class AppPlatform {
         return getLogFolder(System.getProperties());
     }
     
-    protected static synchronized String getLogFolder(Properties system) {
+    static synchronized String getLogFolder(Properties system) {
         if (logsFolder == null) {
             logsFolder = Paths.get(system.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
         }
