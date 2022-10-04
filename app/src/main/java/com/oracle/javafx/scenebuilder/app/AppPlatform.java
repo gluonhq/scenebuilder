@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
+
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -48,7 +50,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-
 /**
  *
  */
@@ -173,7 +174,7 @@ public class AppPlatform {
         messageBox = new MessageBox<>(getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
         // Fix Start: Github Issue #301
         final List<String> parametersUnnamed = new ArrayList<>(parameters.getUnnamed());
-        if (EditorPlatform.IS_MAC) {
+        if (IS_MAC) {
             parametersUnnamed.removeIf(p -> p.startsWith("-psn"));
         }
         // Fix End
