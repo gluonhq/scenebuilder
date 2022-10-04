@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,6 +33,7 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class PreferencesController extends PreferencesControllerBase{
      **************************************************************************/
 
     // PREFERENCES NODE NAME
-    static final String SB_RELEASE_NODE = "SB_2.0"; //NOI18N
+    static final String SB_RELEASE_NODE = "SB_"+AppSettings.getSceneBuilderVersion(); //NOI18N
 
     // GLOBAL PREFERENCES
     static final String TOOL_THEME = "TOOL_THEME"; //NOI18N
