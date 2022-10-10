@@ -32,14 +32,24 @@
 
 package com.oracle.javafx.scenebuilder.app.welcomedialog;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,12 +62,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
 
@@ -80,7 +86,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
     private final SceneBuilderApp sceneBuilderApp;
 
-    private WelcomeDialogWindowController() {
+    WelcomeDialogWindowController() {
         super(WelcomeDialogWindowController.class.getResource("WelcomeWindow.fxml"), //NOI18N
                 I18N.getBundle(),
                 null); // We want it to be a top level window so we're setting the owner to null.
@@ -214,17 +220,107 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         handleOpen(paths);
     }
-
-    private void handleOpen(List<String> paths) {
-        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
-            sceneBuilderApp.handleOpenFilesAction(paths);
-            getStage().hide();
+    
+    protected static AlertDialog questionMissingFilesCleanup(Stage stage, List<String> missingFiles) {
+        String withPath = missingFiles.stream()
+                                      .collect(Collectors.joining(System.lineSeparator()));
+        
+        AlertDialog question = new AlertDialog(stage);
+        StringBuilder shortMessage = new StringBuilder();
+        if (missingFiles.size() > 1) {
+            shortMessage.append(I18N.getString("alert.welcome.files.not.found.question"));
+            question.setTitle(I18N.getString("alert.welcome.files.not.found.title"));
+            question.setOKButtonTitle(I18N.getString("alert.welcome.files.not.found.okay"));
         } else {
-            showMasker(() -> {
+            shortMessage.append(I18N.getString("alert.welcome.file.not.found.question"));
+            question.setTitle(I18N.getString("alert.welcome.file.not.found.title"));
+            question.setOKButtonTitle(I18N.getString("alert.welcome.file.not.found.okay"));
+        }
+        question.setCancelButtonTitle(I18N.getString("alert.welcome.file.not.found.no"));
+        question.setMessage(shortMessage.toString());
+        question.setDetails(withPath);
+        return question;
+    }
+    
+    boolean filePathExists(String filePath) {
+        return Files.exists(Path.of(filePath));
+    }
+
+    /**
+     * Attempts to open files in filePaths. Scene Builder will only attempt to load
+     * files which exist. If a file does not exist, Scene Builder will ask the user
+     * to remove this file from recent files.
+     * 
+     * @param filePaths List of file paths to project files to be opened by Scene
+     *                  Builder.
+     */
+    private void handleOpen(List<String> filePaths) {
+        Consumer<List<String>> missingFilesHandler = missingFiles->{
+            if (!missingFiles.isEmpty()) {
+                var questionDialog = questionMissingFilesCleanup(getStage(), missingFiles);
+                var x = getInstance().getStage().getX();
+                var y = getInstance().getStage().getY();
+                var width = getInstance().getStage().getWidth();
+                var height = getInstance().getStage().getHeight();
+                questionDialog.getStage().setX(x+width/3);
+                questionDialog.getStage().setY(y+height/3);
+                if (questionDialog.showAndWait() == AlertDialog.ButtonID.OK) {
+                    removeMissingFilesFromPrefs(missingFiles);
+                    loadAndPopulateRecentItemsInBackground();
+                }
+            }
+        };
+
+        Consumer<List<String>> existingFilesHandler = paths->{
+            if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
                 sceneBuilderApp.handleOpenFilesAction(paths);
                 getStage().hide();
-            });
+            } else {
+                showMasker(() -> {
+                    sceneBuilderApp.handleOpenFilesAction(paths);
+                    getStage().hide();
+                });
+            }
+        };
+
+        handleOpen(filePaths, missingFilesHandler, existingFilesHandler);        
+    }
+
+    /**
+     * Attempts to open files in filePaths.
+     * In case of files are missing, a special procedure is applied to handle missing files.
+     *  
+     * @param filePaths List of file paths to project files to be opened by Scene Builder.
+     * @param missingFilesHandler Determines how missing files are handled.
+     * @param fileLoader Determines how files are loaded.
+     */
+    void handleOpen(List<String> filePaths, 
+                              Consumer<List<String>> missingFilesHandler,
+                              Consumer<List<String>> fileLoader) {
+        if (filePaths.isEmpty()) {
+            return;
         }
+        
+        var candidates = filePaths.stream()
+                                  .collect(Collectors.groupingBy(this::filePathExists));
+        
+        List<String> missingFiles = candidates.getOrDefault(Boolean.FALSE, new ArrayList<>());
+        missingFilesHandler.accept(missingFiles);
+        
+        List<String> paths = candidates.getOrDefault(Boolean.TRUE, new ArrayList<>())
+                                       .stream()
+                                       .toList();
+        
+        if (paths.isEmpty()) {
+            return;
+        }
+        
+        fileLoader.accept(paths);
+    }
+
+    private void removeMissingFilesFromPrefs(List<String> missingFiles) {
+        PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController.getSingleton().getRecordGlobal();
+        preferencesRecordGlobal.removeRecentItems(missingFiles);
     }
 
     private void showMasker(Runnable onEndAction) {
