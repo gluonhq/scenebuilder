@@ -1275,12 +1275,12 @@ public class MenuBarController {
 
         final MenuItem zoomInMenuItem = new MenuItem(I18N.getString("menu.title.zoom.in"));
         zoomInMenuItem.setUserData(new ZoomInActionController());
-        zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); //NOI18N
+        zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.ADD, modifier)); //NOI18N
         zoomMenu.getItems().add(zoomInMenuItem);
-        
+
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
         zoomOutMenuItem.setUserData(new ZoomOutActionController());
-        zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("/", modifier));  //NOI18N
+        zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIVIDE, modifier));  //NOI18N
         zoomMenu.getItems().add(zoomOutMenuItem);
         
         zoomMenu.getItems().add(new SeparatorMenuItem());
