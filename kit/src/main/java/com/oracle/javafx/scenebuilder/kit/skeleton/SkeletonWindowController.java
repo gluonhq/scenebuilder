@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,23 +32,27 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.DataFormat;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -71,15 +75,15 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
 
     @FXML
     private void onCopyAction(ActionEvent event) {
-        final Map<DataFormat, Object> content = new HashMap<>();
-
+        String content = "";
         if (textArea.getSelection().getLength() == 0) {
-            content.put(DataFormat.PLAIN_TEXT, textArea.getText());
+            content=textArea.getText();
         } else {
-            content.put(DataFormat.PLAIN_TEXT, textArea.getSelectedText());
+            content=textArea.getSelectedText();
         }
-
-        Clipboard.getSystemClipboard().setContent(content);
+        ClipboardContent newContent = new ClipboardContent();
+        newContent.putString(content);
+        Clipboard.getSystemClipboard().setContent(newContent);
     }
 
     @FXML
@@ -99,7 +103,9 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     private boolean dirty = false;
 
     private final String documentName;
-
+    private final KeyCharacterCombination copyAccelerator;
+    private EventHandler<KeyEvent> keyEventHandler;
+    
     public SkeletonWindowController(EditorController editorController, String documentName, Stage owner) {
         super(SkeletonWindowController.class.getResource("SkeletonWindow.fxml"), I18N.getBundle(), owner); //NOI18N
         this.editorController = editorController;
@@ -120,6 +126,35 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
         }
+        
+        this.copyAccelerator = getCopyToClipboardKeyAccelerator();
+    }
+
+    private KeyCharacterCombination getCopyToClipboardKeyAccelerator() {
+        if (EditorPlatform.IS_MAC) {
+            return new KeyCharacterCombination("c", KeyCombination.META_DOWN);
+        }
+        return new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
+    }
+
+    private EventHandler<KeyEvent> getCopyKeyEventHandler() {
+        if (EditorPlatform.IS_MAC) {
+            return event -> handleCopyToClipboardEvent(event, "c".equals(event.getText()), event.isMetaDown());
+        } else {
+            return event -> handleCopyToClipboardEvent(event, KeyCode.C.equals(event.getCode()), event.isControlDown());
+        }
+    };
+
+    private void handleCopyToClipboardEvent(KeyEvent event, boolean condition, boolean modifier) {
+        if (condition && modifier) {
+            /* On macOS it is essential to run the copy action here
+             * in the JavaFX thread. Otherwise the wrong contents 
+             * (e.g. selection from document window) is copied to 
+             * clipboard.
+             */
+            Platform.runLater(()->this.onCopyAction(null));
+            event.consume();
+        }
     }
 
     @Override
@@ -130,7 +165,19 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     @Override
     public void openWindow() {
         super.openWindow();
-
+        /* 
+         * The event handler is only create once with the 
+         * first time the window is created. Both, the text
+         * area and the scene receive accelerators to have
+         * [CTRL]+[C] copy the contents into the clipboard.
+         */
+        if (keyEventHandler == null) {
+            keyEventHandler = getCopyKeyEventHandler();
+            this.textArea.addEventFilter(KeyEvent.KEY_PRESSED,keyEventHandler);
+            getStage().getScene().getAccelerators().put(copyAccelerator, ()->{
+            	Platform.runLater(()->this.onCopyAction(null));
+            });
+        }
         if (dirty) {
             update();
         }
