@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -37,9 +37,9 @@ import java.net.URL;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 
-import static org.junit.Assert.assertFalse;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link com.oracle.javafx.scenebuilder.kit.util.Deprecation#setStaticLoad(javafx.fxml.FXMLLoader, boolean) }
@@ -48,7 +48,7 @@ public class StaticLoadTest {
     
     private boolean thrown;
     
-    @BeforeClass
+    @BeforeAll
     public static void initJFX() {
         JfxInitializer.initialize();
     }
@@ -57,7 +57,7 @@ public class StaticLoadTest {
     public void testStaticLoadWithoutEventHandler() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoadWithoutEventHandler.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoadWithoutEventHandler.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
@@ -72,7 +72,7 @@ public class StaticLoadTest {
     public void testStaticLoad() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoad.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoad.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);

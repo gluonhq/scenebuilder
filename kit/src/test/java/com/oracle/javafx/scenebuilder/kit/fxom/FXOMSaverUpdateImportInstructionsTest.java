@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,9 +31,9 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,26 +47,24 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-
-import javafx.embed.swing.JFXPanel;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Unit test for {@link FXOMSaver#updateImportInstructions(FXOMDocument)}.
  */
 public class FXOMSaverUpdateImportInstructionsTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private static FXOMDocument fxomDocument;
     private static FXOMSaver serviceUnderTest;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         JfxInitializer.initialize();
     }
@@ -75,7 +73,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     public void testEmptyFXML() throws IOException {
         setupTestCase(FxmlTestInfo.EMPTY);
 
-        assertTrue("fxml is empty", fxomDocument.getFxmlText(false).isEmpty());
+        assertTrue( fxomDocument.getFxmlText(false).isEmpty(), "fxml is empty");
     }
 
     @Test
@@ -110,7 +108,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
         unusedImports.add("java.math.*");
         unusedImports.add("java.util.Set");
         unusedImports.add("org.junit.Test");
-        assertFalse("unused imports are not present", imports.containsAll(unusedImports));
+        assertFalse(imports.containsAll(unusedImports),
+                "unused imports are not present");
     }
 
     @Test
@@ -122,7 +121,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
+        assertFalse(imports.contains("javafx.scene.*"),
+                "fxml import does not contain javafx.scene.*");
 
     }
 
@@ -136,8 +136,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
-        assertFalse("fxml import does not contain javafx.scene.control.*", imports.contains("javafx.scene.control.*"));
+        assertFalse(imports.contains("javafx.scene.*"), "fxml import does not contain javafx.scene.*");
+        assertFalse(imports.contains("javafx.scene.control.*"), "fxml import does not contain javafx.scene.control.*");
     }
 
     @Test
@@ -149,8 +149,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertTrue("fxml import contains java.lang.String", imports.contains("java.lang.String"));
-        assertTrue("fxml import contains javafx.scene.paint.Color", imports.contains("javafx.scene.paint.Color"));
+        assertTrue(imports.contains("java.lang.String"), "fxml import contains java.lang.String");
+        assertTrue(imports.contains("javafx.scene.paint.Color"), "fxml import contains javafx.scene.paint.Color");
     }
 
     @Test
@@ -163,7 +163,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         });
 
         // java.lang.* is not a declared class, therefore not in the imports Set
-        assertTrue("fxml contain only 4 imports", (imports.size() == 4));
+        assertTrue((imports.size() == 4), "fxml contain only 4 imports");
     }
 
     @Test
@@ -177,9 +177,9 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
         // java.lang.* is not a declared class, therefore not in the imports Set
         imports.forEach(i -> {
-            assertFalse("fxml does not contain .*", i.contains(".*"));
+            assertFalse(i.contains(".*"),"fxml does not contain .*");
         });
-        assertTrue("fxml contains only 4 imports", (imports.size() == 4));
+        assertTrue((imports.size() == 4), "fxml contains only 4 imports");
 
     }
 
@@ -192,14 +192,14 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertTrue("fxml has import com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton",
-                imports.contains("com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton"));
-        assertFalse("fxml does not contain com.oracle.javafx.scenebuilder.*",
-                imports.contains("com.oracle.javafx.scenebuilder.*"));
+        assertTrue(imports.contains("com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton"),
+                "fxml has import com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton");
+        assertFalse(imports.contains("com.oracle.javafx.scenebuilder.*"),
+                "fxml does not contain com.oracle.javafx.scenebuilder.*");
 
         // java.lang.* is not a declared class, therefore not in the imports Set
         imports.forEach(i -> {
-            assertFalse("fxml does not contain .*", i.contains(".*"));
+            assertFalse(i.contains(".*"),"fxml does not contain .*");
         });
 
     }
@@ -213,15 +213,15 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertEquals("comment line should not be removed", 5, fxomDocument.getGlue().getHeader().size());
+        assertEquals(5, fxomDocument.getGlue().getHeader().size(), "comment line should not be removed");
 
-        assertTrue("second glue node should be a comment", fxomDocument.getGlue().getHeader().get(1) instanceof GlueCharacters);
-        assertTrue("fifth glue node should be a comment", fxomDocument.getGlue().getHeader().get(4) instanceof GlueCharacters);
+        assertTrue(fxomDocument.getGlue().getHeader().get(1) instanceof GlueCharacters, "second glue node should be a comment");
+        assertTrue(fxomDocument.getGlue().getHeader().get(4) instanceof GlueCharacters, "fifth glue node should be a comment");
 
-        assertTrue("fxml does not contain javafx.scene.control.ComboBox",
-                imports.contains("javafx.scene.control.ComboBox"));
-        assertTrue("fxml does not contain javafx.scene.layout.AnchorPane",
-                imports.contains("javafx.scene.layout.AnchorPane"));
+        assertTrue(imports.contains("javafx.scene.control.ComboBox"),
+                "fxml does not contain javafx.scene.control.ComboBox");
+        assertTrue(imports.contains("javafx.scene.layout.AnchorPane"),
+                "fxml does not contain javafx.scene.layout.AnchorPane");
 
     }
 
@@ -232,11 +232,12 @@ public class FXOMSaverUpdateImportInstructionsTest {
         ArrayList<String> imports = new ArrayList<>();
         fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
 
-        assertEquals("imports length should be 5", 5, imports.size());
-        assertTrue("HBox import was not found", imports.contains("javafx.scene.layout.HBox"));
-        assertTrue("VBox import was not found", imports.contains("javafx.scene.layout.VBox"));
+        assertEquals(5, imports.size(), "imports length should be 5");
+        assertTrue(imports.contains("javafx.scene.layout.HBox"), "HBox import was not found");
+        assertTrue(imports.contains("javafx.scene.layout.VBox"), "VBox import was not found");
 
-        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") || imports.contains("java.scene.control.*"));
+        assertFalse(imports.contains("java.scene.layout.*") || imports.contains("java.scene.control.*"),
+                "Wildcard imports are present");
     }
 
     @Test
@@ -246,11 +247,11 @@ public class FXOMSaverUpdateImportInstructionsTest {
         ArrayList<String> imports = new ArrayList<>();
         fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
 
-        assertEquals("imports length should be 4", 4, imports.size());
-        assertTrue("Lighting import was not found.", imports.contains("javafx.scene.effect.Lighting"));
-        assertTrue("Light.Distant import was not found.", imports.contains("javafx.scene.effect.Light.Distant"));
+        assertEquals(4, imports.size(), "imports length should be 4");
+        assertTrue(imports.contains("javafx.scene.effect.Lighting"),"Lighting import was not found.");
+        assertTrue(imports.contains("javafx.scene.effect.Light.Distant"),"Light.Distant import was not found.");
 
-        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*"));
+        assertFalse(imports.contains("java.scene.layout.*"),"Wildcard imports are present");
     }
 
     private String callService() {
@@ -260,7 +261,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     private void setupTestCase(FxmlTestInfo n) {
         Path pathToFXML = Paths.get("src/test/resources/com/oracle/javafx/scenebuilder/kit/fxom/" + n.getFilename() + ".fxml");
         try {
-            Path pathToTestFXML = temporaryFolder.newFile("testerFXML.fxml").toPath();
+            Path pathToTestFXML = temporaryFolder.resolve("testerFXML.fxml");
 
             // Setup for the fxomDocument from the FXML file that will be tested
             setupFXOMDocument(pathToFXML);
@@ -282,7 +283,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
             URL location = fxmlTesterFile.toFile().toURI().toURL();
             String fxmlString = getFxmlAsString(fxmlTesterFile);
 
-            fxomDocument = new FXOMDocument(fxmlString, location, null, null);
+            fxomDocument = new FXOMDocument(fxmlString, location, null, null, FXOMDocumentSwitch.NORMALIZED);
         } catch (IOException e) {
             e.printStackTrace();
         }

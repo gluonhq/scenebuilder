@@ -38,17 +38,23 @@ class SkeletonSettings {
     private FORMAT_TYPE textFormat = FORMAT_TYPE.COMPACT;
 
     enum LANGUAGE {
-        JAVA("Java"), KOTLIN("Kotlin");
+        JAVA("Java", ".java"), KOTLIN("Kotlin", ".kt");
 
         private final String name;
+        private final String ext;
 
-        LANGUAGE(String name) {
+        LANGUAGE(String name, String fileNameExt) {
             this.name = name;
+            this.ext = fileNameExt;
         }
 
         @Override
         public String toString() {
             return name;
+        }
+
+        String getExtension() {
+            return ext;
         }
     }
 

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -31,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors;
 
+import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
@@ -45,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.BooleanProperty;
@@ -154,7 +158,7 @@ public abstract class PropertyEditor extends Editor {
                     }
                 } else {
                     // Special case for non-properties (fx:id, ...)
-                    EditorPlatform.open(EditorPlatform.JAVADOC_HOME
+                    EditorPlatform.open(DocumentationUrls.JAVADOC_HOME.toString()
                             + "javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"); //NOI18N
                 }
                 // Selection of multiple different classes ==> no link
@@ -559,7 +563,7 @@ public abstract class PropertyEditor extends Editor {
                             try {
                                 EditorPlatform.open(cssInfo.getMainUrl().toString());
                             } catch (IOException ex) {
-                                System.out.println(ex.getMessage() + ex);
+                                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to open css file:", ex);
                             }
                         }
                     }

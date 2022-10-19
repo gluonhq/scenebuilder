@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
@@ -180,8 +182,8 @@ public class UserLibrary extends Library {
             
             try {
                 watcherThread.join();
-            } catch(InterruptedException x) {
-                x.printStackTrace();
+            } catch(InterruptedException e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to join watcher thread: ", e);
             } finally {
                 watcher = null;
                 watcherThread = null;
@@ -326,17 +328,17 @@ public class UserLibrary extends Library {
     
     void setItems(Collection<LibraryItem> items) {
         if (Platform.isFxApplicationThread()) {
-            itemsProperty.setAll(items);
+            getItems().setAll(items);
         } else {
-            Platform.runLater(() -> itemsProperty.setAll(items));
+            Platform.runLater(() -> getItems().setAll(items));
         }
     }
     
     void addItems(Collection<LibraryItem> items) {
         if (Platform.isFxApplicationThread()) {
-            itemsProperty.addAll(items);
+            getItems().addAll(items);
         } else {
-            Platform.runLater(() -> itemsProperty.addAll(items));
+            Platform.runLater(() -> getItems().addAll(items));
         }
     }
     
@@ -404,18 +406,18 @@ public class UserLibrary extends Library {
          * we invoke URLClassLoader.close() on the existing one
          * so that it releases its associated jar files.
          */
-        final ClassLoader classLoader = classLoaderProperty.get();
+        final ClassLoader classLoader = getClassLoader();
         if (classLoader instanceof URLClassLoader) {
             final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
             try {
                 urlClassLoader.close();
-            } catch(IOException x) {
-                x.printStackTrace();
+            } catch(IOException e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to close URL classloader: ", e);
             }
         }
         
         // Now moves to the new class loader
-        classLoaderProperty.set(newClassLoader);
+        setClassLoader(newClassLoader);
     }
     
     /*

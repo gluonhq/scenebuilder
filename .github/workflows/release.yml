@@ -1,28 +1,169 @@
-name: Scene Builder Release - Upload files
+name: Release
+
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+
+env:
+  JAVAFX_VERSION: '19'
+  JAVA_VERSION: '19'
 
 jobs:
-  build:
+  precheck:
+    runs-on: ubuntu-20.04
+    outputs:
+      JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
+      JAVA_VERSION: ${{ env.JAVA_VERSION }}
+      APP_VERSION: ${{ steps.vars.outputs.APP_VERSION }}
+      PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
+      S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: jdk.java.net
+          release: ${{ env.JAVA_VERSION }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Set environment
+        id: vars
+        shell: bash
+        run: |
+          mvn -B versions:set -DremoveSnapshot
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          APP_VERSION=$PROJECT_VERSION
+          S3_PATH=$PROJECT_VERSION
+          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
+              APP_VERSION=`echo $PROJECT_VERSION | cut -d- -f1`
+              S3_PATH=RC/$PROJECT_VERSION
+          fi
+          echo ::set-output name=APP_VERSION::$APP_VERSION
+          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
+          echo ::set-output name=S3_PATH::$S3_PATH
+
+  linux-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-linux.yml@master
+    with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+      test: true
+
+  windows-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-windows.yml@master
+    secrets:
+      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+      WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
+      WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
+    with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+      test: true
+
+  mac-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac.yml@master
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
+      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+    with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+      test: true
+
+  mac_aarch64-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac_aarch64.yml@master
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
+      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
+    with:
+      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+      test: true
+
+  kit-bundles:
+    needs: [precheck]
+    uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
+    with:
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
+
+  release:
+    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
     runs-on: ubuntu-20.04
     steps:
-      - name: Find TAG name
-        id: find-tag
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: jdk.java.net
+          release: ${{ needs.precheck.outputs.JAVA_VERSION }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Set Release Version
         run: |
-          TAG=${GITHUB_REF/refs\/tags\//}
-          echo "::set-output name=tag::$TAG"
-      - name: Upload settings.properties and version.json
-        if: "!contains(steps.find-tag.outputs.tag, 'RC')"
-        run: |
-          TAG=${{ steps.find-tag.outputs.tag }}
-          printf "latestversion=$TAG" > settings.properties
-          aws s3 cp settings.properties ${{ env.AWS_S3_BUCKET }}/scenebuilder/settings.properties --acl public-read --region us-east-1 --debug
-          # Upload version.json. Some older versions still use version-8.4.0.json file
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version.json --acl public-read --region us-east-1 --debug
-          aws s3 cp $GITHUB_WORKSPACE/version.json ${{ env.AWS_S3_BUCKET }}/scenebuilder/version-8.4.0.json --acl public-read --region us-east-1 --debug
+          mvn -B -ntp -q versions:set -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }} -DgenerateBackupPoms=false
+          mvn -pl :parent process-resources
+
+      - name: Release with JReleaser
         env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
+          JRELEASER_S3_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          JRELEASER_S3_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          JRELEASER_S3_GLUON_REGION: us-east-1
+          JRELEASER_S3_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          FILES_ACTIVE="RELEASE"
+          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
+              FILES_ACTIVE="NEVER"
+          fi
+          mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \
+            -Djreleaser.files.active=$FILES_ACTIVE jreleaser:release
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-logs
+          path: |
+            target/jreleaser/trace.log
+            target/jreleaser/output.properties

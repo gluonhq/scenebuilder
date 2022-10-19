@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2019, Gluon and/or its affiliates.
+  Copyright (c) 2019, 2021, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -42,19 +42,24 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox>
             <children>
                 <TextArea fx:id="textArea" editable="false" focusTraversable="false" prefHeight="500.0" styleClass="theme-presets" VBox.vgrow="ALWAYS" />
-                <HBox alignment="BASELINE_RIGHT" prefWidth="600.0" spacing="20.0">
+                <HBox alignment="BASELINE_RIGHT" prefWidth="600.0" spacing="20.0" VBox.vgrow="NEVER">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#onCopyAction" text="%label.copy" HBox.hgrow="ALWAYS" />
+                        <HBox alignment="BASELINE_LEFT" spacing="5.0" HBox.hgrow="SOMETIMES">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#onCopyAction" text="%label.copy" HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onSaveAction" text="%label.save.as" />
+                            </children>
+                        </HBox>
                         <HBox alignment="BASELINE_RIGHT" spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <ChoiceBox fx:id="languageChoiceBox" />
-                                <CheckBox fx:id="commentCheckBox" mnemonicParsing="false" text="%skeleton.add.comments">
-                                </CheckBox><CheckBox fx:id="formatCheckBox" mnemonicParsing="false" text="%skeleton.format.full" />
+                                <CheckBox fx:id="commentCheckBox" mnemonicParsing="false" text="%skeleton.add.comments" />
+                                <CheckBox fx:id="formatCheckBox" mnemonicParsing="false" text="%skeleton.format.full" />
                             </children>
                         </HBox>
                     </children>

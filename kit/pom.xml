@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
-        <version>16.0.0-SNAPSHOT</version>
+        <version>19.0.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -66,6 +66,13 @@
             <artifactId>charm-glisten</artifactId>
             <version>${charm.glisten.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.gluonhq.attach</groupId>
+            <artifactId>display</artifactId>
+            <version>${gluon.attach.version}</version>
+            <classifier>desktop</classifier>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Rest API -->
         <dependency>
@@ -86,12 +93,6 @@
         </dependency>
 
         <!-- Test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>

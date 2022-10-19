@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -37,6 +37,7 @@
 
 .recent-documents-scrollpane{
     -fx-background-color: transparent;
+    -fx-background-insets: 0;
 }
 
 .recent-documents-scrollpane > .viewport {
@@ -52,7 +53,7 @@
 .recent-document {
     -fx-text-fill: white;
     -fx-font-size: 1em;
-
+    -fx-cursor: hand;
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
 }
 
@@ -76,4 +77,28 @@
     -fx-text-fill: white;
     -fx-font-size: 1em;
     -fx-padding: 0.1666665em 5px 0.1666665em 7px; /* 2 5 2 7 */
+}
+
+.progress-label {
+    -fx-translate-y: 90;
+    -fx-text-fill: black;
+    -fx-font-size: 1.65em;
+}
+
+.progress {
+    -fx-progress-color: #f68a1f;
+    -fx-scale-x: 3.5;
+    -fx-scale-y: 3.5;
+}
+
+#open-project-button {
+    -fx-background-color: #a2642a;
+    -fx-text-fill: white;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+}
+
+#open-project-button:hover {
+    -fx-background-color: #fbb16c;
 }
