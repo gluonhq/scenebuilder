@@ -209,7 +209,11 @@ public class MenuBarController {
     private MenuItem showSampleControllerMenuItem;
     @FXML
     private Menu zoomMenu;
-
+    
+    private ZoomInActionController zoomInController;
+    
+    private ZoomOutActionController zoomOutController;
+    
     // Modify
     @FXML
     private MenuItem fitToParentMenuItem;
@@ -1269,17 +1273,19 @@ public class MenuBarController {
      */
     
     final static double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
-    
+
     private void updateZoomMenu() {
         final double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
 
+        zoomInController = new ZoomInActionController();
         final MenuItem zoomInMenuItem = new MenuItem(I18N.getString("menu.title.zoom.in"));
-        zoomInMenuItem.setUserData(new ZoomInActionController());
+        zoomInMenuItem.setUserData(zoomInController);
         zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.ADD, modifier)); //NOI18N
         zoomMenu.getItems().add(zoomInMenuItem);
 
+        zoomOutController = new ZoomOutActionController();
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
-        zoomOutMenuItem.setUserData(new ZoomOutActionController());
+        zoomOutMenuItem.setUserData(zoomOutController);
         zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIVIDE, modifier));  //NOI18N
         zoomMenu.getItems().add(zoomOutMenuItem);
         
@@ -1294,7 +1300,20 @@ public class MenuBarController {
         }
     }
 
+    public void zoomIn() {
+        runActionController(zoomInController);
+    }
     
+    public void zoomOut() {
+        runActionController(zoomOutController);
+    }
+    
+    private void runActionController(MenuItemController controllerToRun) {
+        if (controllerToRun.canPerform()) {
+            controllerToRun.perform();
+        }
+    }
+
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
         
