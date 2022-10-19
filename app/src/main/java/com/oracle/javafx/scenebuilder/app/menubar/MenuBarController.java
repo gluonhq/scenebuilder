@@ -1339,15 +1339,17 @@ public class MenuBarController {
 
         if (event.isShiftDown()) {
             handleArrowKeysForZoom(event);
-            return;
+        } else {            
+            handleNumPadKeys(event);
         }
+    }
 
+    private void handleNumPadKeys(KeyEvent event) {
         switch(event.getCode()) {
             case ADD -> runActionController(zoomInController, event);
             case SUBTRACT ->runActionController(zoomOutController, event);
             default -> {/* no action*/}
         }
-        return;
     }
 
     private void handleArrowKeysForZoom(KeyEvent event) {
