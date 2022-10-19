@@ -1290,13 +1290,12 @@ public class MenuBarController {
         if (EditorPlatform.IS_MAC) {
             zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); // NOI18N
             zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("-", modifier)); // NOI18N
-            
-            
+            // Neither KeyCode.MINUS or KeyCode.SUBTRACT seem to work on macOS.
+            // No chance to test on keyboard with num key pad yet.
         } else {
-            // Accelerators for standard keyboard (not keypad)
+            // Accelerators for standard keyboard (not num key pad)
             zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.PLUS, modifier)); // NOI18N
             zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.MINUS, modifier)); // NOI18N
-            
             // Does not work on Windows:
             // zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); // NOI18N
             //
@@ -1314,45 +1313,53 @@ public class MenuBarController {
         }
     }
 
-    private void runActionController(MenuItemController controllerToRun) {
+    private void runActionController(MenuItemController controllerToRun, KeyEvent event) {
         if (controllerToRun.canPerform()) {
             controllerToRun.perform();
         }
+        event.consume();
     }
-    
-    public void handleAdditionalZoomAccelerators(KeyEvent event, boolean modifierDown) {
-		// Zooming using numerical keypad: works for Windows and Linux
-    	// no chance to test on macOS yet
-        if (KeyCode.ADD.equals(event.getCode()) && modifierDown) {
-            runActionController(zoomInController);
-        }
-        if (KeyCode.SUBTRACT.equals(event.getCode()) && modifierDown) {
-            runActionController(zoomOutController);
-        }
-        
-        // Zooming using arrow keys - works on all 3 platforms
-        // as COMMAND+arrows is already used, an additional modifier is required 
-        boolean shiftDown = event.isShiftDown();
-        if (KeyCode.RIGHT.equals(event.getCode()) && modifierDown && shiftDown) {
-            runActionController(zoomInController);
-        }
-        if (KeyCode.UP.equals(event.getCode()) && modifierDown && shiftDown) {
-            runActionController(zoomInController);
-        }
-        if (KeyCode.LEFT.equals(event.getCode()) && modifierDown && shiftDown) {
-            runActionController(zoomOutController);
-        }
-        if (KeyCode.DOWN.equals(event.getCode()) && modifierDown && shiftDown) {
-            runActionController(zoomOutController);
-        }
-        
-		// on macOS 12.0.1, Java 17/JavaFX 19, 
-        // for unknown reasons the "-" key is not properly detected
-        // this condition works
+
+    /**
+     * Provides handling for additional keyboard accelerators assigned to document view
+     * zoom in/out operation. Zoom is controllable via [+]/[-] keys on standard keyboard
+     * and on numerical key pad.
+     * 
+     * Additionally zoom in via arrow keys (up/right) and zoom out (left/down) is possible.
+     * 
+     * @param event {@link KeyEvent} If any action is triggered, the event will be consumed.
+     */
+    public void handleAdditionalZoomAccelerators(KeyEvent event) {
+        // For unknown reasons, on macOS 12.0.1 with  Java 17/JavaFX 19 the "-" key code
+        // is not properly accepted hence this handling here.
         if (EditorPlatform.IS_MAC && "-".equals(event.getText())) {
-        	runActionController(zoomOutController);
+            runActionController(zoomOutController, event);
+            return;
         }
-	}
+
+        if (event.isShiftDown()) {
+            handleArrowKeysForZoom(event);
+            return;
+        }
+
+        switch(event.getCode()) {
+            case ADD -> runActionController(zoomInController, event);
+            case SUBTRACT ->runActionController(zoomOutController, event);
+            default -> {/* no action*/}
+        }
+        return;
+    }
+
+    private void handleArrowKeysForZoom(KeyEvent event) {
+        switch (event.getCode()) {
+            case RIGHT -> runActionController(zoomInController, event);
+            case UP -> runActionController(zoomInController, event);
+            case LEFT -> runActionController(zoomOutController, event);
+            case DOWN -> runActionController(zoomOutController, event);
+            default -> {/* no action*/}
+        }
+        return;
+    }
 
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
