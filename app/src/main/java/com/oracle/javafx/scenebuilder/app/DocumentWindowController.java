@@ -316,21 +316,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             }
             event.consume();
         }
+        
+        System.out.println(event);
 
-        // Zoom actions are defined using "+" and "/" keys. Those keys
-        // may exist in standard keys and also on numpad/keypad.
-        // As each menu item can only handle one accelerator, here
-        // the standard keys are handled. The menuBarController handles
-        // KeyCode.ADD (+) and KeyCode.DIVIDE (/)
-        if (KeyCode.PLUS.equals(event.getCode()) && modifierDown) {
-            menuBarController.zoomIn();
-            event.consume();
-        }
-
-        if (KeyCode.SLASH.equals(event.getCode()) && modifierDown) {
-            menuBarController.zoomOut();
-            event.consume();
-        }
+        menuBarController.handleAdditionalZoomAccelerators(event, modifierDown);
     };
     
     /*

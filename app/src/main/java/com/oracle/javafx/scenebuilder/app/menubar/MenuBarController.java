@@ -87,6 +87,7 @@ import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -1280,15 +1281,14 @@ public class MenuBarController {
         zoomInController = new ZoomInActionController();
         final MenuItem zoomInMenuItem = new MenuItem(I18N.getString("menu.title.zoom.in"));
         zoomInMenuItem.setUserData(zoomInController);
-        zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.ADD, modifier)); //NOI18N
         zoomMenu.getItems().add(zoomInMenuItem);
 
         zoomOutController = new ZoomOutActionController();
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
         zoomOutMenuItem.setUserData(zoomOutController);
-        zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.DIVIDE, modifier));  //NOI18N
-        zoomMenu.getItems().add(zoomOutMenuItem);
-        
+        zoomMenu.getItems().add(zoomOutMenuItem);        
+    	zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier));  //NOI18N
+    	zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("-", modifier));  //NOI18N
         zoomMenu.getItems().add(new SeparatorMenuItem());
         
         for (int i = 0; i < scalingTable.length; i++) {
@@ -1300,19 +1300,46 @@ public class MenuBarController {
         }
     }
 
-    public void zoomIn() {
-        runActionController(zoomInController);
-    }
-    
-    public void zoomOut() {
-        runActionController(zoomOutController);
-    }
-    
     private void runActionController(MenuItemController controllerToRun) {
         if (controllerToRun.canPerform()) {
             controllerToRun.perform();
         }
     }
+    
+    public void handleAdditionalZoomAccelerators(KeyEvent event, boolean modifierDown) {
+		boolean shiftDown = event.isShiftDown();
+        if (EditorPlatform.IS_MAC) {
+        	// This handling is required as the "-" is not properly accepted when used inside the accelerator
+        	if ("-".equals(event.getText())) {
+        		runActionController(zoomOutController);
+        	}
+        	
+        	// On de_DE keyboard layout "MINUS" is mapped to "ß" which is wrong
+        	// if (KeyCode.MINUS.equals(event.getCode()) && modifierDown) {
+        	//	runActionController(zoomOutController);
+        	// }
+        	if (KeyCode.RIGHT.equals(event.getCode()) && modifierDown && shiftDown) {
+        		runActionController(zoomInController);
+        	}
+        	if (KeyCode.UP.equals(event.getCode()) && modifierDown && shiftDown) {
+        		runActionController(zoomInController);
+        	}
+        	if (KeyCode.LEFT.equals(event.getCode()) && modifierDown && shiftDown) {
+        		runActionController(zoomOutController);
+        	}
+        	if (KeyCode.DOWN.equals(event.getCode()) && modifierDown && shiftDown) {
+        		runActionController(zoomOutController);
+        	}
+        } else {
+        	if (KeyCode.ADD.equals(event.getCode()) && modifierDown) {
+        		runActionController(zoomInController);
+        	}
+        	
+        	if (KeyCode.MINUS.equals(event.getCode()) && modifierDown) {
+        		runActionController(zoomOutController);
+        	}
+        }
+	}
 
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
