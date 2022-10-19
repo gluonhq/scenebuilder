@@ -1287,9 +1287,11 @@ public class MenuBarController {
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
         zoomOutMenuItem.setUserData(zoomOutController);
         zoomMenu.getItems().add(zoomOutMenuItem);
-        if (EditorPlatform.IS_LINUX) {
+        if (EditorPlatform.IS_MAC) {
             zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); // NOI18N
             zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("-", modifier)); // NOI18N
+            
+            
         } else {
             // Accelerators for standard keyboard (not keypad)
             zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.PLUS, modifier)); // NOI18N
@@ -1319,52 +1321,36 @@ public class MenuBarController {
     }
     
     public void handleAdditionalZoomAccelerators(KeyEvent event, boolean modifierDown) {
-		boolean shiftDown = event.isShiftDown();
-        if (EditorPlatform.IS_MAC) {
-            // This handling is required as the "-" is not properly accepted when used
-            // inside the accelerator
-            if ("-".equals(event.getText())) {
-                runActionController(zoomOutController);
-            }
-
-            // On de_DE keyboard layout "MINUS" is mapped to "ß" which is wrong
-            // if (KeyCode.MINUS.equals(event.getCode()) && modifierDown) {
-            // runActionController(zoomOutController);
-            // }
-            if (KeyCode.RIGHT.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomInController);
-            }
-            if (KeyCode.UP.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomInController);
-            }
-            if (KeyCode.LEFT.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomOutController);
-            }
-            if (KeyCode.DOWN.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomOutController);
-            }
-        } else {
-            // Works well on windows for num key pad
-            if (KeyCode.ADD.equals(event.getCode()) && modifierDown) {
-                runActionController(zoomInController);
-            }
-            if (KeyCode.SUBTRACT.equals(event.getCode()) && modifierDown) {
-                runActionController(zoomOutController);
-            }
-            
-            // Works also very well on Windows
-            if (KeyCode.RIGHT.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomInController);
-            }
-            if (KeyCode.UP.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomInController);
-            }
-            if (KeyCode.LEFT.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomOutController);
-            }
-            if (KeyCode.DOWN.equals(event.getCode()) && modifierDown && shiftDown) {
-                runActionController(zoomOutController);
-            }
+		// Zooming using numerical keypad: works for Windows and Linux
+    	// no chance to test on macOS yet
+        if (KeyCode.ADD.equals(event.getCode()) && modifierDown) {
+            runActionController(zoomInController);
+        }
+        if (KeyCode.SUBTRACT.equals(event.getCode()) && modifierDown) {
+            runActionController(zoomOutController);
+        }
+        
+        // Zooming using arrow keys - works on all 3 platforms
+        // as COMMAND+arrows is already used, an additional modifier is required 
+        boolean shiftDown = event.isShiftDown();
+        if (KeyCode.RIGHT.equals(event.getCode()) && modifierDown && shiftDown) {
+            runActionController(zoomInController);
+        }
+        if (KeyCode.UP.equals(event.getCode()) && modifierDown && shiftDown) {
+            runActionController(zoomInController);
+        }
+        if (KeyCode.LEFT.equals(event.getCode()) && modifierDown && shiftDown) {
+            runActionController(zoomOutController);
+        }
+        if (KeyCode.DOWN.equals(event.getCode()) && modifierDown && shiftDown) {
+            runActionController(zoomOutController);
+        }
+        
+		// on macOS 12.0.1, Java 17/JavaFX 19, 
+        // for unknown reasons the "-" key is not properly detected
+        // this condition works
+        if (EditorPlatform.IS_MAC && "-".equals(event.getText())) {
+        	runActionController(zoomOutController);
         }
 	}
 
