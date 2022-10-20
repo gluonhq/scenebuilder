@@ -43,7 +43,7 @@
 <?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1024.0" stylesheets="@WelcomeWindow.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <BorderPane fx:id="contentPane">
+   <BorderPane fx:id="contentPane" onDragDropped="#handleDroppedFiles" onDragOver="#handleFileDraggedOver">
       <left>
          <VBox styleClass="left-pane">
             <children>
