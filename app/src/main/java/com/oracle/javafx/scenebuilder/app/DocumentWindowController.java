@@ -316,6 +316,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             }
             event.consume();
         }
+        
+        // Keep preview function working even if preview accelerator is 
+        // already occupied in FXML
+        if ("p".equalsIgnoreCase(event.getText()) && modifierDown) {
+            menuBarController.showPreview();
+            event.consume();
+        }
     };
     
     /*
