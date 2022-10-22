@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropert
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
@@ -73,6 +74,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -253,6 +255,9 @@ class MetadataIntrospector {
                         readWrite,
                         null,
                         inspectorPath);
+            } else if (propertyType == javafx.geometry.Insets.class) {
+                Insets defaultValues = (Insets)getDefaultValue(sample, propertyDescriptor.getReadMethod(), Insets.EMPTY);
+                result = new InsetsPropertyMetadata(name, readWrite, defaultValues, inspectorPath);
             } else if (propertyType == javafx.util.Duration.class) {
                 Duration defaultValue = (Duration)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null);
                 result = new DurationPropertyMetadata(
