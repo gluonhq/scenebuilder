@@ -120,6 +120,9 @@ class SkeletonFileNameProposal {
                 case KOTLIN:
                     location = location.replace(resources, kotlin);
                     break;
+                case JRUBY:
+                    // use default location in "resources"
+                    break;
                 }
             }
         }

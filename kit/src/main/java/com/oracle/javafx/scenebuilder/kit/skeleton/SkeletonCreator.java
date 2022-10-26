@@ -35,6 +35,7 @@ class SkeletonCreator {
 
     private final SkeletonCreatorJava skeletonCreatorJava = new SkeletonCreatorJava();
     private final SkeletonCreatorKotlin skeletonCreatorKotlin = new SkeletonCreatorKotlin();
+    private final SkeletonCreatorJRuby skeletonCreatorJRuby = new SkeletonCreatorJRuby();
 
     /**
      * @return a code skeleton for the given context
@@ -45,6 +46,8 @@ class SkeletonCreator {
                 return skeletonCreatorJava.createFrom(context);
             case KOTLIN:
                 return skeletonCreatorKotlin.createFrom(context);
+            case JRUBY:
+                return skeletonCreatorJRuby.createFrom(context);
             default:
                 throw new IllegalArgumentException("Language not supported: " + context.getSettings().getLanguage());
         }
