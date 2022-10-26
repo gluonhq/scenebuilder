@@ -33,24 +33,46 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 
+import java.lang.reflect.TypeVariable;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
+public class SkeletonCreatorJRuby implements SkeletonConverter {
 
-    @Override
-    void appendPackage(SkeletonContext context, StringBuilder sb) {
+    static final String NL = System.lineSeparator();
+    static final String INDENT = "    "; //NOI18N
+
+    public String createFrom(SkeletonContext context) {
+
+        final StringBuilder sb = new StringBuilder();
+        appendHeaderComment(context, sb);
         // Ruby supports packages... but we ignore it here because Java package != Ruby Module and
         // equating the two can cause confusion. Let the user fix it up themselves
+        appendClass(context, sb);
+
+        return sb.toString();
     }
 
-    @Override
+    static Pattern importExtractor = Pattern.compile("import (([^.]+)\\..*)");
+
     void appendImports(SkeletonContext context, StringBuilder sb) {
+        boolean output = false;
         // Optional, really, as JRubyFX imports them by default
+        // Only "import" non-javafx ones in a comment
         for (String importStatement : context.getImports()) {
-            //sb.append("java_import '").append(importStatement).append("'").append(NL);
+            Matcher matcher = importExtractor.matcher(importStatement);
+            matcher.matches();
+            String rootName = matcher.group(2);
+            if (rootName.equals("javafx"))
+                continue; // JRubyFX already imports these
+            sb.append(INDENT).append("# java_import '").append(matcher.group(1)).append("'").append(NL);
+            output = true;
         }
+        if (output)
+            sb.append(NL);
     }
 
 
@@ -66,46 +88,52 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         sb.append(NL);
     }
 
-    @Override
-    void appendClassPart(SkeletonContext context, StringBuilder sb) {
-        sb.append("class "); //NOI18N
 
-        if (hasController(context)) {
-            String controllerClassName = getControllerClassName(context);
-            sb.append(controllerClassName);
-        } else {
-            sb.append("PleaseProvideControllerClassName"); //NOI18N
-        }
-    }
-
-    @Override
     void appendClass(SkeletonContext context, StringBuilder sb) {
         sb.append(NL);
 
-        appendClassPart(context, sb);
+        String controllerClassName = "PleaseProvideControllerClassName";
+
+        if (hasController(context)) {
+           controllerClassName = getControllerClassName(context);
+        }
+
+        sb.append("class ").append(controllerClassName); //NOI18N
 
         sb.append(NL);
         sb.append(INDENT).append("include JRubyFX::Controller").append(NL).append(NL); //NOI18N
 
-        if (context.getSettings().isFull()) {
-            sb.append(INDENT).append("fxml '").append(context.getDocumentName()).append("'").append(NL).append(NL); //NOI18N
-        }else{
-            sb.append(INDENT).append("# fxml '").append(context.getDocumentName()).append("'").append(NL).append(NL); //NOI18N
+        appendImports(context, sb);
+
+        if (context.getSettings().isWithComments()) {
+            sb.append(INDENT).append("# Marks this class as being a controller for the given fxml document").append(NL); //NOI18N
+            sb.append(INDENT).append("# This creates @instance_variables for all fx:id").append(NL); //NOI18N
+        }
+        String documentName = context.getDocumentName();
+        if (!documentName.contains(".fxml")) {
+            documentName += ".fxml";
+        }
+        sb.append(INDENT).append("fxml '").append(documentName).append("'").append(NL).append(NL); //NOI18N
+
+
+        if (context.getSettings().isWithComments()) {
+            sb.append(INDENT).append("# These @instance_variables will be injected by FXMLLoader & JRubyFX").append(NL); //NOI18N
         }
 
-        appendFields(context, sb);
+        appendFieldsWithFxId(context, sb);
 
-        appendMethods(context, sb);
+        appendFieldsResourcesAndLocation(context, sb);
+
+        appendInitialize(context, sb);
+
+        appendEventHandlers(context, sb);
 
         sb.append("end").append(NL); //NOI18N
     }
 
+
     private boolean hasController(SkeletonContext context) {
         return context.getFxController() != null && !context.getFxController().isEmpty();
-    }
-
-    private boolean hasNestedController(SkeletonContext context) {
-        return hasController(context) && context.getFxController().contains("$"); //NOI18N
     }
 
     private String getControllerClassName(SkeletonContext context) {
@@ -117,57 +145,52 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         return simpleName;
     }
 
-    @Override
-    void appendField(Class<?> fieldClass, String fieldName, StringBuilder sb) {
-        sb.append("# @").append(fieldName).append(": ").append(fieldClass.getSimpleName()); //NOI18N
-        appendFieldParameters(sb, fieldClass); // just for reference
+    void appendFieldParameters(StringBuilder sb, Class<?> fieldClazz) {
+        final TypeVariable<? extends Class<?>>[] parameters = fieldClazz.getTypeParameters();
+        if (parameters.length > 0) {
+            sb.append("<"); //NOI18N
+            String sep = ""; //NOI18N
+            for (TypeVariable<?> ignored : parameters) {
+                sb.append(sep);
+                sb.append("?"); //NOI18N
+                sep = ", "; //NOI18N
+            }
+            sb.append(">"); //NOI18N
+        }
     }
 
-    @Override
+
     void appendFieldsResourcesAndLocation(SkeletonContext context, StringBuilder sb) {
         if (!context.getSettings().isFull()) {
             return;
         }
-        // TODO: I don't think JRubyFX sets these?
-/*
+
+        // these aren't built into JRubyFX's fxml_helper.rb, so just manually add the fields for reification
         if (context.getSettings().isWithComments()) {
-            sb.append(" # ResourceBundle that was given to the FXMLLoader"); //NOI18N
+            sb.append(INDENT).append("# ResourceBundle that was given to the FXMLLoader. Access as self.resources, or @resources if instance_variable is true"); //NOI18N
         }
+        sb.append(NL).append(INDENT);
+        sb.append("java_field '@javafx.fxml.FXML java.util.ResourceBundle resources', instance_variable: true");
         sb.append(NL);
-        sb.append(INDENT);
-        appendField(ResourceBundle.class, "resources", sb); //NOI18N
-        sb.append(NL).append(NL);
 
         if (context.getSettings().isWithComments()) {
-            sb.append(" # URL location of the FXML file that was given to the FXMLLoader"); //NOI18N
+            sb.append(NL).append(INDENT).append("# URL location of the FXML file that was given to the FXMLLoader. Access as self.location, or @location if instance_variable is true"); //NOI18N
         }
-        sb.append(NL);
-        sb.append(INDENT);
-        appendField(URL.class, "location", sb); //NOI18N
-        sb.append(NL).append(NL);*/
+        sb.append(NL).append(INDENT);
+        sb.append("java_field '@javafx.fxml.FXML java.net.URL location', instance_variable: true");
+        sb.append(NL).append(NL);
     }
 
 
-    @Override
     void appendFieldsWithFxId(SkeletonContext context, StringBuilder sb) {
         for (Map.Entry<String, Class<?>> variable : context.getVariables().entrySet()) {
-//            if (context.getSettings().isWithComments()) {
-//                sb.append(INDENT).append("# fx:id=\"").append(variable.getKey()).append("\""); //NOI18N
-//                sb.append(NL);
-//            }
-
-            sb.append(INDENT);
-            appendField(variable.getValue(), variable.getKey(), sb);
-
-            if (context.getSettings().isWithComments()) {
-                sb.append(" (Value injected by FXMLLoader & JRubyFX)"); //NOI18N
-            }
+            sb.append(INDENT).append("# @").append(variable.getKey()).append(": \t").append(variable.getValue().getSimpleName()); //NOI18N
+            appendFieldParameters(sb, variable.getValue()); // just for reference
             sb.append(NL);
         }
         sb.append(NL);
     }
 
-    @Override
     void appendInitialize(SkeletonContext context, StringBuilder sb) {
         if (!context.getSettings().isFull()) {
             return;
@@ -178,7 +201,7 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         }
 
         sb.append(INDENT);
-        appendInitializeMethodPart(sb);
+        sb.append("def initialize()"); //NOI18N
         sb.append(NL);
         appendAssertions(context, sb);
         sb.append(NL);
@@ -186,7 +209,6 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         sb.append("end").append(NL).append(NL); //NOI18N
     }
 
-    @Override
     void appendEventHandlers(SkeletonContext context, StringBuilder sb) {
         for (Map.Entry<String, String> entry : context.getEventHandlers().entrySet()) {
             String methodName = entry.getKey();
@@ -200,13 +222,6 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         }
     }
 
-
-    @Override
-    void appendFieldParameterType(StringBuilder sb) {
-        sb.append("?"); //NOI18N
-    }
-
-    @Override
     void appendEventHandler(String methodName, String eventClassName, StringBuilder sb) {
         sb.append("def "); //NOI18N
         sb.append(methodName);
@@ -214,12 +229,6 @@ public class SkeletonCreatorJRuby extends AbstractSkeletonCreator {
         sb.append(INDENT).append("end"); //NOI18N
     }
 
-    @Override
-    void appendInitializeMethodPart(StringBuilder sb) {
-        sb.append("def initialize()"); //NOI18N
-    }
-
-    @Override
     void appendAssertions(SkeletonContext context, StringBuilder sb) {
         for (String assertion : context.getAssertions()) {
             sb.append(INDENT).append(INDENT)
