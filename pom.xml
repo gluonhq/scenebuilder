@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>19.0.0-SNAPSHOT</version>
+    <version>20.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
