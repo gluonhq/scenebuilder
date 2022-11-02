@@ -319,7 +319,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         
         // Keep preview function working even if preview accelerator is 
         // already occupied in FXML
-        if ("p".equalsIgnoreCase(event.getText()) && modifierDown) {
+        if (KeyCode.P.equals(event.getCode()) && modifierDown) {
             menuBarController.showPreview();
             event.consume();
         }
