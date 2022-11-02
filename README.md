@@ -40,9 +40,15 @@ These are the requisites:
 
 ### How to build Scene Builder ###
 
+Scene Builder makes use of the Maven Wrapper to build and run the project. So there is no need to install Maven on the developers machine. To utilize Maven Wrapper, instead of calling `mvn`, one can run `./mvnw` on Linux or macOS or `mvnw` on Windows instead.
+
 To build the Scene Builder services, on the project's root, run:
 
 `mvn clean package`
+
+Alternatively, utilizing the Maven Wrapper, one can run:
+
+`./mvnw clean package`
 
 It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
 
