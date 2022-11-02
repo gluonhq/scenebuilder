@@ -154,7 +154,8 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 recentDocument.setAlignment(Pos.BASELINE_LEFT);
                 recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
                 recentDocument.setTooltip(new Tooltip(recentItem));
-
+                /* if MnemonicParsing is enabled, file names with underscores are displayed incorrectly */
+                recentDocument.setMnemonicParsing(false);
                 recentDocumentButtons.add(recentDocument);
             }
 
