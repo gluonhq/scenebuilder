@@ -499,6 +499,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     @Override
     public void handleOpenFilesAction(List<String> files) {
+        handleOpenFilesAction(files, null);
+    }
+
+    public void handleOpenFilesAction(List<String> files, Runnable onSuccess) {
         assert files != null;
         assert files.isEmpty() == false;
 
@@ -511,18 +515,73 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            performOpenFiles(fileObjs);
+            var openResult = performOpenFiles(fileObjs);
+            handleFileOpenResult(openResult, onSuccess);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
                 @Override
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
-                        performOpenFiles(fileObjs);
+                        var openResult = performOpenFiles(fileObjs);
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
+                        handleFileOpenResult(openResult, onSuccess);
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * The onSuccess Runnable is only executed if the {@link FileOpenResult} has no
+     * errors at all.
+     * 
+     * @param result    {@link FileOpenResult} holding the list of files to be
+     *                  opened and a map of files with exceptions in case of an
+     *                  error.
+     * @param onSuccess A runnable holding the action to be performed on success.
+     */
+    private void handleFileOpenResult(FileOpenResult result, Runnable onSuccess) {
+        if (result.hasErrors()) {
+            showFileOpenErrors(result);
+        } else {
+            if (onSuccess != null) {
+                onSuccess.run();
+            }
+        }
+    }
+
+    /**
+     * In case of errors (>= 1 exception) a message dialog is shown to the user.
+     * There are versions for exactly 1 error and for more than 1 errors.
+     * 
+     * @param openResult {@link FileOpenResult} holding a map of files with
+     *                   exceptions.
+     */
+    private void showFileOpenErrors(FileOpenResult openResult) {
+        if (openResult.errors.size() == 1) {
+            final File fxmlFile = openResult.errors().keySet().iterator().next();
+            final Exception x = openResult.errors().get(fxmlFile);
+            final ErrorDialog errorDialog = new ErrorDialog(null);
+            errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
+            errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
+            errorDialog.setDebugInfoWithThrowable(x);
+            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+            errorDialog.showAndWait();
+        } else if (openResult.errors.size() > 1){
+            final ErrorDialog errorDialog = new ErrorDialog(null);
+            if (openResult.errors().size() == openResult.filesToOpen.size()) {
+                // Open operation has failed for all the files
+                errorDialog.setMessage(I18N.getString("alert.open.failureN.message"));
+                errorDialog.setDetails(I18N.getString("alert.open.failureN.details"));
+            } else {
+                // Open operation has failed for some files
+                errorDialog.setMessage(I18N.getString("alert.open.failureMofN.message",
+                openResult.errors().size(), openResult.filesToOpen.size()));
+                errorDialog.setDetails(I18N.getString("alert.open.failureMofN.details"));
+            }
+            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+            errorDialog.showAndWait();
         }
     }
 
@@ -657,11 +716,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         return null;
     }
 
-    private void performOpenFiles(List<File> fxmlFiles) {
+    private FileOpenResult performOpenFiles(List<File> fxmlFiles) {
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
         final Map<File, Exception> exceptions = new HashMap<>();
+        final List<File> openedFiles = new ArrayList<>();
         for (File fxmlFile : fxmlFiles) {
             try {
                 final DocumentWindowController dwc
@@ -674,47 +734,20 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     var hostWindow = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
+                    openedFiles.add(fxmlFile);
                 }
             } catch (Exception xx) {
                 exceptions.put(fxmlFile, xx);
             }
         }
-
-        switch (exceptions.size()) {
-            case 0: { // Good
-                // Update recent items with opened files
-                final PreferencesController pc = PreferencesController.getSingleton();
-                pc.getRecordGlobal().addRecentItems(fxmlFiles);
-                break;
-            }
-            case 1: {
-                final File fxmlFile = exceptions.keySet().iterator().next();
-                final Exception x = exceptions.get(fxmlFile);
-                final ErrorDialog errorDialog = new ErrorDialog(null);
-                errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
-                errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
-                errorDialog.setDebugInfoWithThrowable(x);
-                errorDialog.setTitle(I18N.getString("alert.title.open"));
-                errorDialog.showAndWait();
-                break;
-            }
-            default: {
-                final ErrorDialog errorDialog = new ErrorDialog(null);
-                if (exceptions.size() == fxmlFiles.size()) {
-                    // Open operation has failed for all the files
-                    errorDialog.setMessage(I18N.getString("alert.open.failureN.message"));
-                    errorDialog.setDetails(I18N.getString("alert.open.failureN.details"));
-                } else {
-                    // Open operation has failed for some files
-                    errorDialog.setMessage(I18N.getString("alert.open.failureMofN.message",
-                            exceptions.size(), fxmlFiles.size()));
-                    errorDialog.setDetails(I18N.getString("alert.open.failureMofN.details"));
-                }
-                errorDialog.setTitle(I18N.getString("alert.title.open"));
-                errorDialog.showAndWait();
-                break;
-            }
+        
+        // Update recent items with opened files
+        if (!openedFiles.isEmpty()) {
+            final PreferencesController pc = PreferencesController.getSingleton();
+            pc.getRecordGlobal().addRecentItems(openedFiles);
         }
+        
+        return new FileOpenResult(fxmlFiles, exceptions);
     }
 
     private void performExit() {
@@ -1081,6 +1114,21 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public static void applyToAllDocumentWindows(Consumer<DocumentWindowController> consumer) {
         for (DocumentWindowController dwc : getSingleton().getDocumentWindowControllers()) {
             consumer.accept(dwc);
+        }
+    }
+
+    /**
+     * Describes the result of FXML file loading process. As in general SceneBuilder
+     * can open multiple files at the same time. Hence this record can hold of the
+     * files supposed to be opened. In case of errors, the exceptions are stored in
+     * a map per file.
+     */
+    record FileOpenResult(List<File> filesToOpen, Map<File,Exception> errors) {
+        public boolean isSuccess() {
+            return errors.isEmpty();
+        }
+        public boolean hasErrors() {
+            return !errors.isEmpty();
         }
     }
 }

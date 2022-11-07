@@ -256,35 +256,31 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
      *                  Builder.
      */
     private void handleOpen(List<String> filePaths) {
-        Consumer<List<String>> missingFilesHandler = missingFiles->{
-            if (!missingFiles.isEmpty()) {
-                var questionDialog = questionMissingFilesCleanup(getStage(), missingFiles);
-                var x = getInstance().getStage().getX();
-                var y = getInstance().getStage().getY();
-                var width = getInstance().getStage().getWidth();
-                var height = getInstance().getStage().getHeight();
-                questionDialog.getStage().setX(x+width/3);
-                questionDialog.getStage().setY(y+height/3);
-                if (questionDialog.showAndWait() == AlertDialog.ButtonID.OK) {
-                    removeMissingFilesFromPrefs(missingFiles);
-                    loadAndPopulateRecentItemsInBackground();
-                }
-            }
-        };
+        handleOpen(filePaths, 
+                   this::askUserToRemoveMissingRecentFiles,
+                   this::attemptOpenExistingFiles);
+    }
 
-        Consumer<List<String>> existingFilesHandler = paths->{
-            if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
-                sceneBuilderApp.handleOpenFilesAction(paths);
-                getStage().hide();
-            } else {
-                showMasker(() -> {
-                    sceneBuilderApp.handleOpenFilesAction(paths);
-                    getStage().hide();
-                });
+    private void askUserToRemoveMissingRecentFiles(List<String> missingFiles) {
+        if (!missingFiles.isEmpty()) {
+            var questionDialog = questionMissingFilesCleanup(getStage(), missingFiles);
+            if (questionDialog.showAndWait() == AlertDialog.ButtonID.OK) {
+                removeMissingFilesFromPrefs(missingFiles);
+                loadAndPopulateRecentItemsInBackground();
             }
-        };
+        }
+    }
 
-        handleOpen(filePaths, missingFilesHandler, existingFilesHandler);        
+    private void attemptOpenExistingFiles(List<String> paths) {
+        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
+            openFilesAndHideStage(paths);
+        } else {
+            showMasker(() -> openFilesAndHideStage(paths));
+        }
+    }
+
+    private void openFilesAndHideStage(List<String> files) {
+        sceneBuilderApp.handleOpenFilesAction(files,()->getStage().hide());
     }
 
     /**
@@ -301,21 +297,20 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         if (filePaths.isEmpty()) {
             return;
         }
-        
+
         var candidates = filePaths.stream()
                                   .collect(Collectors.groupingBy(this::filePathExists));
-        
+
         List<String> missingFiles = candidates.getOrDefault(Boolean.FALSE, new ArrayList<>());
         missingFilesHandler.accept(missingFiles);
         
         List<String> paths = candidates.getOrDefault(Boolean.TRUE, new ArrayList<>())
                                        .stream()
                                        .toList();
-        
+
         if (paths.isEmpty()) {
             return;
         }
-        
         fileLoader.accept(paths);
     }
 
@@ -335,8 +330,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
             if (isFinished) {
                 Platform.runLater(() -> {
                     onEndAction.run();
-
-                    // restore state in case welcome dialog is opened again
                     contentPane.setDisable(false);
                     masker.setVisible(false);
                 });
