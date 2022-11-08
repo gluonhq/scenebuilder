@@ -99,6 +99,8 @@ import javafx.stage.Stage;
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(SceneBuilderApp.class.getName());
+
     public enum ApplicationControlAction {
         ABOUT,
         CHECK_UPDATES,
@@ -497,11 +499,24 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         newWindow.updateWithDefaultContent();
     }
 
+    /**
+     * By default all necessary actions to open a single file or a group of files take place in this method.
+     * If it is required to perform certain actions after successfully loading all files, please use {@code handleOpenFilesAction(List<String> files, Runnable onSuccess)} instead.
+     * 
+     * All error handling takes place here within, there is no way yet to access exceptional results and to work with them.
+     */
     @Override
     public void handleOpenFilesAction(List<String> files) {
         handleOpenFilesAction(files, null);
     }
 
+    /**
+     * As file loading errors are handled within this method (all exceptions are handled within), it can be helpful to be able to run a certain action after successful file loading (e.g. closing a certain stage).
+     * For this case this method offers the argument {@code Runnable onSuccess} which will be executed after successful file open activity. The {@code Runnable onSuccess} is only ran once, despite how many files have been loaded.
+     *  
+     * @param files List of Strings denoting file paths to be opened
+     * @param onSuccess {@link Runnable} to be executed after all files have been opened successfully
+     */
     public void handleOpenFilesAction(List<String> files, Runnable onSuccess) {
         assert files != null;
         assert files.isEmpty() == false;
@@ -720,9 +735,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
+        LOGGER.log(Level.FINE, "Opening {0} files...", fxmlFiles.size());
         final Map<File, Exception> exceptions = new HashMap<>();
         final List<File> openedFiles = new ArrayList<>();
         for (File fxmlFile : fxmlFiles) {
+            LOGGER.log(Level.FINE, "Attempting to open file {0}", fxmlFile);
             try {
                 final DocumentWindowController dwc
                         = lookupDocumentWindowControllers(fxmlFile.toURI().toURL());
@@ -735,8 +752,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                     openedFiles.add(fxmlFile);
+                    LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
                 }
             } catch (Exception xx) {
+                LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);
                 exceptions.put(fxmlFile, xx);
             }
         }
@@ -746,7 +765,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             final PreferencesController pc = PreferencesController.getSingleton();
             pc.getRecordGlobal().addRecentItems(openedFiles);
         }
-        
+        if (exceptions.size() > 0) {
+            LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptions.size(), fxmlFiles.size()});
+        } else {
+            LOGGER.log(Level.FINE, "Successfully opened all files.");
+        }
         return new FileOpenResult(fxmlFiles, exceptions);
     }
 
@@ -1124,9 +1147,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * a map per file.
      */
     record FileOpenResult(List<File> filesToOpen, Map<File,Exception> errors) {
-        public boolean isSuccess() {
-            return errors.isEmpty();
-        }
         public boolean hasErrors() {
             return !errors.isEmpty();
         }

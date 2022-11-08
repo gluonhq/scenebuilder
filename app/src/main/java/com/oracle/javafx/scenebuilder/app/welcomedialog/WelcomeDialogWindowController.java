@@ -38,6 +38,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
@@ -66,6 +68,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
+
+    private static final Logger LOGGER = Logger.getLogger(WelcomeDialogWindowController.class.getName());
 
     @FXML
     private BorderPane contentPane;
@@ -207,7 +211,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"), "*.fxml")
         );
         fileChooser.setInitialDirectory(EditorController.getNextInitialDirectory());
-
         List<File> fxmlFiles = fileChooser.showOpenMultipleDialog(getStage());
 
         // no file was selected, so nothing to do
@@ -225,7 +228,6 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     protected static AlertDialog questionMissingFilesCleanup(Stage stage, List<String> missingFiles) {
         String withPath = missingFiles.stream()
                                       .collect(Collectors.joining(System.lineSeparator()));
-        
         AlertDialog question = new AlertDialog(stage);
         StringBuilder shortMessage = new StringBuilder();
         if (missingFiles.size() > 1) {
@@ -292,8 +294,9 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
      * @param fileLoader Determines how files are loaded.
      */
     void handleOpen(List<String> filePaths, 
-                              Consumer<List<String>> missingFilesHandler,
-                              Consumer<List<String>> fileLoader) {
+                    Consumer<List<String>> missingFilesHandler,
+                    Consumer<List<String>> fileLoader) {
+
         if (filePaths.isEmpty()) {
             return;
         }
@@ -303,7 +306,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         List<String> missingFiles = candidates.getOrDefault(Boolean.FALSE, new ArrayList<>());
         missingFilesHandler.accept(missingFiles);
-        
+
         List<String> paths = candidates.getOrDefault(Boolean.TRUE, new ArrayList<>())
                                        .stream()
                                        .toList();
@@ -315,6 +318,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void removeMissingFilesFromPrefs(List<String> missingFiles) {
+        missingFiles.forEach(fxmlFileName->LOGGER.log(Level.INFO, "Removing missing file from recent items: {0}", fxmlFileName));
         PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController.getSingleton().getRecordGlobal();
         preferencesRecordGlobal.removeRecentItems(missingFiles);
     }
@@ -330,6 +334,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
             if (isFinished) {
                 Platform.runLater(() -> {
                     onEndAction.run();
+                    // restore state in case welcome dialog is opened again
                     contentPane.setDisable(false);
                     masker.setVisible(false);
                 });
