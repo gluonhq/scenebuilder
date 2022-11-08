@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -127,11 +128,8 @@ class LibraryListCell extends ListCell<LibraryListItem> {
             if (item.getLibItem() != null) {
                 // A qualifier needed to discriminate items is kept in the ID:
                 // this applies to orientation as well as empty qualifiers.
-                // FX8 qualifier is not kept as there's no ambiguity there.
                 String id = item.getLibItem().getName();
-                if (id.contains(BuiltinLibrary.getFX8Qualifier())) {
-                    id = id.substring(0, id.indexOf(BuiltinLibrary.getFX8Qualifier()));
-                }
+
                 // If QE were about to test a localized version the ID should
                 // remain unchanged.
                 if (id.contains(BuiltinLibrary.getEmptyQualifier())) {
