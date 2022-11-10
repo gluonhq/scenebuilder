@@ -35,7 +35,6 @@ package com.oracle.javafx.scenebuilder.app.util;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -125,7 +124,7 @@ public class AppSettings {
     public static void getLatestVersion(Consumer<String> consumer) {
         if (latestVersion == null) {
             var fetchTask = createFetchTask(consumer);
-            Platform.runLater(fetchTask);
+            new Thread(fetchTask, "GetLatestVersion").start();
         } else {
             consumer.accept(latestVersion);
         }
