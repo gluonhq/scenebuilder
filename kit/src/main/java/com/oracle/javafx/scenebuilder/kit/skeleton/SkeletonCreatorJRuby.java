@@ -56,6 +56,24 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
         return sb.toString();
     }
 
+    public String createApplicationFrom(SkeletonContext context) {
+
+        return "require 'jrubyfx'\n" +
+                "\n" +
+                createFrom(context) +
+                "\n" +
+                "fxml_root File.dirname(__FILE__) # or wherever you save the fxml file to\n" +
+                "\n" +
+                "class " + makeClassName(context) + "Application < JRubyFX::Application\n" +
+                "  def start(stage)\n" +
+                "    " + makeClassName(context) + ".load_into(stage)\n" +
+                "    #stage.title = \"" + makeClassName(context) + "\"\n" +
+                "    stage.show\n" +
+                "  end\n" +
+                "  launch\n" +
+                "end\n";
+    }
+
     static Pattern importExtractor = Pattern.compile("import (([^.]+)\\..*)");
 
     void appendImports(SkeletonContext context, StringBuilder sb) {
@@ -82,21 +100,13 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
         }
 
         final String title = I18N.getString("skeleton.window.title", context.getDocumentName());
-        sb.append("#").append(NL); //NOI18N
         sb.append("# ").append(title).append(NL); //NOI18N
-        sb.append("# ").append(NL); //NOI18N
-        sb.append(NL);
     }
 
 
     void appendClass(SkeletonContext context, StringBuilder sb) {
-        sb.append(NL);
 
-        String controllerClassName = "PleaseProvideControllerClassName";
-
-        if (hasController(context)) {
-           controllerClassName = getControllerClassName(context);
-        }
+        String controllerClassName = makeClassName(context);
 
         sb.append("class ").append(controllerClassName); //NOI18N
 
@@ -129,6 +139,15 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
         appendEventHandlers(context, sb);
 
         sb.append("end").append(NL); //NOI18N
+    }
+
+    private String makeClassName(SkeletonContext context) {
+        String controllerClassName = "PleaseProvideControllerClassName";
+
+        if (hasController(context)) {
+            controllerClassName = getControllerClassName(context);
+        }
+        return controllerClassName;
     }
 
 
@@ -167,14 +186,13 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
 
         // these aren't built into JRubyFX's fxml_helper.rb, so just manually add the fields for reification
         if (context.getSettings().isWithComments()) {
-            sb.append(INDENT).append("# ResourceBundle that was given to the FXMLLoader. Access as self.resources, or @resources if instance_variable is true"); //NOI18N
+            sb.append(INDENT).append("# ResourceBundle that was given to the FXMLLoader. Access as self.resources, or @resources if instance_variable is true").append(NL); //NOI18N
         }
-        sb.append(NL).append(INDENT);
+        sb.append(INDENT);
         sb.append("java_field '@javafx.fxml.FXML java.util.ResourceBundle resources', instance_variable: true");
-        sb.append(NL);
 
         if (context.getSettings().isWithComments()) {
-            sb.append(NL).append(INDENT).append("# URL location of the FXML file that was given to the FXMLLoader. Access as self.location, or @location if instance_variable is true"); //NOI18N
+            sb.append(NL).append(NL).append(INDENT).append("# URL location of the FXML file that was given to the FXMLLoader. Access as self.location, or @location if instance_variable is true"); //NOI18N
         }
         sb.append(NL).append(INDENT);
         sb.append("java_field '@javafx.fxml.FXML java.net.URL location', instance_variable: true");
@@ -232,9 +250,10 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
     void appendAssertions(SkeletonContext context, StringBuilder sb) {
         for (String assertion : context.getAssertions()) {
             sb.append(INDENT).append(INDENT)
-                .append("raise 'fx:id=\"").append(assertion).append("\" was not injected: check your FXML file ") //NOI18N
-                .append("\"").append(context.getDocumentName()).append("\".' if ") //NOI18N
-                .append("@").append(assertion).append(".nil?").append(NL); //NOI18N
+                    .append("raise 'fx:id=\"").append(assertion).append("\" was not injected: check your FXML file ") //NOI18N
+                    .append("\"").append(context.getDocumentName()).append("\".' if ") //NOI18N
+                    .append("@").append(assertion).append(".nil?").append(NL); //NOI18N
         }
     }
+
 }

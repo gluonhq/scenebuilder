@@ -1,0 +1,13 @@
+class InnerController
+    include JRubyFX::Controller
+
+    fxml 'test.fxml'
+
+    # @myTableView: 	TableView<?>
+    # @myVbox: 	VBox
+
+    def onMyVboxMouseEntered(event) # event: MouseEvent
+
+    end
+
+end
