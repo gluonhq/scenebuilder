@@ -17,7 +17,7 @@ jobs:
         uses: oracle-actions/setup-java@v1
         with:
           website: jdk.java.net
-          release: 19
+          release: 20
 
       - name: Run Tests (Linux)
         if: runner.os == 'Linux'
