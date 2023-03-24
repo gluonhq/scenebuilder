@@ -80,5 +80,7 @@
             <property name="tokens" value="LITERAL_WHILE"/>
             <property name="option" value="text"/>
         </module>
+        
+        <module name="OperatorWrap"/>
     </module>
 </module>
