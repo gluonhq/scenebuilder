@@ -127,16 +127,8 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
         }
         
-        this.copyAccelerator = getCopyToClipboardKeyAccelerator();
+        this.copyAccelerator = new KeyCharacterCombination("c", KeyCombination.SHORTCUT_DOWN);
     }
-
-    private KeyCharacterCombination getCopyToClipboardKeyAccelerator() {
-        return new KeyCharacterCombination("c", KeyCombination.SHORTCUT_DOWN);
-    }
-
-    private EventHandler<KeyEvent> getCopyKeyEventHandler() {
-        return event -> handleCopyToClipboardEvent(event, "c".equals(event.getText()), event.isShortcutDown());
-    };
 
     private void handleCopyToClipboardEvent(KeyEvent event, boolean condition, boolean modifier) {
         if (condition && modifier) {
@@ -165,10 +157,11 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
          * [SHORTCUT]+[C] copy the contents into the clipboard.
          */
         if (keyEventHandler == null) {
-            keyEventHandler = getCopyKeyEventHandler();
+            keyEventHandler = event -> handleCopyToClipboardEvent(event, 
+                    "c".equals(event.getText()), event.isShortcutDown());
             this.textArea.addEventFilter(KeyEvent.KEY_PRESSED,keyEventHandler);
             getStage().getScene().getAccelerators().put(copyAccelerator, ()->{
-            	Platform.runLater(()->this.onCopyAction(null));
+                Platform.runLater(()->this.onCopyAction(null));
             });
         }
         if (dirty) {
