@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -77,9 +77,9 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     private void onCopyAction(ActionEvent event) {
         String content = "";
         if (textArea.getSelection().getLength() == 0) {
-            content=textArea.getText();
+            content = textArea.getText();
         } else {
-            content=textArea.getSelectedText();
+            content = textArea.getSelectedText();
         }
         ClipboardContent newContent = new ClipboardContent();
         newContent.putString(content);
@@ -131,18 +131,11 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     }
 
     private KeyCharacterCombination getCopyToClipboardKeyAccelerator() {
-        if (EditorPlatform.IS_MAC) {
-            return new KeyCharacterCombination("c", KeyCombination.META_DOWN);
-        }
-        return new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
+        return new KeyCharacterCombination("c", KeyCombination.SHORTCUT_DOWN);
     }
 
     private EventHandler<KeyEvent> getCopyKeyEventHandler() {
-        if (EditorPlatform.IS_MAC) {
-            return event -> handleCopyToClipboardEvent(event, "c".equals(event.getText()), event.isMetaDown());
-        } else {
-            return event -> handleCopyToClipboardEvent(event, KeyCode.C.equals(event.getCode()), event.isControlDown());
-        }
+        return event -> handleCopyToClipboardEvent(event, "c".equals(event.getText()), event.isShortcutDown());
     };
 
     private void handleCopyToClipboardEvent(KeyEvent event, boolean condition, boolean modifier) {
@@ -166,10 +159,10 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     public void openWindow() {
         super.openWindow();
         /* 
-         * The event handler is only create once with the 
-         * first time the window is created. Both, the text
+         * The event handler is only created once with the 
+         * first time this window is created. Both, the text
          * area and the scene receive accelerators to have
-         * [CTRL]+[C] copy the contents into the clipboard.
+         * [SHORTCUT]+[C] copy the contents into the clipboard.
          */
         if (keyEventHandler == null) {
             keyEventHandler = getCopyKeyEventHandler();
