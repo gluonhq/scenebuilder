@@ -49,8 +49,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -103,7 +103,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
     private boolean dirty = false;
 
     private final String documentName;
-    private final KeyCharacterCombination copyAccelerator;
+    private final KeyCodeCombination copyAccelerator;
     private EventHandler<KeyEvent> keyEventHandler;
     
     public SkeletonWindowController(EditorController editorController, String documentName, Stage owner) {
@@ -126,8 +126,8 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
         }
-        
-        this.copyAccelerator = new KeyCharacterCombination("c", KeyCombination.SHORTCUT_DOWN);
+
+        this.copyAccelerator = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
     }
 
     private void handleCopyToClipboardEvent(KeyEvent event, boolean condition, boolean modifier) {
