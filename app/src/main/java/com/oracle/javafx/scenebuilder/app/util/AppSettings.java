@@ -134,7 +134,7 @@ public class AppSettings {
         return new Task<String>() {
             @Override
             protected String call() throws Exception {
-                LOGGER.log(Level.FINE, "Fetching Latest online available SceneBuilder version from: {0}", LATEST_VERSION_CHECK_URL);
+                LOGGER.log(Level.FINE, "Fetching latest Scenebuilder version from: {0}", LATEST_VERSION_CHECK_URL);
                 Properties prop = new Properties();
                 String onlineVersionNumber = null;
 
