@@ -156,9 +156,10 @@ public class AppSettings {
             }
 
             protected void succeeded() { 
-                String value = getValue();
-                LOGGER.log(Level.INFO, "Latest online available version is: {0}", value);
-                consumer.accept(getValue());
+                String fetchedVersion = getValue();
+                LOGGER.log(Level.INFO, "Latest online available version is: {0}", fetchedVersion);
+                consumer.accept(fetchedVersion);
+                latestVersion = fetchedVersion;
             }
         };
     }
