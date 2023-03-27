@@ -82,5 +82,7 @@
         </module>
         
         <module name="OperatorWrap"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
     </module>
 </module>
