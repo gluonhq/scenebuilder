@@ -137,7 +137,7 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
              * (e.g. selection from document window) is copied to 
              * clipboard.
              */
-            Platform.runLater(()->this.onCopyAction(null));
+            Platform.runLater(() -> this.onCopyAction(null));
             event.consume();
         }
     }
@@ -158,10 +158,10 @@ public class SkeletonWindowController extends AbstractFxmlWindowController {
          */
         if (keyEventHandler == null) {
             keyEventHandler = event -> handleCopyToClipboardEvent(event, 
-                    "c".equals(event.getText()), event.isShortcutDown());
-            this.textArea.addEventFilter(KeyEvent.KEY_PRESSED,keyEventHandler);
-            getStage().getScene().getAccelerators().put(copyAccelerator, ()->{
-                Platform.runLater(()->this.onCopyAction(null));
+                    event.getCode() == KeyCode.C, event.isShortcutDown());
+            this.textArea.addEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
+            getStage().getScene().getAccelerators().put(copyAccelerator, () -> {
+                Platform.runLater(() -> this.onCopyAction(null));
             });
         }
         if (dirty) {
