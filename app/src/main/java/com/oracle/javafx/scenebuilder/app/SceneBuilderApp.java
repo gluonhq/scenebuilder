@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -583,7 +583,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             errorDialog.setDebugInfoWithThrowable(x);
             errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
             errorDialog.showAndWait();
-        } else if (openResult.errors.size() > 1){
+        } else if (openResult.errors.size() > 1) {
             final ErrorDialog errorDialog = new ErrorDialog(null);
             if (openResult.errors().size() == openResult.filesToOpen.size()) {
                 // Open operation has failed for all the files
@@ -1146,7 +1146,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * files supposed to be opened. In case of errors, the exceptions are stored in
      * a map per file.
      */
-    record FileOpenResult(List<File> filesToOpen, Map<File,Exception> errors) {
+    record FileOpenResult(List<File> filesToOpen, Map<File, Exception> errors) {
         public boolean hasErrors() {
             return !errors.isEmpty();
         }

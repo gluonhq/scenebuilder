@@ -178,7 +178,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     public static WelcomeDialogWindowController getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new WelcomeDialogWindowController();
             var stage = instance.getStage();
             stage.setMinWidth(800);
@@ -282,7 +282,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void openFilesAndHideStage(List<String> files) {
-        sceneBuilderApp.handleOpenFilesAction(files,()->getStage().hide());
+        sceneBuilderApp.handleOpenFilesAction(files, () -> getStage().hide());
     }
 
     /**
@@ -318,7 +318,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void removeMissingFilesFromPrefs(List<String> missingFiles) {
-        missingFiles.forEach(fxmlFileName->LOGGER.log(Level.INFO, "Removing missing file from recent items: {0}", fxmlFileName));
+        missingFiles.forEach(fxmlFileName -> LOGGER.log(Level.INFO, "Removing missing file from recent items: {0}", fxmlFileName));
         PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController.getSingleton().getRecordGlobal();
         preferencesRecordGlobal.removeRecentItems(missingFiles);
     }
