@@ -1342,18 +1342,23 @@ public class MenuBarController {
             return;
         }
 
+        if (EditorPlatform.IS_MAC && "+".equals(event.getText())) {
+            runActionController(zoomInController, event);
+            return;
+        }
+
         if (event.isShiftDown()) {
             handleArrowKeysForZoom(event);
-        } else {            
+        } else {
             handleNumPadKeys(event);
         }
     }
 
     private void handleNumPadKeys(KeyEvent event) {
-        switch(event.getCode()) {
+        switch (event.getCode()) {
             case ADD -> runActionController(zoomInController, event);
-            case SUBTRACT ->runActionController(zoomOutController, event);
-            default -> {/* no action*/}
+            case SUBTRACT -> runActionController(zoomOutController, event);
+            default -> { /* no action*/ }
         }
     }
 
@@ -1363,7 +1368,7 @@ public class MenuBarController {
             case UP -> runActionController(zoomInController, event);
             case LEFT -> runActionController(zoomOutController, event);
             case DOWN -> runActionController(zoomOutController, event);
-            default -> {/* no action*/}
+            default -> { /* no action*/ }
         }
         return;
     }
