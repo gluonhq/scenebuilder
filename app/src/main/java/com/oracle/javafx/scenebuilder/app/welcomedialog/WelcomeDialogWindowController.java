@@ -52,7 +52,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
@@ -114,10 +113,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         loadAndPopulateRecentItemsInBackground();
 
-        emptyApp.setUserData(Template.EMPTY_APP);
-
         setOnTemplateChosen(this::fireSelectTemplate);
-        setupTemplateButtonHandlers();
     }
 
     private void loadAndPopulateRecentItemsInBackground() {
@@ -158,7 +154,8 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 recentDocument.setAlignment(Pos.BASELINE_LEFT);
                 recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
                 recentDocument.setTooltip(new Tooltip(recentItem));
-
+                /* if MnemonicParsing is enabled, file names with underscores are displayed incorrectly */
+                recentDocument.setMnemonicParsing(false);
                 recentDocumentButtons.add(recentDocument);
             }
 
@@ -173,7 +170,10 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     public static WelcomeDialogWindowController getInstance() {
         if (instance == null){
             instance = new WelcomeDialogWindowController();
-            AppSettings.setWindowIcon((Stage)instance.getStage());
+            var stage = instance.getStage();
+            stage.setMinWidth(800);
+            stage.setMinHeight(650);
+            AppSettings.setWindowIcon(stage);
         }
         return instance;
     }

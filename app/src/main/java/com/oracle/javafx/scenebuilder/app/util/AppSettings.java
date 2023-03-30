@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -34,6 +34,8 @@ package com.oracle.javafx.scenebuilder.app.util;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
+
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -50,8 +52,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppSettings {
+
+    private static final Logger LOGGER = Logger.getLogger(AppSettings.class.getName());
+
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
@@ -81,8 +88,8 @@ public class AppSettings {
                 sbProps.load(in);
                 sceneBuilderVersion = sbProps.getProperty("build.version", "UNSET");
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Cannot init SB version:", e);
         }
     }
 
@@ -115,9 +122,19 @@ public class AppSettings {
     }
 
     public static void getLatestVersion(Consumer<String> consumer) {
-
         if (latestVersion == null) {
-            new Thread (() -> {
+            var fetchTask = createFetchTask(consumer);
+            new Thread(fetchTask, "GetLatestVersion").start();
+        } else {
+            consumer.accept(latestVersion);
+        }
+    }
+
+    private static final Task<String> createFetchTask(Consumer<String> consumer) {
+        return new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                LOGGER.log(Level.FINE, "Fetching latest Scenebuilder version from: {0}", LATEST_VERSION_CHECK_URL);
                 Properties prop = new Properties();
                 String onlineVersionNumber = null;
 
@@ -125,22 +142,26 @@ public class AppSettings {
                 try {
                     url = new URL(LATEST_VERSION_CHECK_URL);
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Failed to construct version check URL: ", e);
                 }
 
                 try (InputStream inputStream = url.openStream()) {
                     prop.load(inputStream);
                     onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Failed to load latest version number property: ", e);
                 }
-                latestVersion = onlineVersionNumber;
-                consumer.accept(latestVersion);
-            }, "GetLatestVersion").start();
-        } else {
-            consumer.accept(latestVersion);
-        }
+                return onlineVersionNumber;
+            }
+
+            protected void succeeded() { 
+                String fetchedVersion = getValue();
+                LOGGER.log(Level.INFO, "Latest online available version is: {0}", fetchedVersion);
+                consumer.accept(fetchedVersion);
+                latestVersion = fetchedVersion;
+            }
+        };
     }
 
     public static String getLatestVersionText() {
@@ -160,10 +181,10 @@ public class AppSettings {
                 latestVersionText = announcementObject.getString("text");
                 latestVersionAnnouncementURL = announcementObject.getString("url");
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Failed to read latest version json: ", e);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Failed to construct latest version info URL: ", e);
         }
     }
 

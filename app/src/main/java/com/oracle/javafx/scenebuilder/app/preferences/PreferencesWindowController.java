@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -53,6 +53,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALTERNATE_TEXT_INPUT_PASTE;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
@@ -90,7 +91,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -139,6 +142,12 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private CheckBox animateAccordion;
     @FXML
     private CheckBox wildcardImports;
+    @FXML
+    private CheckBox alternatePasteBehavior;
+    @FXML
+    private Label alternatePasteBehaviorLabel;
+    @FXML
+    private Pane alternatePasteBehaviorPane;
 
     private PaintPicker alignmentColorPicker;
     private PaintPicker parentRingColorPicker;
@@ -259,6 +268,17 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Wildcard Imports
         wildcardImports.setSelected(recordGlobal.isWildcardImports());
         wildcardImports.selectedProperty().addListener(new WildcardImportListener());
+
+        if (EditorPlatform.IS_MAC) {
+            // Alternate paste behavior for Text Input Controls
+            alternatePasteBehavior.setSelected(recordGlobal.isAlternateTextInputControlPaste());
+            alternatePasteBehavior.selectedProperty().addListener(new AlternatePasteListener());
+        } else {
+            // This setting is supposed to to be invisible on other platforms.
+            alternatePasteBehaviorPane.setDisable(true);
+            alternatePasteBehaviorPane.setVisible(false);
+            alternatePasteBehaviorPane.setManaged(false);
+        }
     }
 
     /*
@@ -574,6 +594,20 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             // Update preferences
             recordGlobal.setWildcardImports(newValue);
             recordGlobal.writeToJavaPreferences(WILDCARD_IMPORT);
+        }
+    }
+
+    private static class AlternatePasteListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController
+                    = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal
+                    = preferencesController.getRecordGlobal();
+            // Update preferences
+            recordGlobal.setAlternateTextInputControlPaste(newValue);
+            recordGlobal.writeToJavaPreferences(ALTERNATE_TEXT_INPUT_PASTE);
         }
     }
 }

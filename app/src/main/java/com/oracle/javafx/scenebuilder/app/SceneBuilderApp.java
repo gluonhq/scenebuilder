@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -184,7 +184,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
             case NEW_TEMPLATE:
                 final TemplatesWindowController templatesWindowController = new TemplatesWindowController(source.getStage());
-                templatesWindowController.setOnTemplateChosen(this::performNewTemplateInNewWindow);
+                templatesWindowController.setOnTemplateChosen(template -> {
+                    templatesWindowController.getStage().hide();
+                    performNewTemplateInNewWindow(template);
+                });
                 templatesWindowController.openWindow();
                 break;
 
@@ -370,8 +373,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         setApplicationUncaughtExceptionHandler();
 
         startInBackground("Set up Scene Builder", () -> {
-            backgroundStartPhase0();
-            backgroundStartPhase1();
+            backgroundStart();
             setUpUserLibrary(showWelcomeDialog);
             createEmptyDocumentWindow();
         });
@@ -626,11 +628,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
-        final URL url = template.getFXMLURL();
-        if (url != null) {
-            documentWindowController.loadFromURL(url, template.getType() != Type.PHONE);
+        documentWindowController.loadFromURL(template.getFXMLURL(), template.getType() != Type.PHONE);
+
+        if (template.getType() == Type.PHONE) {
+            documentWindowController.getEditorController().performEditAction(EditorController.EditAction.SET_SIZE_335x600);
+            documentWindowController.getEditorController().setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
         }
-        Template.prepareDocument(documentWindowController.getEditorController(), template);
+
         documentWindowController.openWindow();
     }
 
@@ -838,34 +842,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private String getToolStylesheet() {
         return ResourceUtils.getToolStylesheet(toolTheme);
     }
-    
-    /*
-     * Background startup
-     * 
-     * To speed SB startup, we create two threads which anticipate some
-     * initialization tasks and offload the JFX thread:
-     *  - 'Phase 0' thread executes tasks that do not require JFX initialization
-     *  - 'Phase 1' thread executes tasks that requires JFX initialization
-     * 
-     * Tasks executed here must be carefully chosen:
-     * 1) they must be thread-safe
-     * 2) they should be order-safe : whether they are executed in background
-     *    or by the JFX thread should make no difference.
-     * 
-     * Currently we simply anticipate creation of big singleton instances
-     * (like Metadata, Preferences...)
+
+    /**
+     * This runs in a background thread to speed up SB startup.
      */
-
-    private void backgroundStartPhase0() {
-        assert Platform.isFxApplicationThread() == false; // Warning 
-
+    private void backgroundStart() {
         PreferencesController.getSingleton();
         Metadata.getMetadata();
-    }
-
-    private void backgroundStartPhase1() {
-        assert Platform.isFxApplicationThread() == false; // Warning
-
         BuiltinLibrary.getLibrary();
         if (EditorPlatform.IS_MAC) {
             MenuBarController.getSystemMenuBarController();

@@ -1,0 +1,17 @@
+# Sample Skeleton for 'test' Controller Class
+class EmptyController
+    include JRubyFX::Controller
+
+    # Marks this class as being a controller for the given fxml document
+    # This creates @instance_variables for all fx:id
+    fxml 'test.fxml'
+
+    # These @instance_variables will be injected by FXMLLoader & JRubyFX
+    # @myTableView: 	TableView<?>
+    # @myVbox: 	VBox
+
+    def onMyVboxMouseEntered(event) # event: MouseEvent
+
+    end
+
+end
