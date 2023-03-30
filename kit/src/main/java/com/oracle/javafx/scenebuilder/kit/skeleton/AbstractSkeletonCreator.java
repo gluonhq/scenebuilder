@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2023, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -38,13 +38,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-abstract class AbstractSkeletonCreator {
+abstract class AbstractSkeletonCreator implements SkeletonConverter {
 
     static final String NL = System.lineSeparator();
     static final String INDENT = "    "; //NOI18N
     static final String FXML_ANNOTATION = "@FXML";
 
-    String createFrom(SkeletonContext context) {
+    public String createFrom(SkeletonContext context) {
         final StringBuilder sb = new StringBuilder();
 
         appendHeaderComment(context, sb);
