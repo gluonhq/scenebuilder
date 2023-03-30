@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -49,6 +49,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
 
@@ -229,19 +230,21 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         String withPath = missingFiles.stream()
                                       .collect(Collectors.joining(System.lineSeparator()));
         AlertDialog question = new AlertDialog(stage);
+        question.setDefaultButtonID(ButtonID.CANCEL);
+        question.setShowDefaultButton(true);
+        question.setOKButtonTitle(I18N.getString("alert.welcome.file.not.found.okay"));
         StringBuilder shortMessage = new StringBuilder();
         if (missingFiles.size() > 1) {
             shortMessage.append(I18N.getString("alert.welcome.files.not.found.question"));
             question.setTitle(I18N.getString("alert.welcome.files.not.found.title"));
-            question.setOKButtonTitle(I18N.getString("alert.welcome.files.not.found.okay"));
         } else {
             shortMessage.append(I18N.getString("alert.welcome.file.not.found.question"));
             question.setTitle(I18N.getString("alert.welcome.file.not.found.title"));
-            question.setOKButtonTitle(I18N.getString("alert.welcome.file.not.found.okay"));
         }
         question.setCancelButtonTitle(I18N.getString("alert.welcome.file.not.found.no"));
         question.setMessage(shortMessage.toString());
         question.setDetails(withPath);
+        
         return question;
     }
     

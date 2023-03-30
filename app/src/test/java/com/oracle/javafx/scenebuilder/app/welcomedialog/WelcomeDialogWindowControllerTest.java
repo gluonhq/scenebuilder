@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2023, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -67,10 +67,10 @@ class WelcomeDialogWindowControllerTest {
         List<String> filesMissing = new ArrayList<>();
         List<String> filesLoaded = new ArrayList<>();
         
-        Consumer<List<String>> missingFilesHandler = missing->filesMissing.addAll(missing);
-        Consumer<List<String>> existingFilesHandler = existing->filesLoaded.addAll(existing);
+        Consumer<List<String>> missingFilesHandler = missing -> filesMissing.addAll(missing);
+        Consumer<List<String>> existingFilesHandler = existing -> filesLoaded.addAll(existing);
         
-        assertDoesNotThrow(()->classUnderTest.handleOpen(filesToLoad, 
+        assertDoesNotThrow(() -> classUnderTest.handleOpen(filesToLoad, 
                                                          missingFilesHandler, 
                                                          existingFilesHandler));
         
@@ -84,7 +84,7 @@ class WelcomeDialogWindowControllerTest {
         List<String> filesToLoad = Collections.emptyList();
         
         Set<String> actionsPerformed = new HashSet<>();
-        Consumer<List<String>> filesHandler = listOffiles->actionsPerformed.add("some action performed");
+        Consumer<List<String>> filesHandler = listOffiles -> actionsPerformed.add("some action performed");
         classUnderTest.handleOpen(filesToLoad, filesHandler, filesHandler);
         
         assertTrue(actionsPerformed.isEmpty());
@@ -99,8 +99,8 @@ class WelcomeDialogWindowControllerTest {
         List<String> filesMissing = new ArrayList<>();
         List<String> filesLoaded = new ArrayList<>();
         
-        Consumer<List<String>> missingFilesHandler = missing->filesMissing.addAll(missing);
-        Consumer<List<String>> existingFilesHandler = existing->filesLoaded.addAll(existing);
+        Consumer<List<String>> missingFilesHandler = missing -> filesMissing.addAll(missing);
+        Consumer<List<String>> existingFilesHandler = existing -> filesLoaded.addAll(existing);
         classUnderTest.handleOpen(filesToLoad, missingFilesHandler, existingFilesHandler);
         
         assertTrue(filesLoaded.isEmpty());
@@ -110,5 +110,4 @@ class WelcomeDialogWindowControllerTest {
     private Path getResource(String resourceName) throws Exception {
         return Path.of(getClass().getResource(resourceName).toURI());
     }
-
 }
