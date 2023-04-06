@@ -146,7 +146,7 @@ jobs:
 
       - name: Release with JReleaser
         env:
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_S3_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           JRELEASER_S3_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           JRELEASER_S3_GLUON_REGION: us-east-1

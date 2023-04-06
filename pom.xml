@@ -118,6 +118,7 @@
                         <encoding>UTF-8</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -179,7 +180,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.0.0-M1</version>
+                <version>1.5.1</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -195,6 +196,9 @@
                             <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
                             <longDescription>${project.description}</longDescription>
                             <tags>javafx,gui,tool</tags>
+                            <snapshot>
+                                <fullChangelog>true</fullChangelog>
+                            </snapshot>
                         </project>
                         <checksum>
                             <files>false</files>
