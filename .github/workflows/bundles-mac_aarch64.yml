@@ -10,11 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '19'
+        default: '20'
         required: false
         type: string
       javafx-version:
-        default: '19'
+        default: '20'
         required: false
         type: string
       test:
