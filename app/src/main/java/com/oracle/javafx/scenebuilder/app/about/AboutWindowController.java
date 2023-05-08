@@ -44,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -128,7 +129,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private String getAboutText() {
-
+        String[] sbBuildDateSplit = sbBuildDate.split("-");
+        String sbBuildYear = sbBuildDateSplit.length > 0 ? sbBuildDateSplit[0] : String.valueOf(LocalDate.now().getYear());
         StringBuilder text = getVersionParagraph()
                 .append(getBuildInfoParagraph())
                 .append(getLoggingParagraph())
@@ -137,8 +139,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(getJavaLibraryPathParagraph())
                 .append(getOsParagraph())
                 .append(getApplicationDirectoriesParagraph())
-                .append(I18N.getString(sbAboutCopyrightKeyName));
-        
+                .append(I18N.getString(sbAboutCopyrightKeyName, sbBuildYear));
+
         return text.toString();
     }
 
