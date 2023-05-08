@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  JAVAFX_VERSION: '20'
+  JAVAFX_VERSION: '20.0.1'
   JAVA_VERSION: '20'
 
 jobs:
