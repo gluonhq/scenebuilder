@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates, 2015, Gluon.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,6 +44,8 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -67,6 +69,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     private String sbBuildInfo;
     private String sbBuildVersion;
     private String sbBuildDate;
+    private String sbBuildDateFormat;
     private String sbBuildJavaVersion;
     private String sbBuildJavaFXVersion;
     // The resource bundle contains two keys: about.copyright and about.copyright.open
@@ -85,6 +88,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 sbBuildInfo = sbProps.getProperty("build.info", "UNSET"); //NOI18N
                 sbBuildVersion = sbProps.getProperty("build.version", "UNSET"); //NOI18N
                 sbBuildDate = sbProps.getProperty("build.date", "UNSET"); //NOI18N
+                sbBuildDateFormat = sbProps.getProperty("build.date.format", "UNSET"); //NOI18N
                 sbBuildJavaVersion = sbProps.getProperty("build.java.version", "UNSET"); //NOI18N
                 sbBuildJavaFXVersion = sbProps.getProperty("build.javafx.version", "UNSET"); //NOI18N
                 sbAboutCopyrightKeyName = sbProps.getProperty("copyright.key.name", "UNSET"); //NOI18N
@@ -128,7 +132,7 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
     }
 
     private String getAboutText() {
-
+        LocalDateTime buildDate = LocalDateTime.parse(sbBuildDate, DateTimeFormatter.ofPattern(sbBuildDateFormat));
         StringBuilder text = getVersionParagraph()
                 .append(getBuildInfoParagraph())
                 .append(getLoggingParagraph())
@@ -137,8 +141,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
                 .append(getJavaLibraryPathParagraph())
                 .append(getOsParagraph())
                 .append(getApplicationDirectoriesParagraph())
-                .append(I18N.getString(sbAboutCopyrightKeyName));
-        
+                .append(I18N.getString(sbAboutCopyrightKeyName, String.valueOf(buildDate.getYear())));
+
         return text.toString();
     }
 
