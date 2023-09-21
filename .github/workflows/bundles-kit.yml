@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       java-version:
-        default: '20'
+        default: '21'
         required: false
         type: string
 

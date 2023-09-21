@@ -16,15 +16,15 @@
     </modules>
 
     <properties>
-        <java.version>20</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>21-ea+24</javafx.version>
+        <javafx.version>21</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>6.2.0</charm.glisten.version>
-        <gluon.attach.version>4.0.15</gluon.attach.version>
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <charm.glisten.version>6.2.2</charm.glisten.version>
+        <gluon.attach.version>4.0.19</gluon.attach.version>
+        <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
@@ -78,7 +78,7 @@
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
-                    <version>0.0.5</version>
+                    <version>0.0.8</version>
                     <configuration>
                         <mainClass>${main.class.name}</mainClass>
                         <options>
