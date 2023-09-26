@@ -46,9 +46,11 @@ jobs:
         run: |
           mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          if [[ ${{ github.event.inputs.candidate }} == RC ]]; then
+          CANDIDATE=${{ github.event.inputs.candidate }}
+          if [[ "$CANDIDATE" == RC ]]; then
               PROJECT_VERSION=$PROJECT_VERSION-RC
           fi
+          echo $PROJECT_VERSION
           APP_VERSION=$PROJECT_VERSION
           S3_PATH=$PROJECT_VERSION
           if [[ "$PROJECT_VERSION" == *-RC* ]]; then
