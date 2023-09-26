@@ -2,6 +2,13 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      candidate:
+        type: choice
+        description: Choose a candidate
+        options:
+          - RC
+          - GA
 
 env:
   JAVAFX_VERSION: '21'
@@ -37,8 +44,11 @@ jobs:
         id: vars
         shell: bash
         run: |
-          mvn -B versions:set -DremoveSnapshot
+          mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ ${{ github.event.inputs.candidate }} == RC ]]; then
+              PROJECT_VERSION=$PROJECT_VERSION-RC
+          fi
           APP_VERSION=$PROJECT_VERSION
           S3_PATH=$PROJECT_VERSION
           if [[ "$PROJECT_VERSION" == *-RC* ]]; then
