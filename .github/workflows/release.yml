@@ -50,7 +50,7 @@ jobs:
           S3_PATH=$PROJECT_VERSION
           CANDIDATE=${{ github.event.inputs.candidate }}
           if [[ "$CANDIDATE" == RC ]]; then
-              PROJECT_VERSION=$PROJECT_VERSION-RC
+              PROJECT_VERSION=${PROJECT_VERSION}-RC
               S3_PATH=RC/$PROJECT_VERSION
           fi
           echo "Releasing.. "$PROJECT_VERSION
