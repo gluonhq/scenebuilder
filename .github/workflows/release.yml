@@ -44,19 +44,16 @@ jobs:
         id: vars
         shell: bash
         run: |
-          mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false
+          mvn -B -ntp -q versions:set -DremoveSnapshot -DgenerateBackupPoms=false
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          APP_VERSION=$PROJECT_VERSION
+          S3_PATH=$PROJECT_VERSION
           CANDIDATE=${{ github.event.inputs.candidate }}
           if [[ "$CANDIDATE" == RC ]]; then
               PROJECT_VERSION=$PROJECT_VERSION-RC
-          fi
-          echo $PROJECT_VERSION
-          APP_VERSION=$PROJECT_VERSION
-          S3_PATH=$PROJECT_VERSION
-          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
-              APP_VERSION=`echo $PROJECT_VERSION | cut -d- -f1`
               S3_PATH=RC/$PROJECT_VERSION
           fi
+          echo "Releasing.. "$PROJECT_VERSION
           echo ::set-output name=APP_VERSION::$APP_VERSION
           echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
           echo ::set-output name=S3_PATH::$S3_PATH
