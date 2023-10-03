@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,20 +40,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- *
- * 
+ * A collection of [LibraryItem].
  */
 public abstract class Library {
     
-    protected final ObservableList<LibraryItem> itemsProperty
-            = FXCollections.observableArrayList();
-    protected final ObjectProperty<ClassLoader> classLoaderProperty 
-            = new SimpleObjectProperty<>();
+    private final ObservableList<LibraryItem> itemsProperty = FXCollections.observableArrayList();
+    private final ObjectProperty<ClassLoader> classLoaderProperty = new SimpleObjectProperty<>();
 
-    /*
-     * Public
-     */
-    
     public ObservableList<LibraryItem> getItems() {
         return itemsProperty;
     }
@@ -60,9 +54,13 @@ public abstract class Library {
     public ReadOnlyProperty<ClassLoader> classLoaderProperty() {
         return classLoaderProperty;
     }
-    
+
     public ClassLoader getClassLoader() {
         return classLoaderProperty.getValue();
+    }
+
+    protected void setClassLoader(ClassLoader loader) {
+        classLoaderProperty.set(loader);
     }
     
     public abstract Comparator<String> getSectionComparator();

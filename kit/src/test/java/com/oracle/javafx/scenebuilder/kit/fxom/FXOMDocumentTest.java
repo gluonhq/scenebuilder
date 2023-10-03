@@ -31,29 +31,28 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
 import javafx.application.Platform;
@@ -70,12 +69,12 @@ public class FXOMDocumentTest {
     private ClassLoader loader;
     private ResourceBundle resourceBundle;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         JfxInitializer.initialize();
     }
 
-    @Before
+    @BeforeEach
     public void prepareTest() throws Exception {
         fxmlName = "ContainerWithMenuSystemMenuBarEnabled.fxml";
         fxmlUrl = getResourceUrl(fxmlName);
@@ -91,40 +90,38 @@ public class FXOMDocumentTest {
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
 
         assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-        assertTrue("for preview, useSystemMenu is expected to be enabled",
-                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+        assertTrue(((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get(),
+                "for preview, useSystemMenu is expected to be enabled");
 
         String generatedFxml = classUnderTest.getFxmlText(false);
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
+    @EnabledOnOs(value=OS.MAC)
     @Test
     public void that_useSystemMenuBarProperty_is_disabled_on_MacOS() throws Exception {
-        assumeTrue("MacOS", OS.get() == OS.MAC);
-        
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
 
         assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-        assertFalse("for preview, useSystemMenu is expected to be enabled",
-                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+        assertFalse(((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get(),
+                "for preview, useSystemMenu is expected to be enabled");
 
         String generatedFxml = classUnderTest.getFxmlText(false);
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));
     }
 
+    @EnabledOnOs(value= {OS.LINUX, OS.WINDOWS})
     @Test
     public void that_useSystemMenuBarProperty_not_modified_on_Linux_and_Windows() throws Exception {
-        assumeTrue("Windows or Linux", Set.of(OS.LINUX, OS.WINDOWS).contains(OS.get()));
-
         classUnderTest = new FXOMDocument(fxmlText, fxmlUrl, loader, resourceBundle);
 
         FXOMObject fxomObject = classUnderTest.searchWithFxId("theMenuBar");
 
         assertTrue(fxomObject.getSceneGraphObject() instanceof MenuBar);
-        assertTrue("for preview, useSystemMenu is expected to be enabled",
-                ((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get());
+        assertTrue(((MenuBar) fxomObject.getSceneGraphObject()).useSystemMenuBarProperty().get(),
+                "for preview, useSystemMenu is expected to be enabled");
 
         String generatedFxml = classUnderTest.getFxmlText(false);
         assertTrue(generatedFxml.contains("useSystemMenuBar=\"true\""));

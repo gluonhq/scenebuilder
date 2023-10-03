@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>18.0.0-SNAPSHOT</version>
+    <version>21.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -16,20 +16,21 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>17</javafx.version>
+        <javafx.version>21</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>6.1.0</charm.glisten.version>
-        <gluon.attach.version>4.0.13</gluon.attach.version>
+        <charm.glisten.version>6.2.2</charm.glisten.version>
+        <gluon.attach.version>4.0.19</gluon.attach.version>
+        <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>sonatype-snapshots</id>
@@ -40,14 +41,44 @@
             <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
-    
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
-                    <version>0.0.5</version>
+                    <version>0.0.8</version>
                     <configuration>
                         <mainClass>${main.class.name}</mainClass>
                         <options>
@@ -87,6 +118,7 @@
                         <encoding>UTF-8</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -148,7 +180,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.0.0-M1</version>
+                <version>1.5.1</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -164,6 +196,9 @@
                             <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
                             <longDescription>${project.description}</longDescription>
                             <tags>javafx,gui,tool</tags>
+                            <snapshot>
+                                <fullChangelog>true</fullChangelog>
+                            </snapshot>
                         </project>
                         <checksum>
                             <files>false</files>
@@ -208,12 +243,12 @@
                         </release>
                         <upload>
                             <s3>
-                                <app>
+                                <gluon>
                                     <active>RELEASE</active>
                                     <checksums>false</checksums>
                                     <signatures>false</signatures>
                                     <path>scenebuilder/{{artifactFile}}</path>
-                                </app>
+                                </gluon>
                             </s3>
                         </upload>
                         <distributions>
@@ -235,8 +270,15 @@
                                 </snap>
                                 <artifacts>
                                     <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.dmg</path>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-amd64.dmg</path>
                                         <platform>osx-x86_64</platform>
+                                        <extraProperties>
+                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64.dmg</path>
+                                        <platform>osx-aarch64</platform>
                                         <extraProperties>
                                             <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
                                         </extraProperties>

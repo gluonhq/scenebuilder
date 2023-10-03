@@ -10,15 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '17.0.1'
+        default: '21'
         required: false
         type: string
       javafx-version:
-        default: '17'
-        required: false
-        type: string
-      java-distro:
-        default: 'temurin'
+        default: '21'
         required: false
         type: string
       test:
@@ -33,18 +29,13 @@ jobs:
       - name: Install packages
         run: sudo apt-get install xdg-utils
 
-      - name: Install test packages
-        if: ${{ inputs.test }}
-        run: |
-          sudo apt-get install xvfb tigervnc-standalone-server tigervnc-common
-
       - uses: actions/checkout@v2
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: oracle-actions/setup-java@v1
         with:
-          distribution: ${{ inputs.java-distro }}
-          java-version: ${{ inputs.java-version }}
+          website: jdk.java.net
+          release: ${{ inputs.java-version }}
 
       - name: Setup JavaFX
         run: |
@@ -62,12 +53,8 @@ jobs:
         if: ${{ inputs.test }}
         run: |
           export DISPLAY=:90
-          mkdir /home/runner/.vnc
-          echo 123456 | vncpasswd -f > /home/runner/.vnc/passwd
-          chmod -v 600 /home/runner/.vnc/passwd
-          vncserver :90 -localhost -nolisten tcp
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
           mvn -B -ntp clean verify checkstyle:checkstyle --no-transfer-progress
-          vncserver -kill :90
 
       - name: Build and package JAR
         run: |

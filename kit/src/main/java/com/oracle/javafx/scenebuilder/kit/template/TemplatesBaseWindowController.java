@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -33,38 +33,29 @@
 package com.oracle.javafx.scenebuilder.kit.template;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowController {
 
-    @FXML
-    protected Button basicDesktopApp;
-    @FXML
-    protected Button complexDesktopApp;
-    @FXML
-    protected Button emptyPhoneApp;
-    @FXML
-    protected Button basicPhoneApp;
-
-    @FXML
-    protected VBox templateContainer;
-
-    private Consumer<Template> onTemplateChosen;
+    private Consumer<Template> onTemplateChosen = template -> {};
 
     public TemplatesBaseWindowController(URL fxmlURL, ResourceBundle resources, Stage owner) {
         super(fxmlURL, resources, owner);
     }
-
 
     @Override
     public void onCloseRequest(WindowEvent event) {
@@ -84,29 +75,50 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
     @Override
     protected void controllerDidLoadFxml() {
         super.controllerDidLoadFxml();
-        assert templateContainer != null;
 
-        basicDesktopApp.setUserData(Template.BASIC_DESKTOP_APP);
-        complexDesktopApp.setUserData(Template.COMPLEX_DESKTOP_APP);
-        emptyPhoneApp.setUserData(Template.EMPTY_PHONE_APP);
-        basicPhoneApp.setUserData(Template.BASIC_PHONE_APP);
+        initTemplates();
     }
 
-    protected void setupTemplateButtonHandlers() {
-        setupTemplateButtonHandlers(templateContainer);
-    }
+    /**
+     * Dynamically generates templates and adds them to fxml-pre-defined [desktopPane] and [mobilePane].
+     */
+    private void initTemplates() {
+        FlowPane desktopPane;
+        FlowPane mobilePane;
 
-    private void setupTemplateButtonHandlers(Parent templateContainer) {
-        for (Node child : templateContainer.getChildrenUnmodifiable()) {
-            if (!(child instanceof Button) && child instanceof Parent){
-                setupTemplateButtonHandlers((Parent)child);
-            }
-            if (child instanceof Button) {
-                Button button = (Button) child;
-                button.setOnAction(event -> {
-                    getStage().hide();
-                    onTemplateChosen.accept((Template)button.getUserData());
-                });
+        try {
+            ScrollPane templatesRoot = (ScrollPane) getRoot().lookup("#templatesRoot");
+            desktopPane = (FlowPane) templatesRoot.getContent().lookup("#desktopPane");
+            mobilePane = (FlowPane) templatesRoot.getContent().lookup("#mobilePane");
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to lookup() [desktopPane] and [mobilePane]:", e);
+            return;
+        }
+
+        for (Template template : Template.values()) {
+
+            // this "try" is on a per template basis so that a malformed template doesn't crash valid ones
+            try {
+                VBox btnRoot = FXMLLoader.load(TemplatesBaseWindowController.class.getResource("Template.fxml"));
+                var button = (Button) btnRoot.lookup("#button");
+                button.setText(template.getUiName());
+                button.setOnAction(e -> onTemplateChosen.accept(template));
+
+                ImageView view = (ImageView) button.getGraphic();
+                view.setImage(template.getImage());
+
+                Label label = (Label) btnRoot.lookup("#labelDescription");
+                label.setText(template.getDescription());
+
+                if (template.isDesktop()) {
+                    desktopPane.getChildren().add(btnRoot);
+                } else {
+                    mobilePane.getChildren().add(btnRoot);
+                }
+            } catch (Exception e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to load template: " + template, e);
+
+                // do not rethrow since SB is completely functional without templates
             }
         }
     }

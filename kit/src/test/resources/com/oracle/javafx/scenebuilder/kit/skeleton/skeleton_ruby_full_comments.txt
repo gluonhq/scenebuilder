@@ -1,0 +1,33 @@
+# Sample Skeleton for 'test' Controller Class
+class EmptyController
+    include JRubyFX::Controller
+
+    # java_import 'java.net.URL'
+    # java_import 'java.util.ResourceBundle'
+
+    # Marks this class as being a controller for the given fxml document
+    # This creates @instance_variables for all fx:id
+    fxml 'test.fxml'
+
+    # These @instance_variables will be injected by FXMLLoader & JRubyFX
+    # @myTableView: 	TableView<?>
+    # @myVbox: 	VBox
+
+    # ResourceBundle that was given to the FXMLLoader. Access as self.resources, or @resources if instance_variable is true
+    java_field '@javafx.fxml.FXML java.util.ResourceBundle resources', instance_variable: true
+
+    # URL location of the FXML file that was given to the FXMLLoader. Access as self.location, or @location if instance_variable is true
+    java_field '@javafx.fxml.FXML java.net.URL location', instance_variable: true
+
+    # Called by JRubyFX after FXML loading is complete. Different from Java, same as normal Ruby
+    def initialize()
+        raise 'fx:id="myTableView" was not injected: check your FXML file "test".' if @myTableView.nil?
+        raise 'fx:id="myVbox" was not injected: check your FXML file "test".' if @myVbox.nil?
+
+    end
+
+    def onMyVboxMouseEntered(event) # event: MouseEvent
+
+    end
+
+end

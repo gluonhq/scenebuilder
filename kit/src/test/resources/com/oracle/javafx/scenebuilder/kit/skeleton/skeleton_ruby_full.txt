@@ -1,0 +1,25 @@
+class EmptyController
+    include JRubyFX::Controller
+
+    # java_import 'java.net.URL'
+    # java_import 'java.util.ResourceBundle'
+
+    fxml 'test.fxml'
+
+    # @myTableView: 	TableView<?>
+    # @myVbox: 	VBox
+
+    java_field '@javafx.fxml.FXML java.util.ResourceBundle resources', instance_variable: true
+    java_field '@javafx.fxml.FXML java.net.URL location', instance_variable: true
+
+    def initialize()
+        raise 'fx:id="myTableView" was not injected: check your FXML file "test".' if @myTableView.nil?
+        raise 'fx:id="myVbox" was not injected: check your FXML file "test".' if @myVbox.nil?
+
+    end
+
+    def onMyVboxMouseEntered(event) # event: MouseEvent
+
+    end
+
+end
