@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicke
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPickerStop;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -48,7 +49,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -155,6 +158,7 @@ public class ColorPicker extends VBox {
         assert green_textfield != null;
         assert blue_textfield != null;
         assert alpha_slider != null;
+        assert picker_scrollpane != null;
 
         hue_slider.setStyle(makeHueSliderCSS()); // Make the grad for hue slider
 
@@ -255,6 +259,9 @@ public class ColorPicker extends VBox {
         // paint combobox add values
         paintCombobox.getItems().setAll(CSS_CODE, JAVA_CODE);
         paintCombobox.getSelectionModel().select(0);
+
+        picker_scrollpane.addEventFilter(KeyEvent.ANY, Event::consume);
+        picker_scrollpane.addEventFilter(ScrollEvent.SCROLL, Event::consume);
     }
 
     /**
