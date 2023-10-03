@@ -259,7 +259,6 @@ public class ColorPicker extends VBox {
         // paint combobox add values
         paintCombobox.getItems().setAll(CSS_CODE, JAVA_CODE);
         paintCombobox.getSelectionModel().select(0);
-
         picker_scrollpane.addEventFilter(KeyEvent.ANY, Event::consume);
         picker_scrollpane.addEventFilter(ScrollEvent.SCROLL, Event::consume);
     }
