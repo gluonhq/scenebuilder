@@ -59,6 +59,7 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.shape.Circle;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -454,8 +455,9 @@ public class ColorPicker extends VBox {
 
         // Set TextFields value
         hue_textfield.setText(String.valueOf((int) hue));
-        saturation_textfield.setText(String.valueOf((int) (saturation * 100)));
-        brightness_textfield.setText(String.valueOf((int) (brightness * 100)));
+        DecimalFormat format = new DecimalFormat("0.##");
+        saturation_textfield.setText(format.format(saturation * 100));
+        brightness_textfield.setText(format.format(brightness * 100));
         double alpha_rounded = round(alpha, 100); // 2 decimals rounding
         alpha_textfield.setText(Double.toString(alpha_rounded));
         red_textfield.setText(Integer.toString(red));
