@@ -120,10 +120,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     static {
         try {
-            // Reads logging property file from local runs, or embedded in a JAR
+            // Ensures logging.properties is applied, whether running application locally or via a JAR
             LogManager.getLogManager().readConfiguration(SceneBuilderApp.class.getResourceAsStream("/logging.properties"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to initialise log manager", e);
         }
     }
 
