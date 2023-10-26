@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       java-version:
-        default: '21'
+        default: '21.0.1'
         required: false
         type: string
       javafx-version:
