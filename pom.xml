@@ -16,11 +16,11 @@
     </modules>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>21.0.1</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>21</javafx.version>
+        <javafx.version>21.0.1</javafx.version>
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>6.2.2</charm.glisten.version>
         <gluon.attach.version>4.0.19</gluon.attach.version>
