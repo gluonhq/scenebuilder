@@ -12,7 +12,7 @@ on:
 
 env:
   JAVAFX_VERSION: '21.0.1'
-  JAVA_VERSION: '21.0.1'
+  JAVA_VERSION: '21'
 
 jobs:
   precheck:
