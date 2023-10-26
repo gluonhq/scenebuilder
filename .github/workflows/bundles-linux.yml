@@ -14,7 +14,7 @@ on:
         required: false
         type: string
       javafx-version:
-        default: '21'
+        default: '21.0.1'
         required: false
         type: string
       test:
