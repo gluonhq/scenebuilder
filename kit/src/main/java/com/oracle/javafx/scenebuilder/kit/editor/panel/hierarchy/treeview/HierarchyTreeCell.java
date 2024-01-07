@@ -506,6 +506,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
                     final DisplayOption option = panelController.getDisplayOption();
                     if (item.hasDisplayInfo(option)
                             && item.isResourceKey(option) == false // Do not allow inline editing of the I18N value
+                            && item.isBindingExpression(option) == false // Do not allow inline editing of the binding expression value
                             && displayInfoLabel.isHover()) {
                         startEditingDisplayInfo();
                         // Consume the event so the native expand/collapse behavior is not performed
@@ -759,8 +760,8 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
 
         final DisplayOption option = panelController.getDisplayOption();
         final String displayInfo = item.getDisplayInfo(option);
-        // Do not allow inline editing of the I18N value
-        if (item.isResourceKey(option)) {
+        // Do not allow inline editing of the I18N value or binding expression
+        if (item.isResourceKey(option) || item.isBindingExpression(option)) {
             displayInfoLabel.getStyleClass().removeAll(HIERARCHY_READWRITE_LABEL);
         } else {
             if (displayInfoLabel.getStyleClass().contains(HIERARCHY_READWRITE_LABEL) == false) {
