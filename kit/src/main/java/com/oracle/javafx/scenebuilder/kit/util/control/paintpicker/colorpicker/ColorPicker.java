@@ -256,11 +256,14 @@ public class ColorPicker extends VBox {
         picker_region.pressedProperty().addListener(liveUpdateListener);
         hue_slider.pressedProperty().addListener(liveUpdateListener);
         alpha_slider.pressedProperty().addListener(liveUpdateListener);
+
+        // Fix ColorPicker movement on focus. Now blocks scroll and key events (Home, End, PgUp, PgDn, arrows) to keep it static. For issue #654.
+        picker_scrollpane.addEventFilter(KeyEvent.ANY, Event::consume);
+        picker_scrollpane.addEventFilter(ScrollEvent.SCROLL, Event::consume);
+
         // paint combobox add values
         paintCombobox.getItems().setAll(CSS_CODE, JAVA_CODE);
         paintCombobox.getSelectionModel().select(0);
-        picker_scrollpane.addEventFilter(KeyEvent.ANY, Event::consume);
-        picker_scrollpane.addEventFilter(ScrollEvent.SCROLL, Event::consume);
     }
 
     /**
