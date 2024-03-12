@@ -257,7 +257,7 @@ public class ColorPicker extends VBox {
         hue_slider.pressedProperty().addListener(liveUpdateListener);
         alpha_slider.pressedProperty().addListener(liveUpdateListener);
 
-        // Fix ColorPicker movement on focus. Now blocks scroll and key events (Home, End, PgUp, PgDn, arrows) to keep it static. For issue #654.
+        // Disable ColorPicker movement on focus, by blocking scroll and key (Home, End, PgUp, PgDn, arrows) events
         picker_scrollpane.addEventFilter(KeyEvent.ANY, Event::consume);
         picker_scrollpane.addEventFilter(ScrollEvent.SCROLL, Event::consume);
 
