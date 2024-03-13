@@ -83,6 +83,7 @@ jobs:
 
       - name: Codesign
         uses: erwin1/code-sign-action@master
+        if: false
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
           password: '${{ secrets.WINDOWS_PASSWORD }}'
