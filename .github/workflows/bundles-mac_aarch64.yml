@@ -37,9 +37,7 @@ on:
 jobs:
   build:
     name: macOS on M1
-    runs-on: [macOS, ARM64]
-    env:
-      KEYCHAIN: job-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v2
 
@@ -57,7 +55,6 @@ jobs:
 
       - name: Setup JavaFX
         run: |
-          rm -rf /tmp/javafx-jmods-${{ inputs.javafx-version }}
           wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
