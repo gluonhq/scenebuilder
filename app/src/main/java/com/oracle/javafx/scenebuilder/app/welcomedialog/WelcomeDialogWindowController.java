@@ -234,10 +234,10 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         question.setDefaultButtonID(ButtonID.CANCEL);
         question.setShowDefaultButton(true);
         question.setOKButtonTitle(I18N.getString("alert.welcome.file.not.found.okay"));
-        question.setTitle(I18N.getString("alert.welcome.files.not.found.title"));
-        question.setMessage(I18N.getString("alert.welcome.files.not.found.question"));
+        question.setTitle(I18N.getString("alert.welcome.file.not.found.title"));
+        question.setMessage(I18N.getString("alert.welcome.file.not.found.question"));
         question.setCancelButtonTitle(I18N.getString("alert.welcome.file.not.found.no"));
-        question.setDetails(withPath);
+        question.setDetails(I18N.getString("alert.welcome.file.not.found.message") + withPath);
         return question;
     }
     
@@ -306,7 +306,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         		missingFiles.add(file);
         	}
         });
-
+        
         missingFilesHandler.accept(missingFiles);
         
         if (existingFiles.isEmpty()) {
