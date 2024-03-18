@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -40,6 +40,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropert
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
@@ -73,6 +74,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -115,7 +117,7 @@ class MetadataIntrospector {
                 }
             }
             exception = null;
-        } catch(IOException | IntrospectionException x) {
+        } catch (IOException | IntrospectionException x) {
             exception = x;
         }
         
@@ -160,7 +162,7 @@ class MetadataIntrospector {
         try {
             fxmlLoader.setClassLoader(componentClass.getClassLoader());
             result = fxmlLoader.load(new ByteArrayInputStream(fxmlBytes));
-        } catch(RuntimeException x) {
+        } catch (RuntimeException x) {
             throw new IOException(x);
         }
         
@@ -202,38 +204,38 @@ class MetadataIntrospector {
                         name,
                         propertyType,
                         readWrite,
-                        (Enum<?>)getDefaultValue(sample, propertyDescriptor.getReadMethod(), fallback),
+                        (Enum<?>) getDefaultValue(sample, propertyDescriptor.getReadMethod(), fallback),
                         inspectorPath);
             } else if (propertyType == Boolean.class) {
                 result = new BooleanPropertyMetadata(
                         name,
                         readWrite,
-                        (Boolean)getDefaultValue(sample, propertyDescriptor.getReadMethod(), false),
+                        (Boolean) getDefaultValue(sample, propertyDescriptor.getReadMethod(), false),
                         inspectorPath);
             } else if (propertyType == Integer.class) {
                 result = new IntegerPropertyMetadata(
                         name,
                         readWrite,
-                        (Integer)getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0),
+                        (Integer) getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0),
                         inspectorPath);
             } else if (propertyType == Double.class) {
                 result = new DoublePropertyMetadata(
                         name,
                         DoubleKind.COORDINATE,
                         readWrite,
-                        (Double)getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0.0),
+                        (Double) getDefaultValue(sample, propertyDescriptor.getReadMethod(), 0.0),
                         inspectorPath);
             } else if (propertyType == String.class) {
                 result = new StringPropertyMetadata(
                         name,
                         readWrite,
-                        (String)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
+                        (String) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.paint.Color.class) {
                 result = new ColorPropertyMetadata(
                         name,
                         readWrite,
-                        (Color)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
+                        (Color) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null),
                         inspectorPath);
             } else if (propertyType == javafx.scene.paint.Paint.class) {
                 result = new PaintPropertyMetadata(
@@ -253,12 +255,15 @@ class MetadataIntrospector {
                         readWrite,
                         null,
                         inspectorPath);
+            } else if (propertyType == javafx.geometry.Insets.class) {
+                Insets defaultValues = (Insets) getDefaultValue(sample, propertyDescriptor.getReadMethod(), Insets.EMPTY);
+                result = new InsetsPropertyMetadata(name, readWrite, defaultValues, inspectorPath);
             } else if (propertyType == javafx.util.Duration.class) {
-                Duration defaultValue = (Duration)getDefaultValue(sample, propertyDescriptor.getReadMethod(), null);
+                Duration defaultValue = (Duration) getDefaultValue(sample, propertyDescriptor.getReadMethod(), null);
                 result = new DurationPropertyMetadata(
                         name,
                         readWrite,
-                        defaultValue == null? null : new SBDuration(defaultValue),
+                        defaultValue == null ? null : new SBDuration(defaultValue),
                         inspectorPath);
 
             } else if (propertyType == javafx.event.EventHandler.class) {
@@ -330,7 +335,7 @@ class MetadataIntrospector {
         
         try {
             result = readMethod.invoke(sample);
-        } catch(InvocationTargetException|IllegalAccessException x) {
+        } catch (InvocationTargetException | IllegalAccessException x) {
             result = fallback;
         }
         

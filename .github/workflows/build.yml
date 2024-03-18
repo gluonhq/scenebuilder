@@ -2,6 +2,9 @@ name: Scene Builder PR Verify
 on:
   pull_request:
 
+env:
+  JAVA_VERSION: '21'
+
 jobs:
   verify:
     runs-on: ${{ matrix.os }}
@@ -17,7 +20,7 @@ jobs:
         uses: oracle-actions/setup-java@v1
         with:
           website: jdk.java.net
-          release: 19
+          release: ${{ env.JAVA_VERSION }}
 
       - name: Run Tests (Linux)
         if: runner.os == 'Linux'
