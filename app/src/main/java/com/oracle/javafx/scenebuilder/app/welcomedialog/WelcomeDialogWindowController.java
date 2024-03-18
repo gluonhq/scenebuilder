@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -304,20 +304,23 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
             return;
         }
 
-        var candidates = filePaths.stream()
-                                  .collect(Collectors.groupingBy(this::filePathExists));
+        List<String> existingFiles = new ArrayList<>();
+        List<String> missingFiles = new ArrayList<>();
+        filePaths.forEach(file->{
+        	if (filePathExists(file)) {
+        		existingFiles.add(file);
+        	} else {
+        		missingFiles.add(file);
+        	}
+        });
 
-        List<String> missingFiles = candidates.getOrDefault(Boolean.FALSE, new ArrayList<>());
         missingFilesHandler.accept(missingFiles);
-
-        List<String> paths = candidates.getOrDefault(Boolean.TRUE, new ArrayList<>())
-                                       .stream()
-                                       .toList();
-
-        if (paths.isEmpty()) {
-            return;
+        
+        if (existingFiles.isEmpty()) {
+        	return;
         }
-        fileLoader.accept(paths);
+
+        fileLoader.accept(existingFiles);
     }
 
     private void removeMissingFilesFromPrefs(List<String> missingFiles) {
