@@ -83,6 +83,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -139,7 +140,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public SceneBuilderApp() {
         assert singleton == null;
         singleton = this;
-
+        
         // set design time flag
         java.beans.Beans.setDesignTime(true);
         
@@ -526,7 +527,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-
+        
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
             var openResult = performOpenFiles(fileObjs);
@@ -564,37 +565,28 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     /**
-     * In case of errors (>= 1 exception) a message dialog is shown to the user.
-     * There are versions for exactly 1 error and for more than 1 errors.
-     * 
-     * @param openResult {@link FileOpenResult} holding a map of files with
-     *                   exceptions.
-     */
+	 * For each file open error (when opened through the welcome dialog), the file
+	 * name and the related exception text are presented to the user to confirm.
+	 * 
+	 * @param openResult {@link FileOpenResult} holding a map of files with
+	 *                   exceptions.
+	 */
     private void showFileOpenErrors(FileOpenResult openResult) {
-        if (openResult.errors.size() == 1) {
-            final File fxmlFile = openResult.errors().keySet().iterator().next();
-            final Exception x = openResult.errors().get(fxmlFile);
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
-            errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
-            errorDialog.setDebugInfoWithThrowable(x);
-            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
-            errorDialog.showAndWait();
-        } else if (openResult.errors.size() > 1) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            if (openResult.errors().size() == openResult.filesToOpen.size()) {
-                // Open operation has failed for all the files
-                errorDialog.setMessage(I18N.getString("alert.open.failureN.message"));
-                errorDialog.setDetails(I18N.getString("alert.open.failureN.details"));
-            } else {
-                // Open operation has failed for some files
-                errorDialog.setMessage(I18N.getString("alert.open.failureMofN.message",
-                openResult.errors().size(), openResult.filesToOpen.size()));
-                errorDialog.setDetails(I18N.getString("alert.open.failureMofN.details"));
-            }
-            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
-            errorDialog.showAndWait();
-        }
+    	if (openResult.errors().isEmpty()) {
+    		return;
+    	}
+    	
+    	Map<File,Exception> errors = openResult.errors();
+    	for (Entry<File, Exception> error : errors.entrySet()) {
+    		final File fxmlFile = error.getKey();
+    		final Exception x = error.getValue();
+    		final ErrorDialog errorDialog = new ErrorDialog(WelcomeDialogWindowController.getInstance().getStage());
+    		errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
+    		errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
+    		errorDialog.setDebugInfoWithThrowable(x);
+    		errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+    		errorDialog.showAndWait();    		
+    	}
     }
 
     @Override
