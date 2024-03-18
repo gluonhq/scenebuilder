@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,9 +33,12 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -43,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -137,6 +141,28 @@ public class FXOMDocument {
     
     public URL getLocation() {
         return location;
+    }
+
+    public Optional<URL> location() {
+        return Optional.ofNullable(getLocation());
+    }
+
+    public Optional<Path> locationPath() {
+        return locationURI()
+                // this is used instead of Paths::get to match the original implementation
+                .map(File::new)
+                .map(File::toPath);
+    }
+
+    public Optional<URI> locationURI() {
+        if (location == null)
+            return Optional.empty();
+
+        try {
+            return Optional.ofNullable(location.toURI());
+        } catch (URISyntaxException e) {
+            return Optional.empty();
+        }
     }
 
     public void setLocation(URL location) {

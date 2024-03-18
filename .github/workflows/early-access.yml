@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 env:
-  JAVAFX_VERSION: '19'
-  JAVA_VERSION: '19'
+  JAVAFX_VERSION: '21.0.1'
+  JAVA_VERSION: '21'
 
 jobs:
   precheck:
@@ -137,7 +137,7 @@ jobs:
 
       - name: Release with JReleaser
         env:
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 

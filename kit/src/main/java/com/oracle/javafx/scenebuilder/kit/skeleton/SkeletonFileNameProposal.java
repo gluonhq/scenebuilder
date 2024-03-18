@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2023, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -119,6 +119,9 @@ class SkeletonFileNameProposal {
                     break;
                 case KOTLIN:
                     location = location.replace(resources, kotlin);
+                    break;
+                case JRUBY:
+                    // use default location in "resources"
                     break;
                 }
             }

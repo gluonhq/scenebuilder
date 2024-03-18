@@ -108,5 +108,5 @@ mvn checkstyle:checkstyle
 There will be a report for each sub-project, one for `app` and one for `kit`.
 
 * Kit: `kit/target/site/checkstyle.html`
-* App: `kit/target/site/checkstyle.html`
+* App: `app/target/site/checkstyle.html`
 

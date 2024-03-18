@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2023, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -38,7 +38,7 @@ class SkeletonSettings {
     private FORMAT_TYPE textFormat = FORMAT_TYPE.COMPACT;
 
     enum LANGUAGE {
-        JAVA("Java", ".java"), KOTLIN("Kotlin", ".kt");
+        JAVA("Java", ".java"), KOTLIN("Kotlin", ".kt"), JRUBY("JRuby", ".rb");
 
         private final String name;
         private final String ext;
