@@ -10,11 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '19'
+        default: '21.0.1'
         required: false
         type: string
       javafx-version:
-        default: '19'
+        default: '21.0.1'
         required: false
         type: string
       test:
@@ -101,14 +101,12 @@ jobs:
           INSTALL_DIR: app/target/install
 
       - name: Notarize Release Build
-        uses: erwin1/xcode-notarize@main
+        uses: erwin1/xcode-notarizer@v1
         with:
           product-path: ${{ steps.outputfile.outputs.path }}
-          appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
-          appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
-          primary-bundle-id: com.gluonhq.scenebuilder
-          asc-provider: ${{ secrets.MACSIGN_PREFIX }}
-          verbose: true
+          apple-id: ${{ secrets.NOTARIZATION_USERNAME }}
+          app-password: ${{ secrets.NOTARIZATION_PASSWORD }}
+          team-id: ${{ secrets.MACSIGN_PREFIX }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2

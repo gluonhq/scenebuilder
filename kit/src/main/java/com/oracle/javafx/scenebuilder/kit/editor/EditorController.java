@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -106,6 +106,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -817,6 +818,13 @@ public class EditorController {
      */
     public FXOMDocument getFxomDocument() {
         return fxomDocumentProperty.getValue();
+    }
+
+    /**
+     * @return the editor's document
+     */
+    public Optional<FXOMDocument> fxomDocument() {
+        return Optional.ofNullable(getFxomDocument());
     }
     
     /**
