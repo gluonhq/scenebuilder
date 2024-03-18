@@ -62,7 +62,12 @@ public enum DocumentationUrls {
     OPENJFX_CSS_REFERENCE("https://openjfx.io/javadoc/{javafx.version.major}/javafx.graphics/javafx/scene/doc-files/cssref.html"),
     OPENJFX_FXML_REFERENCE("https://openjfx.io/javadoc/{javafx.version.major}/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html"),
 
-    GLUON_SCENEBUILDER_CONTRIBUTE("https://github.com/gluonhq/scenebuilder");
+    GLUON_SCENEBUILDER_CONTRIBUTE("https://github.com/gluonhq/scenebuilder"),
+    
+    /**
+     * 3rd Party 
+     */
+    JFXCENTRAL_HOMEPAGE("https://www.jfx-central.com");
 
     private static final String SAFE_DEFAULT_VERSION = "17";
 

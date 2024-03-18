@@ -20,11 +20,11 @@
 
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        
+
         <module name="GenericWhitespace"/>
         <module name="EmptyForInitializerPad"/>
         <module name="EmptyForIteratorPad"/>
-        
+
         <module name="NoWhitespaceBefore"/>
         <module name="NoWhitespaceBeforeCaseDefaultColon"/>
         <module name="NoWhitespaceBefore">
@@ -41,10 +41,10 @@
         <module name="EmptyLineSeparator">
             <property name="tokens" value="IMPORT"/>
             <property name="tokens" value="STATIC_IMPORT"/>
-			<property name="tokens" value="INTERFACE_DEF"/>
-			<property name="tokens" value="INSTANCE_INIT"/>
-			<property name="tokens" value="RECORD_DEF"/>
-			<property name="allowNoEmptyLineBetweenFields" value="false"/>
+            <property name="tokens" value="INTERFACE_DEF"/>
+            <property name="tokens" value="INSTANCE_INIT"/>
+            <property name="tokens" value="RECORD_DEF"/>
+            <property name="allowNoEmptyLineBetweenFields" value="false"/>
             <property name="allowMultipleEmptyLinesInsideClassMembers" value="true"/>
         </module>
 
@@ -62,7 +62,7 @@
             <property name="tokens" value="INDEX_OP"/>
             <property name="tokens" value="METHOD_REF"/>
         </module>    
-        
+
         <module name="EmptyBlock">
             <property name="tokens" value="LITERAL_CATCH"/>
             <property name="tokens" value="LITERAL_DEFAULT"/>
@@ -80,5 +80,9 @@
             <property name="tokens" value="LITERAL_WHILE"/>
             <property name="option" value="text"/>
         </module>
+
+        <module name="OperatorWrap"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
     </module>
 </module>
