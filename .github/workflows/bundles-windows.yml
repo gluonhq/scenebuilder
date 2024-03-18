@@ -10,11 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '19'
+        default: '21.0.1'
         required: false
         type: string
       javafx-version:
-        default: '19'
+        default: '21.0.1'
         required: false
         type: string
       test:
@@ -83,6 +83,7 @@ jobs:
 
       - name: Codesign
         uses: erwin1/code-sign-action@master
+        if: false
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
           password: '${{ secrets.WINDOWS_PASSWORD }}'
