@@ -229,22 +229,15 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     protected static AlertDialog questionMissingFilesCleanup(Stage stage, List<String> missingFiles) {
         String withPath = missingFiles.stream()
                                       .collect(Collectors.joining(System.lineSeparator()));
+        
         AlertDialog question = new AlertDialog(stage);
         question.setDefaultButtonID(ButtonID.CANCEL);
         question.setShowDefaultButton(true);
         question.setOKButtonTitle(I18N.getString("alert.welcome.file.not.found.okay"));
-        StringBuilder shortMessage = new StringBuilder();
-        if (missingFiles.size() > 1) {
-            shortMessage.append(I18N.getString("alert.welcome.files.not.found.question"));
-            question.setTitle(I18N.getString("alert.welcome.files.not.found.title"));
-        } else {
-            shortMessage.append(I18N.getString("alert.welcome.file.not.found.question"));
-            question.setTitle(I18N.getString("alert.welcome.file.not.found.title"));
-        }
+        question.setTitle(I18N.getString("alert.welcome.files.not.found.title"));
+        question.setMessage(I18N.getString("alert.welcome.files.not.found.question"));
         question.setCancelButtonTitle(I18N.getString("alert.welcome.file.not.found.no"));
-        question.setMessage(shortMessage.toString());
         question.setDetails(withPath);
-        
         return question;
     }
     
