@@ -506,7 +506,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void handleOpenFilesAction(List<String> files) {
-        handleOpenFilesAction(files, null);
+        handleOpenFilesAction(files, () -> { /* no operation in this case */ });
     }
 
     /**
@@ -559,9 +559,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (result.hasErrors()) {
             showFileOpenErrors(result);
         } else {
-            if (onSuccess != null) {
-                onSuccess.run();
-            }
+            onSuccess.run();
         }
     }
 
