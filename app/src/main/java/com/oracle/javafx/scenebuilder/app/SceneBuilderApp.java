@@ -565,28 +565,28 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     /**
-	 * For each file open error (when opened through the welcome dialog), the file
-	 * name and the related exception text are presented to the user to confirm.
-	 * 
-	 * @param openResult {@link FileOpenResult} holding a map of files with
-	 *                   exceptions.
-	 */
+     * For each file open error (when opened through the welcome dialog), the file
+     * name and the related exception text are presented to the user to confirm.
+     * 
+     * @param openResult {@link FileOpenResult} holding a map of files with
+     *                   exceptions.
+     */
     private void showFileOpenErrors(FileOpenResult openResult) {
-    	if (openResult.errors().isEmpty()) {
-    		return;
-    	}
-    	
-    	Map<File,Exception> errors = openResult.errors();
-    	for (Entry<File, Exception> error : errors.entrySet()) {
-    		final File fxmlFile = error.getKey();
-    		final Exception x = error.getValue();
-    		final ErrorDialog errorDialog = new ErrorDialog(WelcomeDialogWindowController.getInstance().getStage());
-    		errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
-    		errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
-    		errorDialog.setDebugInfoWithThrowable(x);
-    		errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
-    		errorDialog.showAndWait();    		
-    	}
+        if (openResult.errors().isEmpty()) {
+            return;
+        }
+
+        Map<File, Exception> errors = openResult.errors();
+        for (Entry<File, Exception> error : errors.entrySet()) {
+            final File fxmlFile = error.getKey();
+            final Exception x = error.getValue();
+            final ErrorDialog errorDialog = new ErrorDialog(WelcomeDialogWindowController.getInstance().getStage());
+            errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
+            errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
+            errorDialog.setDebugInfoWithThrowable(x);
+            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+            errorDialog.showAndWait();
+        }
     }
 
     @Override
