@@ -580,13 +580,24 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         for (Entry<File, Exception> error : errors.entrySet()) {
             final File fxmlFile = error.getKey();
             final Exception x = error.getValue();
-            final ErrorDialog errorDialog = new ErrorDialog(WelcomeDialogWindowController.getInstance().getStage());
+            final ErrorDialog errorDialog = new ErrorDialog(getOwnerWindow());
             errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
             errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
             errorDialog.setDebugInfoWithThrowable(x);
             errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+            errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.title")+": "+fxmlFile.getName());
             errorDialog.showAndWait();
         }
+    }
+
+    private Stage getOwnerWindow() {
+        Stage owner = null;
+        if (windowList.isEmpty()) {
+            owner = WelcomeDialogWindowController.getInstance().getStage();
+        } else {
+            owner = windowList.get(0).getStage();
+        }
+        return owner;
     }
 
     @Override
