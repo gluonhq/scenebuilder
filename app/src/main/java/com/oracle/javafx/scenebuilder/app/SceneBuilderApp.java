@@ -531,7 +531,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
             var openResult = performOpenFiles(fileObjs);
-            handleFileOpenResult(openResult, onSuccess);
+            handleFileOpenResult(openResult, onSuccess, WelcomeDialogWindowController.getInstance().getStage());
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
@@ -540,7 +540,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     if (userLibrary.isFirstExplorationCompleted()) {
                         var openResult = performOpenFiles(fileObjs);
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
-                        handleFileOpenResult(openResult, onSuccess);
+                        handleFileOpenResult(openResult, onSuccess, WelcomeDialogWindowController.getInstance().getStage());
                     }
                 }
             });
@@ -555,10 +555,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      *                  opened and a map of files with exceptions in case of an
      *                  error.
      * @param onSuccess A runnable holding the action to be performed on success.
+     * @param owner     Owner window ({@link Stage})
      */
-    private void handleFileOpenResult(FileOpenResult result, Runnable onSuccess) {
+    private void handleFileOpenResult(FileOpenResult result, Runnable onSuccess, Stage owner) {
         if (result.hasErrors()) {
-            showFileOpenErrors(result);
+            showFileOpenErrors(result, owner);
         } else {
             onSuccess.run();
         }
@@ -570,8 +571,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * 
      * @param openResult {@link FileOpenResult} holding a map of files with
      *                   exceptions.
+     * @param owner Owner {@link Stage}
      */
-    private void showFileOpenErrors(FileOpenResult openResult) {
+    private void showFileOpenErrors(FileOpenResult openResult, Stage owner) {
         if (openResult.errors().isEmpty()) {
             return;
         }
@@ -580,7 +582,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         for (Entry<File, Exception> error : errors.entrySet()) {
             final File fxmlFile = error.getKey();
             final Exception x = error.getValue();
-            final ErrorDialog errorDialog = new ErrorDialog(getOwnerWindow());
+            final ErrorDialog errorDialog = new ErrorDialog(owner);
             errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
             errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
             errorDialog.setDebugInfoWithThrowable(x);
@@ -684,7 +686,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
             FileOpenResult openResult = performOpenFiles(fxmlFiles);
-            showFileOpenErrors(openResult);
+            showFileOpenErrors(openResult, getOwnerWindow());
         }
     }
 
