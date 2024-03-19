@@ -299,18 +299,18 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         List<String> existingFiles = new ArrayList<>();
         List<String> missingFiles = new ArrayList<>();
-        filePaths.forEach(file->{
-        	if (filePathExists(file)) {
-        		existingFiles.add(file);
-        	} else {
-        		missingFiles.add(file);
-        	}
+        filePaths.forEach(file -> {
+            if (filePathExists(file)) {
+                existingFiles.add(file);
+            } else {
+                missingFiles.add(file);
+            }
         });
         
         missingFilesHandler.accept(missingFiles);
-        
+
         if (existingFiles.isEmpty()) {
-        	return;
+            return;
         }
 
         fileLoader.accept(existingFiles);
