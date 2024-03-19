@@ -111,4 +111,3 @@ There will be a report for each sub-project, one for `app` and one for `kit`.
 * App: `app/target/site/checkstyle.html`
 
 This project makes use of [EditorConfig](https://editorconfig.org/) which is [directly supported](https://editorconfig.org/#pre-installed) by IntelliJ IDEA. There are plugins for NetBeans, Eclipse and Visual Studio and [more](https://editorconfig.org/#download). EditorConfig ensures via configuration in `.editorconfig` file, that the proper indentation is used.
-EditorConfig can automatically correct possible formatting violations when executed as a Maven plug-in: `mvn editorconfig:format`.
