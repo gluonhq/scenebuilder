@@ -140,7 +140,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     public SceneBuilderApp() {
         assert singleton == null;
         singleton = this;
-        
+
         // set design time flag
         java.beans.Beans.setDesignTime(true);
         
@@ -527,24 +527,36 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-        
+
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            var openResult = performOpenFiles(fileObjs);
-            handleFileOpenResult(openResult, onSuccess, WelcomeDialogWindowController.getInstance().getStage());
+            performOpenFiles(fileObjs, onSuccess);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
                 @Override
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
-                        var openResult = performOpenFiles(fileObjs);
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
-                        handleFileOpenResult(openResult, onSuccess, WelcomeDialogWindowController.getInstance().getStage());
+                        performOpenFiles(fileObjs, onSuccess);
                     }
                 }
             });
         }
+    }
+
+    /**
+     * Opens the given list of files. For all resulting dialogs (success, error),
+     * the welcome dialog window is the configured owner.
+     * 
+     * @param files     List of files which SceneBuilder will attempt to open.
+     * @param onSuccess A runnable holding the action to be performed after
+     *                  successfully loading the files. This is only executed when
+     *                  all files have been opened without errors.
+     */
+    private void performOpenFiles(final List<File> files, Runnable onSuccess) {
+        var openResult = performOpenFiles(files);
+        handleFileOpenResult(openResult, onSuccess, WelcomeDialogWindowController.getInstance().getStage());
     }
 
     /**
