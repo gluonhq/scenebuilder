@@ -49,7 +49,6 @@ jobs:
 
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
-          keychain: ${{ env.KEYCHAIN }}
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
@@ -115,7 +114,3 @@ jobs:
         with:
           name: artifacts
           path: ${{ steps.outputfile.outputs.path }}
-
-      - name: Delete keychain
-        run: |
-          security delete-keychain "${{ env.KEYCHAIN }}".keychain
