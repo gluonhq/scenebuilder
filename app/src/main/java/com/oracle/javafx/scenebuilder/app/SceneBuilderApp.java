@@ -1112,16 +1112,4 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             consumer.accept(dwc);
         }
     }
-
-    /**
-     * Describes the result of FXML file loading process. As in general SceneBuilder
-     * can open multiple files at the same time. Hence this record can hold of the
-     * files supposed to be opened. In case of errors, the exceptions are stored in
-     * a map per file.
-     */
-    record FileOpenResult(List<File> filesToOpen, Map<File, Exception> errors) {
-        public boolean hasErrors() {
-            return !errors.isEmpty();
-        }
-    }
 }
