@@ -32,28 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -82,7 +60,6 @@ import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.kit.template.Type;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -96,6 +73,23 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.function.*;
+import java.util.Map.Entry;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * This is the SB main entry point.
