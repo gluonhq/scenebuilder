@@ -748,15 +748,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             final PreferencesController pc = PreferencesController.getSingleton();
             pc.getRecordGlobal().addRecentItems(openedFiles);
         }
-        if (exceptionsPerFile.size() > 0) {
-            LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptionsPerFile.size(), fxmlFiles.size()});
-        } else {
-            LOGGER.log(Level.FINE, "Successfully opened all files.");
-        }
 
         if (exceptionsPerFile.isEmpty()) {
+            LOGGER.log(Level.FINE, "Successfully opened all files.");
             onSuccess.run();
         } else {
+            LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptionsPerFile.size(), fxmlFiles.size()});
             onError.accept(exceptionsPerFile);
         }
     }
