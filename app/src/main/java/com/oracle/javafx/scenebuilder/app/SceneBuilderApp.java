@@ -665,7 +665,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (fxmlFiles != null) {
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
-            performOpenFiles(fxmlFiles, (errors)->showFileOpenErrors(errors, getOwnerWindow()), ()->{});
+            performOpenFiles(fxmlFiles, errors -> showFileOpenErrors(errors, getOwnerWindow()), ()->{});
         }
     }
 
