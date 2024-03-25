@@ -528,10 +528,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-        Supplier<Stage> ownerWindow = ()->WelcomeDialogWindowController.getInstance().getStage();
+        
+        Consumer<Map<File,Exception>> onError = errors->showFileOpenErrors(errors, 
+                                                            ()->WelcomeDialogWindowController.getInstance().getStage());
+        
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            performOpenFiles(fileObjs, errors->showFileOpenErrors(errors, ownerWindow), onSuccess);
+            performOpenFiles(fileObjs, onError, onSuccess);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
@@ -539,7 +542,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
-                        performOpenFiles(fileObjs, errors->showFileOpenErrors(errors, ownerWindow), onSuccess);
+                        performOpenFiles(fileObjs, onError, onSuccess);
                     }
                 }
             });
@@ -574,13 +577,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private Supplier<Stage> getOwnerWindow() {
-        return ()->{
-            if (windowList.isEmpty()) {
-                return WelcomeDialogWindowController.getInstance().getStage();
-            } else {
-                return windowList.get(0).getStage();
-            }
-        };
+        return ()->findFirstUnusedDocumentWindowController()
+                            .map(DocumentWindowController::getStage)
+                            .orElse(WelcomeDialogWindowController.getInstance().getStage());
     }
 
     @Override
