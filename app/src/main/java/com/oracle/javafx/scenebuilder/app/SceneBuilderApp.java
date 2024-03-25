@@ -267,7 +267,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         final List<File> fxmlFiles = new ArrayList<>();
         fxmlFiles.add(fxmlFile);
-        performOpenFiles(fxmlFiles,r->showFileOpenErrors(r, getOwnerWindow()), ()->{});
+        performOpenFiles(fxmlFiles);
     }
 
     public void documentWindowRequestClose(DocumentWindowController fromWindow) {
@@ -529,8 +529,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
         
-        Consumer<Map<File,Exception>> onError = errors->showFileOpenErrors(errors, 
-                                                            ()->WelcomeDialogWindowController.getInstance().getStage());
+        Consumer<Map<File, Exception>> onError = errors -> showFileOpenErrors(errors, 
+                                                            () -> WelcomeDialogWindowController.getInstance().getStage());
         
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
@@ -558,7 +558,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      *               the occurred {@link Exception} as value. exceptions.
      * @param owner  Owner Supplier function to obtain the owners {@link Stage}
      */
-    private void showFileOpenErrors(Map<File,Exception> errors, Supplier<Stage> owner) {
+    private void showFileOpenErrors(Map<File, Exception> errors, Supplier<Stage> owner) {
         if (errors.isEmpty()) {
             return;
         }
@@ -571,13 +571,13 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
             errorDialog.setDebugInfoWithThrowable(x);
             errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
-            errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.title")+": "+fxmlFile.getName());
+            errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.title") + ": " + fxmlFile.getName());
             errorDialog.showAndWait();
         }
     }
 
     private Supplier<Stage> getOwnerWindow() {
-        return ()->findFirstUnusedDocumentWindowController()
+        return () -> findFirstUnusedDocumentWindowController()
                             .map(DocumentWindowController::getStage)
                             .orElse(WelcomeDialogWindowController.getInstance().getStage());
     }
@@ -665,7 +665,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         if (fxmlFiles != null) {
             assert fxmlFiles.isEmpty() == false;
             EditorController.updateNextInitialDirectory(fxmlFiles.get(0));
-            performOpenFiles(fxmlFiles, errors -> showFileOpenErrors(errors, getOwnerWindow()), ()->{});
+            performOpenFiles(fxmlFiles);
         }
     }
 
@@ -711,6 +711,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
         }
         return null;
+    }
+
+    private void performOpenFiles(List<File> fxmlFiles) {
+        performOpenFiles(fxmlFiles, r -> showFileOpenErrors(r, getOwnerWindow()), () -> { /* no action here */ } );
     }
 
     private void performOpenFiles(List<File> fxmlFiles, Consumer<Map<File, Exception>> onError, Runnable onSuccess) {
