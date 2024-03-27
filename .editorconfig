@@ -1,0 +1,19 @@
+# EditorConfig is awesome: https://EditorConfig.org
+root = true
+
+[*.java]
+indent_style = space
+indent_size = 4
+
+[*.fxml]
+indent_style = space
+indent_size = 2
+
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[pom.xml]
+indent_style = space
+indent_size = 4
+
