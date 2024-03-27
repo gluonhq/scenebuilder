@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   Copyright (c) 2017, 2019, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
@@ -40,7 +41,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <!-- TODO textAlignement should be JUSTIFY for detailsLabel and messageLabel once RT-23231 is fixed -->
-<VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="7.0" xmlns:fx="http://javafx.com/fxml">
+
+<VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="7.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21.0.1">
   <children>
     <HBox id="HBox" alignment="TOP_LEFT" spacing="7.0" VBox.vgrow="ALWAYS">
       <children>
@@ -55,7 +57,7 @@
         <Insets left="10.0" right="10.0" top="10.0" />
       </padding>
     </HBox>
-    <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: rgb(229,229,229)&#10;" VBox.vgrow="NEVER">
+    <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: rgb(229,229,229)&#10;" VBox.vgrow="NEVER">
       <children>
         <HBox fx:id="okParent" alignment="CENTER" spacing="5.0">
           <children>
