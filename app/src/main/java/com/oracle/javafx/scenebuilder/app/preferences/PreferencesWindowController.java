@@ -53,6 +53,7 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PRESERVE_UNRESOLVED_IMPORTS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALTERNATE_TEXT_INPUT_PASTE;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
@@ -142,6 +143,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     private CheckBox animateAccordion;
     @FXML
     private CheckBox wildcardImports;
+    @FXML
+    private CheckBox preserveUnresolvedImports;
     @FXML
     private CheckBox alternatePasteBehavior;
     @FXML
@@ -268,6 +271,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Wildcard Imports
         wildcardImports.setSelected(recordGlobal.isWildcardImports());
         wildcardImports.selectedProperty().addListener(new WildcardImportListener());
+        preserveUnresolvedImports.setSelected(recordGlobal.isPreserveUnresolvedImports());
+        preserveUnresolvedImports.selectedProperty().addListener(new PreserveUnresolvedImportListener());
 
         if (EditorPlatform.IS_MAC) {
             // Alternate paste behavior for Text Input Controls
@@ -594,6 +599,17 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
             // Update preferences
             recordGlobal.setWildcardImports(newValue);
             recordGlobal.writeToJavaPreferences(WILDCARD_IMPORT);
+        }
+    }
+
+    private static class PreserveUnresolvedImportListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final PreferencesController preferencesController = PreferencesController.getSingleton();
+            final PreferencesRecordGlobal recordGlobal = preferencesController.getRecordGlobal();
+            recordGlobal.setPreserveUnresolvedImports(newValue);
+            recordGlobal.writeToJavaPreferences(PRESERVE_UNRESOLVED_IMPORTS);
         }
     }
 

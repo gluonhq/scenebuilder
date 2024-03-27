@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -88,9 +89,10 @@ public class ErrorDialog extends AlertDialog {
     private void updateActionButtonVisibility() {
         setActionButtonVisible(debugInfo != null);
     }
-    
+
     private void showDetailsDialog() {
-        final TextViewDialog detailDialog = new TextViewDialog(null);
+        final TextViewDialog detailDialog = new TextViewDialog(super.getStage());
+        detailDialog.setTitle(I18N.getString("alert.title.details"));
         detailDialog.setText(debugInfo);
         detailDialog.showAndWait();
     }

@@ -67,6 +67,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.search.SearchController;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
@@ -396,7 +397,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void loadFromFile(File fxmlFile) throws IOException {
         final URL fxmlURL = fxmlFile.toURI().toURL();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+
+        FXOMDocumentSwitch[] options = PreferencesController.getSingleton().getRecordGlobal()
+                                                            .isPreserveUnresolvedImports() 
+                                                            ? new FXOMDocumentSwitch[] {FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS} 
+                                                            : new FXOMDocumentSwitch[0];
+
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false, options);
         updateLoadFileTime();
         updateStageTitle(); // No-op if fxml has not been loaded yet
         updateFromDocumentPreferences(true);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+  Copyright (c) 2016, 2022, Gluon and/or its affiliates.
   Copyright (c) 2012, 2014, Oracle and/or its affiliates.
   All rights reserved. Use is subject to license terms.
 
@@ -50,7 +50,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" prefHeight="-Infinity" prefWidth="550.0" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <Label text="%prefs.doc.width" GridPane.columnIndex="0" GridPane.rowIndex="0" />
     <DoubleField fx:id="rootContainerWidth" prefWidth="200.0" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" />
@@ -127,11 +127,11 @@
                 <Label text="%prefs.wildcard.import" GridPane.columnIndex="0" GridPane.rowIndex="18" />
     <CheckBox fx:id="wildcardImports" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="18" />
 
-                <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="21">
+                <Button onAction="#resetToDefaultAction" prefWidth="-1.0" text="%prefs.reset.default" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="22">
          <GridPane.margin>
             <Insets top="-10.0" />
          </GridPane.margin></Button>
-      <GridPane fx:id="alternatePasteBehaviorPane" hgap="5.0" vgap="10.0" GridPane.columnSpan="2" GridPane.rowIndex="20">
+      <GridPane fx:id="alternatePasteBehaviorPane" hgap="5.0" vgap="10.0" GridPane.columnSpan="2" GridPane.rowIndex="21">
         <columnConstraints>
           <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="50.0" />
           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" percentWidth="50.0" />
@@ -157,7 +157,9 @@
                </GridPane.margin></Separator>
          </children>
       </GridPane>
-      <Separator layoutX="30.0" layoutY="500.0" prefWidth="-1.0" GridPane.columnSpan="2" GridPane.rowIndex="19" />
+      <Separator layoutX="30.0" layoutY="500.0" prefWidth="-1.0" GridPane.columnSpan="2" GridPane.rowIndex="20" />
+      <Label text="%prefs.preserve.unresolved.import" GridPane.rowIndex="19" />
+      <CheckBox fx:id="preserveUnresolvedImports" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="19" />
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" percentWidth="50.0" />
@@ -167,6 +169,7 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
   <rowConstraints>
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />

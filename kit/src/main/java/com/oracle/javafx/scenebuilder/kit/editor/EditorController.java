@@ -103,11 +103,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -759,10 +761,11 @@ public class EditorController {
      * @param fxmlLocation null or the location of the fxml text being edited
      * @param checkTheme if set to true a check will be made if the fxml contains
      *                           Gluon controls and if so, the correct theme is set
+     * @param switches Optional switches to configure FXOM and FXML processes
      * @throws IOException if fxml text cannot be parsed and loaded correctly.
      */
-    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation, boolean checkTheme) throws IOException {
-        updateFxomDocument(fxmlText, fxmlLocation, getResources(), checkTheme);
+    public void setFxmlTextAndLocation(String fxmlText, URL fxmlLocation, boolean checkTheme, FXOMDocumentSwitch ... switches) throws IOException {
+        updateFxomDocument(fxmlText, fxmlLocation, getResources(), checkTheme, switches);
         this.fxmlLocationProperty.setValue(fxmlLocation);
     }
 
@@ -2562,11 +2565,13 @@ public class EditorController {
         return true;
     }
 
-    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources, boolean checkTheme) throws IOException {
+    private void updateFxomDocument(String fxmlText, URL fxmlLocation, ResourceBundle resources, boolean checkTheme, FXOMDocumentSwitch ... switches) throws IOException {
         final FXOMDocument newFxomDocument;
         
         if (fxmlText != null) {
-            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, FXOMDocumentSwitch.NORMALIZED);
+            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
+            options.addAll(Set.of(switches));
+            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, options.toArray(new FXOMDocumentSwitch[0]));
         } else {
             newFxomDocument = null;
         }
@@ -2581,8 +2586,35 @@ public class EditorController {
         if (checkTheme) {
             WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
         }
+        
+        if (unresolvedImportsFound(newFxomDocument)) {
+            showUnresolvedImportsDialog(newFxomDocument);
+        }
     }
-    
+
+    private boolean unresolvedImportsFound(final FXOMDocument newFxomDocument) {
+        return newFxomDocument != null && newFxomDocument.isClassesMissing();
+    }
+
+    private void showUnresolvedImportsDialog(FXOMDocument document) {
+        final ErrorDialog errorDialog = new ErrorDialog(ownerWindow);
+        List<String> missingClasses = document.getMissingClasses();
+        String first10 = missingClasses.stream()
+                                       .limit(10)
+                                       .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports", Integer.toString(missingClasses.size())));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+
+        String allMissing = document.getMissingClasses()
+                                    .stream()
+                                    .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice", allMissing, missingClasses.size()));
+        errorDialog.setTitle(I18N.getString("alert.title.open"));
+        errorDialog.showAndWait();
+    }
+
     private final ChangeListener<ClassLoader> libraryClassLoaderListener
             = (ov, t, t1) -> libraryClassLoaderDidChange();
     
