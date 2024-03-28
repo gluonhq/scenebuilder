@@ -10,11 +10,11 @@ on:
         required: true
         type: string
       java-version:
-        default: '21.0.1'
+        default: '22'
         required: false
         type: string
       javafx-version:
-        default: '21.0.1'
+        default: '22'
         required: false
         type: string
       test:
@@ -37,9 +37,7 @@ on:
 jobs:
   build:
     name: macOS on M1
-    runs-on: [macOS, ARM64]
-    env:
-      KEYCHAIN: job-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v2
 
@@ -51,13 +49,11 @@ jobs:
 
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
-          keychain: ${{ env.KEYCHAIN }}
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
       - name: Setup JavaFX
         run: |
-          rm -rf /tmp/javafx-jmods-${{ inputs.javafx-version }}
           wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
@@ -118,7 +114,3 @@ jobs:
         with:
           name: artifacts
           path: ${{ steps.outputfile.outputs.path }}
-
-      - name: Delete keychain
-        run: |
-          security delete-keychain "${{ env.KEYCHAIN }}".keychain
