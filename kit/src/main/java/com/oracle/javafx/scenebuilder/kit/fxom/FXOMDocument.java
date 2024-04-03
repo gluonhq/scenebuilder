@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -82,7 +82,7 @@ public class FXOMDocument {
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
     private int updateDepth;
-    private List<String> missingClasses = new ArrayList<>();
+    private final List<String> unresolvableImportTypes = new ArrayList<>();
 
     private boolean hasGluonControls;
     
@@ -136,19 +136,19 @@ public class FXOMDocument {
     /**
      * Adds the name of a class or a name space which could not be resolved by FXMLLoader.
      * 
-     * @param missingClassName Either a class namr from an import or a name space from a wild card import.
+     * @param unresolvableImportType A class name from an import which is effectively not known to the FXMLLoader (the type is generally not known to the JVM).
      */
-    public void addMissingClass(String missingClassName) {
-        this.missingClasses.add(missingClassName);
+    public void addUnresolvableType(String unresolvableImportType) {
+        this.unresolvableImportTypes.add(unresolvableImportType);
     }
 
     /**
-     * If there were unresolved FXML import statements, affected class names and package name spaces are provided here.
+     * If there were unresolved FXML import statements, affected fully qualified type names are provided here.
      * 
-     * @return list of unresolved FXML import class names or name spaces.
+     * @return List of unresolved FXML import type names.
      */
-    public List<String> getMissingClasses() {
-        return this.missingClasses;
+    public List<String> getUnresolvableTypes() {
+        return this.unresolvableImportTypes;
     }
         
     public FXOMDocument() {
@@ -205,7 +205,7 @@ public class FXOMDocument {
         this.classLoader = classLoader;
         endUpdate();
     }    
-
+    
     public List<Class<?>> getInitialDeclaredClasses() {
         return initialDeclaredClasses;
     }
@@ -247,8 +247,8 @@ public class FXOMDocument {
                 sampleDataGenerator.assignSampleData(fxomRoot);
             }
         }
-    }
-
+    }    
+    
     public FXOMObject getFxomRoot() {
         return fxomRoot;
     }
