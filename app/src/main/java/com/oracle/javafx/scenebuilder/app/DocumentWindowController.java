@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -397,7 +397,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void loadFromFile(File fxmlFile) throws IOException {
         final URL fxmlURL = fxmlFile.toURI().toURL();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-
+        
         FXOMDocumentSwitch[] options = FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS
                                                          .fromToggle(getPreferencesRecordGlobal().isPreserveUnresolvedImports());
 
