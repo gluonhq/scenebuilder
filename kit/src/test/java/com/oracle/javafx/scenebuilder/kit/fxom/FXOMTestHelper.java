@@ -45,6 +45,11 @@ public class FXOMTestHelper {
     public static FXOMDocument createFXOMDocumentFrom(String resourceName, 
                                                       FXOMDocumentSwitch... switches) throws Exception {
         URL location = FXOMTestHelper.class.getResource(resourceName);
+        return createFXOMDocumentFrom(location, switches);
+    }
+    
+    public static FXOMDocument createFXOMDocumentFrom(URL location, FXOMDocumentSwitch... switches)
+            throws Exception {
         String fxmlText = FXOMDocument.readContentFromURL(location);
         ClassLoader classLoader = null;
         ResourceBundle resources = null;

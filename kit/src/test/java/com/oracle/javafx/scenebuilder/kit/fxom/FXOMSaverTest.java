@@ -31,13 +31,13 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static com.oracle.javafx.scenebuilder.kit.fxom.FXOMTestHelper.createFXOMDocumentFrom;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,38 +45,42 @@ import org.junit.jupiter.api.Test;
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
-import javafx.application.Platform;
-
 class FXOMSaverTest {
-    
+
     @BeforeAll
     public static void init() {
         JfxInitializer.initialize();
     }
-    
+
     @Test
     void that_FXOMDocument_with_unresolvable_imports_can_be_saved_with_all_imports_preserved() throws Exception {
-        FXOMDocument document = createFXOMDocumentFrom("UnresolvableImports.fxml");
+        URL location = FXOMTestHelper.class.getResource("UnresolvableImports.fxml");
+
+        FXOMDocument document = createFXOMDocumentFrom(location, FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS);
+
         FXOMSaver classUnderTest = new FXOMSaver();
-        document.setLocation(Path.of("C:\\Temp\\test.fxml").toUri().toURL());
-        classUnderTest.save(document);
-        fail("Not yet implemented");
+        Path outfile = Path.of("FXOMSaverTest_withUnresolvedTypes.fxml");
+        document.setLocation(outfile.toUri().toURL());
+
+        String generatedFxml = assertDoesNotThrow(() -> classUnderTest.save(document));
+        List<String> generatedImportLines = generatedFxml.lines().filter(l -> l.startsWith("<?import")).toList();
+
+        assertEquals(6, generatedImportLines.size());
+        assertEquals("<?import javafx.scene.control.Button?>", generatedImportLines.get(0));
+        assertEquals("<?import javafx.scene.control.ComboBox?>", generatedImportLines.get(1));
+        assertEquals("<?import javafx.scene.control.TextField?>", generatedImportLines.get(2));
+        assertEquals("<?import javafx.scene.layout.AnchorPane?>", generatedImportLines.get(3));
+        assertEquals("<?import also.an.unresolvable.Dependency?>", generatedImportLines.get(4));
+        assertEquals("<?import another.unresolvable.Dependency?>", generatedImportLines.get(5));
+
+        /*
+         * TODO: The source FXML has a wildcard import which goes away.
+         * 
+         * <?import this.namespace.is.unknown.*?>
+         * 
+         * Question: keep such unknown wildcard imports or not?
+         */
+
     }
 
-    private FXOMDocument createFXOMDocumentFrom(String resourceName) throws IOException, Exception {
-        URL resource = getClass().getResource(resourceName);
-        String validFxmlText = FXOMDocument.readContentFromURL(resource);
-        FXOMDocument document = waitFor(()->new FXOMDocument(validFxmlText, resource, null, null, FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS));
-        return document;
-    }
-
-    private <T> T waitFor(Callable<T> callable) throws Exception {
-        FutureTask<T> task = new FutureTask<T>(callable);
-        if (Platform.isFxApplicationThread()) {
-            return callable.call();
-        } else {
-            Platform.runLater(()->task.run());
-            return task.get();
-        }
-    }
 }
