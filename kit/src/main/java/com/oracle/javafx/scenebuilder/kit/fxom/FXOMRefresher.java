@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleArrayPropertyMetadata;
@@ -50,25 +49,33 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  *
  */
 class FXOMRefresher {
+    
+    private static final Logger LOGGER = Logger.getLogger(FXOMRefresher.class.getName());
 
     public void refresh(FXOMDocument document) {
         String fxmlText = null;
         try {
             fxmlText = document.getFxmlText(false);
-            FXOMDocumentSwitch[] options = checkForUnresolvedImportsAndConfigureOption(document);
-            
+
+            if (document.hasUnresolvableImports()) {
+                LOGGER.log(Level.INFO, "Detected unresolved imports.");
+                FXOMImportsRemover importRemover = new FXOMImportsRemover();
+                fxmlText = importRemover.apply(fxmlText, document.getUnresolvableTypes());
+            }
+
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),
                     document.getClassLoader(),
-                    document.getResources(),
-                    options);
+                    document.getResources());
             final TransientStateBackup backup = new TransientStateBackup(document);
             // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
             if (newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {
@@ -97,14 +104,6 @@ class FXOMRefresher {
                 sb.append(": no FXML dumped");
             }
             throw new IllegalStateException(sb.toString(), x);
-        }
-    }
-
-    private FXOMDocumentSwitch[] checkForUnresolvedImportsAndConfigureOption(FXOMDocument document) {
-        if (document.hasUnresolvableImports()) {
-            return new FXOMDocumentSwitch[] {FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS};
-        } else {
-            return new FXOMDocumentSwitch[0];
         }
     }
 

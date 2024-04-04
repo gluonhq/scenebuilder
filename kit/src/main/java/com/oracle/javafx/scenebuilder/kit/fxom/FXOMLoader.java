@@ -48,7 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +55,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 
 /**
@@ -123,21 +121,9 @@ class FXOMLoader implements LoadListener {
         }
     }
 
-    
-
     private String removeUnresolvableTypeFromFXML(String fxmlText, String unresolvableType) {
-        List<String> lines = new ArrayList<>(fxmlText.lines().toList());
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).matches("^\s?[<]\s?[?]\s?import\s?.*")) {
-                    if (lines.get(i).contains(unresolvableType)) {
-                        document.addUnresolvableType(unresolvableType);
-                        lines.set(i, "");
-                        break;
-                    }
-            }
-        }
-        return lines.stream()
-                    .collect(Collectors.joining(System.lineSeparator()));
+        FXOMImportsRemover remover = new FXOMImportsRemover(document::addUnresolvableType);
+        return remover.apply(fxmlText, List.of(unresolvableType));
     }
 
     private void handleFxmlLoadingError(Exception x) throws IOException {
