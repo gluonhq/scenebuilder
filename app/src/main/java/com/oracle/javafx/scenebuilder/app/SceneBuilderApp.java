@@ -661,6 +661,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      * If any files are selected, calls performOpenFiles() on them.
      */
     private void performOpenFile() {
+        LOGGER.log(Level.INFO, "opening file chooser");
         final FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(I18N.getString("file.filter.label.fxml"),
@@ -730,7 +731,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         final Map<File, Exception> exceptionsPerFile = new HashMap<>();
         final List<File> openedFiles = new ArrayList<>();
         for (File fxmlFile : fxmlFiles) {
-            LOGGER.log(Level.FINE, "Attempting to open file {0}", fxmlFile);
+            LOGGER.log(Level.INFO, "Attempting to open file {0}", fxmlFile);
             try {
                 final DocumentWindowController dwc
                         = lookupDocumentWindowControllers(fxmlFile.toURI().toURL());
