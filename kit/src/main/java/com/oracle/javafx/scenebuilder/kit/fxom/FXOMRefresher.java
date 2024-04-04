@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoubleArrayPropertyMetadata;
@@ -60,11 +61,14 @@ class FXOMRefresher {
         String fxmlText = null;
         try {
             fxmlText = document.getFxmlText(false);
+            FXOMDocumentSwitch[] options = checkForUnresolvedImportsAndConfigureOption(document);
+            
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),
                     document.getClassLoader(),
-                    document.getResources());
+                    document.getResources(),
+                    options);
             final TransientStateBackup backup = new TransientStateBackup(document);
             // if the refresh should not take place (e.g. due to an error), remove a property from intrinsic
             if (newDocument.getSceneGraphRoot() == null && newDocument.getFxomRoot() == null) {
@@ -93,6 +97,14 @@ class FXOMRefresher {
                 sb.append(": no FXML dumped");
             }
             throw new IllegalStateException(sb.toString(), x);
+        }
+    }
+
+    private FXOMDocumentSwitch[] checkForUnresolvedImportsAndConfigureOption(FXOMDocument document) {
+        if (document.hasUnresolvableImports()) {
+            return new FXOMDocumentSwitch[] {FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS};
+        } else {
+            return new FXOMDocumentSwitch[0];
         }
     }
 

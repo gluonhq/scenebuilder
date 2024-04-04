@@ -44,6 +44,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,6 +88,7 @@ public class FXOMDocument {
     private boolean hasGluonControls;
     
     private List<Class<?>> initialDeclaredClasses;
+
     
     /**
      * Creates a new {@link FXOMDocument} from given FXML source. Depending on the
@@ -109,7 +111,7 @@ public class FXOMDocument {
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
-        initialDeclaredClasses = new ArrayList<>();
+        this.initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
             Set<FXOMDocumentSwitch> availableSwitches = Set.of(switches);
@@ -509,6 +511,13 @@ public class FXOMDocument {
     }
     
     /**
+     * When true, then there are import statements with unknown types (not on classpath).
+     */
+    protected boolean hasUnresolvableImports() {
+        return !this.unresolvableImportTypes.isEmpty();
+    }
+    
+    /**
      * Depending on where the {@link FXOMDocument} shall be used, 
      * it is necessary to configure the {@link FXOMDocument} creation process.
      * The switches here can be used to configure the creation process in the desired way.
@@ -529,9 +538,40 @@ public class FXOMDocument {
         FOR_PREVIEW,
         
         /**
-         * This flag ensures that the {@link FXOMLoader} preserves imports which were not resolvable by {@link FXMLLoader}.
-         * This behavior is controlled using Preferences-API.
+         * This flag ensures that the {@link FXOMLoader} preserves imports which were
+         * not resolvable by {@link FXMLLoader}. This behavior is controlled using
+         * Preferences-API.
          */
         PRESERVE_UNRESOLVED_IMPORTS;
+        
+        /**
+         * Creates a new array holding the set of existing switches including the new
+         * switch.
+         * 
+         * @param existingSwitches Array (usually var args) with existing values.
+         * @param newSwitch        New option to be added to the whole set.
+         * @return Array of unique FXOMDocumentSwitch items consisting of the given
+         *         existing switches and the new one.
+         */
+        public static FXOMDocumentSwitch[] combined(FXOMDocumentSwitch[] existingSwitches, FXOMDocumentSwitch newSwitch) {
+            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
+            options.addAll(Set.of(existingSwitches));
+            return options.toArray(new FXOMDocumentSwitch[0]);
+        }
+        
+        /**
+         * When the toggle is true, then a single item array is created.
+         * 
+         * @param toggle Any element, e.g. item/switch from Scene Builder preferences.
+         * @return When the toggle is true, then a single item array is created,
+         *         otherwise the resulting array will be empty.
+         */
+        public FXOMDocumentSwitch[] fromToggle(boolean toggle) {
+            if (toggle) {
+                return new FXOMDocumentSwitch[] {this};
+            } else {
+                return new FXOMDocumentSwitch[0];
+            }
+        }
     }
 }

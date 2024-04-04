@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -112,13 +112,12 @@ class FXOMLoader implements LoadListener {
             setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
             Throwable cause = x.getCause();
-            if (cause instanceof ClassNotFoundException missingClass 
-                && Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS)) {
-                String missingClassName = missingClass.getMessage();
-                String modifiedFxml = removeMissingClassesImports(fxmlText, missingClassName);
-                LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. Try loading FXML without {0}", missingClassName);
-                load(modifiedFxml, switches);
-            } else {                
+            if (cause instanceof ClassNotFoundException missingTypeError && (Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS) || document.hasUnresolvableImports())) {
+                    String missingClassName = missingTypeError.getMessage();
+                    String modifiedFxml = removeUnresolvableTypeFromFXML(fxmlText, missingClassName);
+                    LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. Try loading FXML without {0}", missingClassName);
+                    load(modifiedFxml, switches);
+            } else {
                 handleFxmlLoadingError(x);
             }
         }
@@ -126,12 +125,12 @@ class FXOMLoader implements LoadListener {
 
     
 
-    private String removeMissingClassesImports(String fxmlText, String missingClass) {
+    private String removeUnresolvableTypeFromFXML(String fxmlText, String unresolvableType) {
         List<String> lines = new ArrayList<>(fxmlText.lines().toList());
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).matches("^\s?[<]\s?[?]\s?import\s?.*")) {
-                    if (lines.get(i).contains(missingClass)) {
-                        document.addMissingClass(missingClass);
+                    if (lines.get(i).contains(unresolvableType)) {
+                        document.addUnresolvableType(unresolvableType);
                         lines.set(i, "");
                         break;
                     }
@@ -156,7 +155,7 @@ class FXOMLoader implements LoadListener {
     private void handleKnownCauses(Exception x) throws IOException {
         if (x.getCause().getClass() == XMLStreamException.class) {
             knownErrorsHandler.accept(x);
-        } else {                    
+        } else {
             handleUnknownAndMissingCauses(x);
         }
     }

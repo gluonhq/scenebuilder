@@ -398,10 +398,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         final URL fxmlURL = fxmlFile.toURI().toURL();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
 
-        FXOMDocumentSwitch[] options = PreferencesController.getSingleton().getRecordGlobal()
-                                                            .isPreserveUnresolvedImports() 
-                                                            ? new FXOMDocumentSwitch[] {FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS} 
-                                                            : new FXOMDocumentSwitch[0];
+        FXOMDocumentSwitch[] options = FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS
+                                                         .fromToggle(getPreferencesRecordGlobal().isPreserveUnresolvedImports());
 
         editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false, options);
         updateLoadFileTime();

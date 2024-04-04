@@ -142,7 +142,7 @@ class FXOMSaver {
     
     private List<GlueInstruction> getMissingClassesImports(FXOMDocument fxomDocument) {
         final Set<String> imports = new TreeSet<>(); // Sorted
-        imports.addAll(fxomDocument.getMissingClasses());
+        imports.addAll(fxomDocument.getUnresolvableTypes());
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
 

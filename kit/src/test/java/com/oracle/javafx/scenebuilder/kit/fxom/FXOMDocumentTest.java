@@ -44,9 +44,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,8 +55,8 @@ import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+import static com.oracle.javafx.scenebuilder.kit.JfxTestHelper.waitFor;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuBar;
 
@@ -285,24 +283,27 @@ public class FXOMDocumentTest {
         assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
     
+
     @Test
     public void that_unresolvable_imports_cause_exception_by_default() throws Exception {
-        URL resource = getClass().getResource("UnresolvableImports.fxml");
-        String validFxmlText = FXOMDocument.readContentFromURL(resource);
+        
+        URL location = getClass().getResource("UnresolvableImports.fxml");
+        String fxmlText = FXOMDocument.readContentFromURL(location);
+        
+        ClassLoader classLoader = null;
+        ResourceBundle resources = null;
+        FXOMDocumentSwitch[] switches = new FXOMDocumentSwitch[0]; 
         
         Throwable t = assertThrows(ExecutionException.class, 
-                ()->waitFor(()->new FXOMDocument(validFxmlText, resource, null, null)));
+                ()->waitFor(()->new FXOMDocument(fxmlText, location, classLoader, resources, switches)));
         
         if (t.getCause() != null) {
             t = t.getCause();
         }
-        
-        assertEquals(IOException.class, t.getClass());
-        assertTrue(t.getMessage().startsWith("javafx.fxml.LoadException: "));
     }
     
     @Test
-    public void that_unresolvable_can_be_ignored_via_switch() throws Exception {
+    public void that_unresolvable_imports_can_be_ignored_via_switch() throws Exception {
         URL resource = getClass().getResource("UnresolvableImports.fxml");
         String validFxmlText = FXOMDocument.readContentFromURL(resource);
         
@@ -316,14 +317,26 @@ public class FXOMDocumentTest {
         assertEquals("another.unresolvable.Dependency", unresolvableImports.get(0));
         assertEquals("also.an.unresolvable.Dependency", unresolvableImports.get(1));
     }
-
-    private <T> T waitFor(Callable<T> callable) throws Exception {
-        FutureTask<T> task = new FutureTask<T>(callable);
-        if (Platform.isFxApplicationThread()) {
-            return callable.call();
-        } else {
-            Platform.runLater(()->task.run());
-            return task.get();
-        }
+    
+    @Test
+    public void that_document_can_be_created_even_with_unresolvable_imports() throws Exception {
+        
+        URL location = getClass().getResource("UnresolvableImports.fxml");
+        String fxmlText = FXOMDocument.readContentFromURL(location);
+        
+        ClassLoader classLoader = null;
+        ResourceBundle resources = null;
+        FXOMDocumentSwitch[] switches = new FXOMDocumentSwitch[]{FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS};
+        
+        var newDocument = assertDoesNotThrow(()->waitFor(()->new FXOMDocument(fxmlText,
+                                                                  location,
+                                                                  classLoader,
+                                                                  resources,
+                                                                  switches)));
+        
+        assertNotNull(newDocument);
+        assertTrue(newDocument.hasUnresolvableImports());
+        
     }
+
 }

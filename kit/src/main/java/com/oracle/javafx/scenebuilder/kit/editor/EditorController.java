@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -103,7 +103,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -2568,9 +2567,8 @@ public class EditorController {
         final FXOMDocument newFxomDocument;
         
         if (fxmlText != null) {
-            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
-            options.addAll(Set.of(switches));
-            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, options.toArray(new FXOMDocumentSwitch[0]));
+            FXOMDocumentSwitch[] options = FXOMDocumentSwitch.combined(switches, FXOMDocumentSwitch.NORMALIZED);
+            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, options);
         } else {
             newFxomDocument = null;
         }
