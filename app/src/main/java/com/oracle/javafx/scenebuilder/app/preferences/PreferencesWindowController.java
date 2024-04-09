@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -53,8 +53,8 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.WILDCARD_IMPORT;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PRESERVE_UNRESOLVED_IMPORTS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ALTERNATE_TEXT_INPUT_PASTE;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.PRESERVE_UNRESOLVED_IMPORTS;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
@@ -271,6 +271,8 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         // Wildcard Imports
         wildcardImports.setSelected(recordGlobal.isWildcardImports());
         wildcardImports.selectedProperty().addListener(new WildcardImportListener());
+        
+        // Unresolvable Imports
         preserveUnresolvedImports.setSelected(recordGlobal.isPreserveUnresolvedImports());
         preserveUnresolvedImports.selectedProperty().addListener(new PreserveUnresolvedImportListener());
 
