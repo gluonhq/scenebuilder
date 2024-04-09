@@ -99,10 +99,9 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     static final int DEFAULT_RECENT_ITEMS_SIZE = 15;
     static final boolean DEFAULT_ACCORDION_ANIMATION = true;
     static final boolean DEFAULT_WILDCARD_IMPORTS = false;
-    static final boolean DEFAULT_PRESERVE_UNRESOLVED_IMPORTS = true;
-
     static final boolean DEFAULT_ALTERNATE_TEXT_INPUT_PASTE = EditorPlatform.IS_MAC;
-
+    static final boolean DEFAULT_PRESERVE_UNRESOLVED_IMPORTS = true;
+    
     /***************************************************************************
      *                                                                         *
      * Instance fields                                                         *
@@ -400,7 +399,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     public boolean isAlternateTextInputControlPaste() {
         return alternatePasteBehavior;
     }
-
+    
     public void setAlternateTextInputControlPaste(boolean alternatePasteBehavior) {
         this.alternatePasteBehavior = alternatePasteBehavior;
     }
@@ -491,6 +490,8 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
 
         // Wildcard imports
         setWildcardImports(applicationRootPreferences.getBoolean(WILDCARD_IMPORT, DEFAULT_WILDCARD_IMPORTS));
+
+        // Unresolvable Imports
         setPreserveUnresolvedImports(applicationRootPreferences.getBoolean(PRESERVE_UNRESOLVED_IMPORTS, DEFAULT_PRESERVE_UNRESOLVED_IMPORTS));
 
         // Alternate paste behavior for Text Input Controls
@@ -561,10 +562,11 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
             case WILDCARD_IMPORT:
                 applicationRootPreferences.putBoolean(WILDCARD_IMPORT, isWildcardImports());
                 break;
-            case PRESERVE_UNRESOLVED_IMPORTS:
-                applicationRootPreferences.putBoolean(PRESERVE_UNRESOLVED_IMPORTS, isPreserveUnresolvedImports());
             case ALTERNATE_TEXT_INPUT_PASTE:
                 applicationRootPreferences.putBoolean(ALTERNATE_TEXT_INPUT_PASTE,isAlternateTextInputControlPaste());
+                break;
+            case PRESERVE_UNRESOLVED_IMPORTS:
+                applicationRootPreferences.putBoolean(PRESERVE_UNRESOLVED_IMPORTS, isPreserveUnresolvedImports());
                 break;
             default:
                 super.writeToJavaPreferences(key);
