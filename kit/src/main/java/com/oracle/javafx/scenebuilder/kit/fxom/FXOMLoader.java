@@ -110,10 +110,13 @@ class FXOMLoader implements LoadListener {
             setSceneGraphRoot(fxmlLoader.load(is));
         } catch (RuntimeException | IOException x) {
             Throwable cause = x.getCause();
-            if (cause instanceof ClassNotFoundException missingTypeError && (Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS) || document.hasUnresolvableImports())) {
+            if (cause instanceof ClassNotFoundException missingTypeError && 
+                    (Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS) 
+                            || document.hasUnresolvableImports())) {
                     String missingClassName = missingTypeError.getMessage();
                     String modifiedFxml = removeUnresolvableTypeFromFXML(fxmlText, missingClassName);
-                    LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. Try loading FXML without {0}", missingClassName);
+                    LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. "
+                                            + "Try loading FXML without {0}", missingClassName);
                     load(modifiedFxml, switches);
             } else {
                 handleFxmlLoadingError(x);

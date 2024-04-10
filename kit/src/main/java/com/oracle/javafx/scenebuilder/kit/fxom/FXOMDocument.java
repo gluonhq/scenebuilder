@@ -106,7 +106,8 @@ public class FXOMDocument {
      *                    (e.g. enforcing normalization)
      * @throws IOException when the fxmlText cannot be loaded
      */
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, FXOMDocumentSwitch... switches) throws IOException {
+    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources,
+                        FXOMDocumentSwitch... switches) throws IOException {
         this.glue = new GlueDocument(fxmlText);
         this.location = location;
         this.classLoader = classLoader;
@@ -136,16 +137,20 @@ public class FXOMDocument {
     }
 
     /**
-     * Adds the name of a class or a name space which could not be resolved by FXMLLoader.
+     * Adds the name of a class or a name space which could not be resolved by
+     * FXMLLoader.
      * 
-     * @param unresolvableImportType A class name from an import which is effectively not known to the FXMLLoader (the type is generally not known to the JVM).
+     * @param unresolvableImportType A class name from an import which is
+     *                               effectively not known to the FXMLLoader (the
+     *                               type is generally not known to the JVM).
      */
     public void addUnresolvableType(String unresolvableImportType) {
         this.unresolvableImportTypes.add(unresolvableImportType);
     }
 
     /**
-     * If there were unresolved FXML import statements, affected fully qualified type names are provided here.
+     * If there were unresolved FXML import statements, affected fully qualified
+     * type names are provided here.
      * 
      * @return List of unresolved FXML import type names.
      */
@@ -553,7 +558,8 @@ public class FXOMDocument {
          * @return Array of unique FXOMDocumentSwitch items consisting of the given
          *         existing switches and the new one.
          */
-        public static FXOMDocumentSwitch[] combined(FXOMDocumentSwitch[] existingSwitches, FXOMDocumentSwitch newSwitch) {
+        public static FXOMDocumentSwitch[] combined(FXOMDocumentSwitch[] existingSwitches,
+                                                    FXOMDocumentSwitch newSwitch) {
             Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
             options.addAll(Set.of(existingSwitches));
             return options.toArray(new FXOMDocumentSwitch[0]);
