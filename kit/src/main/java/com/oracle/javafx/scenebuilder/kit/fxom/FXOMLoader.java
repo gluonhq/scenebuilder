@@ -108,18 +108,28 @@ class FXOMLoader implements LoadListener {
             assert is.markSupported();
             is.reset();
             setSceneGraphRoot(fxmlLoader.load(is));
-        } catch (RuntimeException | IOException x) {
-            Throwable cause = x.getCause();
-            if (handlingOfUnresolvedImportsIsEnabled(cause, switches)) {
-                    String missingClassName = cause.getMessage();
-                    String modifiedFxml = removeUnresolvableTypeFromFXML(fxmlText, missingClassName);
-                    LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. "
-                                            + "Try loading FXML without {0}", missingClassName);
-                    load(modifiedFxml, switches);
-            } else {
-                handleFxmlLoadingError(x);
-            }
+        } catch (RuntimeException | IOException fxmlLoaderError) {
+            showErrorOrHandleUnresolvedImports(fxmlText, fxmlLoaderError, switches);
         }
+    }
+
+    private void showErrorOrHandleUnresolvedImports(String fxmlText, Exception fxmlLoaderError,
+            FXOMDocumentSwitch... switches) throws IOException {
+        Throwable cause = fxmlLoaderError.getCause();
+        if (handlingOfUnresolvedImportsIsEnabled(cause, switches)) {
+            handleUnresolvedImports(fxmlText, cause, switches);
+        } else {
+            handleFxmlLoadingError(fxmlLoaderError);
+        }
+    }
+
+    private void handleUnresolvedImports(String fxmlText, Throwable cause, FXOMDocumentSwitch... switches)
+            throws IOException {
+        String missingClassName = cause.getMessage();
+        LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. "
+                + "Try loading FXML without {0}", missingClassName);
+        String modifiedFxml = removeUnresolvableTypeFromFXML(fxmlText, missingClassName);
+        load(modifiedFxml, switches);
     }
 
     private boolean handlingOfUnresolvedImportsIsEnabled(Throwable cause, FXOMDocumentSwitch... switches) {
