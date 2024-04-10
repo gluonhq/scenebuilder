@@ -114,9 +114,6 @@ class FXOMSaver {
         // gets list of the imports to be added to the FXML document.
         List<GlueInstruction> importList = getHeaderIncludes(fxomDocument);
 
-        List<GlueInstruction> missingImports = getMissingClassesImports(fxomDocument);;
-        importList.addAll(missingImports);
-
         // synchronizes the glue with the list of glue instructions
         synchronizeHeader(fxomDocument.getGlue(), importList);
     }
@@ -136,13 +133,10 @@ class FXOMSaver {
 
         imports.addAll(findPropertyClasses(root.getChildObjects().toArray(FXOMObject[]::new)));
         imports.addAll(findPropertyClasses(root));
-
-        return createGlueInstructionsForImports(fxomDocument, imports);
-    }
-    
-    private List<GlueInstruction> getMissingClassesImports(FXOMDocument fxomDocument) {
-        final Set<String> imports = new TreeSet<>(); // Sorted
+        
+        // Handle imports wich were not resolvable at the time the document was loaded
         imports.addAll(fxomDocument.getUnresolvableTypes());
+
         return createGlueInstructionsForImports(fxomDocument, imports);
     }
 

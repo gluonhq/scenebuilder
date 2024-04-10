@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -63,9 +64,44 @@ class FXOMSaverTest {
         document.setLocation(outfile.toUri().toURL());
 
         String generatedFxml = assertDoesNotThrow(() -> classUnderTest.save(document));
+        String generatedImports = generatedFxml.lines()
+                                               .filter(l -> l.startsWith("<?import"))
+                                               .collect(Collectors.joining("\n"));
+        
+        String expectedImports = """
+                <?import also.an.unresolvable.Dependency?>
+                <?import another.unresolvable.Dependency?>
+                <?import javafx.scene.control.Button?>
+                <?import javafx.scene.control.ComboBox?>
+                <?import javafx.scene.control.TextField?>
+                <?import javafx.scene.layout.AnchorPane?>""";
+
+        assertEquals(expectedImports, generatedImports);
+        
+        /*
+         * TODO: Questions
+         * 
+         * 1) Keep unknown wildcard imports or not? (<?import this.namespace.is.unknown.*?>)
+         * 2) Keep input order OR allow the Glue process to handle ordering?
+         * 
+         */
+    }
+    
+    @Test
+    void that_FXOMSaver_preserves_wildcard_imports() throws Exception {
+        URL location = FXOMTestHelper.class.getResource("UnresolvableImports.fxml");
+
+        FXOMDocument document = createFXOMDocumentFrom(location, FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS);
+        boolean preserveWildCardImports = true;
+        
+        FXOMSaver classUnderTest = new FXOMSaver(preserveWildCardImports);
+        Path outfile = Path.of("FXOMSaverTest_withUnresolvedTypes.fxml");
+        document.setLocation(outfile.toUri().toURL());
+
+        String generatedFxml = assertDoesNotThrow(() -> classUnderTest.save(document));
         List<String> generatedImportLines = generatedFxml.lines().filter(l -> l.startsWith("<?import")).toList();
 
-        assertEquals(6, generatedImportLines.size());
+        assertEquals(4, generatedImportLines.size());
         assertEquals("<?import javafx.scene.control.Button?>", generatedImportLines.get(0));
         assertEquals("<?import javafx.scene.control.ComboBox?>", generatedImportLines.get(1));
         assertEquals("<?import javafx.scene.control.TextField?>", generatedImportLines.get(2));
