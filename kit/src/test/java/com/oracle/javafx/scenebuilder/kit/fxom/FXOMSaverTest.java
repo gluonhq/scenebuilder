@@ -88,7 +88,7 @@ class FXOMSaverTest {
     }
     
     @Test
-    void that_FXOMSaver_preserves_wildcard_imports() throws Exception {
+    void that_FXOMSaver_preserves_wildcard_imports_if_requested() throws Exception {
         URL location = FXOMTestHelper.class.getResource("UnresolvableImports.fxml");
 
         FXOMDocument document = createFXOMDocumentFrom(location, FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS);
@@ -99,24 +99,20 @@ class FXOMSaverTest {
         document.setLocation(outfile.toUri().toURL());
 
         String generatedFxml = assertDoesNotThrow(() -> classUnderTest.save(document));
-        List<String> generatedImportLines = generatedFxml.lines().filter(l -> l.startsWith("<?import")).toList();
-
-        assertEquals(4, generatedImportLines.size());
-        assertEquals("<?import javafx.scene.control.Button?>", generatedImportLines.get(0));
-        assertEquals("<?import javafx.scene.control.ComboBox?>", generatedImportLines.get(1));
-        assertEquals("<?import javafx.scene.control.TextField?>", generatedImportLines.get(2));
-        assertEquals("<?import javafx.scene.layout.AnchorPane?>", generatedImportLines.get(3));
-        assertEquals("<?import also.an.unresolvable.Dependency?>", generatedImportLines.get(4));
-        assertEquals("<?import another.unresolvable.Dependency?>", generatedImportLines.get(5));
+        String generatedImports = generatedFxml.lines()
+                .filter(l -> l.startsWith("<?import"))
+                .collect(Collectors.joining("\n"));
 
         /*
-         * TODO: The source FXML has a wildcard import which goes away.
-         * 
-         * <?import this.namespace.is.unknown.*?>
-         * 
-         * Question: keep such unknown wildcard imports or not?
+         * Unresolved types are not considered when wildcard imports are allowed.
          */
-
+        String expectedImports = """
+                <?import also.an.unresolvable.Dependency?>
+                <?import another.unresolvable.Dependency?>
+                <?import javafx.scene.control.*?>
+                <?import javafx.scene.layout.*?>""";
+        
+        assertEquals(expectedImports, generatedImports);
     }
 
 }
