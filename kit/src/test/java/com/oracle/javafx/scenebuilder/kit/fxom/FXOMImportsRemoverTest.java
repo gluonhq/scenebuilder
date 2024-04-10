@@ -66,9 +66,8 @@ class FXOMImportsRemoverTest {
                 </AnchorPane>
                 """;
         
-        String cleanedFxmlText = classUnderTest.removeImports(sourceFxmlText, 
-                                                              List.of("another.unresolvable.Dependency",
-                                                                      "also.an.unresolvable.Dependency"));
+        List<String> importsToRemove = List.of("another.unresolvable.Dependency", "also.an.unresolvable.Dependency");
+        String cleanedFxmlText = classUnderTest.removeImports(sourceFxmlText, importsToRemove);
         
         String expectedFxmlText = """
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -111,7 +110,6 @@ class FXOMImportsRemoverTest {
         String cleanedFxmlText = classUnderTest.removeImports(sourceFxmlText, List.of());
         
         assertEquals(sourceFxmlText, cleanedFxmlText);
-
     }
 
 }
