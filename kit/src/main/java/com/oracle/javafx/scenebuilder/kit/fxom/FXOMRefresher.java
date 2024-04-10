@@ -68,7 +68,7 @@ class FXOMRefresher {
             if (document.hasUnresolvableImports()) {
                 LOGGER.log(Level.INFO, "Detected unresolved imports.");
                 FXOMImportsRemover importRemover = new FXOMImportsRemover();
-                fxmlText = importRemover.apply(fxmlText, document.getUnresolvableTypes());
+                fxmlText = importRemover.removeImports(fxmlText, document.getUnresolvableTypes());
             }
 
             final FXOMDocument newDocument

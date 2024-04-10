@@ -31,20 +31,87 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 class FXOMImportsRemoverTest {
     
-    private FXOMImportsRemover classUnderTest = new FXOMImportsRemover();
+    private FXOMImportsRemover classUnderTest;
 
     @Test
-    void test() {
-        /*
-         * TODO: implement this test
-         */
-        fail("Not yet implemented");
+    void that_the_given_imports_are_removed() {
+        Set<String> detectedUnresolvableTypes = new HashSet<>();
+        classUnderTest = new FXOMImportsRemover(detectedUnresolvableTypes::add);
+        
+        String sourceFxmlText = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <?import javafx.scene.control.*?>
+                <?import another.unresolvable.Dependency?>
+                <?import also.an.unresolvable.Dependency?>
+                <?import this.namespace.is.unknown.*?>
+                <AnchorPane>
+                    <children>
+                        <Button layoutX="302.0" layoutY="27.0" text="Button" />
+                        <ComboBox layoutX="46.0" layoutY="175.0" prefWidth="150.0" />
+                        <TextField layoutX="345.0" layoutY="264.0" />
+                        <Button layoutX="84.0" layoutY="252.0" text="Button" />
+                        <UnknownElement layoutX="84.0" layoutY="87.0" text="Some Content" />
+                    </children>
+                </AnchorPane>
+                """;
+        
+        String cleanedFxmlText = classUnderTest.removeImports(sourceFxmlText, 
+                                                              List.of("another.unresolvable.Dependency",
+                                                                      "also.an.unresolvable.Dependency"));
+        
+        String expectedFxmlText = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <?import javafx.scene.control.*?>
+                <?import this.namespace.is.unknown.*?>
+                <AnchorPane>
+                    <children>
+                        <Button layoutX="302.0" layoutY="27.0" text="Button" />
+                        <ComboBox layoutX="46.0" layoutY="175.0" prefWidth="150.0" />
+                        <TextField layoutX="345.0" layoutY="264.0" />
+                        <Button layoutX="84.0" layoutY="252.0" text="Button" />
+                        <UnknownElement layoutX="84.0" layoutY="87.0" text="Some Content" />
+                    </children>
+                </AnchorPane>
+                """;
+        
+        assertTrue(detectedUnresolvableTypes.contains("another.unresolvable.Dependency"));
+        assertTrue(detectedUnresolvableTypes.contains("also.an.unresolvable.Dependency"));
+        assertEquals(expectedFxmlText.lines().limit(4).toList(), cleanedFxmlText.lines().limit(4).toList());
+    }
+    
+    @Test
+    void that_fxml_is_not_modified_when_nothing_is_to_be_removed() {
+        String sourceFxmlText = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <?import javafx.scene.control.*?>
+                <?import this.namespace.is.unknown.*?>
+                <AnchorPane>
+                    <children>
+                        <Button layoutX="302.0" layoutY="27.0" text="Button" />
+                        <ComboBox layoutX="46.0" layoutY="175.0" prefWidth="150.0" />
+                        <TextField layoutX="345.0" layoutY="264.0" />
+                        <Button layoutX="84.0" layoutY="252.0" text="Button" />
+                        <UnknownElement layoutX="84.0" layoutY="87.0" text="Some Content" />
+                    </children>
+                </AnchorPane>
+                """;
+        
+        classUnderTest = new FXOMImportsRemover();
+        String cleanedFxmlText = classUnderTest.removeImports(sourceFxmlText, List.of());
+        
+        assertEquals(sourceFxmlText, cleanedFxmlText);
+
     }
 
 }

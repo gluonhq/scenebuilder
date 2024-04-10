@@ -123,7 +123,7 @@ class FXOMLoader implements LoadListener {
 
     private String removeUnresolvableTypeFromFXML(String fxmlText, String unresolvableType) {
         FXOMImportsRemover remover = new FXOMImportsRemover(document::addUnresolvableType);
-        return remover.apply(fxmlText, List.of(unresolvableType));
+        return remover.removeImports(fxmlText, List.of(unresolvableType));
     }
 
     private void handleFxmlLoadingError(Exception x) throws IOException {

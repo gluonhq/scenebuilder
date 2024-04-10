@@ -31,50 +31,100 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class FXOMImportsRemover implements BiFunction<String, List<String>, String>{
+class FXOMImportsRemover {
     
     private static final Logger LOGGER = Logger.getLogger(FXOMImportsRemover.class.getName());
 
-    private Consumer<String> unresolvedTypeConsumer;
+    private Consumer<String> removedTypeConsumer;
     
     FXOMImportsRemover() {
-        this(type->{});
-    }
-    FXOMImportsRemover(Consumer<String> unresolvedTypeConsumer) {
-        this.unresolvedTypeConsumer = unresolvedTypeConsumer;
+        this(type->{
+            /* no operation here by default  */
+        });
     }
     
-    /*
-     * TODO: Rework the way how the import tag is detected and how the import statement is removed.
-     * This implementation only works fine with one import per line, but actually one can put multiple imports in one line.
-     * This approach works as of now but is not robust.
+    FXOMImportsRemover(Consumer<String> matchingTypeConsumer) {
+        this.removedTypeConsumer = matchingTypeConsumer;
+    }
+    
+    /**
+     * Removes all imports from a given FXML for the given type names.
      * 
+     * @param sourceFxml The source FXML.
+     * @param typesToRemoveThe type names which shall be removed. 
+     * @return FXML text without the previously removed types
      */
-    @Override
-    public String apply(String sourceFxml, List<String> unresolvedTypes) {
-        List<String> lines = new ArrayList<>(sourceFxml.lines().toList());
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if (line.matches("^\s?[<]\s?[?]\s?import\s?.*")) {
-                for (String unresolvedType : unresolvedTypes) {
-                    if (line.contains(unresolvedType)) {
-                        LOGGER.log(Level.INFO, "Removing FXML import: ", line);
-                        lines.set(i, "");
-                        unresolvedTypeConsumer.accept(unresolvedType);
-                    }
+    public String removeImports(String sourceFxml, Collection<String> typesToRemove) {
+        var predicate = new IgnoreImportPredicate(removedTypeConsumer,typesToRemove);
+        if (typesToRemove.isEmpty()) {
+            return sourceFxml;
+        }
+        
+        LOGGER.log(Level.INFO, "Removing FXML imports.");
+        
+        /* 
+         * The predicate detects specific imports.
+         * In this case here, all lines which do not match the given types shall be kept.
+         */
+        return sourceFxml.lines()
+                         .filter(predicate)
+                         .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    /**
+     * This predicate will yield true for all FXML lines to keep and false for all
+     * FXML lines to ignore. Lines to be ignored are import statements with the
+     * given type names.
+     * <br>
+     * <br>
+     * Regex description
+     * <pre>
+     *  opening import declaration: &lt;?import
+     *  at least one whitespace, more are possible: (\\s\\s*)
+     *  the unresolved type name 
+     *  optional whitespace: (\\s*)
+     *  closing import declaration: [?]&gt;
+     * </pre>
+     */
+    private static class IgnoreImportPredicate implements Predicate<String> {
+
+        private final Map<String, Pattern> typesToRemove;
+        
+        private final Consumer<String> matchingTypeConsumer;
+
+        IgnoreImportPredicate(Consumer<String> unresolvedTypeConsumer, Collection<String> unresolvedTypes) {
+            this.matchingTypeConsumer = unresolvedTypeConsumer;
+            this.typesToRemove = unresolvedTypes.stream()
+                                                .collect(Collectors.toMap(String::valueOf, 
+                                                                 IgnoreImportPredicate::createRegex));
+        }
+
+        private static Pattern createRegex(String type) {
+            return Pattern.compile( "<[?]import(\\s*)" + type.replace(".", "[.]") + "(\\s*)[?]>");
+        }
+
+        @Override
+        public boolean test(String lineToTest) {
+            for (Entry<String,Pattern> entry : typesToRemove.entrySet()) {
+                var pattern = entry.getValue().matcher(lineToTest);
+                if (pattern.matches()) {
+                    LOGGER.log(Level.INFO, "Import to ignore: {0}", lineToTest);
+                    matchingTypeConsumer.accept(entry.getKey());
+                    return false;
                 }
             }
+            return true;
         }
-        String modifiedFxml = lines.stream()
-                                   .collect(Collectors.joining(System.lineSeparator()));
-        return modifiedFxml;
+
     }
 }
