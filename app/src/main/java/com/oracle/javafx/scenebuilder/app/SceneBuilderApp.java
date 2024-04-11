@@ -813,7 +813,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                                         .collect(Collectors.joining(";"+System.lineSeparator()));
 
         errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice", allMissing, missingTypes.size()));
-        errorDialog.setTitle(I18N.getString("alert.title.open") + " : " + fxmlFile.getName());
+        errorDialog.setTitle(I18N.getString("alert.title.open") + ": " + fxmlFile.getName());
         errorDialog.showAndWait();
     }
 
