@@ -51,6 +51,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
@@ -95,6 +96,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This is the SB main entry point.
@@ -535,11 +537,16 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
         
         Consumer<Map<File, Exception>> onError = errors -> showFileOpenErrors(errors, 
-                                                            () -> WelcomeDialogWindowController.getInstance().getStage());
+                                                            () -> WelcomeDialogWindowController.getInstance()
+                                                                                               .getStage());
+        
+        Consumer<Map<File, List<String>>> onMissingTypes = missings -> notifyUserAboutUnresolvableImports(missings,
+                                                            () -> WelcomeDialogWindowController.getInstance()
+                                                                                               .getStage());
         
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            performOpenFiles(fileObjs, onError, onSuccess);
+            performOpenFiles(fileObjs, onError, onMissingTypes, onSuccess);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
@@ -547,7 +554,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
-                        performOpenFiles(fileObjs, onError, onSuccess);
+                        performOpenFiles(fileObjs, onError, onMissingTypes, onSuccess);
                     }
                 }
             });
@@ -719,16 +726,23 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void performOpenFiles(List<File> fxmlFiles) {
-        performOpenFiles(fxmlFiles, r -> showFileOpenErrors(r, getOwnerWindow()), () -> { /* no action here */ } );
+        performOpenFiles(fxmlFiles, 
+                         r -> showFileOpenErrors(r, getOwnerWindow()),
+                         m -> notifyUserAboutUnresolvableImports(m, getOwnerWindow()),
+                         () -> { /* no action here */ } );
     }
 
-    private void performOpenFiles(List<File> fxmlFiles, Consumer<Map<File, Exception>> onError, Runnable onSuccess) {
+    private void performOpenFiles(List<File> fxmlFiles, 
+                                  Consumer<Map<File, Exception>> onError,
+                                  Consumer<Map<File, List<String>>> onMissingTypes,
+                                  Runnable onSuccess) {
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
         LOGGER.log(Level.FINE, "Opening {0} files...", fxmlFiles.size());
         final Map<File, Exception> exceptionsPerFile = new HashMap<>();
         final List<File> openedFiles = new ArrayList<>();
+        final Map<File, List<String>> filesWithUnresolvedTypes = new HashMap<>();
         for (File fxmlFile : fxmlFiles) {
             LOGGER.log(Level.FINE, "Attempting to open file {0}", fxmlFile);
             try {
@@ -744,6 +758,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.openWindow();
                     openedFiles.add(fxmlFile);
                     LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
+                    
+                    FXOMDocument doc = hostWindow.getEditorController().getFxomDocument(); 
+                    if (doc.hasUnresolvableTypes()) {
+                        filesWithUnresolvedTypes.put(fxmlFile, doc.getUnresolvableTypes());
+                    }
+                    
                 }
             } catch (Exception xx) {
                 LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);
@@ -756,7 +776,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             final PreferencesController pc = PreferencesController.getSingleton();
             pc.getRecordGlobal().addRecentItems(openedFiles);
         }
-
+        
         if (exceptionsPerFile.isEmpty()) {
             LOGGER.log(Level.FINE, "Successfully opened all files.");
             onSuccess.run();
@@ -764,6 +784,37 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptionsPerFile.size(), fxmlFiles.size()});
             onError.accept(exceptionsPerFile);
         }
+        
+        if (!filesWithUnresolvedTypes.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Detected unresolved types in FXML to load.");
+            onMissingTypes.accept(filesWithUnresolvedTypes);
+        }
+    }
+    
+    private void notifyUserAboutUnresolvableImports(Map<File,List<String>> missingTypes, Supplier<Stage> owner) {
+        for (Entry<File, List<String>> entry : missingTypes.entrySet()) {
+            notifyUserAboutUnresolvableImports(entry.getKey(), entry.getValue(), owner.get());
+        }
+    }
+    
+    private void notifyUserAboutUnresolvableImports(File fxmlFile, List<String> missingTypes, Stage owner) {
+        LOGGER.log(Level.INFO, "Unresolvable types foundin FXML: {0}: {1}",
+                               new Object[] {fxmlFile, missingTypes.stream().collect(Collectors.joining(","))});
+
+        final ErrorDialog errorDialog = new ErrorDialog(owner);
+        String first10 = missingTypes.stream()
+                                     .limit(10)
+                                     .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports", Integer.toString(missingTypes.size())));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+
+        String allMissing = missingTypes.stream()
+                                        .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice", allMissing, missingTypes.size()));
+        errorDialog.setTitle(I18N.getString("alert.title.open"));
+        errorDialog.showAndWait();
     }
 
     private void performExit() {

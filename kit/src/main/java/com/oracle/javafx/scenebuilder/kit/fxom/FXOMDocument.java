@@ -157,6 +157,10 @@ public class FXOMDocument {
     public List<String> getUnresolvableTypes() {
         return this.unresolvableImportTypes;
     }
+    
+    public boolean hasUnresolvableTypes() {
+        return !this.unresolvableImportTypes.isEmpty();
+    }
         
     public FXOMDocument() {
         this.glue = new GlueDocument();
