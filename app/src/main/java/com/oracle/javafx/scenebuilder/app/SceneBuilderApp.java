@@ -798,7 +798,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
     
     private void notifyUserAboutUnresolvableImports(File fxmlFile, List<String> missingTypes, Stage owner) {
-        LOGGER.log(Level.INFO, "Unresolvable types foundin FXML: {0}: {1}",
+        LOGGER.log(Level.INFO, "Unresolvable types found in FXML: {0}: {1}",
                                new Object[] {fxmlFile, missingTypes.stream().collect(Collectors.joining(","))});
 
         final ErrorDialog errorDialog = new ErrorDialog(owner);
