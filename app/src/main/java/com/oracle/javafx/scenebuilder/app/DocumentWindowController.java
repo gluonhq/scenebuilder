@@ -95,6 +95,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -122,6 +125,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -133,6 +137,8 @@ import javafx.stage.WindowEvent;
  */
 public class DocumentWindowController extends AbstractFxmlWindowController {
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentWindowController.class.getName());
+    
     public enum DocumentControlAction {
         COPY,
         SELECT_ALL,
@@ -2296,6 +2302,35 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             recordGlobal = preferencesController.getRecordGlobal();
         }
         return recordGlobal;
+    }
+
+    public void showMissingTypesNotificationIfNeeded(File fxmlFile) {
+        FXOMDocument doc = getEditorController().getFxomDocument();
+        if (doc.hasUnresolvableTypes()) {
+            notifyUserAboutUnresolvableImports(fxmlFile, doc.getUnresolvableTypes(), getStage());
+        }
+    }
+    
+    private void notifyUserAboutUnresolvableImports(File fxmlFile, List<String> missingTypes, Stage owner) {
+        LOGGER.log(Level.WARNING, "Detected unresolved types in FXML: {0}: {1}",
+                               new Object[] {fxmlFile, missingTypes.stream().collect(Collectors.joining(","))});
+
+        final ErrorDialog errorDialog = new ErrorDialog(owner);
+        String first10 = missingTypes.stream()
+                                     .limit(10)
+                                     .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports",
+                               Integer.toString(missingTypes.size())));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+
+        String allMissing = missingTypes.stream()
+                                        .collect(Collectors.joining(";"+System.lineSeparator()));
+
+        errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice",
+                                 allMissing, missingTypes.size()));
+        errorDialog.setTitle(I18N.getString("alert.title.open") + ": " + fxmlFile.getName());
+        errorDialog.showAndWait();
     }
 }
 
