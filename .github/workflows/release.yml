@@ -11,8 +11,8 @@ on:
           - GA
 
 env:
-  JAVAFX_VERSION: '22'
-  JAVA_VERSION: '22'
+  JAVAFX_VERSION: '23'
+  JAVA_VERSION: '23'
 
 jobs:
   precheck:
