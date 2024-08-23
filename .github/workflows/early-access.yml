@@ -41,8 +41,8 @@ jobs:
           PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           APP_VERSION=$PROJECT_VERSION
           APP_VERSION=${APP_VERSION%-*}
-          echo ::set-output name=APP_VERSION::$APP_VERSION
-          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
+          echo APP_VERSION=$APP_VERSION >> $GITHUB_OUTPUT
+          echo PROJECT_VERSION=$PROJECT_VERSION >> $GITHUB_OUTPUT
 
   linux-bundles:
     needs: [precheck]

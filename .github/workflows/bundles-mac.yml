@@ -55,7 +55,7 @@ jobs:
         id: javafx
         run: |
           JAVAFX_MAJOR_VERSION=$(echo ${{ inputs.javafx-version }} | cut -d- -f1)
-          echo ::set-output name=JAVAFX_MAJOR_VERSION::$JAVAFX_MAJOR_VERSION
+          echo JAVAFX_MAJOR_VERSION=$JAVAFX_MAJOR_VERSION >> $GITHUB_OUTPUT
           wget -P /tmp https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-x64_bin-jmods.zip -d /tmp
 
@@ -92,7 +92,7 @@ jobs:
             --mac-sign
           mv ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.APP_VERSION }}.dmg ${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
           ls ${{ env.INSTALL_DIR }}
-          echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg
+          echo path=${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-amd64.dmg >> $GITHUB_OUTPUT
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}/
