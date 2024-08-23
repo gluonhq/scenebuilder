@@ -2,7 +2,7 @@ name: Early Access
 
 on:
   push:
-    branches: [ master, java-23-ea ]
+    branches: [ master ]
 
 env:
   JAVA_VERSION: '23'
