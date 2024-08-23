@@ -42,9 +42,11 @@ jobs:
           release: ${{ inputs.java-version }}
 
       - name: Setup JavaFX
+        id: javafx
         shell: pwsh
         run: |
           $JAVAFX_MAJOR_VERSION = '${{ inputs.javafx-version }}' -split '-' | Select-Object -Index 0
+          echo ::set-output name=JAVAFX_MAJOR_VERSION::$JAVAFX_MAJOR_VERSION
           Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip -OutFile D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip
           Expand-Archive -Force D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip D:\
 
@@ -76,7 +78,7 @@ jobs:
           call dir ${{ env.INSTALL_DIR }}
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
-          JAVAFX_HOME: D:\javafx-jmods-${{ inputs.javafx-version }}
+          JAVAFX_HOME: D:\javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           PROJECT_VERSION: ${{ inputs.project-version }}
           APP_VERSION: ${{ inputs.app-version }}

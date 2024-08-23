@@ -53,8 +53,10 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
       - name: Setup JavaFX
+        id: javafx
         run: |
           JAVAFX_MAJOR_VERSION=$(echo ${{ inputs.javafx-version }} | cut -d- -f1)
+          echo ::set-output name=JAVAFX_MAJOR_VERSION::$JAVAFX_MAJOR_VERSION
           wget -P /tmp https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
@@ -94,7 +96,7 @@ jobs:
           echo ::set-output name=path::${{ env.INSTALL_DIR }}/SceneBuilder-${{ env.PROJECT_VERSION }}-aarch64.dmg
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
-          JAVAFX_HOME: /tmp/javafx-jmods-${{ inputs.javafx-version }}/
+          JAVAFX_HOME: /tmp/javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}/
           JPACKAGE_HOME: ${{ env.JAVA_HOME }}
           MACSIGN_PREFIX: ${{ secrets.MACSIGN_PREFIX }}
           MACSIGN_USER: ${{ secrets.MACSIGN_USER }}
