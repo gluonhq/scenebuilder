@@ -44,7 +44,7 @@ jobs:
       - name: Setup JavaFX
         shell: pwsh
         run: |
-          $JAVAFX_MAJOR_VERSION = ${{ inputs.javafx-version }} -split '-' | Select-Object -Index 0
+          $JAVAFX_MAJOR_VERSION = '${{ inputs.javafx-version }}' -split '-' | Select-Object -Index 0
           Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip -OutFile D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip
           Expand-Archive -Force D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip D:\
 
