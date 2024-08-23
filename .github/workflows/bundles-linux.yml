@@ -44,7 +44,7 @@ jobs:
       - name: Setup JavaFX
         run: |
           wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ env.JAVAFX_BUILD }}_linux-x64_bin-jmods.zip
-          unzip /tmp/openjfx-${{ inputs.javafx-version }}_linux-x64_bin-jmods.zip -d /tmp
+          unzip /tmp/openjfx-${{ env.JAVAFX_BUILD }}_linux-x64_bin-jmods.zip -d /tmp
         env:
           JAVAFX_BUILD: ${{ inputs.javafx-ea-build == '' && inputs.javafx-version || format('{0}-{1}', inputs.javafx-version, inputs.javafx-ea-build) }}
 
