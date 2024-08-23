@@ -2,10 +2,11 @@ name: Early Access
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, java-23-ea ]
 
 env:
   JAVAFX_VERSION: '23'
+  JAVAFX_EA_BUILD: 'ea+27'
   JAVA_VERSION: '23'
 
 jobs:
@@ -49,6 +50,7 @@ jobs:
     uses: ./.github/workflows/bundles-linux.yml
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      javafx-ea-build: ${{ needs.precheck.outputs.JAVAFX_EA_BUILD }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -63,6 +65,7 @@ jobs:
       WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      javafx-ea-build: ${{ needs.precheck.outputs.JAVAFX_EA_BUILD }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -80,6 +83,7 @@ jobs:
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      javafx-ea-build: ${{ needs.precheck.outputs.JAVAFX_EA_BUILD }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -97,6 +101,7 @@ jobs:
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      javafx-ea-build: ${{ needs.precheck.outputs.JAVAFX_EA_BUILD }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}

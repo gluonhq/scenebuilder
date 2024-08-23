@@ -17,6 +17,10 @@ on:
         default: '23'
         required: false
         type: string
+      javafx-ea-build:
+        default: ''
+        required: false
+        type: string
       test:
         default: false
         required: false
