@@ -17,10 +17,6 @@ on:
         default: '23'
         required: false
         type: string
-      javafx-ea-build:
-        default: ''
-        required: false
-        type: string
       test:
         default: false
         required: false
@@ -43,10 +39,9 @@ jobs:
 
       - name: Setup JavaFX
         run: |
-          wget -P /tmp https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ env.JAVAFX_BUILD }}_linux-x64_bin-jmods.zip
-          unzip /tmp/openjfx-${{ env.JAVAFX_BUILD }}_linux-x64_bin-jmods.zip -d /tmp
-        env:
-          JAVAFX_BUILD: ${{ inputs.javafx-ea-build == '' && inputs.javafx-version || format('{0}-{1}', inputs.javafx-version, inputs.javafx-ea-build) }}
+          JAVAFX_MAJOR_VERSION=$(echo ${{ inputs.javafx-version }} | cut -d- -f1)
+          wget -P /tmp https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_linux-x64_bin-jmods.zip
+          unzip /tmp/openjfx-${{ inputs.javafx-version }}_linux-x64_bin-jmods.zip -d /tmp
 
       - name: Cache Maven packages
         uses: actions/cache@v2

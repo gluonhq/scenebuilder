@@ -17,10 +17,6 @@ on:
         default: '23'
         required: false
         type: string
-      javafx-ea-build:
-        default: ''
-        required: false
-        type: string
       test:
         default: false
         required: false
@@ -48,7 +44,8 @@ jobs:
       - name: Setup JavaFX
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/${{ inputs.javafx-version }}/openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip -OutFile D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip
+          $JAVAFX_MAJOR_VERSION = ${{ inputs.javafx-version }} -split '-' | Select-Object -Index 0
+          Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/$JAVAFX_MAJOR_VERSION/openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip -OutFile D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip
           Expand-Archive -Force D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip D:\
 
       - name: Cache Maven packages
