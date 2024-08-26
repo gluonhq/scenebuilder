@@ -48,11 +48,11 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog.ButtonID;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesBaseWindowController;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -61,6 +61,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -115,6 +117,33 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
 
         getStage().setTitle(I18N.getString("welcome.title"));
         getStage().initModality(Modality.APPLICATION_MODAL);
+    }
+    
+    @FXML
+    void handleFileDraggedOver(DragEvent event) {
+        if (event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.ANY);
+        }
+    }
+
+    @FXML
+    void handleDroppedFiles(DragEvent event) {
+        if (event.getDragboard().hasFiles()) {
+            new WelcomeDialogFilesDropHandler(event.getDragboard().getFiles())
+                .withSupportedFiles(fileNames->Platform.runLater(()->handleOpen(fileNames)))
+                .withUnsupportedFiles(unsupported->notifyUserWhenDroppedUnsupportedFiles(unsupported))
+                .run();
+        }
+    }
+
+    private void notifyUserWhenDroppedUnsupportedFiles(List<String> unsupported) {
+        ErrorDialog dialog = new ErrorDialog(getStage());
+        dialog.setTitle(I18N.getString("welcome.loading.when.dropped.error.title"));
+        dialog.setMessage(I18N.getString("welcome.loading.when.dropped.error.message"));
+        String detail = unsupported.stream()
+                                   .collect(Collectors.joining(System.lineSeparator()));
+        dialog.setDetails(detail);
+        Platform.runLater(()->dialog.showAndWait());
     }
 
     @Override
@@ -292,7 +321,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     void handleOpen(List<String> filePaths, 
                     Consumer<List<String>> missingFilesHandler,
                     Consumer<List<String>> fileLoader) {
-
+        LOGGER.log(Level.INFO, "Attempting to open files: {0}", filePaths);
         if (filePaths.isEmpty()) {
             return;
         }
