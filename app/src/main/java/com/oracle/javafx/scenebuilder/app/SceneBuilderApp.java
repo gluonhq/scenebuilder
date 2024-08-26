@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -82,9 +82,16 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -93,6 +100,8 @@ import java.util.logging.Logger;
  * This is the SB main entry point.
  */
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
+
+    private static final Logger LOGGER = Logger.getLogger(SceneBuilderApp.class.getName());
 
     public enum ApplicationControlAction {
         ABOUT,
@@ -496,8 +505,25 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         newWindow.updateWithDefaultContent();
     }
 
+    /**
+     * By default all necessary actions to open a single file or a group of files take place in this method.
+     * If it is required to perform certain actions after successfully loading all files, please use {@code handleOpenFilesAction(List<String> files, Runnable onSuccess)} instead.
+     * 
+     * All error handling takes place here within, there is no way yet to access exceptional results and to work with them.
+     */
     @Override
     public void handleOpenFilesAction(List<String> files) {
+        handleOpenFilesAction(files, () -> { /* no operation in this case */ });
+    }
+
+    /**
+     * As file loading errors are handled within this method (all exceptions are handled within), it can be helpful to be able to run a certain action after successful file loading (e.g. closing a certain stage).
+     * For this case this method offers the argument {@code Runnable onSuccess} which will be executed after successful file open activity. The {@code Runnable onSuccess} is only ran once, despite how many files have been loaded.
+     *  
+     * @param files List of Strings denoting file paths to be opened
+     * @param onSuccess {@link Runnable} to be executed after all files have been opened successfully
+     */
+    public void handleOpenFilesAction(List<String> files, Runnable onSuccess) {
         assert files != null;
         assert files.isEmpty() == false;
 
@@ -507,22 +533,58 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
-
+        
+        Consumer<Map<File, Exception>> onError = errors -> showFileOpenErrors(errors, 
+                                                            () -> WelcomeDialogWindowController.getInstance().getStage());
+        
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
-            performOpenFiles(fileObjs);
+            performOpenFiles(fileObjs, onError, onSuccess);
         } else {
             // open files only after the first exploration has finished
             userLibrary.firstExplorationCompletedProperty().addListener(new InvalidationListener() {
                 @Override
                 public void invalidated(Observable observable) {
                     if (userLibrary.isFirstExplorationCompleted()) {
-                        performOpenFiles(fileObjs);
                         userLibrary.firstExplorationCompletedProperty().removeListener(this);
+                        performOpenFiles(fileObjs, onError, onSuccess);
                     }
                 }
             });
         }
+    }
+
+    /**
+     * For each file open error (when opened through the welcome dialog), the file
+     * name and the related exception text are presented to the user to confirm.
+     * For an empty collection, no dialog is displayed.
+     * 
+     * @param errors A {@link Map} with having the file to be opened as the key and
+     *               the occurred {@link Exception} as value. exceptions.
+     * @param owner  Owner Supplier function to obtain the owners {@link Stage}
+     */
+    private void showFileOpenErrors(Map<File, Exception> errors, Supplier<Stage> owner) {
+        if (errors.isEmpty()) {
+            return;
+        }
+
+        for (Entry<File, Exception> error : errors.entrySet()) {
+            final File fxmlFile = error.getKey();
+            final Exception x = error.getValue();
+            final ErrorDialog errorDialog = new ErrorDialog(owner.get());
+            errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
+            errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
+            errorDialog.setDebugInfoWithThrowable(x);
+            errorDialog.setTitle(I18N.getString("alert.open.failure.title"));
+            errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.title") + ": " + fxmlFile.getName());
+            errorDialog.showAndWait();
+        }
+    }
+
+    private Supplier<Stage> getOwnerWindow() {
+        return () -> findFirstUnusedDocumentWindowController()
+                            .map(DocumentWindowController::getStage)
+                            .orElse(WelcomeDialogWindowController.getInstance().getStage());
     }
 
     @Override
@@ -657,11 +719,18 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void performOpenFiles(List<File> fxmlFiles) {
+        performOpenFiles(fxmlFiles, r -> showFileOpenErrors(r, getOwnerWindow()), () -> { /* no action here */ } );
+    }
+
+    private void performOpenFiles(List<File> fxmlFiles, Consumer<Map<File, Exception>> onError, Runnable onSuccess) {
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
-        final Map<File, Exception> exceptions = new HashMap<>();
+        LOGGER.log(Level.FINE, "Opening {0} files...", fxmlFiles.size());
+        final Map<File, Exception> exceptionsPerFile = new HashMap<>();
+        final List<File> openedFiles = new ArrayList<>();
         for (File fxmlFile : fxmlFiles) {
+            LOGGER.log(Level.FINE, "Attempting to open file {0}", fxmlFile);
             try {
                 final DocumentWindowController dwc
                         = lookupDocumentWindowControllers(fxmlFile.toURI().toURL());
@@ -673,46 +742,27 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     var hostWindow = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
+                    openedFiles.add(fxmlFile);
+                    LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
                 }
             } catch (Exception xx) {
-                exceptions.put(fxmlFile, xx);
+                LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);
+                exceptionsPerFile.put(fxmlFile, xx);
             }
         }
+        
+        // Update recent items with opened files
+        if (!openedFiles.isEmpty()) {
+            final PreferencesController pc = PreferencesController.getSingleton();
+            pc.getRecordGlobal().addRecentItems(openedFiles);
+        }
 
-        switch (exceptions.size()) {
-            case 0: { // Good
-                // Update recent items with opened files
-                final PreferencesController pc = PreferencesController.getSingleton();
-                pc.getRecordGlobal().addRecentItems(fxmlFiles);
-                break;
-            }
-            case 1: {
-                final File fxmlFile = exceptions.keySet().iterator().next();
-                final Exception x = exceptions.get(fxmlFile);
-                final ErrorDialog errorDialog = new ErrorDialog(null);
-                errorDialog.setMessage(I18N.getString("alert.open.failure1.message", displayName(fxmlFile.getPath())));
-                errorDialog.setDetails(I18N.getString("alert.open.failure1.details"));
-                errorDialog.setDebugInfoWithThrowable(x);
-                errorDialog.setTitle(I18N.getString("alert.title.open"));
-                errorDialog.showAndWait();
-                break;
-            }
-            default: {
-                final ErrorDialog errorDialog = new ErrorDialog(null);
-                if (exceptions.size() == fxmlFiles.size()) {
-                    // Open operation has failed for all the files
-                    errorDialog.setMessage(I18N.getString("alert.open.failureN.message"));
-                    errorDialog.setDetails(I18N.getString("alert.open.failureN.details"));
-                } else {
-                    // Open operation has failed for some files
-                    errorDialog.setMessage(I18N.getString("alert.open.failureMofN.message",
-                            exceptions.size(), fxmlFiles.size()));
-                    errorDialog.setDetails(I18N.getString("alert.open.failureMofN.details"));
-                }
-                errorDialog.setTitle(I18N.getString("alert.title.open"));
-                errorDialog.showAndWait();
-                break;
-            }
+        if (exceptionsPerFile.isEmpty()) {
+            LOGGER.log(Level.FINE, "Successfully opened all files.");
+            onSuccess.run();
+        } else {
+            LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptionsPerFile.size(), fxmlFiles.size()});
+            onError.accept(exceptionsPerFile);
         }
     }
 

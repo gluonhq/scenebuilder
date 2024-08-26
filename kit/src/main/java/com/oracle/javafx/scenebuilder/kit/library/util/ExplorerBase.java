@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Gluon and/or its affiliates.
+ * Copyright (c) 2020, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -102,8 +102,10 @@ abstract class ExplorerBase {
                 // http://stackoverflow.com/questions/8100376/class-forname-vs-classloader-loadclass-which-to-use-for-dynamic-loading
                 entryClass = classLoader.loadClass(className); // Note: static intializers of entryClass are not run, this doesn't seem to be an issue
 
-                if (Modifier.isAbstract(entryClass.getModifiers())
-                        || !Node.class.isAssignableFrom(entryClass)) {
+                final int modifiers = entryClass.getModifiers();
+                if (Modifier.isAbstract(modifiers)
+                        || !Node.class.isAssignableFrom(entryClass)
+                        || !(Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers))) {
                     status = JarReportEntry.Status.IGNORED;
                     entryClass = null;
                     entryException = null;
