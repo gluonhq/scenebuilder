@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -85,26 +85,23 @@ class AppPlatformTest {
     }
 
     @Test
-    @EnabledOnOs(value = org.junit.jupiter.api.condition.OS.WINDOWS)
     void that_application_settings_directory_is_created_properly_on_windows() {
-        Path appDir = Path.of(AppPlatform.getApplicationDataFolder());
+        Path appDir = Path.of(AppPlatform.getApplicationDataFolder(OS.WINDOWS));
         Path expected = Path.of(System.getenv("APPDATA") + "\\Scene Builder\\" + AppSettings.getSceneBuilderVersion());
         assertEquals(expected, appDir);
     }
 
     @Test
-    @EnabledOnOs(value = org.junit.jupiter.api.condition.OS.LINUX)
     void that_application_settings_directory_is_created_properly_on_linux() {
-        Path appDir = Path.of(AppPlatform.getApplicationDataFolder());
+        Path appDir = Path.of(AppPlatform.getApplicationDataFolder(OS.LINUX));
         Path expected = Path
                 .of(System.getProperty("user.home") + "/.scenebuilder/" + AppSettings.getSceneBuilderVersion());
         assertEquals(expected, appDir);
     }
 
     @Test
-    @EnabledOnOs(value = org.junit.jupiter.api.condition.OS.MAC)
     void that_application_settings_directory_is_created_properly_on_mac() {
-        Path appDir = Path.of(AppPlatform.getApplicationDataFolder());
+        Path appDir = Path.of(AppPlatform.getApplicationDataFolder(OS.MAC));
         Path expected = Path.of(System.getProperty("user.home") + "/Library/Application Support/Scene Builder/"
                 + AppSettings.getSceneBuilderVersion());
         assertEquals(expected, appDir);
@@ -122,7 +119,7 @@ class AppPlatformTest {
     void that_messagebox_folder_resides_in_applications_data_folder() {
         // init app data folder first as this is the basis
         AppPlatform.getApplicationDataFolder(testEnvironment, testProperties, OS.WINDOWS, "19.0.0-SNAPSHOT");
-        Path messageBoxDir = Path.of(AppPlatform.getMessageBoxFolder());
+        Path messageBoxDir = Path.of(AppPlatform.getMessageBoxFolder(OS.WINDOWS));
         Path expectedDir = Path.of("C:\\Users\\UserName\\AppData\\Roaming\\Scene Builder\\19.0.0-SNAPSHOT\\MB");
         assertEquals(expectedDir, messageBoxDir);
     }

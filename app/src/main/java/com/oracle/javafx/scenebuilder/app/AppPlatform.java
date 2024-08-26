@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,6 +37,7 @@ import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,14 @@ public class AppPlatform {
     private static MessageBox<MessageBoxMessage> messageBox;
 
     public static synchronized String getApplicationDataFolder() {
-        return getApplicationDataFolder(System.getenv(), System.getProperties(), OS.get(),
-                AppSettings.getSceneBuilderVersion());
+        return getApplicationDataFolder(OS.get());
+    }
+
+    static synchronized String getApplicationDataFolder(OS operatingSystem) {
+        return getApplicationDataFolder(System.getenv(),
+                                        System.getProperties(),
+                                        operatingSystem,
+                                        AppSettings.getSceneBuilderVersion());
     }
     
     static synchronized String getApplicationDataFolder(Map<String, String> sysenv, Properties system,
@@ -107,9 +114,9 @@ public class AppPlatform {
     static synchronized String getUserLibraryFolder(OS operatingSystem) {
         if (userLibraryFolder == null) {
             if (OS.WINDOWS.equals(operatingSystem)) {
-                userLibraryFolder = getApplicationDataFolder() + "\\" + "Library"; // NOI18N
+                userLibraryFolder = getApplicationDataFolder(operatingSystem) + "\\" + "Library"; // NOI18N
             } else {
-                userLibraryFolder = getApplicationDataFolder() + "/" + "Library"; // NOI18N
+                userLibraryFolder = getApplicationDataFolder(operatingSystem) + "/" + "Library"; // NOI18N
             }
         }
         return userLibraryFolder;
@@ -122,12 +129,16 @@ public class AppPlatform {
      * @return Directory path for Scene Builder logs
      */
     public static synchronized String getLogFolder() {
-        return getLogFolder(System.getProperties());
+        return getLogFolder(System.getProperties(), OS.get());
     }
     
-    static synchronized String getLogFolder(Properties system) {
+    static synchronized String getLogFolder(Properties system, OS operatingSystem) {
         if (logsFolder == null) {
-            logsFolder = Paths.get(system.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
+            if (OS.WINDOWS.equals(operatingSystem)) {
+                logsFolder = system.getProperty("user.home") + "\\.scenebuilder\\logs"; //NOI18N
+            } else {
+                logsFolder = system.getProperty("user.home") + "/.scenebuilder/logs"; //NOI18N
+            }
         }
         return logsFolder;
     }
@@ -196,10 +207,17 @@ public class AppPlatform {
     }
     
     protected static String getMessageBoxFolder() {
+        return getMessageBoxFolder(OS.get());
+    }
+
+    protected static String getMessageBoxFolder(OS operatingSystem) {
         if (messageBoxFolder == null) {
-            messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
+            if (OS.WINDOWS.equals(operatingSystem)) {
+                messageBoxFolder = getApplicationDataFolder() + "\\MB"; //NOI18N
+            } else {
+                messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
+            }
         }
-        
         return messageBoxFolder;
     }
     
