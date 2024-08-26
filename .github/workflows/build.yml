@@ -3,7 +3,7 @@ on:
   pull_request:
 
 env:
-  JAVA_VERSION: '22'
+  JAVA_VERSION: '23'
 
 jobs:
   verify:
