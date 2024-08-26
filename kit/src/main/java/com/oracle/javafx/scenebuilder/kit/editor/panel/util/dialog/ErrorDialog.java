@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2012, 2024, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -43,6 +43,7 @@ import javafx.stage.Window;
 public class ErrorDialog extends AlertDialog {
     
     private String debugInfo;
+    private String detailsTitle;
     
     public ErrorDialog(Window owner) {
         super(owner);
@@ -80,7 +81,10 @@ public class ErrorDialog extends AlertDialog {
         setDebugInfo(info);
     }
     
-    
+    public void setDetailsTitle(String detailsTitle) {
+        this.detailsTitle = detailsTitle;
+    }
+
     /*
      * Private
      */
@@ -90,8 +94,11 @@ public class ErrorDialog extends AlertDialog {
     }
     
     private void showDetailsDialog() {
-        final TextViewDialog detailDialog = new TextViewDialog(null);
+        final TextViewDialog detailDialog = new TextViewDialog(this.getStage());
         detailDialog.setText(debugInfo);
+        if (detailsTitle != null) {
+            detailDialog.setTitle(detailsTitle);
+        }
         detailDialog.showAndWait();
     }
 }

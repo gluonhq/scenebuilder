@@ -11,8 +11,8 @@ on:
           - GA
 
 env:
-  JAVAFX_VERSION: '21.0.1'
-  JAVA_VERSION: '21'
+  JAVAFX_VERSION: '23'
+  JAVA_VERSION: '23'
 
 jobs:
   precheck:
@@ -54,13 +54,13 @@ jobs:
               S3_PATH=RC/$PROJECT_VERSION
           fi
           echo "Releasing.. "$PROJECT_VERSION
-          echo ::set-output name=APP_VERSION::$APP_VERSION
-          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
-          echo ::set-output name=S3_PATH::$S3_PATH
+          echo APP_VERSION=$APP_VERSION >> $GITHUB_OUTPUT
+          echo PROJECT_VERSION=$PROJECT_VERSION >> $GITHUB_OUTPUT
+          echo S3_PATH=$S3_PATH >> $GITHUB_OUTPUT
 
   linux-bundles:
     needs: [precheck]
-    uses: gluonhq/scenebuilder/.github/workflows/bundles-linux.yml@master
+    uses: ./.github/workflows/bundles-linux.yml
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
@@ -70,7 +70,7 @@ jobs:
 
   windows-bundles:
     needs: [precheck]
-    uses: gluonhq/scenebuilder/.github/workflows/bundles-windows.yml@master
+    uses: ./.github/workflows/bundles-windows.yml
     secrets:
       WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
       WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
@@ -84,7 +84,7 @@ jobs:
 
   mac-bundles:
     needs: [precheck]
-    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac.yml@master
+    uses: ./.github/workflows/bundles-mac.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
@@ -101,7 +101,7 @@ jobs:
 
   mac_aarch64-bundles:
     needs: [precheck]
-    uses: gluonhq/scenebuilder/.github/workflows/bundles-mac_aarch64.yml@master
+    uses: ./.github/workflows/bundles-mac_aarch64.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
@@ -118,7 +118,7 @@ jobs:
 
   kit-bundles:
     needs: [precheck]
-    uses: gluonhq/scenebuilder/.github/workflows/bundles-kit.yml@master
+    uses: ./.github/workflows/bundles-kit.yml
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
