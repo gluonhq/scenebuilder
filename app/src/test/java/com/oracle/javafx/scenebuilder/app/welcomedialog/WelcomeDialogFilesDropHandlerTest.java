@@ -38,9 +38,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,9 +64,6 @@ class WelcomeDialogFilesDropHandlerTest {
         assertThrows(IllegalStateException.class, ()->classUnderTest.run());
 
         classUnderTest.withSupportedFiles(files->System.out.println(files));
-        assertThrows(IllegalStateException.class, ()->classUnderTest.run());
-        
-        classUnderTest.withUnsupportedFiles(unsupported->System.out.println(unsupported));
         assertDoesNotThrow(()->classUnderTest.run());
     }
 
@@ -86,11 +81,10 @@ class WelcomeDialogFilesDropHandlerTest {
         
         // Action handler to notify user on unsupported items
         List<String> unsupportedFiles = new ArrayList<>();
-        Consumer<List<String>> unsupportedFileHandling = unsupported->unsupportedFiles.addAll(unsupported);
+        
         
         classUnderTest = new WelcomeDialogFilesDropHandler(droppedFiles)
-                    .withSupportedFiles(openFilesAction)
-                    .withUnsupportedFiles(unsupportedFileHandling);
+                    .withSupportedFiles(openFilesAction);
         
         assertDoesNotThrow(()->classUnderTest.run());
         assertEquals(2, fileOpenResults.size());
@@ -99,63 +93,31 @@ class WelcomeDialogFilesDropHandlerTest {
     }
 
     @Test
-    void that_an_attempt_to_handle_unsupported_files_triggers_appropriate_action(@TempDir Path emptyDir) throws Exception {
-        List<File> droppedFiles = List.of(new File("Image.png"), emptyDir.toFile());
+    void that_dropped_subdirectories_are_searched_for_fxml_in_first_level(@TempDir Path fxmlDir) {
+        File emptyDirectory = new File("src/main/resources");
+        File unsupportedFile = new File("src/main/resources/com/oracle/javafx/scenebuilder/app/SceneBuilderLogo_32.png");
+
+        List<File> droppedFiles = List.of(emptyDirectory,
+                                          new File("src/main/resources/com/oracle/javafx/scenebuilder/app/welcomedialog"),
+                                          new File("src/main/resources/com/oracle/javafx/scenebuilder/app/DocumentWindow.fxml"),
+                                          unsupportedFile);
 
         // Action handler for opening files
         List<String> fileOpenResults = new ArrayList<>();
-        Consumer<List<String>> openFilesAction = files->fileOpenResults.addAll(files);
-        
-        // Action handler to notify user on unsupported items
-        List<String> unsupportedFiles = new ArrayList<>();
-        Consumer<List<String>> unsupportedFileHandling = unsupported->{
-            for (String file : unsupported) {
-                var item = new File(file);
-                if (item.isDirectory()) {
-                    unsupportedFiles.add(new File(file).getName() + "(dir is empty)");
-                } else {
-                    unsupportedFiles.add(new File(file).getName());
-                }
-            }
-        };
-
-        classUnderTest = new WelcomeDialogFilesDropHandler(droppedFiles)
-                .withSupportedFiles(openFilesAction)
-                .withUnsupportedFiles(unsupportedFileHandling);
-        classUnderTest.run();
-
-        assertTrue(fileOpenResults.isEmpty());
-        assertEquals(2, unsupportedFiles.size());
-        assertEquals("Image.png", unsupportedFiles.get(0));
-        assertTrue(unsupportedFiles.get(1).endsWith("(dir is empty)"));
-    }
-
-    @Test
-    void that_dropped_subdirectories_are_searched_for_fxml_in_first_level(@TempDir Path fxmlDir) {
-        List<File> droppedFiles = List.of(new File("src/main/resources/com/oracle/javafx/scenebuilder/app/welcomedialog"),
-                                          new File("src/main/resources/com/oracle/javafx/scenebuilder/app/DocumentWindow.fxml"),
-                                          new File("src/main/resources/com/oracle/javafx/scenebuilder/app/SceneBuilderLogo_32.png"));
-
-        // Action handler for opening files
-        Set<String> fileOpenResults = new HashSet<>();
         Consumer<List<String>> openFilesAction = files->{
             for (String file : files) {
                 fileOpenResults.add("opened " + new File(file).getName());
             }
         };
 
-        // Action handler to notify user on unsupported items
-        List<String> unsupportedFiles = new ArrayList<>();
-        Consumer<List<String>> unsupportedFileHandling = unsupported->unsupportedFiles.addAll(unsupported);
 
         classUnderTest = new WelcomeDialogFilesDropHandler(droppedFiles)
-                    .withSupportedFiles(openFilesAction)
-                    .withUnsupportedFiles(unsupportedFileHandling);
+                                        .withSupportedFiles(openFilesAction);
         
         classUnderTest.run();
         assertTrue(fileOpenResults.contains("opened WelcomeWindow.fxml"), "FXML from dropped directory");
         assertTrue(fileOpenResults.contains("opened DocumentWindow.fxml"), "FXML file dropped");
-        assertTrue(unsupportedFiles.isEmpty());
+        assertEquals(2, fileOpenResults.size());
     }
 
 }
