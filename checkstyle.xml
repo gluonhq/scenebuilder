@@ -8,6 +8,11 @@
     <property name="severity" value="warning" />
     <property name="fileExtensions" value="java, properties, xml, fxml" />
 
+    <module name="LineLength">
+        <property name="fileExtensions" value="java" />
+        <property name="max" value="120"/>
+    </module>
+
     <!-- BeforeExecutionFileFilters is required for sources that are based on java9 -->
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern"
