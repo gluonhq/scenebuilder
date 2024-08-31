@@ -140,9 +140,27 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         ErrorDialog dialog = new ErrorDialog(getStage());
         dialog.setTitle(I18N.getString("welcome.loading.when.dropped.error.title"));
         dialog.setMessage(I18N.getString("welcome.loading.when.dropped.error.message"));
+        dialog.setDetailsTitle(I18N.getString("welcome.loading.when.dropped.error.title"));
+        String explanation = I18N.getString("welcome.loading.when.dropped.error.detail.explanation");
+        String suffix = "\n\n";
+        
+        int maxItems = 5;
+        if (unsupported.size() > maxItems) {
+            suffix = I18N.getString("welcome.loading.when.dropped.error.detail.suffix");
+        }
+        
         String detail = unsupported.stream()
-                                   .collect(Collectors.joining(System.lineSeparator()));
+                                   .limit(maxItems)
+                                   .collect(Collectors.joining(System.lineSeparator(), 
+                                                               explanation,
+                                                               suffix));
+        
+        String debugInfo = unsupported.stream()
+                                      .collect(Collectors.joining(System.lineSeparator()));
+        
         dialog.setDetails(detail);
+        dialog.setDebugInfo(debugInfo);
+        
         Platform.runLater(()->dialog.showAndWait());
     }
 
