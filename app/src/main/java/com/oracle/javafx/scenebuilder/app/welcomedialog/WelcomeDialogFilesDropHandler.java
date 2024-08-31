@@ -46,15 +46,23 @@ final class WelcomeDialogFilesDropHandler {
 
     private final List<File> droppedFiles;
     private final List<String> toOpen;
+    private final List<String> unsupportedItems;
     private Consumer<List<String>> openFiles;
+    private Consumer<List<String>> handleUnsupported;
 
     WelcomeDialogFilesDropHandler(List<File> droppedFiles) {
         this.droppedFiles = Objects.requireNonNull(droppedFiles);
         this.toOpen = new ArrayList<>(droppedFiles.size());
+        this.unsupportedItems = new ArrayList<>(droppedFiles.size());
     }
 
     final WelcomeDialogFilesDropHandler withSupportedFiles(Consumer<List<String>> handleOpen) {
         this.openFiles = handleOpen;
+        return this;
+    }
+
+    final WelcomeDialogFilesDropHandler withUnsupportedFiles(Consumer<List<String>> unsupportedHandler) {
+        this.handleUnsupported = unsupportedHandler;
         return this;
     }
 
@@ -67,10 +75,16 @@ final class WelcomeDialogFilesDropHandler {
         if (this.openFiles == null) {
             throw new IllegalStateException("Please configure a dropped file handling action using the withSupportedFiles(...) method.");
         }
+        if (this.handleUnsupported == null) {
+            throw new IllegalStateException("Please configure an action for handling of unsupported files using withUnsupportedFiles(...) method.");
+        }
         
         if (!toOpen.isEmpty()) {
             LOGGER.log(Level.INFO, "Received drop event to open files...");
             openFiles.accept(toOpen);
+        } else {
+            LOGGER.log(Level.INFO, "Dropped object does not contain any loadable FXML files.");
+            handleUnsupported.accept(unsupportedItems);
         }
     }
 
@@ -81,17 +95,15 @@ final class WelcomeDialogFilesDropHandler {
 
         for (var file : droppedFiles) {
             if (file.isDirectory()) {
-                LOGGER.log(Level.INFO, "Dropped object is a directory: {0}", file.getAbsolutePath());
                 File[] children = file.listFiles();
                 List<String> inDir = new ArrayList<>(children.length);
                 for (var child : children) {
                     if (isFxml(child)) {
-                        LOGGER.log(Level.INFO, "FXML file found: {0}", child.getAbsolutePath());
                         inDir.add(child.getAbsolutePath());
                     }
                 }
                 if (inDir.isEmpty()) {
-                    LOGGER.log(Level.INFO, "Dropped directory does not contain FXML files: {0}", file.getAbsolutePath());
+                    unsupportedItems.add(file.getAbsolutePath());
                 } else {
                     toOpen.addAll(inDir);
                 }
@@ -99,7 +111,7 @@ final class WelcomeDialogFilesDropHandler {
                 if (isFxml(file)) {
                     toOpen.add(file.getAbsolutePath());
                 } else {
-                    LOGGER.log(Level.INFO, "Dropped item is not a FXML file: {0}", file.getAbsolutePath());
+                    unsupportedItems.add(file.getAbsolutePath());
                 }
             }
         }

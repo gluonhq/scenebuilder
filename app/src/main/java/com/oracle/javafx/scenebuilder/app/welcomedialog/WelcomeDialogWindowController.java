@@ -131,8 +131,19 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         if (event.getDragboard().hasFiles()) {
             new WelcomeDialogFilesDropHandler(event.getDragboard().getFiles())
                 .withSupportedFiles(fileNames->Platform.runLater(()->handleOpen(fileNames)))
+                .withUnsupportedFiles(unsupported->notifyUserWhenDroppedUnsupportedFiles(unsupported))
                 .run();
         }
+    }
+
+    private void notifyUserWhenDroppedUnsupportedFiles(List<String> unsupported) {
+        ErrorDialog dialog = new ErrorDialog(getStage());
+        dialog.setTitle(I18N.getString("welcome.loading.when.dropped.error.title"));
+        dialog.setMessage(I18N.getString("welcome.loading.when.dropped.error.message"));
+        String detail = unsupported.stream()
+                                   .collect(Collectors.joining(System.lineSeparator()));
+        dialog.setDetails(detail);
+        Platform.runLater(()->dialog.showAndWait());
     }
 
     @Override
