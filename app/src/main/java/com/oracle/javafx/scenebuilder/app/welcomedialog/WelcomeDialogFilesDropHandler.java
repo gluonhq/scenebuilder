@@ -71,6 +71,32 @@ final class WelcomeDialogFilesDropHandler {
         handleDropResult();
     }
 
+    /**
+     *  
+     * SceneBuilder will silently ignore unsupported files and empty directories as long
+     * as there is at least one FXML file to be opened. For individual FXML files, the actual 
+     * error handling happens later. Here the files to be opened are not tested or validated.
+     * 
+     * The idea is, that if a user picks one file intentionally, a concise feedback in case
+     * of the wrong file format or an empty directory can be helpful and is desired.
+     * 
+     * But when selecting a whole directory or multiple files, it might be helpful to ignore
+     * unsupported files as long actual candidates to be opened exist. The unsupported ones
+     * can result from an imprecise selection. One example could be that the user knowingly 
+     * picked a resources folder with FXMLs, which also includes other files such as properties
+     * or icons. In that case the user would get annoyed about an message.
+     * Another case is a quick selection e. g. in Gnome Nautilus or Windows Explorer where some
+     * other files are unintentionally (by accident) selected. In such case, an error message 
+     * could be annoying as well.
+     * 
+     * Supported files are passed into the openFiles handler.
+     * The error message for unsupported files is only shown when the list of files toOpen is 
+     * empty.
+     * 
+     * Nevertheless, the fact that unsupported files were dropped and the location of unsupported 
+     * files are logged.
+     *
+     */
     final void handleDropResult() {
         if (this.openFiles == null) {
             throw new IllegalStateException("Please configure a dropped file handling action using the withSupportedFiles(...) method.");
@@ -85,6 +111,13 @@ final class WelcomeDialogFilesDropHandler {
         } else {
             LOGGER.log(Level.INFO, "Dropped object does not contain any loadable FXML files.");
             handleUnsupported.accept(unsupportedItems);
+        }
+        
+        if (!unsupportedItems.isEmpty()) {
+            LOGGER.log(Level.WARNING, "{0} unsupported items dropped.", unsupportedItems.size());
+            for (var unsupportedItem : unsupportedItems) {
+                LOGGER.log(Level.INFO, "Unsupported file or empty directory: {0}", unsupportedItem);
+            }
         }
     }
 
