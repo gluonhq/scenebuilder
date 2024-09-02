@@ -32,8 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +43,9 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -330,6 +330,8 @@ public class EditorPlatform {
             executeDaemon(args, null);
         }
     }
+    
+    private static FileBrowserDetector fileBrowserDetector = null;
 
     /**
      * Requests the underlying platform to "reveal" the specified folder. On
@@ -350,23 +352,20 @@ public class EditorPlatform {
             args.add("explorer"); //NOI18N
             args.add("/select," + path); //NOI18N
         } else if (EditorPlatform.IS_LINUX) {
-            // nautilus does fine on Ubuntu, which is a Debian.
-            // I've no idea how it does with other Linux flavors.
-            args.add("dolphin"); //NOI18N
-            // The nautilus that comes with Ubuntu up to 11.04 included doesn't
-            // take a file path as parameter (you get an error popup), you must
-            // provide a dir path.
-            // Starting with Ubuntu 11.10 (the first based on kernel 3.x) a
-            // file path is well managed.
-            int osVersionNumerical = Integer.parseInt(System.getProperty("os.version").substring(0, 1)); //NOI18N
-            if (osVersionNumerical < 3) {
-                // Case Ubuntu 10.04 to 11.04: What you provide to nautilus is
-                // the name of the directory containing the file you want to see
-                // listed. See DTL-5384.
-                path = filePath.getAbsoluteFile().getParent();
-                if (path == null) {
-                    path = "."; //NOI18N
-                }
+            
+            if (fileBrowserDetector == null) {
+                fileBrowserDetector = new FileBrowserDetector();
+                fileBrowserDetector.detect();
+            }
+            
+            var fileBrowser = fileBrowserDetector.getLinuxFileBrowser();
+            if (fileBrowser.isPresent()) {
+                args.add(fileBrowser.get()); //NOI18N
+            }
+            
+            path = filePath.getAbsoluteFile().getParent();
+            if (path == null) {
+                path = "."; //NOI18N
             }
             args.add(path);
         } else {
