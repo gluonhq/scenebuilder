@@ -352,7 +352,7 @@ public class EditorPlatform {
         } else if (EditorPlatform.IS_LINUX) {
             // nautilus does fine on Ubuntu, which is a Debian.
             // I've no idea how it does with other Linux flavors.
-            args.add("nautilus"); //NOI18N
+            args.add("dolphin"); //NOI18N
             // The nautilus that comes with Ubuntu up to 11.04 included doesn't
             // take a file path as parameter (you get an error popup), you must
             // provide a dir path.
