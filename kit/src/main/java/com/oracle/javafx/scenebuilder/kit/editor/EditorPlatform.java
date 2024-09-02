@@ -68,6 +68,10 @@ public class EditorPlatform {
 
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
+    static {
+        Logger.getLogger(EditorPlatform.class.getName()).log(Level.INFO, "Detected Operating System: {0}", osName);
+    }
+    
     /**
      * True if current platform is running Linux.
      */
