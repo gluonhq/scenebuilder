@@ -3,7 +3,9 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -19,7 +21,7 @@ class FileBrowserDetector {
     
     public Optional<String> getLinuxFileBrowser() {
         if (this.detectedExecutable == null) {
-            this.detectedExecutable = detectLinuxFileManager();      
+            this.detect();      
         }
         
         return this.detectedExecutable;
@@ -29,22 +31,33 @@ class FileBrowserDetector {
         this.detectedExecutable = detectLinuxFileManager();
     }
     
-    Optional<String> detectLinuxFileManager() {       
-        var filemanager = detectApplication("nautilus");
-        if (filemanager.isPresent()) {
-            return filemanager;
-        } 
+    Optional<String> detectLinuxFileManager() {
+        var nautilus = detectApplication("nautilus");
+        var dolphin = detectApplication("dolphin");
+        var xdgopen = detectApplication("xdg-open");
         
-        filemanager = detectApplication("dolphin");
-        if (filemanager.isPresent()) {
-            return filemanager;
+        Map<String,String> mgrs = new HashMap<>();
+        if (nautilus.isPresent()) {
+            mgrs.put("nautilus", nautilus.get());
         }
         
-        filemanager = detectApplication("xdg-open");
-        if (filemanager.isPresent()) {
-            return filemanager;
+        if (dolphin.isPresent()) {
+            mgrs.put("dolphin", dolphin.get());
         }
-
+        
+        if (xdgopen.isPresent()) {
+            mgrs.put("xdgopen", xdgopen.get());
+        }
+        
+        boolean isKde = System.getenv().containsKey("KDE_SESSION_UID");
+        if (isKde && dolphin.isPresent()) {
+            return dolphin;
+        } else if (nautilus.isPresent()) {
+            return nautilus;
+        } else if (xdgopen.isPresent()) {
+            return xdgopen;
+        }
+        
         return Optional.empty();
     }
     
