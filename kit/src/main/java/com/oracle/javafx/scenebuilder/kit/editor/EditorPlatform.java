@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
@@ -58,6 +59,8 @@ import javafx.scene.shape.Rectangle;
  */
 public class EditorPlatform {
     
+    private static final Logger LOGGER = Logger.getLogger(EditorPlatform.class.getName());
+    
     public enum OS {
         LINUX, MAC, WINDOWS;
 
@@ -69,7 +72,7 @@ public class EditorPlatform {
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
     static {
-        Logger.getLogger(EditorPlatform.class.getName()).log(Level.INFO, "Detected Operating System: {0}", osName);
+        LOGGER.log(Level.INFO, "Detected Operating System: {0}", osName);
     }
     
     /**
@@ -214,7 +217,7 @@ public class EditorPlatform {
                         }
                     }
                 } catch (IOException e) {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to get color from stylesheet: ", e);
+                    LOGGER.log(Level.WARNING, "Failed to get color from stylesheet: ", e);
                 }
             }
             return color;
@@ -335,11 +338,9 @@ public class EditorPlatform {
         }
     }
     
-    private static FileBrowserDetector fileBrowserDetector = null;
-
     /**
      * Requests the underlying platform to "reveal" the specified folder. On
-     * Linux, it runs 'nautilus'. On Mac, it runs 'open'. On Windows, it runs
+     * Linux, it runs 'xdg-open'. On Mac, it runs 'open'. On Windows, it runs
      * 'explorer /select'.
      *
      * @param filePath path for the folder to be revealed
@@ -357,15 +358,7 @@ public class EditorPlatform {
             args.add("/select," + path); //NOI18N
         } else if (EditorPlatform.IS_LINUX) {
             
-            if (fileBrowserDetector == null) {
-                fileBrowserDetector = new FileBrowserDetector();
-                fileBrowserDetector.detect();
-            }
-            
-            var fileBrowser = fileBrowserDetector.getLinuxFileBrowser();
-            if (fileBrowser.isPresent()) {
-                args.add(fileBrowser.get()); //NOI18N
-            }
+            args.add("xdg-open"); //NOI18N
             
             path = filePath.getAbsoluteFile().getParent();
             if (path == null) {
@@ -374,6 +367,7 @@ public class EditorPlatform {
             args.add(path);
         } else {
             // Not Supported
+            LOGGER.log(Level.SEVERE, "Unsupported operating system! Cannot reveal file in file browser.");
         }
 
         if (!args.isEmpty()) {
@@ -417,8 +411,13 @@ public class EditorPlatform {
         try {
             ProcessBuilder builder = new ProcessBuilder(cmd);
             builder = builder.directory(wDir);
-            builder.start();
+            Process proc = builder.start();
+            int exitValue = proc.exitValue();
+            if (0 != exitValue) {
+                LOGGER.log(Level.SEVERE, "Error during attempt to run: {0} in {1}", new Object[] {cmd.stream().collect(Collectors.joining(" ")), wDir});
+            }
         } catch (RuntimeException ex) {
+            LOGGER.log(Level.SEVERE, "Exception during attempt to run: {0} in {1}", new Object[] {cmd.stream().collect(Collectors.joining(" ")), wDir});
             throw new IOException(ex);
         }
     }
