@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -44,9 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
