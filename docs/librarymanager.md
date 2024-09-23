@@ -1,14 +1,17 @@
-<style>
-.center-image {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+<head>
+  <style>
+  .center-image {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  img {
+      max-width:400px;
+      max-height:400px;
   }
-img {
-    max-width:600px;
-    max-height:600px;
-}
-</style>
+  </style>
+  <title>The Library Manager</title>
+</head>
 
 # The Library Manager
 
