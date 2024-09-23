@@ -2,7 +2,7 @@
 
 Scene Builder is designed to be used with a set of built-in controls, that can be selected from the Library panel (at the left)
 
-<p align="center"><img src="images/librarymanager/SceneBuilder01.png" alt="Controls under Library Panel" width="400"></p>
+<p align="center"><img src="images/librarymanager/SceneBuilder01.png" alt="Controls under Library Panel" width="600"></p>
 
 However, many projects use extra sets of controls, which will be called from now on _custom controls_, that is, JavaFX controls that are not in the built-in set of default controls.
 
