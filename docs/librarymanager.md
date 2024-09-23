@@ -1,23 +1,8 @@
-<head>
-  <style>
-  .center-image {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  img {
-      max-width:400px;
-      max-height:400px;
-  }
-  </style>
-  <title>The Library Manager</title>
-</head>
-
 # The Library Manager
 
 Scene Builder is designed to be used with a set of built-in controls, that can be selected from the Library panel (at the left)
 
-<img src="images/librarymanager/SceneBuilder01.png" alt="Controls under Library Panel" class="center-image">
+<img src="images/librarymanager/SceneBuilder01.png" alt="Controls under Library Panel" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 However, many projects use extra sets of controls, which will be called from now on _custom controls_, that is, JavaFX controls that are not in the built-in set of default controls.
 
@@ -25,13 +10,13 @@ The Library Manager deals with custom controls in different ways, allowing the u
 
 On top of the Library pane item, there is a small MenuButton control with a cog icon, press it to show the Library Manager dialog:
 
-<img src="images/librarymanager/SceneBuilder02.png" alt="Library menuButton" class="center-image">
+<img src="images/librarymanager/SceneBuilder02.png" alt="Library menuButton" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 <h4>View as List or Sections options</h4>
 
 The first two menu items are for selecting between using a flat list to list all the components in the Library (custom and built-in ones):
 
-<img src="images/librarymanager/SceneBuilder03.png" alt="View as List" class="center-image">
+<img src="images/librarymanager/SceneBuilder03.png" alt="View as List" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 or the default Accordion container with TiledPanes as Sections, as shown earlier above.
 
@@ -39,11 +24,11 @@ or the default Accordion container with TiledPanes as Sections, as shown earlier
 
 This is a quick way of creating a custom control out of an existing FXML in Scene Builder.
 
-<img src="images/librarymanager/SceneBuilder04.png" alt="import selection" class="center-image">
+<img src="images/librarymanager/SceneBuilder04.png" alt="import selection" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 Once you select part of it, clicking the menu item will create a custom control which in this case is a simple FXML file:
 
-<img src="images/librarymanager/SceneBuilder05.png" alt="custom FXML" class="center-image">
+<img src="images/librarymanager/SceneBuilder05.png" alt="custom FXML" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 This FXML code snippet can be reused now in other FXMLs.
 
@@ -51,7 +36,7 @@ This FXML code snippet can be reused now in other FXMLs.
 
 The last menu item refers to the Section for Custom Controls:
 
-<img src="images/librarymanager/SceneBuilder06.png" alt="custom library folder" class="center-image">
+<img src="images/librarymanager/SceneBuilder06.png" alt="custom library folder" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 There is a system folder where custom jars and files are cached, and this can be revealed in Finder. And for all existing custom controls, an analysis can be performed and the report will show possible errors. This is useful especially when importing a custom control doesn't behave as expected.
 
@@ -59,7 +44,7 @@ There is a system folder where custom jars and files are cached, and this can be
 
 The third menu item gives you access to the Library Manager dialog:
 
-<img src="images/librarymanager/SceneBuilder07.png" alt="the library manager" class="center-image">
+<img src="images/librarymanager/SceneBuilder07.png" alt="the library manager" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 If there were already some custom controls (jars or FXML files)  presented in the Custom section of the Library, then those would be listed in this dialog.
 
@@ -71,25 +56,25 @@ On the lower part of the dialog, there are different actions that the user can p
 
 The user can type a name of a library: full name or part of its group id, or full name or part of it of the artifact id, following the usual naming convention.
 
-<img src="images/librarymanager/SceneBuilder08.png" alt="Search Library in Repositories" class="center-image">
+<img src="images/librarymanager/SceneBuilder08.png" alt="Search Library in Repositories" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 For instance, to download and install the latest release of ControlsFX, just by typing its maven group "org.controlsfx", the existing artifacts (in the registered repositories) will show up:
 
-<img src="images/librarymanager/SceneBuilder09.png" alt="ControlsFX results" class="center-image">
+<img src="images/librarymanager/SceneBuilder09.png" alt="ControlsFX results" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 Then selecting one of the presented results will download the latest release of the artifact from one of the repositories, install it to the user's local .m2, find all possible custom controls found in the jar, and present them for a preview:
 
-<img src="images/librarymanager/SceneBuilder10.png" alt="ControlsFX custom controls" class="center-image">
+<img src="images/librarymanager/SceneBuilder10.png" alt="ControlsFX custom controls" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 The user can browse over the list of custom controls, select anyone for a preview (not all have one), and select one or more custom controls to be imported.
 
 After pressing Import Components, the Import dialog will close and the Manager will show a new entry added:
 
-<img src="images/librarymanager/SceneBuilder11.png" alt="ControlsFX successfully imported" class="center-image">
+<img src="images/librarymanager/SceneBuilder11.png" alt="ControlsFX successfully imported" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 And while the full jar was imported, only the selected custom controls are added into the Custom section, ready to be used:
 
-<img src="images/librarymanager/SceneBuilder12.png" alt="Using ControlsFX imported controls" class="center-image">
+<img src="images/librarymanager/SceneBuilder12.png" alt="Using ControlsFX imported controls" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 If other controls are needed from this jar, the user can open the Library Manager again, and edit the related entry, to select again from the Import dialog.
 
@@ -99,11 +84,11 @@ Also note that if an artifact is removed from the list, it will just be removed 
 
 The user can type the exact names of groupID and artifactID coordinates of an artifact to get all existing versions of an artifact in all registered repositories:
 
-<img src="images/librarymanager/SceneBuilder13.png" alt="Add library from repository dialog" class="center-image">
+<img src="images/librarymanager/SceneBuilder13.png" alt="Add library from repository dialog" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 For instance, for "org.controlsfx" group and "controlsfx" artifact, a list is found in the registered repositories (Maven Central releases, Sonatype snapshots, Local .m2, Nexus, …):
 
-<img src="images/librarymanager/SceneBuilder14.png" alt="Different ControlsFX artifacts found" class="center-image">
+<img src="images/librarymanager/SceneBuilder14.png" alt="Different ControlsFX artifacts found" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 Then any given version can be selected to extract its custom controls, as it was shown earlier.
 
@@ -111,23 +96,23 @@ Then any given version can be selected to extract its custom controls, as it was
 
 This option opens a file chooser that lets the user find a jar or an FXML file in the local file system.
 
-<img src="images/librarymanager/SceneBuilder15.png" alt="Finding custom controls in the file system" class="center-image">
+<img src="images/librarymanager/SceneBuilder15.png" alt="Finding custom controls in the file system" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 After locating and selecting a jar with one or more custom controls, it will extract them, in the same way:
 
-<img src="images/librarymanager/SceneBuilder16.png" alt="Custom controls from local jar" class="center-image">
+<img src="images/librarymanager/SceneBuilder16.png" alt="Custom controls from local jar" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 <h4>Add root folder with *.class files option</h4>
 
 This is an alternative to adding the jar with the packaged classed: when building the control, the output folder that contains the list of classes is enough to find and import the custom control. The result is the same as with the jar, but this option removes the extra step of packaging, especially while developing the early versions of the control.
 
-<img src="images/librarymanager/SceneBuilder17.png" alt="Custom controls from build folder" class="center-image">
+<img src="images/librarymanager/SceneBuilder17.png" alt="Custom controls from build folder" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 <h4>Manage repositories option</h4>
 
 Finally, the user can manage the repositories where artifacts are resolved from.
 
-<img src="images/librarymanager/SceneBuilder18.png" alt="Manage repositories dialog" class="center-image">
+<img src="images/librarymanager/SceneBuilder18.png" alt="Manage repositories dialog" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 Initially, the preset list of remote repositories is listed. These are not editable and can’t be removed.
 
@@ -135,7 +120,7 @@ By clicking on Add Repository, the user can add new repositories to the list, bo
 
 A new repository requires a name and a valid URL. If it is private, the credentials are required as well. The test button will perform a connection to the given URL to check if it is valid or not, and if private, if the credentials are valid as well.
 
-<img src="images/librarymanager/SceneBuilder19.png" alt="Add custom repository dialog" class="center-image">
+<img src="images/librarymanager/SceneBuilder19.png" alt="Add custom repository dialog" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 Note that in case of private repositories, the credentials will be stored locally in the user preferences. They will be used only when installing libraries from the private repository.
 
@@ -475,7 +460,7 @@ There are some specific optional annotations intended for FXML:
 
 When the control is added to Scene Builder, the control’s properties are visible in the Inspector area (to the right), and the user can interact with them:
 
-<img src="images/librarymanager/SceneBuilder20.png" alt="The popup custom control in action" class="center-image">
+<img src="images/librarymanager/SceneBuilder20.png" alt="The popup custom control in action" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -501,6 +486,6 @@ After importing a jar with one or more possible custom controls, it is possible 
 
 The Jar Analysis Report can provide insightful information about the reasons for this. As mentioned earlier, when exploring the jar, the FXMLLoader is instantiated with the possible custom control classes, and if something fails, the result is one or more exceptions that are captured by the Jar Analysis and the report just shows them:
 
-<img src="images/librarymanager/SceneBuilder21.png" alt="The Jar Analysis report" class="center-image">
+<img src="images/librarymanager/SceneBuilder21.png" alt="The Jar Analysis report" style="display: block; margin-left: auto; margin-right: auto;" width="400">
 
 By checking the exceptions, developers can go back and fix the issues in the source code.
