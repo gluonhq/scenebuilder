@@ -12,7 +12,7 @@ On top of the Library pane item, there is a small MenuButton control with a cog 
 
 <p align="center"><img src="images/librarymanager/SceneBuilder02.png" alt="Library menuButton" width="400"></p>
 
-<h4>View as List or Sections options</h4>
+#### View as List or Sections options
 
 The first two menu items are for selecting between using a flat list to list all the components in the Library (custom and built-in ones):
 
@@ -20,7 +20,7 @@ The first two menu items are for selecting between using a flat list to list all
 
 or the default Accordion container with TiledPanes as Sections, as shown earlier above.
 
-<h4>Import Selection option</h4>
+#### Import Selection option
 
 This is a quick way of creating a custom control out of an existing FXML in Scene Builder.
 
@@ -32,7 +32,7 @@ Once you select part of it, clicking the menu item will create a custom control 
 
 This FXML code snippet can be reused now in other FXMLs.
 
-<h4>Custom Library Folder option</h4>
+#### Custom Library Folder option
 
 The last menu item refers to the Section for Custom Controls:
 
@@ -40,7 +40,7 @@ The last menu item refers to the Section for Custom Controls:
 
 There is a system folder where custom jars and files are cached, and this can be revealed in Finder. And for all existing custom controls, an analysis can be performed and the report will show possible errors. This is useful especially when importing a custom control doesn't behave as expected.
 
-<h3>JAR/FXML Manager option</h4>
+#### JAR/FXML Manager option
 
 The third menu item gives you access to the Library Manager dialog:
 
@@ -52,7 +52,7 @@ For each library or file, the user can edit or delete it. Editing an FXML will o
 
 On the lower part of the dialog, there are different actions that the user can perform.
 
-<h4>Search repositories option</h4>
+#### Search repositories option
 
 The user can type a name of a library: full name or part of its group id, or full name or part of it of the artifact id, following the usual naming convention.
 
@@ -80,7 +80,7 @@ If other controls are needed from this jar, the user can open the Library Manage
 
 Also note that if an artifact is removed from the list, it will just be removed from Scene Builder, but the artifact won’t be removed from the local .m2 repository.
 
-<h4>Manually add Library from repository option</h4>
+#### Manually add Library from repository option
 
 The user can type the exact names of groupID and artifactID coordinates of an artifact to get all existing versions of an artifact in all registered repositories:
 
@@ -92,7 +92,7 @@ For instance, for "org.controlsfx" group and "controlsfx" artifact, a list is fo
 
 Then any given version can be selected to extract its custom controls, as it was shown earlier.
 
-<h4>Add Library/FXML from file system option</h4>
+#### Add Library/FXML from file system option
 
 This option opens a file chooser that lets the user find a jar or an FXML file in the local file system.
 
@@ -102,13 +102,13 @@ After locating and selecting a jar with one or more custom controls, it will ext
 
 <p align="center"><img src="images/librarymanager/SceneBuilder16.png" alt="Custom controls from local jar" width="400"></p>
 
-<h4>Add root folder with *.class files option</h4>
+#### Add root folder with *.class files option
 
 This is an alternative to adding the jar with the packaged classed: when building the control, the output folder that contains the list of classes is enough to find and import the custom control. The result is the same as with the jar, but this option removes the extra step of packaging, especially while developing the early versions of the control.
 
 <p align="center"><img src="images/librarymanager/SceneBuilder17.png" alt="Custom controls from build folder" width="400"></p>
 
-<h4>Manage repositories option</h4>
+#### Manage repositories option
 
 Finally, the user can manage the repositories where artifacts are resolved from.
 
@@ -124,7 +124,7 @@ A new repository requires a name and a valid URL. If it is private, the credenti
 
 Note that in case of private repositories, the credentials will be stored locally in the user preferences. They will be used only when installing libraries from the private repository.
 
-<h3>The Custom section</h3>
+### The Custom section
 
 All the components imported once from either local or remote repositories or from the local file system, will be listed in the Custom panel, ready to be used. These will remain available upon further restarts of Scene Builder, and will only be removed, if user does so from the Library Manager.
 
@@ -486,6 +486,6 @@ After importing a jar with one or more possible custom controls, it is possible 
 
 The Jar Analysis Report can provide insightful information about the reasons for this. As mentioned earlier, when exploring the jar, the FXMLLoader is instantiated with the possible custom control classes, and if something fails, the result is one or more exceptions that are captured by the Jar Analysis and the report just shows them:
 
-<p align="center"><img src="images/librarymanager/SceneBuilder21.png" alt="The Jar Analysis report" width="400"></p>
+<p align="center"><img src="images/librarymanager/SceneBuilder21.png" alt="The Jar Analysis report" width="600"></p>
 
 By checking the exceptions, developers can go back and fix the issues in the source code.
