@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -30,30 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.i18n;
+package com.oracle.javafx.scenebuilder.kit.i18n.spi;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.spi.ResourceBundleProvider;
 
-public class I18NControl extends ResourceBundle.Control {
-    @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) {
-        String bundleName = toBundleName(baseName, locale);
-        String resourceName = toResourceName(bundleName, "properties");
-        try (InputStream is = loader.getResourceAsStream(resourceName);
-             InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-             BufferedReader reader = new BufferedReader(isr)) {
-            return new PropertyResourceBundle(reader);
-        } catch (IOException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to create ResourceBundle: ", e);
-            return null;
-        }
-    }
-}
+public interface I18NResourcesProvider extends ResourceBundleProvider { }
