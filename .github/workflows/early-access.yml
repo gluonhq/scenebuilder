@@ -110,7 +110,7 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   early-access:
-    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
+    needs: [precheck, linux-bundles, windows-bundles, kit-bundles]
     if: endsWith(${{ needs.precheck.outputs.PROJECT_VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-20.04
     steps:

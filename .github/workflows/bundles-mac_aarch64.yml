@@ -115,5 +115,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SceneBuilder-${{ inputs.project-version }}-amd64.dmg
+          name: SceneBuilder-${{ inputs.project-version }}-aarch64.dmg
           path: ${{ steps.outputfile.outputs.path }}
