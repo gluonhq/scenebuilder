@@ -314,8 +314,8 @@ public class EditorPlatform {
      * 'xdg-open'. On Mac, it runs 'open'. On Windows, it runs 'cmd /c start'.
      *
      * @param path path for the file to be opened
-     * @throws IOException if an error occurs
-     * @throws FileBrowserRevealException 
+     * @throws IOException in case the application called failed to open due to an error.
+     * @throws FileBrowserRevealException in case the application opened indicates an error (unexpected return code).
      */
     public static void open(String path) throws IOException, FileBrowserRevealException {
         List<String> args = new ArrayList<>();
