@@ -14,10 +14,10 @@ jobs:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
           release: ${{ env.JAVA_VERSION }}

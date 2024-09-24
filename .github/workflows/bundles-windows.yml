@@ -33,10 +33,10 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
           release: ${{ inputs.java-version }}
@@ -51,7 +51,7 @@ jobs:
           Expand-Archive -Force D:\openjfx-${{ inputs.javafx-version }}_windows-x64_bin-jmods.zip D:\
 
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -94,7 +94,7 @@ jobs:
           folder: 'app/target/install'
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: app/target/install/*.msi
