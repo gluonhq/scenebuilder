@@ -286,7 +286,7 @@
                                     <remoteBuild>true</remoteBuild>
                                 </snap>
                                 <artifacts>
-                                    <artifact>
+                                    <!--<artifact>
                                         <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-amd64.dmg</path>
                                         <platform>osx-x86_64</platform>
                                         <extraProperties>
@@ -299,7 +299,7 @@
                                         <extraProperties>
                                             <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
                                         </extraProperties>
-                                    </artifact>
+                                    </artifact>-->
                                     <artifact>
                                         <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.msi</path>
                                         <platform>windows-x86_64</platform>
