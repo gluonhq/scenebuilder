@@ -1473,7 +1473,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         File libraryPath = Paths.get(userLibraryPath).normalize().toFile();
         try {
             EditorPlatform.revealInFileBrowser(libraryPath);
-        } catch(Exception revealError) {
+        } catch (Exception revealError) {
             handleRevealFolderException(revealError, String.valueOf(libraryPath));
         }
     }
@@ -2185,29 +2185,29 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         return closeConfirmed ? ActionStatus.DONE : ActionStatus.CANCELLED;
     }
     
-    
     private void performRevealAction() {
         assert editorController.getFxomDocument() != null;
         assert editorController.getFxomDocument().getLocation() != null;
-        
+
         final URL location = editorController.getFxomDocument().getLocation();
-        
+
         File fxmlFile = null;
         try {
-            /* Using Path.normalize().toAbsolutePath() ensures that forward and backward slashes are not mixed and 
-             * the path matches the platform requirements. It also ensures, that the file:/ prefix is removed from 
-             * paths and users can directly use the path in their attempt to investigate the error.
+            /*
+             * Using Path.normalize().toAbsolutePath() ensures that forward and backward slashes are not mixed
+             * and the path matches the platform requirements. It also ensures, that the file:/ prefix is
+             * removed from paths and users can directly use the path in their attempt to investigate the error.
              */
             fxmlFile = Path.of(location.toURI()).normalize().toAbsolutePath().toFile();
         } catch (URISyntaxException e) {
             handleRevealResourceException(e, String.valueOf(location));
         }
-        
+
         try {
             EditorPlatform.revealInFileBrowser(fxmlFile);
-        } catch(FileBrowserRevealException re) {
+        } catch (FileBrowserRevealException re) {
             handleRevealFileException(re, String.valueOf(fxmlFile));
-        } catch(IOException x) {
+        } catch (IOException x) {
             handleRevealResourceException(x, String.valueOf(fxmlFile));
         }
     }
