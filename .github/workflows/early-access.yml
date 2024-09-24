@@ -142,6 +142,8 @@ jobs:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls -l artifacts
+          ls -l artifacts/SceneBuilder-23.0.0-SNAPSHOT.deb
+          find artifacts
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
       - name: JReleaser output
