@@ -58,7 +58,7 @@ The user can type a name of a library: full name or part of its group id, or ful
 
 <p align="center"><img src="images/librarymanager/SceneBuilder08.png" alt="Search Library in Repositories" width="400"></p>
 
-For instance, to download and install the latest release of ControlsFX, just by typing its maven group "org.controlsfx", the existing artifacts (in the registered repositories) will show up:
+For instance, to download and install the latest release of ControlsFX, just by typing its maven group `org.controlsfx`, the existing artifacts (in the registered repositories) will show up:
 
 <p align="center"><img src="images/librarymanager/SceneBuilder09.png" alt="ControlsFX results" width="400"></p>
 
@@ -86,7 +86,7 @@ The user can type the exact names of groupID and artifactID coordinates of an ar
 
 <p align="center"><img src="images/librarymanager/SceneBuilder13.png" alt="Add library from repository dialog" width="400"></p>
 
-For instance, for "org.controlsfx" group and "controlsfx" artifact, a list is found in the registered repositories (Maven Central releases, Sonatype snapshots, Local .m2, Nexus, …):
+For instance, for `org.controlsfx` group and `controlsfx` artifact, a list is found in the registered repositories (Maven Central releases, Sonatype snapshots, Local .m2, Nexus, …):
 
 <p align="center"><img src="images/librarymanager/SceneBuilder14.png" alt="Different ControlsFX artifacts found" width="400"></p>
 
