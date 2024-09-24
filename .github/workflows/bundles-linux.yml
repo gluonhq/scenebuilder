@@ -101,7 +101,13 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: SceneBuilder-${{ inputs.project-version }}.deb
           path: |
             app/target/install/*.deb
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SceneBuilder-${{ inputs.project-version }}.rpm
+          path: |
             app/target/install/*.rpm

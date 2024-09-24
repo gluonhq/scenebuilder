@@ -147,6 +147,9 @@ jobs:
 
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
 
       - name: Set Release Version
         run: |
