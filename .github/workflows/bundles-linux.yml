@@ -29,10 +29,10 @@ jobs:
       - name: Install packages
         run: sudo apt-get install xdg-utils
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
           release: ${{ inputs.java-version }}
@@ -46,7 +46,7 @@ jobs:
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_linux-x64_bin-jmods.zip -d /tmp
 
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -99,9 +99,15 @@ jobs:
           INSTALL_DIR: app/target/install
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: SceneBuilder-${{ inputs.project-version }}.deb
           path: |
             app/target/install/*.deb
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SceneBuilder-${{ inputs.project-version }}.rpm
+          path: |
             app/target/install/*.rpm
