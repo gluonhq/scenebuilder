@@ -121,6 +121,8 @@ jobs:
 
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
       - name: Set up Java
         uses: oracle-actions/setup-java@v1.4.0
