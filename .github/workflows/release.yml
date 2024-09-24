@@ -54,9 +54,9 @@ jobs:
               S3_PATH=RC/$PROJECT_VERSION
           fi
           echo "Releasing.. "$PROJECT_VERSION
-          echo ::set-output name=APP_VERSION::$APP_VERSION
-          echo ::set-output name=PROJECT_VERSION::$PROJECT_VERSION
-          echo ::set-output name=S3_PATH::$S3_PATH
+          echo APP_VERSION=$APP_VERSION >> $GITHUB_OUTPUT
+          echo PROJECT_VERSION=$PROJECT_VERSION >> $GITHUB_OUTPUT
+          echo S3_PATH=$S3_PATH >> $GITHUB_OUTPUT
 
   linux-bundles:
     needs: [precheck]
