@@ -58,7 +58,7 @@ public class I18NResourcesProviderImpl extends AbstractResourceBundleProvider im
              BufferedReader reader = new BufferedReader(isr)) {
             return new PropertyResourceBundle(reader);
         } catch (IOException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to create ResourceBundle: ", e);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to create ResourceBundle for " + bundleName, e);
             return null;
         }
     }
