@@ -31,10 +31,11 @@
  */
 
 module com.gluonhq.scenebuilder.kit {
-    requires javafx.web;
+    requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.media;
     requires javafx.swing;
+    requires javafx.media;
+    requires javafx.web;
 
     requires com.gluonhq.charm.glisten;
     requires static javax.json.api;
