@@ -33,14 +33,14 @@
 module com.gluonhq.scenebuilder.kit {
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
-    requires javafx.fxml;
+    requires transitive javafx.fxml;
     requires javafx.swing;
     requires javafx.media;
-    requires javafx.web;
+    requires transitive javafx.web;
 
     requires com.gluonhq.charm.glisten;
     requires static javax.json.api;
-    requires static java.prefs;
+    requires transitive static java.prefs;
 
     requires static aether.api;
     requires static aether.connector.basic;

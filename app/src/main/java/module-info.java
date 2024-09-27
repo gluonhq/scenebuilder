@@ -35,7 +35,7 @@ module com.gluonhq.scenebuilder.app {
     requires javafx.fxml;
     requires javafx.media;
     requires javafx.swing;
-    requires com.gluonhq.scenebuilder.kit;
+    requires transitive com.gluonhq.scenebuilder.kit;
     requires java.logging;
     requires java.prefs;
     requires javax.json.api;
@@ -55,4 +55,6 @@ module com.gluonhq.scenebuilder.app {
     uses com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider;
 
     exports com.oracle.javafx.scenebuilder.app;
+    exports com.oracle.javafx.scenebuilder.app.menubar;
+    exports com.oracle.javafx.scenebuilder.app.preferences;
 }
