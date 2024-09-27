@@ -31,7 +31,8 @@
  */
 
 module com.gluonhq.scenebuilder.kit {
-    requires javafx.controls;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires javafx.swing;
     requires javafx.media;
