@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon and/or its affiliates.
+ * Copyright (c) 2018, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -56,7 +56,11 @@ public class Picker {
     
     private final Set<Node> excludes = new HashSet<>();
     private final List<Node> matches = new ArrayList<>();
-    
+
+    public Picker() {
+        // no-op
+    }
+
     /**
      * Returns the list of nodes below (sceneX, sceneY).
      * Topmost node is at index 0.

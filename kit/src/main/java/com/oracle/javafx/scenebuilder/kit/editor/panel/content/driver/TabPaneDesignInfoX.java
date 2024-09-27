@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,6 +52,9 @@ import javafx.scene.control.TabPane;
  */
 public class TabPaneDesignInfoX /* extends TabDesignInfo */ {
 
+    public TabPaneDesignInfoX() {
+        // no-op
+    }
 
     /**
      * Returns the node representing the tab header in the TabPane skin.

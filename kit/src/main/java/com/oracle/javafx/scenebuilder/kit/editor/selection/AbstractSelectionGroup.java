@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,7 +43,11 @@ public abstract class AbstractSelectionGroup implements Cloneable {
     
     public abstract FXOMObject getAncestor();
     public abstract boolean isValid(FXOMDocument fxomDocument);
-    
+
+    AbstractSelectionGroup() {
+        // no-op
+    }
+
     @Override
     public AbstractSelectionGroup clone() throws CloneNotSupportedException
     {

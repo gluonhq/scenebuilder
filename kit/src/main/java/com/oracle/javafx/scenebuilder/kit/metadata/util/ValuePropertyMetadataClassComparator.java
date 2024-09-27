@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,6 +39,10 @@ import java.util.Comparator;
  *
  */
 public class ValuePropertyMetadataClassComparator implements Comparator<ValuePropertyMetadata> {
+
+    public ValuePropertyMetadataClassComparator() {
+        // no-op
+    }
 
     @Override
     public int compare(ValuePropertyMetadata propMeta1, ValuePropertyMetadata propMeta2) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2023, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -44,6 +44,10 @@ public class SkeletonCreatorJRuby implements SkeletonConverter {
 
     static final String NL = System.lineSeparator();
     static final String INDENT = "    "; //NOI18N
+
+    SkeletonCreatorJRuby() {
+        // no-op
+    }
 
     public String createFrom(SkeletonContext context) {
 

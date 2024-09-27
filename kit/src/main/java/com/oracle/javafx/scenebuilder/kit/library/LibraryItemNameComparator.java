@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,7 +40,11 @@ import java.util.Locale;
  * 
  */
 public class LibraryItemNameComparator implements Comparator<LibraryItem> {
-    
+
+    public LibraryItemNameComparator() {
+        // no-op
+    }
+
     /**
      * The comparison done here is performed on the name property of the
      * LibraryItem, and it is done ignoring the case.

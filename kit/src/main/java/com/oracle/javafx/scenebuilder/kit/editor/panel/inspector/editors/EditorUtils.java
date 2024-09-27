@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -79,6 +79,10 @@ public class EditorUtils {
 
     static final String[] FXML_RESERVED_KEYWORDS = {"null"}; //NOI18N
     private static final String FXINCLUDE_JAVADOC_URL = "https://openjfx.io/javadoc/11/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html#include_elements";
+
+    EditorUtils() {
+        // no-op
+    }
 
     public static void makeWidthStretchable(final Node node) {
         Parent p = node.getParent();

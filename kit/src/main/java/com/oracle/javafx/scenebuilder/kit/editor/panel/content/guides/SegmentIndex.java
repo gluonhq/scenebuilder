@@ -45,6 +45,9 @@ public class SegmentIndex {
     private final List<AbstractSegment> segments = new ArrayList<>();
     private boolean sorted;
     
+    public SegmentIndex() {
+        // no-op
+    }
 
     public void addSegment(AbstractSegment s) {
         segments.add(s);

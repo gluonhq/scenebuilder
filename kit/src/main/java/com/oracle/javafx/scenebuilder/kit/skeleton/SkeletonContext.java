@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -47,7 +47,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-class SkeletonContext {
+public class SkeletonContext {
 
     private final String fxController;
     private final String documentName;

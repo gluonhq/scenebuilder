@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,6 +44,10 @@ import java.util.stream.Collectors;
 public class LibraryUtil {
 
     public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
+
+    LibraryUtil() {
+        // no-op
+    }
 
     public static boolean isJarPath(Path path) {
         final String pathString = path.toString().toLowerCase(Locale.ROOT);

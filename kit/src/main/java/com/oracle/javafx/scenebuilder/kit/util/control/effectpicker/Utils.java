@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -51,6 +52,10 @@ import javafx.scene.effect.SepiaTone;
 import javafx.scene.effect.Shadow;
 
 public abstract class Utils {
+
+    Utils() {
+        // no-op
+    }
 
     public static final Effect newInstance(Class<? extends Effect> clazz) {
         assert clazz != null;

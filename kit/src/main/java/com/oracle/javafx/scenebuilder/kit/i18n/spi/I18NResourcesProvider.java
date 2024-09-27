@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2024, Gluon and/or its affiliates.
- * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -14,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Oracle Corporation and Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -30,24 +29,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.editor.drag.target;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+package com.oracle.javafx.scenebuilder.kit.i18n.spi;
 
-/**
- *
- */
-public abstract class AbstractDropTarget {
+import java.util.spi.ResourceBundleProvider;
 
-    AbstractDropTarget() {
-        // no-op
-    }
-
-    public abstract FXOMObject getTargetObject();
-    public abstract boolean acceptDragSource(AbstractDragSource dragSource);
-    public abstract Job makeDropJob(AbstractDragSource dragSource, EditorController editorController);
-    public abstract boolean isSelectRequiredAfterDrop();
-}
+public interface I18NResourcesProvider extends ResourceBundleProvider { }
