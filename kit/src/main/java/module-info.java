@@ -42,7 +42,7 @@ module com.gluonhq.scenebuilder.kit {
     requires static javax.json.api;
     requires transitive static java.prefs;
 
-    requires static aether.api;
+    requires transitive static aether.api;
     requires static aether.connector.basic;
     requires static aether.impl;
     requires static aether.spi;
