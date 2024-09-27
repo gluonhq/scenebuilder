@@ -42,6 +42,10 @@ public class I18N {
     
     private static ResourceBundle bundle;
 
+    I18N() {
+        // no-op
+    }
+
     public static String getString(String key) {
         return getBundle().getString(key);
     }

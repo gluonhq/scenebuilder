@@ -207,6 +207,11 @@ module com.gluonhq.scenebuilder.kit {
     exports com.oracle.javafx.scenebuilder.kit.metadata.klass;
     exports com.oracle.javafx.scenebuilder.kit.metadata.property;
     exports com.oracle.javafx.scenebuilder.kit.metadata.property.value;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value.list;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value.effect.light;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint;
+    exports com.oracle.javafx.scenebuilder.kit.metadata.property.value.keycombination;
     exports com.oracle.javafx.scenebuilder.kit.metadata.util;
     exports com.oracle.javafx.scenebuilder.kit.preferences;
     exports com.oracle.javafx.scenebuilder.kit.preview;

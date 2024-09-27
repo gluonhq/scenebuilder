@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -65,6 +65,10 @@ public abstract class ImageUtils {
     private static Image edit_icon_image;
     private static ImageCursor css_cursor;
     private static final WeakHashMap<String, Reference<Image>> imageCache = new WeakHashMap<>();
+
+    ImageUtils() {
+        // no-op
+    }
 
     public static Image getImage(URL resource) {
         // No resource found for the specified name

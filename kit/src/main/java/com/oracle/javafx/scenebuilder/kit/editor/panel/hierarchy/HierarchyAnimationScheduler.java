@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -51,6 +52,10 @@ public class HierarchyAnimationScheduler {
     // Rate value used to set the timeline duration.
     // The bigger it is, the slower the animation will be.
     private final double rate = 4.0;
+
+    public HierarchyAnimationScheduler() {
+        // no-op
+    }
 
     public void playDecrementAnimation(final ScrollBar scrollBar) {
         assert scrollBar != null;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -426,6 +426,10 @@ public class NodeCssState {
      * @treatAsPrivate
      */
     public static class RuleComparator implements Comparator<MatchingRule> {
+
+        RuleComparator() {
+            // no-op
+        }
 
         @Override
         public int compare(MatchingRule t, MatchingRule t1) {

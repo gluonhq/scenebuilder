@@ -47,6 +47,10 @@ import java.util.spi.AbstractResourceBundleProvider;
 
 public class I18NResourcesProviderImpl extends AbstractResourceBundleProvider implements I18NResourcesProvider {
 
+    public I18NResourcesProviderImpl() {
+        // no-op
+    }
+
     @Override
     public ResourceBundle getBundle(String baseName, Locale locale) {
         String bundleName = toBundleName(baseName, locale);

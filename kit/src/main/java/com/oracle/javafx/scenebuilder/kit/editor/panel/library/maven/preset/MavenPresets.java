@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -41,7 +41,11 @@ public class MavenPresets {
     public static final String SONATYPE = "Sonatype";
     public static final String GLUON_NEXUS = "Gluon Nexus";
     public static final String LOCAL = "Local";
-    
+
+    MavenPresets() {
+        // no-op
+    }
+
     private static final List<Repository> REPOSITORIES = Arrays.asList(
             new Repository(MAVEN, "default", "https://repo1.maven.org/maven2/"),
             new Repository(SONATYPE + " (snapshots)", "default", "https://oss.sonatype.org/content/repositories/snapshots"),

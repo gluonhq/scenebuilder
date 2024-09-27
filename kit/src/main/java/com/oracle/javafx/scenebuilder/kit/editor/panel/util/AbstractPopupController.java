@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,7 +53,11 @@ public abstract class AbstractPopupController {
     private Popup popup;
     private Node anchor;
     private Window anchorWindow;
-    
+
+    public AbstractPopupController() {
+        // no-op
+    }
+
     /**
      * Returns the root FX object of this popup.
      * When called the first time, this method invokes {@link #makeRoot()}

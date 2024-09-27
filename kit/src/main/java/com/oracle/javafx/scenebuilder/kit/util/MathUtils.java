@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,7 +36,11 @@ package com.oracle.javafx.scenebuilder.kit.util;
  *
  */
 public class MathUtils {
-    
+
+    MathUtils() {
+        // no-op
+    }
+
     /**
      * Returns true if the two specified double values are approximately equals.
      * @param v1 first double to check
