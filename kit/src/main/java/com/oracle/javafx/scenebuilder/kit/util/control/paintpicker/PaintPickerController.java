@@ -80,7 +80,7 @@ public class PaintPickerController {
     public final static RadialGradient DEFAULT_RADIAL
             = new RadialGradient(0.0, 0.0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE);
 
-    PaintPickerController() {
+    public PaintPickerController() {
         // no-op
     }
 
