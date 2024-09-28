@@ -22,8 +22,8 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <javafx.version>23</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>6.2.2</charm.glisten.version>
-        <gluon.attach.version>4.0.19</gluon.attach.version>
+        <charm.glisten.version>6.2.3</charm.glisten.version>
+        <gluon.attach.version>4.0.21</gluon.attach.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
