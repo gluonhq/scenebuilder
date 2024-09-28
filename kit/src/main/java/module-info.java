@@ -39,6 +39,7 @@ module com.gluonhq.scenebuilder.kit {
     requires transitive javafx.web;
 
     requires com.gluonhq.charm.glisten;
+    requires com.gluonhq.attach.display;
     requires static javax.json.api;
     requires transitive static java.prefs;
 
