@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 env:
+  JAVAFX_VERSION: '23'
   JAVA_VERSION: '23'
-  JAVAFX_VERSION: '23-ea+27'
 
 jobs:
   precheck:
@@ -19,16 +19,16 @@ jobs:
       PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
           release: ${{ env.JAVA_VERSION }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -115,21 +115,24 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Download all build artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
 
       - name: Set up Java
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
           release: ${{ needs.precheck.outputs.JAVA_VERSION }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -143,7 +146,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
           path: |

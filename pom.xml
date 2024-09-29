@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>23.0.0-SNAPSHOT</version>
+    <version>24.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -16,14 +16,14 @@
     </modules>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>23-ea+27</javafx.version>
+        <javafx.version>23</javafx.version>
         <aether.version>1.1.0</aether.version>
-        <charm.glisten.version>6.2.2</charm.glisten.version>
-        <gluon.attach.version>4.0.19</gluon.attach.version>
+        <charm.glisten.version>6.2.3</charm.glisten.version>
+        <gluon.attach.version>4.0.21</gluon.attach.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
@@ -88,7 +88,8 @@
                     <configuration>
                         <mainClass>${main.class.name}</mainClass>
                         <options>
-                            <option>--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED</option>
+                            <option>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.app</option>
+                            <option>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</option>
                         </options>
                     </configuration>
                 </plugin>
@@ -149,6 +150,7 @@
                     <configuration>
                         <reuseForks>false</reuseForks>
                         <forkCount>1</forkCount>
+                        <argLine>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</argLine>
                     </configuration>
                 </plugin>
             </plugins>

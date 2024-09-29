@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -56,6 +57,10 @@ public abstract class Editor {
     public static final String vMaxPropName = "vmax";
 
     public static final String INDETERMINATE_STR = "-"; //NOI18N
+
+    Editor() {
+        // no-op
+    }
 
     public abstract Node getValueEditor();
 

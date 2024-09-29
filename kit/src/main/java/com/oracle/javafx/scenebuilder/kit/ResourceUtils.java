@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -49,6 +49,10 @@ public class ResourceUtils {
     private static List<String> audioExtensions;
     private static List<String> videoExtensions;
     private static List<String> mediaExtensions;
+
+    ResourceUtils() {
+        // no-op
+    }
 
     public static String getToolStylesheet(ToolTheme theme) {
         switch(theme) {

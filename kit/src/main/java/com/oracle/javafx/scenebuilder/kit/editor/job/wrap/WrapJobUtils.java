@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -51,6 +52,10 @@ import javafx.scene.layout.BorderPane;
  * Utilities to build wrap jobs.
  */
 public class WrapJobUtils {
+
+    WrapJobUtils() {
+        // no-op
+    }
 
     /**
      * Returns the property name of the specified container to be used for wrapping jobs.
