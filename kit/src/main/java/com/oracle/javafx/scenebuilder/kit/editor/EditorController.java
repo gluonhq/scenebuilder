@@ -2339,7 +2339,7 @@ public class EditorController {
             errorDialog.setDetailsTitle(I18N.getString("alert.error.file.open.edit.details.title"));
             errorDialog.setDebugInfoWithThrowable(re);
             errorDialog.showAndWait();
-        } 
+        }
     }
 
     private void performRevealIncludedFile() {
