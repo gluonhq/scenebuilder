@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -55,7 +56,11 @@ import javafx.scene.control.TreeView;
 public class SampleDataGenerator {
     
     private final Map<FXOMObject, AbstractSampleData> sampleDataMap = new HashMap<>();
-    
+
+    public SampleDataGenerator() {
+        // no-op
+    }
+
     public void assignSampleData(FXOMObject startObject) {
         assert startObject != null;
         

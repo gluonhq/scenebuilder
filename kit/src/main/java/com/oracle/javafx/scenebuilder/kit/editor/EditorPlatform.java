@@ -254,7 +254,11 @@ public class EditorPlatform {
             return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css");
         }
     }
-    
+
+    EditorPlatform() {
+        // no-op
+    }
+
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
         return Theme.MODENA.getStylesheetURL();
