@@ -36,15 +36,33 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public final class Cmd {
-    
-    public final Integer exec(List<String> cmd, File wDir, long timeoutSec) throws IOException, InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder(cmd);
-        builder = builder.directory(wDir);
-        Process proc = builder.start();
-        proc.waitFor(timeoutSec, TimeUnit.SECONDS);
-        int exitValue = proc.exitValue();
-        return exitValue;
+/**
+ * Cmd allows the execution of a given command line in a defined working directory. The execution is
+ * aborted after the timeout.
+ */
+final class Cmd {
+   
+    /**
+     * Executes a given command line using the working directory and timeout.
+     * 
+     * @param cmd The command line to be executed defined as a {@link List} of {@link String}
+     * @param wDir The working directory, where the process shall be executed within.
+     * @param timeoutSec Duration in in seconds after which the execution should be stopped. 
+     * @return exit code of the command line as an Integer
+     * 
+     * @throws IOException - if the command was not found or the program execution exceeds the given timeout duration.
+     * @throws InterruptedException - if the current thread is interrupted while waiting
+     */
+    public final Integer exec(List<String> cmd, File wDir, long timeoutSec) throws IOException, 
+                                                                                   InterruptedException {
+            ProcessBuilder builder = new ProcessBuilder(cmd);
+            builder = builder.directory(wDir);
+            Process proc = builder.start();
+            boolean completed = proc.waitFor(timeoutSec, TimeUnit.SECONDS);
+            if (completed) {
+                return proc.exitValue();
+            }
+            throw new IOException("Process timed out after %s seconds!".formatted(timeoutSec));
     }
 
 }
