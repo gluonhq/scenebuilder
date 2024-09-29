@@ -2329,7 +2329,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         errorDialog.setDebugInfoWithThrowable(revealException);
         errorDialog.showAndWait();
     }
-    
+
     /**
      * 
      * In some cases the resource to be revealed or opened is a directory. Hence the UI dialog should reflect this.
