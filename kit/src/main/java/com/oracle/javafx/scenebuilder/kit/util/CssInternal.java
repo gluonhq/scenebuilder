@@ -59,18 +59,16 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
-import javafx.css.CompoundSelector;
 import javafx.css.Rule;
 import javafx.css.Selector;
-import javafx.css.SimpleSelector;
 import javafx.css.Style;
 import javafx.css.Stylesheet;
 import javafx.css.CssParser;
 
 /**
  *
- * Utility classes using css internal classes (from com.sun package). Note that
- * the CSS Analyzer is also using extensively com.sun classes.
+ * Utility classes to extract CSS information.
+ * Note: Requires JavaFX 23+
  *
  */
 public class CssInternal {
@@ -247,25 +245,12 @@ public class CssInternal {
             return styleClasses;
         }
         if (s == null) {
-            // The parsed CSS file was empty. No parsing occured.
+            // The parsed CSS file was empty. No parsing occurred.
             return styleClasses;
         }
         for (Rule r : s.getRules()) {
             for (Selector ss : r.getSelectors()) {
-                if (ss instanceof SimpleSelector) {
-                    SimpleSelector simple = (SimpleSelector) ss;
-                    styleClasses.addAll(simple.getStyleClasses());
-                } else {
-                    if (ss instanceof CompoundSelector) {
-                        CompoundSelector cs = (CompoundSelector) ss;
-                        for (Selector selector : cs.getSelectors()) {
-                            if (selector instanceof SimpleSelector) {
-                                SimpleSelector simple = (SimpleSelector) selector;
-                                styleClasses.addAll(simple.getStyleClasses());
-                            }
-                        }
-                    }
-                }
+                styleClasses.addAll(ss.getStyleClassNames());
             }
         }
         return styleClasses;
