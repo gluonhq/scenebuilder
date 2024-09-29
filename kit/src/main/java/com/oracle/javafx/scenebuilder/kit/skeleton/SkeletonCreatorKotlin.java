@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,6 +32,10 @@
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 public class SkeletonCreatorKotlin extends AbstractSkeletonCreator {
+
+    SkeletonCreatorKotlin() {
+        // no-op
+    }
 
     @Override
     void appendPackage(SkeletonContext context, StringBuilder sb) {

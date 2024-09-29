@@ -1042,6 +1042,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     public static class TitleComparator implements Comparator<DocumentWindowController> {
 
+        public TitleComparator() {
+            // no-op
+        }
+
         @Override
         public int compare(DocumentWindowController d1, DocumentWindowController d2) {
             final int result;
