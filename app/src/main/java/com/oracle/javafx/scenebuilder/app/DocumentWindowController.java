@@ -2311,7 +2311,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         errorDialog.setDebugInfoWithThrowable(fileRevealException);
         errorDialog.showAndWait();
     }
-    
+
     /**
      * 
      * Resources may be related to files included with Scene Builder or with arbitrary files (e.g. CSS sheets)
