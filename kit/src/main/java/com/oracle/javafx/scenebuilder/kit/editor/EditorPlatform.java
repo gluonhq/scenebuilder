@@ -77,7 +77,7 @@ public class EditorPlatform {
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
     static {
-        LOGGER.log(Level.INFO, "Detected Operating System: {0}", osName);
+        LOGGER.log(Level.FINE, "Detected Operating System: {0}", osName);
     }
     
     /**
