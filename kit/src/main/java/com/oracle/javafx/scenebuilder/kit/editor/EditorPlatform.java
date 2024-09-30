@@ -383,7 +383,7 @@ public class EditorPlatform {
         }
 
         if (!args.isEmpty()) {
-        	executeDaemon(args, null, exitCodeOk);
+            executeDaemon(args, null, exitCodeOk);
         }
     }
 
