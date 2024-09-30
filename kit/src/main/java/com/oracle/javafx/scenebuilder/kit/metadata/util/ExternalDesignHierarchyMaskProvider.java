@@ -29,43 +29,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.library;
+package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
 import java.util.List;
 
-public interface ExternalSectionProvider {
+public interface ExternalDesignHierarchyMaskProvider {
 
     /**
-     * Position of the external section within the built-in library sections
-     * 0 will be on top, -1 at the bottom
-     * @return an integer with the expected position
+     * list of items that their design mask deserves a
+     * resizing while used as top element of the layout
+     * @return a List of classes
      */
-    int getExternalSectionPosition();
-
-    /**
-     * Name of the external section
-     * @return a String with the section's name
-     */
-    String getExternalSectionName();
-
-    /**
-     * list of items added to the external section
-     * @return a List of classes for this section
-     */
-    List<Class<?>> getExternalSectionItems();
-
-    /**
-     * path of the FXML resources, relative to the external section provider, where the
-     * FXML files for each item are located
-     * @return a String with the path
-     */
-    String getItemsFXMLPath();
-
-    /**
-     * path of the Icon resources, relative to the external section provider, where the
-     * icons for each item are located
-     * @return a String with the path
-     */
-    String getItemsIconPath();
-
+    List<Class<?>> getResizableItems();
 }

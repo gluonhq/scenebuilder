@@ -143,6 +143,7 @@ module com.gluonhq.scenebuilder.kit {
     provides com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider with com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProviderImpl;
     uses com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider;
     uses com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider;
+    uses com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
 
     exports com.oracle.javafx.scenebuilder.kit;
     exports com.oracle.javafx.scenebuilder.kit.alert;

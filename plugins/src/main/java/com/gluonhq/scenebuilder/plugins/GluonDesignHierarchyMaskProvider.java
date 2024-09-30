@@ -29,43 +29,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.library;
+package com.gluonhq.scenebuilder.plugins;
 
+import com.gluonhq.charm.glisten.control.BottomNavigation;
+import com.gluonhq.charm.glisten.control.DropdownButton;
+import com.gluonhq.charm.glisten.control.ExpansionPanel;
+import com.gluonhq.charm.glisten.control.ToggleButtonGroup;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
+
+import java.util.Arrays;
 import java.util.List;
 
-public interface ExternalSectionProvider {
+public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchyMaskProvider {
 
-    /**
-     * Position of the external section within the built-in library sections
-     * 0 will be on top, -1 at the bottom
-     * @return an integer with the expected position
-     */
-    int getExternalSectionPosition();
-
-    /**
-     * Name of the external section
-     * @return a String with the section's name
-     */
-    String getExternalSectionName();
-
-    /**
-     * list of items added to the external section
-     * @return a List of classes for this section
-     */
-    List<Class<?>> getExternalSectionItems();
-
-    /**
-     * path of the FXML resources, relative to the external section provider, where the
-     * FXML files for each item are located
-     * @return a String with the path
-     */
-    String getItemsFXMLPath();
-
-    /**
-     * path of the Icon resources, relative to the external section provider, where the
-     * icons for each item are located
-     * @return a String with the path
-     */
-    String getItemsIconPath();
-
+    @Override
+    public List<Class<?>> getResizableItems() {
+        return Arrays.asList(
+            ExpansionPanel.ExpandedPanel.class,
+            DropdownButton.class,
+            BottomNavigation.class,
+            ExpansionPanel.CollapsedPanel.class,
+            ToggleButtonGroup.class);
+    }
 }

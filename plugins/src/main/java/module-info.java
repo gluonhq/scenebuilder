@@ -41,6 +41,7 @@ module com.gluonhq.scenebuilder.plugins {
 
     provides com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider with com.gluonhq.scenebuilder.plugins.GluonSectionProvider;
     provides com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider with com.gluonhq.scenebuilder.plugins.GluonMetadataProvider;
+    provides com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider with com.gluonhq.scenebuilder.plugins.GluonDesignHierarchyMaskProvider;
 
     exports com.gluonhq.scenebuilder.plugins;
 }
