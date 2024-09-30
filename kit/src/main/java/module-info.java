@@ -120,7 +120,7 @@ module com.gluonhq.scenebuilder.kit {
     opens com.oracle.javafx.scenebuilder.kit.library to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.library.user to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.library.util to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.metadata to javafx.fxml;
+    opens com.oracle.javafx.scenebuilder.kit.metadata;
     opens com.oracle.javafx.scenebuilder.kit.metadata.klass to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.metadata.property to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.metadata.property.value to javafx.fxml;
@@ -142,6 +142,7 @@ module com.gluonhq.scenebuilder.kit {
 
     provides com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider with com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProviderImpl;
     uses com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider;
+    uses com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider;
 
     exports com.oracle.javafx.scenebuilder.kit;
     exports com.oracle.javafx.scenebuilder.kit.alert;

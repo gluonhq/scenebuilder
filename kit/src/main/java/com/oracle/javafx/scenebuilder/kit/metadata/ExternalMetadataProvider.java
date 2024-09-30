@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation and Gluon nor the names of its
+ *  - Neither the name of Oracle Corporation nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,18 +29,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module com.gluonhq.scenebuilder.plugins {
-    requires transitive com.gluonhq.scenebuilder.kit;
-    requires java.logging;
+package com.oracle.javafx.scenebuilder.kit.metadata;
 
-    requires com.gluonhq.charm.glisten;
-    requires com.gluonhq.attach.display;
+import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 
-    opens com.gluonhq.scenebuilder.plugins.editor.images.nodeicons to com.gluonhq.scenebuilder.kit;
-    opens com.gluonhq.scenebuilder.plugins.library.builtin to com.gluonhq.scenebuilder.kit;
+import java.util.List;
 
-    provides com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider with com.gluonhq.scenebuilder.plugins.GluonSectionProvider;
-    provides com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider with com.gluonhq.scenebuilder.plugins.GluonMetadataProvider;
+public interface ExternalMetadataProvider {
 
-    exports com.gluonhq.scenebuilder.plugins;
+    /**
+     * list of items added to the metadata
+     * @return a List of classes
+     */
+    List<ComponentClassMetadata> getItems();
 }
