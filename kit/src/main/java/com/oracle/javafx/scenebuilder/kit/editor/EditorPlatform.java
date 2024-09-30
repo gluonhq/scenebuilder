@@ -38,22 +38,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Path;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 
-import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -434,47 +429,29 @@ public class EditorPlatform {
      *                                    exception.
      */
     private static void executeDaemon(List<String> cmd, File wDir, int exitCodeOk) throws IOException, FileBrowserRevealException {
-    	Task<Void> cmdTask = new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				var cmdLine = cmd.stream().collect(Collectors.joining(" "));
-		        long timeoutSec = 5;
-		        try {
-		            int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
-		            if (exitCodeOk != exitValue) {
-		                LOGGER.log(Level.SEVERE, "Error during attempt to run: {0} in {1}", new Object[] {cmdLine, wDir});
-		                throw new FileBrowserRevealException(
-		                        "The command to reval the file exited with an error (exitValue=%s).\nCommand: %s\nWorking Dir: %s"
-		                        .formatted(Integer.toString(exitValue), cmdLine, wDir));
-		            } else {
-		                LOGGER.log(Level.FINE, "Successfully executed command: {0} in {1}", new Object[] {cmdLine, wDir});
-		            }
-		        } catch (RuntimeException ex) {
-		            LOGGER.log(Level.SEVERE, "Unknown error during attempt to run: {0} in {1}", new Object[] {cmdLine, wDir});
-		            throw new IOException(ex);
-		        } catch (InterruptedException e) {
-		            LOGGER.log(Level.SEVERE, "Process timeout after {0}s: {1} in {2}", new Object[] {timeoutSec, cmdLine, wDir});
-		            Thread.currentThread().interrupt();
-		            String msg = "The command to reval the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
-		                            .formatted(cmdLine, wDir, timeoutSec);
-		            String detailMsg = msg+"\n"+e.getMessage();
-		            
-		            throw new IOException(detailMsg);
-		        }
-		        return null;
-			}
-
-			@Override
-			protected void failed() {
-			
-				/*
-				 * TODO:
-				 * There is no error handling yet - at least if an exception is thrown, that must be handled.
-				 */
-				
-			}
-    	};
-		
-		new Thread(cmdTask, "executeDaemon-task").start();
+        var cmdLine = cmd.stream().collect(Collectors.joining(" "));
+        long timeoutSec = 5;
+        try {
+            int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
+            if (exitCodeOk != exitValue) {
+                LOGGER.log(Level.SEVERE, "Error during attempt to run: {0} in {1}", new Object[] {cmdLine, wDir});
+                throw new FileBrowserRevealException(
+                        "The command to reval the file exited with an error (exitValue=%s).\nCommand: %s\nWorking Dir: %s"
+                        .formatted(Integer.toString(exitValue), cmdLine, wDir));
+            } else {
+                LOGGER.log(Level.FINE, "Successfully executed command: {0} in {1}", new Object[] {cmdLine, wDir});
+            }
+        } catch (RuntimeException ex) {
+            LOGGER.log(Level.SEVERE, "Unknown error during attempt to run: {0} in {1}", new Object[] {cmdLine, wDir});
+            throw new IOException(ex);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "Process timeout after {0}s: {1} in {2}", new Object[] {timeoutSec, cmdLine, wDir});
+            Thread.currentThread().interrupt();
+            String msg = "The command to reval the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
+                            .formatted(cmdLine, wDir, timeoutSec);
+            String detailMsg = msg+"\n"+e.getMessage();
+            
+            throw new IOException(detailMsg);
+        }
     }
 }
