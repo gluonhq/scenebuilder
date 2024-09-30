@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation and Gluon nor the names of its
+ *  - Neither the name of Oracle Corporation nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,33 +29,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.library;
 
-module com.gluonhq.scenebuilder.app {
-    requires javafx.web;
-    requires javafx.fxml;
-    requires javafx.media;
-    requires javafx.swing;
-    requires transitive com.gluonhq.scenebuilder.kit;
-    requires transitive com.gluonhq.scenebuilder.plugins;
-    requires java.logging;
-    requires java.prefs;
-    requires javax.json.api;
+import java.util.List;
 
-    opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.i18n to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.menubar to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.message to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.preferences to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.registration to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.report to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.tracking to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.util to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.welcomedialog;
+public interface ExternalSectionProvider {
 
-    uses com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider;
+    /**
+     * Position of the external section within the built-in library sections
+     * 0 will be on top, -1 at the bottom
+     * @return an integer with the expected position
+     */
+    int getExternalSectionPosition();
 
-    exports com.oracle.javafx.scenebuilder.app;
-    exports com.oracle.javafx.scenebuilder.app.menubar;
-    exports com.oracle.javafx.scenebuilder.app.preferences;
+    /**
+     * Name of the external section
+     * @return a String with the section's name
+     */
+    String getExternalSectionName();
+
+    /**
+     * list of items added to the external section
+     * @return a List of classes for this section
+     */
+    List<Class<?>> getExternalSectionItems();
+
+    /**
+     * path of the FXML resources, relative to the external section provider, where the
+     * FXML files for each item are located
+     * @return a String with the path
+     */
+    String getItemsFXMLPath();
+
+    /**
+     * path of the Icon resources, relative to the external section provider, where the
+     * icons for each item are located
+     * @return a String with the path
+     */
+    String getItemsIconPath();
+
 }

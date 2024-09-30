@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,13 +32,17 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
+import java.util.ServiceLoader;
+
 import javafx.scene.layout.Region;
 
 /**
@@ -47,11 +51,9 @@ import javafx.scene.layout.Region;
  */
 public class BuiltinLibrary extends Library {
 
-    public static final String GLUON_FILE_PREFIX  = "Gluon_";
     // In SB 1.1 the section names of the Library have been localized. We assume
     // for now we stick to this approach, but fact is the support of custom
     // sections could change the rules of the game.
-    public static final String TAG_GLUON          = "Gluon";
     public static final String TAG_CONTAINERS     = "Containers"; //NOI18N
     public static final String TAG_CONTROLS       = "Controls"; //NOI18N
     public static final String TAG_MENU           = "Menu"; //NOI18N
@@ -139,41 +141,6 @@ public class BuiltinLibrary extends Library {
      */
     
     private BuiltinLibrary() {
-        // Gluon
-        addCustomizedItem(com.gluonhq.charm.glisten.control.AppBar.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.AutoCompleteTextField.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.Avatar.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.BottomNavigation.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.BottomNavigationButton.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.CardPane.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.CharmListView.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.Chip.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.control.Dialog.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.DropdownButton.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanel.ExpandedPanel.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.FloatingActionButton.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridLayout.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridRow.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.responsive.grid.GridSpan.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.Icon.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.layout.Layer.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.control.ListTile.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.MenuPopupView.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.MenuSidePopupView.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.NavigationDrawer.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.PopupView.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ProgressBar.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ProgressIndicator.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.SettingsPane.class, TAG_GLUON);
-//        addCustomizedItem(com.gluonhq.charm.glisten.layout.layer.SidePopupView.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.mvc.SplashView.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.TextField.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, TAG_GLUON);
-        addCustomizedItem(com.gluonhq.charm.glisten.mvc.View.class, TAG_GLUON);
-
         // Containers
         addCustomizedItem(javafx.scene.control.Accordion.class, TAG_CONTAINERS);
         addCustomizedItem(javafx.scene.control.Accordion.class, TAG_CONTAINERS,
@@ -311,6 +278,9 @@ public class BuiltinLibrary extends Library {
         addDefaultItem(javafx.scene.ParallelCamera.class, TAG_3D);
         addDefaultItem(javafx.scene.PerspectiveCamera.class, TAG_3D);
         addCustomizedItem(javafx.scene.PointLight.class, TAG_3D);
+
+        // External items
+        addExternalItems();
     }
     
     
@@ -323,8 +293,7 @@ public class BuiltinLibrary extends Library {
         final String fxmlText = makeFxmlText(componentClass);
         addItem(nameWithQualifier.toString(), fxmlText, section, name);
     }
-    
-    
+
     private void addRegionItem200x200(Class<? extends Region> componentClass, String section) {
         addRegionItem200x200(componentClass, section, null);
     }
@@ -384,10 +353,6 @@ public class BuiltinLibrary extends Library {
         if (qualifier != null) {
             nameWithQualifier += qualifier;
         }
-        if (componentClass.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-            fxmlBaseName = GLUON_FILE_PREFIX + fxmlBaseName;
-            iconName = GLUON_FILE_PREFIX + iconName;
-        }
         final String fxmlText = readCustomizedFxmlText(fxmlBaseName, componentClass);
         assert fxmlText != null;
         addItem(nameWithQualifier, fxmlText, section, iconName);
@@ -399,8 +364,38 @@ public class BuiltinLibrary extends Library {
         final LibraryItem item = new LibraryItem(name, section, fxmlText, iconURL, this);
         getItems().add(item);
     }
-    
-    
+
+    private void addExternalItems() {
+        Collection<ExternalSectionProvider> providers = getExternalItemProviders();
+        List<String> orderedSections = BuiltinSectionComparator.getOrderedSections();
+        for (ExternalSectionProvider provider : providers) {
+            for (Class<?> item : provider.getExternalSectionItems()) {
+                String nameWithQualifier = item.getSimpleName();
+                URL resourceUrl = provider.getClass().getResource(provider.getItemsFXMLPath() + "/" + nameWithQualifier + ".fxml");
+                assert resourceUrl != null;
+                final String fxmlText = readFxmlURL(resourceUrl);
+                assert fxmlText != null;
+                URL iconURL = provider.getClass().getResource(provider.getItemsIconPath() + "/" + nameWithQualifier + ".png");
+                assert iconURL != null;
+                final LibraryItem libraryItem = new LibraryItem(nameWithQualifier, provider.getExternalSectionName(), fxmlText, iconURL, this);
+                getItems().add(libraryItem);
+            }
+            int position = provider.getExternalSectionPosition();
+            if (position < 0 || position >= orderedSections.size()) {
+                orderedSections.add(provider.getExternalSectionName());
+            } else {
+                orderedSections.add(provider.getExternalSectionPosition(), provider.getExternalSectionName());
+            }
+        }
+    }
+
+    private Collection<ExternalSectionProvider> getExternalItemProviders() {
+        ServiceLoader<ExternalSectionProvider> loader = ServiceLoader.load(ExternalSectionProvider.class);
+        Collection<ExternalSectionProvider> providers = new ArrayList<>();
+        loader.iterator().forEachRemaining(providers::add);
+        return providers;
+    }
+
     private static String makeRegionFxmlText(Class<? extends Region> componentClass,
             double pw, double ph) {
         final StringBuilder sb = new StringBuilder();
@@ -434,28 +429,25 @@ public class BuiltinLibrary extends Library {
         
         return sb.toString();
     }
-    
-    
+
     private String readCustomizedFxmlText(String fxmlBaseName, Class<?> componentClass) {
-        
-        final StringBuilder fxmlPath = new StringBuilder();
-        fxmlPath.append("builtin/"); //NOI18N
-        fxmlPath.append(fxmlBaseName);
-        fxmlPath.append(".fxml"); //NOI18N
-        
-        final URL fxmlURL = BuiltinLibrary.class.getResource(fxmlPath.toString());
+        String fxmlPath = "builtin/" + fxmlBaseName + ".fxml"; //NOI18N
+        final URL fxmlURL = BuiltinLibrary.class.getResource(fxmlPath);
         assert fxmlURL != null : "fxmlBaseName=" + fxmlBaseName; //NOI18N
+        return readFxmlURL(fxmlURL);
+    }
+
+    private String readFxmlURL(URL fxmlURL) {
         final String result;
-        
+
         try {
             result = FXOMDocument.readContentFromURL(fxmlURL);
-        } catch(IOException x) {
+        } catch (IOException x) {
             throw new IllegalStateException("Bug in " + getClass().getSimpleName(), x); //NOI18N
-        } catch(NullPointerException ex) {
-            System.out.println("fxmlPath =  " + fxmlPath);
-            throw  ex;
+        } catch (NullPointerException ex) {
+            System.out.println("fxmlURL =  " + fxmlURL);
+            throw ex;
         }
-        
         return result;
     }
 }

@@ -29,33 +29,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-module com.gluonhq.scenebuilder.app {
-    requires javafx.web;
-    requires javafx.fxml;
-    requires javafx.media;
-    requires javafx.swing;
+module com.gluonhq.scenebuilder.plugins {
     requires transitive com.gluonhq.scenebuilder.kit;
-    requires transitive com.gluonhq.scenebuilder.plugins;
     requires java.logging;
-    requires java.prefs;
-    requires javax.json.api;
 
-    opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.i18n to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.menubar to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.message to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.preferences to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.registration to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.report to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.tracking to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.util to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.welcomedialog;
+    requires com.gluonhq.charm.glisten;
+    requires com.gluonhq.attach.display;
 
-    uses com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider;
+    opens com.gluonhq.scenebuilder.plugins.editor.images.nodeicons to com.gluonhq.scenebuilder.kit;
+    opens com.gluonhq.scenebuilder.plugins.library.builtin to com.gluonhq.scenebuilder.kit;
 
-    exports com.oracle.javafx.scenebuilder.app;
-    exports com.oracle.javafx.scenebuilder.app.menubar;
-    exports com.oracle.javafx.scenebuilder.app.preferences;
+    provides com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider with com.gluonhq.scenebuilder.plugins.GluonSectionProvider;
+
+    exports com.gluonhq.scenebuilder.plugins;
 }

@@ -13,6 +13,7 @@
     <modules>
         <module>kit</module>
         <module>app</module>
+        <module>plugins</module>
     </modules>
 
     <properties>

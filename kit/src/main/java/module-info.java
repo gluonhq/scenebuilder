@@ -141,6 +141,7 @@ module com.gluonhq.scenebuilder.kit {
     opens com.oracle.javafx.scenebuilder.kit.util.eventnames to javafx.fxml;
 
     provides com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProvider with com.oracle.javafx.scenebuilder.kit.i18n.spi.I18NResourcesProviderImpl;
+    uses com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider;
 
     exports com.oracle.javafx.scenebuilder.kit;
     exports com.oracle.javafx.scenebuilder.kit.alert;

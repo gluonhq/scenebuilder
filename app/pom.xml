@@ -26,6 +26,11 @@
             <artifactId>kit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.gluonhq.scenebuilder</groupId>
+            <artifactId>plugins</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
     <build>
