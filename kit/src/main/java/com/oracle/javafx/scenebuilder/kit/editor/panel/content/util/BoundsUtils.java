@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,7 +43,11 @@ import javafx.scene.Node;
  *
  */
 public class BoundsUtils {
-    
+
+    BoundsUtils() {
+        // no-op
+    }
+
     public static Bounds makeBounds(Point2D p1, Point2D p2) {
         return new BoundingBox(
                 Math.min(p1.getX(), p2.getX()),

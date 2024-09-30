@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -56,7 +57,11 @@ import java.util.Map;
  * 
  */
 public class ErrorReport {
-    
+
+    public ErrorReport() {
+        // no-op
+    }
+
     private final Map<FXOMNode, List<ErrorReportEntry>> entries = new HashMap<>();
     private final Map<Path, CSSParsingReport> cssParsingReports = new HashMap<>();
     private FXOMDocument fxomDocument;

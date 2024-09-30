@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -78,6 +79,10 @@ public class PaintPickerController {
             = new LinearGradient(0.0, 0.0, 1.0, 1.0, true, CycleMethod.NO_CYCLE);
     public final static RadialGradient DEFAULT_RADIAL
             = new RadialGradient(0.0, 0.0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE);
+
+    public PaintPickerController() {
+        // no-op
+    }
 
     public final ObjectProperty<Paint> paintProperty() {
         return paint;

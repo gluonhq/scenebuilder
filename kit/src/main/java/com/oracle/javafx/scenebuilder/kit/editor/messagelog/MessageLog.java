@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -46,7 +47,11 @@ import javafx.beans.property.SimpleIntegerProperty;
  *
  */
 public class MessageLog {
-    
+
+    public MessageLog() {
+        // no-op
+    }
+
     private final List<MessageLogEntry> entries = new ArrayList<>();
     private final SimpleIntegerProperty revision = new SimpleIntegerProperty();
     private final SimpleIntegerProperty numOfWarningMessages = new SimpleIntegerProperty();

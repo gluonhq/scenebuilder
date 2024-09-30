@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -70,7 +70,10 @@ import javafx.scene.media.MediaView;
  */
 public class FXOMNodes {
     
-    
+    FXOMNodes() {
+        // no-op
+    }
+
     /**
      * Sorts the specified set of objects according their location in
      * the fxom document. Objets are sorted according depth first order.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2024 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -51,6 +51,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+
 /**
  *
  */
@@ -61,6 +62,10 @@ public class AppPlatform {
     private static String messageBoxFolder;
     private static String logsFolder;
     private static MessageBox<MessageBoxMessage> messageBox;
+
+    AppPlatform() {
+        // no-op
+    }
 
     public static synchronized String getApplicationDataFolder() {
         return getApplicationDataFolder(OS.get());
@@ -121,8 +126,6 @@ public class AppPlatform {
         }
         return userLibraryFolder;
     }
-
-    
     
     /**
      * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
@@ -161,7 +164,6 @@ public class AppPlatform {
         public void handleMessageBoxFailure(Exception x);
         public void handleQuitAction();
     }
-    
     
     /*
      * Private (requestStartGeneric)
@@ -202,7 +204,6 @@ public class AppPlatform {
                 throw new IOException(x);
             }
         }
-        
         return result;
     }
     
