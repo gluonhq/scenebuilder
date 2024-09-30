@@ -447,7 +447,7 @@ public class EditorPlatform {
 		                        "The command to reval the file exited with an error (exitValue=%s).\nCommand: %s\nWorking Dir: %s"
 		                        .formatted(Integer.toString(exitValue), cmdLine, wDir));
 		            } else {
-		                LOGGER.log(Level.INFO, "Successfully executed command: {0} in {1}", new Object[] {cmdLine, wDir});
+		                LOGGER.log(Level.FINE, "Successfully executed command: {0} in {1}", new Object[] {cmdLine, wDir});
 		            }
 		        } catch (RuntimeException ex) {
 		            LOGGER.log(Level.SEVERE, "Unknown error during attempt to run: {0} in {1}", new Object[] {cmdLine, wDir});
