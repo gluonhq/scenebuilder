@@ -29,5 +29,4 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --win-dir-chooser ^
 --win-menu ^
 --win-menu-group "Scene Builder" ^
---win-per-user-install ^
 --win-shortcut
