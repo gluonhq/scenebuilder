@@ -70,7 +70,7 @@ jobs:
         env:
           APP_VERSION: ${{ inputs.app-version }}
 
-      - name: Create Bundle using JPackage
+      - name: Create per-user Bundle using JPackage
         shell: cmd
         run: |
           call .github\scripts\jpackage.bat
@@ -84,6 +84,21 @@ jobs:
           APP_VERSION: ${{ inputs.app-version }}
           INSTALL_DIR: app\target\install
 
+      - name: Create per-machine Bundle using JPackage
+        shell: cmd
+        run: |
+          call .github\scripts\jpackage-per-machine.bat
+          call ren ${{ env.INSTALL_DIR }}\SceneBuilder-${{ env.APP_VERSION }}.msi SceneBuilder-per-machine-${{ env.PROJECT_VERSION }}.msi
+          call dir ${{ env.INSTALL_DIR }}
+        env:
+          MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
+          JAVAFX_HOME: D:\javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          PROJECT_VERSION: ${{ inputs.project-version }}
+          APP_VERSION: ${{ inputs.app-version }}
+          INSTALL_DIR: app\target\install
+
+
       - name: Codesign
         uses: erwin1/code-sign-action@master
         if: false
@@ -93,8 +108,14 @@ jobs:
           certificatename: '${{ secrets.WINDOWS_CERTNAME }}'
           folder: 'app/target/install'
 
-      - name: Upload Artifact
+      - name: Upload Artifact (per user)
         uses: actions/upload-artifact@v4
         with:
           name: SceneBuilder-${{ inputs.project-version }}.msi
+          path: app/target/install/*.msi
+
+      - name: Upload Artifact (per machine)
+        uses: actions/upload-artifact@v4
+        with:
+          name: SceneBuilder-per-machine-${{ inputs.project-version }}.msi
           path: app/target/install/*.msi
