@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -49,6 +50,10 @@ import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
  * No need to use a job in this case as the undo action will remove the new added FXOM object.
  */
 public class JobUtils {
+
+    private JobUtils() {
+        // no-op
+    }
 
     public static void addColumnConstraints(
             final FXOMDocument fxomDocument,

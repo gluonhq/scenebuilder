@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -43,7 +44,11 @@ import javafx.beans.property.SimpleIntegerProperty;
 public abstract class Glossary {
     
     private final SimpleIntegerProperty revision = new SimpleIntegerProperty();
-    
+
+    Glossary() {
+        // no-op
+    }
+
     /**
      * Returns candidate controller classes tracked by this glossary.
      * If fxmlLocation is not null, this glossary may use it to filter the 

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -40,7 +41,11 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
  *
  */
 public abstract class AbstractDropTarget {
-    
+
+    AbstractDropTarget() {
+        // no-op
+    }
+
     public abstract FXOMObject getTargetObject();
     public abstract boolean acceptDragSource(AbstractDragSource dragSource);
     public abstract Job makeDropJob(AbstractDragSource dragSource, EditorController editorController);

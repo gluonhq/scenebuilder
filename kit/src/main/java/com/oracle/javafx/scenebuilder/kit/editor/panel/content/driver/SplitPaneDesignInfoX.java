@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,6 +45,9 @@ import javafx.scene.control.SplitPane;
  */
 public class SplitPaneDesignInfoX  {
 
+    public SplitPaneDesignInfoX() {
+        // no-op
+    }
 
     /**
      * Convert from local coordinates to divider position coordinates (0-1).

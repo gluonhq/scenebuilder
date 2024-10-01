@@ -20,6 +20,10 @@ See the [documentation](http://docs.gluonhq.com/scenebuilder/) about the new fea
 
 For community support, go to [StackOverflow](https://stackoverflow.com/questions/tagged/scenebuilder).
 
+### Requirements on Linux ###
+
+On Linux systems, Scene Builder uses the `xdg-open` command to reveal files in the system's default file system browser or to open URLs in the default web browser. Most modern Linux Desktop Environments already provide the [xdg-utils](https://freedesktop.org/wiki/Software/xdg-utils/) package. If it is missing, it can be installed using the respective Linux package management tool such as `yum`, `apt-get`, `dnf` or `pacman`. The `xdg-utils` package is usually available on KDE based systems, some Arch based systems may require manual installations.
+
 ## Issues and Contributions ##
 
 Issues can be reported to the [Issue tracker](https://github.com/gluonhq/scenebuilder/issues/)
@@ -35,7 +39,7 @@ Gluon Scene Builder is frequently released, and this is only required in case yo
 
 These are the requisites:
 
-* A recent version of [JDK 11 or later](https://www.oracle.com/technetwork/java/javase/downloads/index.html) for building 'master' branch
+* A recent version of [JDK 21 or later](https://www.oracle.com/technetwork/java/javase/downloads/index.html) for building 'master' branch
 * A recent version of [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for building '8u-dev' branch
 
 ### How to build Scene Builder ###
@@ -110,3 +114,4 @@ There will be a report for each sub-project, one for `app` and one for `kit`.
 * Kit: `kit/target/site/checkstyle.html`
 * App: `app/target/site/checkstyle.html`
 
+This project makes use of [EditorConfig](https://editorconfig.org/) which is [directly supported](https://editorconfig.org/#pre-installed) by IntelliJ IDEA. There are plugins for NetBeans, Eclipse and Visual Studio and [more](https://editorconfig.org/#download). EditorConfig ensures via configuration in `.editorconfig` file, that the proper indentation is used.

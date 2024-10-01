@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -46,6 +46,10 @@ import java.util.List;
 public class PaintConvertUtil {
 
     private static final int ROUNDING_FACTOR = 10000;//Use for round to 4 decimal places
+
+    PaintConvertUtil() {
+        // no-op
+    }
 
     public static String convertPaintToCss(Paint fxPaint) {
         if (fxPaint instanceof LinearGradient) {

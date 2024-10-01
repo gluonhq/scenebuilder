@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,6 +35,7 @@ package com.oracle.javafx.scenebuilder.app;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.FileBrowserRevealException;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import javafx.stage.FileChooser;
 
@@ -46,7 +47,7 @@ import java.util.ResourceBundle;
 /**
  *
  */
-class ResourceController {
+public class ResourceController {
 
     private final DocumentWindowController documentWindowController;
     private File resourceFile;
@@ -97,10 +98,11 @@ class ResourceController {
         try {
             EditorPlatform.revealInFileBrowser(resourceFile);
         } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setTitle(I18N.getString("error.file.reveal.title"));
-            errorDialog.setMessage(I18N.getString("error.file.reveal.message"));
-            errorDialog.setDetails(I18N.getString("error.filesystem.details"));
+            final ErrorDialog errorDialog = new ErrorDialog(documentWindowController.getStage());
+            errorDialog.setTitle(I18N.getString("alert.error.file.reveal.title"));
+            errorDialog.setMessage(I18N.getString("alert.error.file.reveal.message"));
+            errorDialog.setDetails(I18N.getString("alert.error.file.reveal.details", resourceFile));
+            errorDialog.setDetailsTitle(I18N.getString("alert.error.file.reveal.details.title"));
             errorDialog.setDebugInfoWithThrowable(ioe);
             errorDialog.showAndWait();
         }

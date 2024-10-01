@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -52,7 +53,11 @@ import javafx.scene.layout.GridPane;
  * 
  */
 public class Selection {
-    
+
+    public Selection() {
+        // no-op
+    }
+
     private AbstractSelectionGroup group;
     private final SimpleIntegerProperty revision = new SimpleIntegerProperty();
     private boolean lock;

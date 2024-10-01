@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -47,6 +47,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.EditAction;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.FileBrowserRevealException;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssPanelController;
@@ -94,6 +95,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -183,6 +186,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         CANCELLED,
         DONE
     }
+    
+    private static final Logger LOGGER = Logger.getLogger(DocumentWindowController.class.getName());
     
     private final EditorController editorController = new EditorController();
     private final MenuBarController menuBarController = new MenuBarController(this);
@@ -1035,6 +1040,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     public static class TitleComparator implements Comparator<DocumentWindowController> {
 
+        public TitleComparator() {
+            // no-op
+        }
+
         @Override
         public int compare(DocumentWindowController d1, DocumentWindowController d2) {
             final int result;
@@ -1467,14 +1476,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     @FXML
     void onLibraryRevealCustomFolder(ActionEvent event) {
         String userLibraryPath = ((UserLibrary) getEditorController().getLibrary()).getPath();
+        
+        // ensure that there is no mixup of forward and backward slashes.
+        File libraryPath = Paths.get(userLibraryPath).normalize().toFile();
         try {
-            EditorPlatform.revealInFileBrowser(new File(userLibraryPath));
-        } catch(IOException x) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setMessage(I18N.getString("alert.reveal.failure.message", getStage().getTitle()));
-            errorDialog.setDetails(I18N.getString("alert.reveal.failure.details"));
-            errorDialog.setDebugInfoWithThrowable(x);
-            errorDialog.showAndWait();
+            EditorPlatform.revealInFileBrowser(libraryPath);
+        } catch (Exception revealError) {
+            handleRevealFolderException(revealError, String.valueOf(libraryPath));
         }
     }
     
@@ -2185,25 +2193,32 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         return closeConfirmed ? ActionStatus.DONE : ActionStatus.CANCELLED;
     }
     
-    
     private void performRevealAction() {
         assert editorController.getFxomDocument() != null;
         assert editorController.getFxomDocument().getLocation() != null;
-        
+
         final URL location = editorController.getFxomDocument().getLocation();
-        
+
+        File fxmlFile = null;
         try {
-            final File fxmlFile = new File(location.toURI());
+            /*
+             * Using Path.normalize().toAbsolutePath() ensures that forward and backward slashes are not mixed
+             * and the path matches the platform requirements. It also ensures, that the file:/ prefix is
+             * removed from paths and users can directly use the path in their attempt to investigate the error.
+             */
+            fxmlFile = Path.of(location.toURI()).normalize().toAbsolutePath().toFile();
+        } catch (URISyntaxException e) {
+            handleRevealResourceException(e, String.valueOf(location));
+        }
+
+        try {
             EditorPlatform.revealInFileBrowser(fxmlFile);
-        } catch(IOException | URISyntaxException x) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setMessage(I18N.getString("alert.reveal.failure.message", getStage().getTitle()));
-            errorDialog.setDetails(I18N.getString("alert.reveal.failure.details"));
-            errorDialog.setDebugInfoWithThrowable(x);
-            errorDialog.showAndWait();
+        } catch (FileBrowserRevealException re) {
+            handleRevealFileException(re, String.valueOf(fxmlFile));
+        } catch (IOException x) {
+            handleRevealResourceException(x, String.valueOf(fxmlFile));
         }
     }
-    
     
     private void updateLoadFileTime() {
         
@@ -2275,17 +2290,64 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     private void openURL(String url) {
         try {
+            LOGGER.log(Level.FINE, "Attempting to open URL: {0}", url);
             EditorPlatform.open(url);
         } catch (IOException ioe) {
-            handleErrorWhenOpeningURL(ioe, url);
+            LOGGER.log(Level.WARNING, "Error during attempt to open URL!", ioe);
+            handleRevealResourceException(ioe, url);
         }
     }
 
-    private void handleErrorWhenOpeningURL(IOException ioe, String url) {
-        final ErrorDialog errorDialog = new ErrorDialog(null);
-        errorDialog.setMessage(I18N.getString("alert.help.failure.message", url));
-        errorDialog.setDetails(I18N.getString("alert.messagebox.failure.details"));
-        errorDialog.setDebugInfoWithThrowable(ioe);
+    /**
+     * When an FXML file is to be revealed and an error occurs, the file and the error are displayed in this dialog.
+     * The error type and its details are displayed within the details window. The dialog itself only 
+     * notifies that there was an error.
+     * 
+     * @param fileRevealException {@link FileBrowserRevealException}
+     * @param locationToBeRevealed {@link String}
+     */
+    private void handleRevealFileException(FileBrowserRevealException fileRevealException, String locationToBeRevealed) {
+        final ErrorDialog errorDialog = new ErrorDialog(this.getStage());
+        errorDialog.setTitle(I18N.getString("alert.error.file.reveal.title"));
+        errorDialog.setMessage(I18N.getString("alert.error.file.reveal.message"));
+        errorDialog.setDetails(I18N.getString("alert.error.file.reveal.details", locationToBeRevealed));
+        errorDialog.setDetailsTitle(I18N.getString("alert.error.file.reveal.details.title"));
+        errorDialog.setDebugInfoWithThrowable(fileRevealException);
+        errorDialog.showAndWait();
+    }
+
+    /**
+     * 
+     * Resources may be related to files included with Scene Builder or with arbitrary files (e.g. CSS sheets)
+     * co-located to a given FXML file. In case of an error opening a resource, a custom dialog is shown.
+     * 
+     * @param revealException {@link Exception}
+     * @param locationToBeRevealed {@link String}
+     */
+    private void handleRevealResourceException(Exception revealException, String locationToBeRevealed) {
+        final ErrorDialog errorDialog = new ErrorDialog(this.getStage());
+        errorDialog.setTitle(I18N.getString("alert.error.resource.reveal.title"));
+        errorDialog.setMessage(I18N.getString("alert.error.resource.reveal.message"));
+        errorDialog.setDetails(I18N.getString("alert.error.resource.reveal.details", locationToBeRevealed));
+        errorDialog.setDetailsTitle(I18N.getString("alert.error.resource.reveal.details.title"));
+        errorDialog.setDebugInfoWithThrowable(revealException);
+        errorDialog.showAndWait();
+    }
+
+    /**
+     * 
+     * In some cases the resource to be revealed or opened is a directory. Hence the UI dialog should reflect this.
+     * 
+     * @param revealException {@link Exception}
+     * @param directoryToBeRevealed {@link String}
+     */
+    private void handleRevealFolderException(Exception revealException, String directoryToBeRevealed) {
+        final ErrorDialog errorDialog = new ErrorDialog(this.getStage());
+        errorDialog.setTitle(I18N.getString("alert.error.directory.reveal.title"));
+        errorDialog.setMessage(I18N.getString("alert.error.directory.reveal.message"));
+        errorDialog.setDetails(I18N.getString("alert.error.directory.reveal.details", directoryToBeRevealed));
+        errorDialog.setDetailsTitle(I18N.getString("alert.error.directory.reveal.details.title"));
+        errorDialog.setDebugInfoWithThrowable(revealException);
         errorDialog.showAndWait();
     }
 

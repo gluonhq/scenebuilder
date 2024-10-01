@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -36,7 +37,11 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.guides;
  *
  */
 public abstract class AbstractSegment implements Comparable<AbstractSegment> {
-    
+
+    AbstractSegment() {
+        // no-op
+    }
+
     public abstract double getX1();
     public abstract double getY1();
     public abstract double getX2();
