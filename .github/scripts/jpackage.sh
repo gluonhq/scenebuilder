@@ -5,7 +5,7 @@ $JAVA_HOME/bin/jlink \
 --module-path $JAVAFX_HOME \
 --add-modules $jdeps_modules,$JAVAFX_MODULES \
 --output app/target/runtime \
---strip-debug --compress 2 --no-header-files --no-man-pages
+--strip-debug --compress zip-9 --no-header-files --no-man-pages
 
 $JPACKAGE_HOME/bin/jpackage \
 --app-version $APP_VERSION \
