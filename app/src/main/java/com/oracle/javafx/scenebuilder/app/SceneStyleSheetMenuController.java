@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -102,10 +103,11 @@ public class SceneStyleSheetMenuController {
         try {
             EditorPlatform.open(toOpen.getPath());
         } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
+            final ErrorDialog errorDialog = new ErrorDialog(documentWindowController.getStage());
             errorDialog.setTitle(I18N.getString("error.file.open.title"));
-            errorDialog.setMessage(I18N.getString("error.file.open.message"));
+            errorDialog.setMessage(I18N.getString("error.file.open.message", toOpen));
             errorDialog.setDetails(I18N.getString("error.filesystem.details"));
+            errorDialog.setDetailsTitle(I18N.getString("error.file.open.title"));
             errorDialog.setDebugInfoWithThrowable(ioe);
             errorDialog.showAndWait();
         }
