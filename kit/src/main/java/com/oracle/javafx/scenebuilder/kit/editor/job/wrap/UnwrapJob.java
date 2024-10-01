@@ -316,38 +316,40 @@ public class UnwrapJob extends BatchSelectionJob {
         for (FXOMObject child : children) {
             assert child.getSceneGraphObject() instanceof Node;
 
-            final Node childNode = (Node) child.getSceneGraphObject();
-            final double currentLayoutX = childNode.getLayoutX();
-            final double currentLayoutY = childNode.getLayoutY();
-
             // Modify child LAYOUT bounds
-            if (newContainerMask.isFreeChildPositioning()) {
-                final Point2D nextLayoutXY = oldContainerNode.localToParent(
-                        currentLayoutX, currentLayoutY);
-
-                final ModifyObjectJob modifyLayoutX = WrapJobUtils.modifyObjectJob(
-                        (FXOMInstance) child, "layoutX", nextLayoutXY.getX(), getEditorController());
-                jobs.add(modifyLayoutX);
-                final ModifyObjectJob modifyLayoutY = WrapJobUtils.modifyObjectJob(
-                        (FXOMInstance) child, "layoutY", nextLayoutXY.getY(), getEditorController());
-                jobs.add(modifyLayoutY);
-            } else {
-                final ModifyObjectJob modifyLayoutX = WrapJobUtils.modifyObjectJob(
-                        (FXOMInstance) child, "layoutX", 0.0, getEditorController());
-                jobs.add(modifyLayoutX);
-                final ModifyObjectJob modifyLayoutY = WrapJobUtils.modifyObjectJob(
-                        (FXOMInstance) child, "layoutY", 0.0, getEditorController());
-                jobs.add(modifyLayoutY);
-            }
-
-            // Remove static properties from child
             if (child instanceof FXOMInstance) {
-                final FXOMInstance fxomInstance = (FXOMInstance) child;
-                for (FXOMProperty p : fxomInstance.getProperties().values()) {
-                    final Class<?> residentClass = p.getName().getResidenceClass();
-                    if (residentClass != null
-                            && residentClass != newContainer.getDeclaredClass()) {
-                        jobs.add(new RemovePropertyJob(p, getEditorController()));
+                final Node childNode = (Node) child.getSceneGraphObject();
+                final double currentLayoutX = childNode.getLayoutX();
+                final double currentLayoutY = childNode.getLayoutY();
+
+                if (newContainerMask.isFreeChildPositioning()) {
+                    final Point2D nextLayoutXY = oldContainerNode.localToParent(
+                            currentLayoutX, currentLayoutY);
+
+                    final ModifyObjectJob modifyLayoutX = WrapJobUtils.modifyObjectJob(
+                            (FXOMInstance) child, "layoutX", nextLayoutXY.getX(), getEditorController());
+                    jobs.add(modifyLayoutX);
+                    final ModifyObjectJob modifyLayoutY = WrapJobUtils.modifyObjectJob(
+                            (FXOMInstance) child, "layoutY", nextLayoutXY.getY(), getEditorController());
+                    jobs.add(modifyLayoutY);
+                } else {
+                    final ModifyObjectJob modifyLayoutX = WrapJobUtils.modifyObjectJob(
+                            (FXOMInstance) child, "layoutX", 0.0, getEditorController());
+                    jobs.add(modifyLayoutX);
+                    final ModifyObjectJob modifyLayoutY = WrapJobUtils.modifyObjectJob(
+                            (FXOMInstance) child, "layoutY", 0.0, getEditorController());
+                    jobs.add(modifyLayoutY);
+                }
+
+                // Remove static properties from child
+                if (child instanceof FXOMInstance) {
+                    final FXOMInstance fxomInstance = (FXOMInstance) child;
+                    for (FXOMProperty p : fxomInstance.getProperties().values()) {
+                        final Class<?> residentClass = p.getName().getResidenceClass();
+                        if (residentClass != null
+                                && residentClass != newContainer.getDeclaredClass()) {
+                            jobs.add(new RemovePropertyJob(p, getEditorController()));
+                        }
                     }
                 }
             }
