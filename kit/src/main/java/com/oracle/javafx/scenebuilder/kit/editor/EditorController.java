@@ -2332,12 +2332,13 @@ public class EditorController {
         assert includedFile != null; // Because of (1)
         try {
             EditorPlatform.open(includedFile.getAbsolutePath());
-        } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setTitle(I18N.getString("error.file.open.title"));
-            errorDialog.setMessage(I18N.getString("error.file.open.message", 
-                    includedFile.getAbsolutePath()));
-            errorDialog.setDebugInfoWithThrowable(ioe);
+        } catch (IOException re) {
+            final ErrorDialog errorDialog = new ErrorDialog(this.ownerWindow);
+            errorDialog.setTitle(I18N.getString("alert.error.file.open.title"));
+            errorDialog.setMessage(I18N.getString("alert.error.file.open.edit.message"));
+            errorDialog.setDetails(I18N.getString("alert.error.file.reveal.details", includedFile.getAbsolutePath()));
+            errorDialog.setDetailsTitle(I18N.getString("alert.error.file.open.edit.details.title"));
+            errorDialog.setDebugInfoWithThrowable(re);
             errorDialog.showAndWait();
         }
     }
@@ -2349,11 +2350,11 @@ public class EditorController {
         try {
             EditorPlatform.revealInFileBrowser(includedFile);
         } catch (IOException ioe) {
-            final ErrorDialog errorDialog = new ErrorDialog(null);
-            errorDialog.setTitle(I18N.getString("error.file.reveal.title"));
-            errorDialog.setMessage(I18N.getString("error.file.reveal.message",
-                    includedFile.getAbsolutePath()));
-            errorDialog.setDetails(I18N.getString("error.write.details"));
+            final ErrorDialog errorDialog = new ErrorDialog(this.ownerWindow);
+            errorDialog.setTitle(I18N.getString("alert.error.file.reveal.title"));
+            errorDialog.setMessage(I18N.getString("alert.error.file.reveal.message"));
+            errorDialog.setDetails(I18N.getString("alert.error.file.reveal.details", includedFile.getAbsolutePath()));
+            errorDialog.setDetailsTitle(I18N.getString("alert.error.file.reveal.details.title"));
             errorDialog.setDebugInfoWithThrowable(ioe);
             errorDialog.showAndWait();
         }

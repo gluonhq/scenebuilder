@@ -20,6 +20,10 @@ See the [documentation](http://docs.gluonhq.com/scenebuilder/) about the new fea
 
 For community support, go to [StackOverflow](https://stackoverflow.com/questions/tagged/scenebuilder).
 
+### Requirements on Linux ###
+
+On Linux systems, Scene Builder uses the `xdg-open` command to reveal files in the system's default file system browser or to open URLs in the default web browser. Most modern Linux Desktop Environments already provide the [xdg-utils](https://freedesktop.org/wiki/Software/xdg-utils/) package. If it is missing, it can be installed using the respective Linux package management tool such as `yum`, `apt-get`, `dnf` or `pacman`. The `xdg-utils` package is usually available on KDE based systems, some Arch based systems may require manual installations.
+
 ## Issues and Contributions ##
 
 Issues can be reported to the [Issue tracker](https://github.com/gluonhq/scenebuilder/issues/)

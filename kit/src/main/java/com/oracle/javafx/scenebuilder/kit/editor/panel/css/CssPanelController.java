@@ -46,6 +46,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssValuePresenterFact
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.NodeCssState.CssProperty;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Item;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Path;
@@ -107,6 +108,8 @@ import javafx.util.Duration;
  *
  */
 public class CssPanelController extends AbstractFxmlPanelController {
+    
+    private static final Logger LOGGER = Logger.getLogger(CssPanelController.class.getName());
 
     @FXML
     private StackPane cssPanelHost;
@@ -1449,7 +1452,14 @@ public class CssPanelController extends AbstractFxmlPanelController {
                             EditorPlatform.revealInFileBrowser(f);
                         }
                     } catch (URISyntaxException | IOException ex) {
-                        System.out.println(ex.getMessage() + ": " + ex);
+                        LOGGER.log(Level.SEVERE, "An unexpected error occured!", ex);
+                        final ErrorDialog errorDialog = new ErrorDialog(editorController.getOwnerWindow());
+                        errorDialog.setTitle(I18N.getString("alert.error.file.reveal.title"));
+                        errorDialog.setMessage(I18N.getString("alert.error.file.reveal.message"));
+                        errorDialog.setDetails(I18N.getString("alert.error.file.reveal.details", path));
+                        errorDialog.setDetailsTitle(I18N.getString("alert.error.file.reveal.details.title"));
+                        errorDialog.setDebugInfoWithThrowable(ex);
+                        errorDialog.showAndWait();
                     }
                 }
             } else {
