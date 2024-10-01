@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,8 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy;
+package com.gluonhq.scenebuilder.plugins.hierarchy;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -51,17 +52,17 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
     /**
      * Creates a hierarchy item.
      *
-     * @param owner The accessory owner
+     * @param owner      The accessory owner
      * @param fxomObject The FX object represented by this item
+     * @param accessory  The accessory
      */
-    public HierarchyItemExpandedPanel(
-            final DesignHierarchyMask owner,
-            final FXOMObject fxomObject) {
+    public HierarchyItemExpandedPanel(final DesignHierarchyMask owner,
+        final FXOMObject fxomObject, DesignHierarchyMask.Accessory accessory) {
         assert owner != null;
         this.owner = owner;
         // fxomObject can be null for place holder items
         this.mask = fxomObject == null ? null : new DesignHierarchyMask(fxomObject);
-        this.accessory = DesignHierarchyMask.Accessory.EX_CONTENT;
+        this.accessory = accessory;
     }
 
     @Override
@@ -74,11 +75,11 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
         }
         final HierarchyItemExpandedPanel item = (HierarchyItemExpandedPanel) obj;
         if (!isEmpty()) {
-            // If the place holder is not empty, we compare the fxom object
+            // If the placeholder is not empty, we compare the fxom object
             assert getFxomObject() != null;
             return getFxomObject().equals(item.getFxomObject());
         } else {
-            // If the place holder is empty, we compare the accessory + owner
+            // If the placeholder is empty, we compare the accessory + owner
             return getOwner().equals(item.getOwner())
                     && getAccessory().equals(item.getAccessory());
         }
@@ -94,7 +95,7 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
     }
 
     @Override
-    public boolean isPlaceHolder() {
+    public boolean isPlaceholder() {
         return true;
     }
 
@@ -122,13 +123,13 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
     }
 
     @Override
-    public Image getPlaceHolderImage() {
+    public Image getPlaceholderImage() {
         return ImageUtils.getNodeIcon("CustomNode.png");
     }
 
     @Override
-    public String getPlaceHolderInfo() {
-        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + accessory.toString().toUpperCase(Locale.getDefault()));
+    public String getPlaceholderInfo() {
+        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert", accessory.toString().toUpperCase(Locale.ROOT)));
     }
 
     @Override

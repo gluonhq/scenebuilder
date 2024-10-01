@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,8 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy;
+package com.gluonhq.scenebuilder.plugins.hierarchy;
 
+import com.gluonhq.scenebuilder.plugins.GluonDesignHierarchyMaskProvider;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -76,11 +78,11 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
         }
         final HierarchyItemExpansionPanel item = (HierarchyItemExpansionPanel) obj;
         if (!isEmpty()) {
-            // If the place holder is not empty, we compare the fxom object
+            // If the placeholder is not empty, we compare the fxom object
             assert getFxomObject() != null;
             return getFxomObject().equals(item.getFxomObject());
         } else {
-            // If the place holder is empty, we compare the accessory + owner
+            // If the placeholder is empty, we compare the accessory + owner
             return getOwner().equals(item.getOwner())
                     && getAccessory().equals(item.getAccessory());
         }
@@ -96,7 +98,7 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
     }
 
     @Override
-    public boolean isPlaceHolder() {
+    public boolean isPlaceholder() {
         return true;
     }
 
@@ -124,13 +126,13 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
     }
 
     @Override
-    public Image getPlaceHolderImage() {
-        return ImageUtils.getNodeIcon("Gluon_ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png");
+    public Image getPlaceholderImage() {
+        return ImageUtils.getImage(GluonDesignHierarchyMaskProvider.class.getResource("editor/images/nodeicons/ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png"));
     }
 
     @Override
-    public String getPlaceHolderInfo() {
-        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + accessory.name().toUpperCase(Locale.getDefault()));
+    public String getPlaceholderInfo() {
+        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert", accessory.name().toUpperCase(Locale.ROOT)));
     }
 
     @Override

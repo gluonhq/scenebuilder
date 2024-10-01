@@ -56,7 +56,6 @@ import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPathComparator;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 
 import javafx.scene.Scene;
-import javafx.scene.control.SelectionMode;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -6190,14 +6189,16 @@ public class Metadata {
         subSectionMap.put("Code", ss2);
     }
 
+    private final Collection<ExternalMetadataProvider> externalMetadataProviders = getExternalMetadataProviders();
+
     private void addExternalMetadata() {
-        Collection<ExternalMetadataProvider> providers = getExternalMetadataProviders();
-        for (ExternalMetadataProvider provider : providers) {
-            for (ComponentClassMetadata item : provider.getItems()) {
+        for (ExternalMetadataProvider provider : externalMetadataProviders) {
+            for (ComponentClassMetadata item : provider.getExternalItems()) {
                 componentClassMap.put(item.getKlass(), item);
             }
         }
     }
+
     private Collection<ExternalMetadataProvider> getExternalMetadataProviders() {
         ServiceLoader<ExternalMetadataProvider> loader = ServiceLoader.load(ExternalMetadataProvider.class);
         Collection<ExternalMetadataProvider> providers = new ArrayList<>();

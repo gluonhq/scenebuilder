@@ -46,6 +46,7 @@ import javafx.scene.control.SelectionMode;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.oracle.javafx.scenebuilder.kit.metadata.Metadata.ButtonBaseMetadata;
 import static com.oracle.javafx.scenebuilder.kit.metadata.Metadata.ControlMetadata;
@@ -78,23 +79,24 @@ public class GluonMetadataProvider implements ExternalMetadataProvider {
     private final ComponentClassMetadata ToggleButtonGroupMetadata =
         new ComponentClassMetadata(com.gluonhq.charm.glisten.control.ToggleButtonGroup.class, ControlMetadata);
 
+    private static final PropertyName actionItemsName = new PropertyName("actionItems");
+    private static final PropertyName togglesName = new PropertyName("toggles");
+    private static final PropertyName titleNodesName = new PropertyName("titleNodes");
+    private static final PropertyName optionsName = new PropertyName("options");
+    private static final PropertyName itemsName = new PropertyName("items");
+
     public GluonMetadataProvider() {
         // Property Names
-        final PropertyName actionItemsName = new PropertyName("actionItems");
         final PropertyName bottomNavigationTypeName = new PropertyName("type");
         final PropertyName buttonsName = new PropertyName("buttons");
         final PropertyName collapsedContentName = new PropertyName("collapsedContent");
         final PropertyName contentName = new PropertyName("content");
         final PropertyName expandedContentName = new PropertyName("expandedContent");
         final PropertyName expandedName = new PropertyName("expanded");
-        final PropertyName itemsName = new PropertyName("items");
         final PropertyName onPullToRefreshName = new PropertyName("onPullToRefresh");
-        final PropertyName optionsName = new PropertyName("options");
         final PropertyName searchBoxVisibleName = new PropertyName("searchBoxVisible");
         final PropertyName selectionTypeName = new PropertyName("selectionType");
         final PropertyName titleFilterName = new PropertyName("titleFilter");
-        final PropertyName titleNodesName = new PropertyName("titleNodes");
-        final PropertyName togglesName = new PropertyName("toggles");
 
         // Property Metadata
         final ComponentPropertyMetadata actionItems_Node_PropertyMetadata =
@@ -225,12 +227,30 @@ public class GluonMetadataProvider implements ExternalMetadataProvider {
     }
 
     @Override
-    public List<ComponentClassMetadata> getItems() {
+    public List<ComponentClassMetadata> getExternalItems() {
         return Arrays.asList(BottomNavigationMetadata, CardPaneMetadata,
             CollapsedPanelMetadata, DropdownButtonMetadata,
             ExpandedPanelMetadata, ExpansionPanelContainerMetadata,
             ExpansionPanelMetadata, OptionMetadata,
             SettingsPaneMetadata, ToggleButtonGroupMetadata);
+    }
 
+    @Override
+    public Optional<PropertyName> getExternalSubComponentProperty(Class<?> componentClass) {
+        PropertyName result = null;
+        if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
+            result = actionItemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.CardPane.class ||
+            componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class ||
+            componentClass == com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class) {
+            result = itemsName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ToggleButtonGroup.class) {
+            result = togglesName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class) {
+            result = titleNodesName;
+        } else if (componentClass == com.gluonhq.charm.glisten.control.SettingsPane.class) {
+            result = optionsName;
+        }
+        return Optional.ofNullable(result);
     }
 }

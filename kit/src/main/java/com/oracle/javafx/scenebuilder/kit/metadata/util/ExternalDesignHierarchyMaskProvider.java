@@ -31,14 +31,50 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public interface ExternalDesignHierarchyMaskProvider {
 
     /**
-     * list of items that their design mask deserves a
-     * resizing while used as top element of the layout
+     * List of external classes that their design mask should not
+     * resize while used as top element of the layout
      * @return a List of classes
      */
-    List<Class<?>> getResizableItems();
+    List<Class<?>> getExternalNonResizableItems();
+
+    /**
+     * List of external accessories
+     * @return a list with external accessories
+     */
+    List<DesignHierarchyMask.Accessory> getExternalAccessories();
+
+    /**
+     * Returns a predicate for a given accessory, that takes an object
+     * and returns true or false based on a given condition
+     * @param accessory the accessory
+     * @return a predicate to test an object
+     */
+    Predicate<Object> isExternalAccepting(DesignHierarchyMask.Accessory accessory);
+
+    /**
+     * Returns a map with external accessories as keys, and biFunctions that generate a valid HierarchyItem (or subclass)
+     * given a mask and an FXOM object, that can be inserted in the Hierarchy Tree, as values for those keys.
+     * @return a map of accessories and biFunctions to generate HierarchyItems
+     */
+    Map<DesignHierarchyMask.Accessory, BiFunction<DesignHierarchyMask, FXOMObject, HierarchyItem>> getExternalHierarchyItemGeneratorMap();
+
+    /**
+     * If the hierarchyItem object matches a given condition, gets an optional of the external accessory
+     * for such object, else returns empty
+     * @param hierarchyItem the HierarchyItem object
+     * @return an optional with an accessory or empty
+     */
+    Optional<DesignHierarchyMask.Accessory> getExternalAccessoryForHierarchyItem(HierarchyItem hierarchyItem);
 }

@@ -32,8 +32,10 @@
 package com.oracle.javafx.scenebuilder.kit.metadata;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ExternalMetadataProvider {
 
@@ -41,5 +43,13 @@ public interface ExternalMetadataProvider {
      * list of items added to the metadata
      * @return a List of classes
      */
-    List<ComponentClassMetadata> getItems();
+    List<ComponentClassMetadata> getExternalItems();
+
+    /**
+     * Returns an optional with a propertyName for an external component class, if any,
+     * or empty
+     * @param componentClass the class
+     * @return an optional with a propertyName or empty
+     */
+    Optional<PropertyName> getExternalSubComponentProperty(Class<?> componentClass);
 }

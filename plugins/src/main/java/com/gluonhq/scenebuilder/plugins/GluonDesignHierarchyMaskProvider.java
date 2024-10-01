@@ -35,20 +35,78 @@ import com.gluonhq.charm.glisten.control.BottomNavigation;
 import com.gluonhq.charm.glisten.control.DropdownButton;
 import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.gluonhq.charm.glisten.control.ToggleButtonGroup;
+import com.gluonhq.scenebuilder.plugins.hierarchy.HierarchyItemExpandedPanel;
+import com.gluonhq.scenebuilder.plugins.hierarchy.HierarchyItemExpansionPanel;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchyMaskProvider {
 
+    // ExpansionPanel
+    private static final DesignHierarchyMask.Accessory EXPANDED_CONTENT =
+        new DesignHierarchyMask.Accessory("EXPANDED_CONTENT", new PropertyName("expandedContent"), javafx.scene.Node.class, o -> true);
+    private static final DesignHierarchyMask.Accessory COLLAPSED_CONTENT =
+        new DesignHierarchyMask.Accessory("COLLAPSED_CONTENT", new PropertyName("collapsedContent"), javafx.scene.Node.class, o -> true);
+    // ExpansionPanel.ExpandedPanel
+    private static final DesignHierarchyMask.Accessory EX_CONTENT =
+        new DesignHierarchyMask.Accessory("CONTENT", new PropertyName("content"), javafx.scene.Node.class, o -> true);
+
     @Override
-    public List<Class<?>> getResizableItems() {
-        return Arrays.asList(
-            ExpansionPanel.ExpandedPanel.class,
-            DropdownButton.class,
+    public List<Class<?>> getExternalNonResizableItems() {
+        return List.of(
             BottomNavigation.class,
+            DropdownButton.class,
             ExpansionPanel.CollapsedPanel.class,
+            ExpansionPanel.ExpandedPanel.class,
             ToggleButtonGroup.class);
+    }
+
+    @Override
+    public List<DesignHierarchyMask.Accessory> getExternalAccessories() {
+        return List.of(EXPANDED_CONTENT, COLLAPSED_CONTENT, EX_CONTENT);
+    }
+
+    @Override
+    public Predicate<Object> isExternalAccepting(DesignHierarchyMask.Accessory accessory) {
+        if (accessory == DesignHierarchyMask.Accessory.CONTENT || accessory == DesignHierarchyMask.Accessory.GRAPHIC ||
+            accessory == DesignHierarchyMask.Accessory.DP_CONTENT || accessory == DesignHierarchyMask.Accessory.DP_GRAPHIC) {
+            // For these accessories, we accept every object except an ExpandedPanel
+            return o -> !(o instanceof ExpansionPanel.ExpandedPanel);
+        } else if (accessory == EX_CONTENT) {
+            // For this accessory, we accept only an ExpandedPanel
+            return o -> o instanceof ExpansionPanel.ExpandedPanel;
+        } else if (accessory == DesignHierarchyMask.Accessory.EXPANDABLE_CONTENT || accessory == COLLAPSED_CONTENT) {
+            // For these accessories, we accept only an ExpansionPanel
+            return o -> o instanceof ExpansionPanel;
+        }
+        return o -> true;
+    }
+
+    @Override
+    public Map<DesignHierarchyMask.Accessory, BiFunction<DesignHierarchyMask, FXOMObject, HierarchyItem>> getExternalHierarchyItemGeneratorMap() {
+        return Map.of(
+            EXPANDED_CONTENT, (mask, fxom) -> new HierarchyItemExpansionPanel(mask, fxom, EXPANDED_CONTENT),
+            COLLAPSED_CONTENT, (mask, fxom) -> new HierarchyItemExpansionPanel(mask, fxom, COLLAPSED_CONTENT),
+            EX_CONTENT, (mask, fxom) -> new HierarchyItemExpandedPanel(mask, fxom, EX_CONTENT)
+        );
+    }
+
+    @Override
+    public Optional<DesignHierarchyMask.Accessory> getExternalAccessoryForHierarchyItem(HierarchyItem hierarchyItem) {
+        if (hierarchyItem instanceof HierarchyItemExpandedPanel expandedPanel) {
+            return Optional.of(expandedPanel.getAccessory());
+        } else if (hierarchyItem instanceof HierarchyItemExpansionPanel expansionPanel) {
+            return Optional.of(expansionPanel.getAccessory());
+        }
+        return Optional.empty();
     }
 }

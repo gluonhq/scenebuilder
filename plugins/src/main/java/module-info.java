@@ -37,6 +37,7 @@ module com.gluonhq.scenebuilder.plugins {
     requires com.gluonhq.attach.display;
 
     opens com.gluonhq.scenebuilder.plugins.editor.images.nodeicons to com.gluonhq.scenebuilder.kit;
+    opens com.gluonhq.scenebuilder.plugins.hierarchy to com.gluonhq.scenebuilder.kit;
     opens com.gluonhq.scenebuilder.plugins.library.builtin to com.gluonhq.scenebuilder.kit;
 
     provides com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider with com.gluonhq.scenebuilder.plugins.GluonSectionProvider;

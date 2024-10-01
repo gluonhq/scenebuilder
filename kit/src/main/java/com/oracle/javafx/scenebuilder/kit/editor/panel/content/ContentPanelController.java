@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -1215,7 +1215,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
                     candidates.add(subComponent);
                 }
             }
-            for (DesignHierarchyMask.Accessory a : DesignHierarchyMask.Accessory.values()) {
+            for (DesignHierarchyMask.Accessory a : m.getAccessoryList()) {
                 if (m.isAcceptingAccessory(a)) {
                     final FXOMObject accessoryObject = m.getAccessory(a);
                     if ((accessoryObject != null) && accessoryObject.isNode()) {
