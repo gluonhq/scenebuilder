@@ -39,11 +39,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.scene.Node;
@@ -58,6 +60,8 @@ import javafx.scene.shape.Rectangle;
  */
 public class EditorPlatform {
     
+    private static final Logger LOGGER = Logger.getLogger(EditorPlatform.class.getName());
+    
     public enum OS {
         LINUX, MAC, WINDOWS;
 
@@ -68,6 +72,10 @@ public class EditorPlatform {
 
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
+    static {
+        LOGGER.log(Level.FINE, "Detected Operating System: {0}", osName);
+    }
+    
     /**
      * True if current platform is running Linux.
      */
@@ -210,7 +218,7 @@ public class EditorPlatform {
                         }
                     }
                 } catch (IOException e) {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to get color from stylesheet: ", e);
+                    LOGGER.log(Level.WARNING, "Failed to get color from stylesheet: ", e);
                 }
             }
             return color;
@@ -306,9 +314,10 @@ public class EditorPlatform {
      * 'xdg-open'. On Mac, it runs 'open'. On Windows, it runs 'cmd /c start'.
      *
      * @param path path for the file to be opened
-     * @throws IOException if an error occurs
+     * @throws IOException in case the application called failed to open due to an error.
+     * @throws FileBrowserRevealException in case the application opened indicates an error (unexpected return code).
      */
-    public static void open(String path) throws IOException {
+    public static void open(String path) throws IOException, FileBrowserRevealException {
         List<String> args = new ArrayList<>();
         if (EditorPlatform.IS_MAC) {
             args.add("open"); //NOI18N
@@ -331,21 +340,22 @@ public class EditorPlatform {
         }
 
         if (!args.isEmpty()) {
-            executeDaemon(args, null);
+            executeDaemon(args, null, 0);
         }
     }
-
+    
     /**
-     * Requests the underlying platform to "reveal" the specified folder. On
-     * Linux, it runs 'nautilus'. On Mac, it runs 'open'. On Windows, it runs
-     * 'explorer /select'.
+     * Requests the underlying platform to open the specified folder in its default file system viewer. This will reveal any file therein.
+     * On Linux, it runs {@code 'xdg-open'}. On Mac, it runs {@code 'open'} and on Windows it runs {@code 'explorer /select'}.
      *
      * @param filePath path for the folder to be revealed
-     * @throws IOException if an error occurs
+     * @throws FileBrowserRevealException This exception allows to catch exits codes != 0 from the called process.
+     * @throws IOException General IOExceptions are thrown by Java System Call Processes in case of an error. 
      */
-    public static void revealInFileBrowser(File filePath) throws IOException {
+    public static void revealInFileBrowser(File filePath) throws IOException, FileBrowserRevealException {
         List<String> args = new ArrayList<>();
-        String path = filePath.toURI().toURL().toExternalForm();
+        String path = Paths.get(filePath.toURI()).normalize().toAbsolutePath().toString();
+        int exitCodeOk = 0;
         if (EditorPlatform.IS_MAC) {
             args.add("open"); //NOI18N
             args.add("-R"); //NOI18N
@@ -353,32 +363,21 @@ public class EditorPlatform {
         } else if (EditorPlatform.IS_WINDOWS) {
             args.add("explorer"); //NOI18N
             args.add("/select," + path); //NOI18N
-        } else if (EditorPlatform.IS_LINUX) {
-            // nautilus does fine on Ubuntu, which is a Debian.
-            // I've no idea how it does with other Linux flavors.
-            args.add("nautilus"); //NOI18N
-            // The nautilus that comes with Ubuntu up to 11.04 included doesn't
-            // take a file path as parameter (you get an error popup), you must
-            // provide a dir path.
-            // Starting with Ubuntu 11.10 (the first based on kernel 3.x) a
-            // file path is well managed.
-            int osVersionNumerical = Integer.parseInt(System.getProperty("os.version").substring(0, 1)); //NOI18N
-            if (osVersionNumerical < 3) {
-                // Case Ubuntu 10.04 to 11.04: What you provide to nautilus is
-                // the name of the directory containing the file you want to see
-                // listed. See DTL-5384.
-                path = filePath.getAbsoluteFile().getParent();
-                if (path == null) {
-                    path = "."; //NOI18N
-                }
+            exitCodeOk = 1;
+        } else if (EditorPlatform.IS_LINUX) {           
+            args.add("xdg-open"); //NOI18N
+            path = filePath.getAbsoluteFile().getParent();
+            if (path == null) {
+                path = "."; //NOI18N
             }
             args.add(path);
         } else {
             // Not Supported
+            LOGGER.log(Level.SEVERE, "Unsupported operating system! Cannot reveal location {0} in file browser.", path);
         }
 
         if (!args.isEmpty()) {
-            executeDaemon(args, null);
+            executeDaemon(args, null, exitCodeOk);
         }
     }
 
@@ -410,18 +409,49 @@ public class EditorPlatform {
     public static boolean isAssertionEnabled() {
         return EditorPlatform.class.desiredAssertionStatus();
     }
-
-    /*
-     * Private
+    
+    /**
+     * Executes a system process using the given cmd list as command line definition within the provided
+     * working directory.
+     * 
+     * @param cmd        Command line definition as {@link List} of {@link String}
+     * @param wDir       Working Directory as {@link File}
+     * @param exitCodeOk Certain applications (e.g. Windows Explorer) do report exit code 1 in case
+     *                   everything is okay. Hence one can configure the expected exit code here.
+     * @throws IOException                Any given runtime exception is collected and re-thrown as
+     *                                    IOException.
+     * 
+     * @throws FileBrowserRevealException This exception is only thrown if the exit code of the command
+     *                                    line call is not 0. This allows to specifically react e.g. to
+     *                                    invalid command line calls or to unsuccessful calls. Not every
+     *                                    cmd call which ends with an error code != 0 is creating an
+     *                                    exception.
      */
-    private static void executeDaemon(List<String> cmd, File wDir) throws IOException {
+    private static void executeDaemon(List<String> cmd, File wDir, int exitCodeOk)
+            throws IOException, FileBrowserRevealException {
+        var cmdLine = cmd.stream().collect(Collectors.joining(" "));
+        long timeoutSec = 5;
         try {
-            ProcessBuilder builder = new ProcessBuilder(cmd);
-            builder = builder.directory(wDir);
-            builder.start();
+            int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
+            if (exitCodeOk != exitValue) {
+                LOGGER.log(Level.SEVERE, "Error during attempt to run: {0} in {1}", new Object[] { cmdLine, wDir });
+                throw new FileBrowserRevealException(
+                        "The command to reval the file exited with an error (exitValue=%s).\nCommand: %s\nWorking Dir: %s"
+                                .formatted(Integer.toString(exitValue), cmdLine, wDir));
+            } else {
+                LOGGER.log(Level.FINE, "Successfully executed command: {0} in {1}", new Object[] { cmdLine, wDir });
+            }
         } catch (RuntimeException ex) {
+            LOGGER.log(Level.SEVERE, "Unknown error during attempt to run: {0} in {1}", new Object[] { cmdLine, wDir });
             throw new IOException(ex);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "Process timeout after {0}s: {1} in {2}",
+                    new Object[] { timeoutSec, cmdLine, wDir });
+            Thread.currentThread().interrupt();
+            String msg = "The command to reval the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
+                    .formatted(cmdLine, wDir, timeoutSec);
+            String detailMsg = msg + "\n" + e.getMessage();
+            throw new IOException(detailMsg);
         }
     }
-
 }

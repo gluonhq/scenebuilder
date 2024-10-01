@@ -65,6 +65,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -910,6 +911,20 @@ public class ContentPanelController extends AbstractFxmlPanelController
         final ContextMenuController contextMenuController
                 = getEditorController().getContextMenuController();
         scrollPane.setContextMenu(contextMenuController.getContextMenu());
+        
+        scrollPane.setOnKeyPressed(e -> {
+        	
+            if (e.getCode() == KeyCode.ESCAPE) {
+                // on ESC we select the parent of current selected item
+                Selection selection = getEditorController().getSelection();
+                FXOMObject parent = selection.getAncestor();
+                
+                if (parent != null) {
+                    selection.clear();
+                    selection.select(parent);
+                }
+            }
+        });
         
         // Setup default workspace background
         setWorkspaceBackground(ImageUtils.getImage(getDefaultWorkspaceBackgroundURL()));
