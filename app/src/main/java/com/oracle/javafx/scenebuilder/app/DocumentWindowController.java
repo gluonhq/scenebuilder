@@ -2381,6 +2381,8 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports",
                                Integer.toString(missingTypes.size())));
         errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+        errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.unresolved.imports",
+                                    Integer.toString(missingTypes.size())));
 
         String allMissing = missingTypes.stream()
                                         .collect(Collectors.joining(";"+System.lineSeparator()));
