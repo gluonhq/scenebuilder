@@ -138,8 +138,6 @@ import javafx.stage.WindowEvent;
  */
 public class DocumentWindowController extends AbstractFxmlWindowController {
 
-    private static final Logger LOGGER = Logger.getLogger(DocumentWindowController.class.getName());
-    
     public enum DocumentControlAction {
         COPY,
         SELECT_ALL,
