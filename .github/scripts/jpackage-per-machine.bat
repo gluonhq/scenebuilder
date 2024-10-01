@@ -7,7 +7,7 @@ set JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
 --module-path %JAVAFX_HOME% ^
 --add-modules %JDEPS_MODULES%,%JAVAFX_MODULES% ^
 --output app/target/runtime ^
---strip-debug --compress zip-9 --no-header-files --no-man-pages
+--strip-debug --compress 2 --no-header-files --no-man-pages
 
 %JPACKAGE_HOME%\bin\jpackage ^
 --app-version %APP_VERSION% ^
