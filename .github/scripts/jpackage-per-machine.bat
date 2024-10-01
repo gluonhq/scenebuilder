@@ -2,7 +2,6 @@ for /F %%i in ('%JAVA_HOME%\bin\jdeps --module-path %JAVAFX_HOME% --print-module
 
 REM jdeps doesn't include JavaFX modules in Windows
 set JAVAFX_MODULES=javafx.fxml,javafx.media,javafx.swing,javafx.web
-REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.jgss,java.sql,java.xml,javafx.fxml,javafx.media,javafx.swing,javafx.web,jdk.unsupported
 
 %JAVA_HOME%\bin\jlink ^
 --module-path %JAVAFX_HOME% ^
