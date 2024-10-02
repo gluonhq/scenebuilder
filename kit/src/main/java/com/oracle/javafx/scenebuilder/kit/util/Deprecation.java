@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,7 +33,6 @@
 package com.oracle.javafx.scenebuilder.kit.util;
 
 import javafx.css.Style;
-import javafx.scene.control.skin.MenuBarSkin;
 import javafx.collections.ObservableMap;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
@@ -55,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
@@ -179,17 +177,6 @@ public class Deprecation {
 
     public static Bounds getGridPaneCellBounds(GridPane gridPane, int c, int r) {
         return gridPane.getCellBounds(c, r);
-    }
-
-    // Returns the corresponding text css (.css) from a binary css (.bss)
-    public static URL getThemeTextStylesheet(String binaryCssUrlStr) {
-        String textCssUrlStr = binaryCssUrlStr.replaceAll(".bss", ".css"); //NOI18N
-        try {
-            return new URL(textCssUrlStr);
-        } catch (MalformedURLException ex) {
-            // should never happen
-            return null;
-        }
     }
 
     // Deprecated as of FX 8 u20, and replaced by new method getTreeItemLevel:
