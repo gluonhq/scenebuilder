@@ -117,39 +117,41 @@ public class EditorPlatform {
     public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = GluonTheme.LIGHT;
 
     interface StylesheetProvider {
-        String getStylesheetURL();
+        List<String> getStylesheetURLs();
     }
 
+    private static final String MODENA_PATH = "com/sun/javafx/scene/control/skin/modena/";
+    private static final String CASPIAN_PATH = "com/sun/javafx/scene/control/skin/caspian/";
     /**
      * Themes supported by Scene Builder Kit.
      */
     public enum Theme implements StylesheetProvider {
         GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.css")),
         GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.css")),
-        MODENA("com/sun/javafx/scene/control/skin/modena/modena.bss"),
-        MODENA_TOUCH("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch.css"),
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-blackOnWhite.css"),
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-whiteOnBlack.css"),
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-highContrast-yellowOnBlack.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-blackOnWhite.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-whiteOnBlack.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK("com/oracle/javafx/scenebuilder/kit/util/css/modena/modena-touch-highContrast-yellowOnBlack.css"),
-        CASPIAN("com/sun/javafx/scene/control/skin/caspian/caspian.bss"),
-        CASPIAN_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-highContrast.css"),
-        CASPIAN_EMBEDDED("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded.css"),
-        CASPIAN_EMBEDDED_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-highContrast.css"),
-        CASPIAN_EMBEDDED_QVGA("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga.css"),
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST("com/oracle/javafx/scenebuilder/kit/util/css/caspian/caspian-embedded-qvga-highContrast.css");
+        MODENA(MODENA_PATH + "modena.css"),
+        MODENA_TOUCH(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css"),
+        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE(MODENA_PATH + "modena.css", MODENA_PATH + "blackOnWhite.css"),
+        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "whiteOnBlack.css"),
+        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "yellowOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "blackOnWhite.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "whiteOnBlack.css"),
+        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "yellowOnBlack.css"),
+        CASPIAN(CASPIAN_PATH + "caspian.css"),
+        CASPIAN_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "highcontrast.css"),
+        CASPIAN_EMBEDDED(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css"),
+        CASPIAN_EMBEDDED_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "highcontrast.css"),
+        CASPIAN_EMBEDDED_QVGA(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css"),
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css", CASPIAN_PATH + "highcontrast.css");
 
-        private String url;
+        private final List<String> urls;
 
-        Theme(String url) {
-            this.url = url;
+        Theme(String... urls) {
+            this.urls = List.of(urls);
         }
 
         @Override
-        public String getStylesheetURL() {
-            return url;
+        public List<String> getStylesheetURLs() {
+            return urls;
         }
 
         @Override
@@ -194,15 +196,15 @@ public class EditorPlatform {
         }
 
         @Override
-        public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".css");
+        public List<String> getStylesheetURLs() {
+            return List.of(GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".css"));
         }
 
         public Color getColor() {
             if (color == null) {
                 URL url = null;
                 try {
-                    url = new URL(getStylesheetURL());
+                    url = new URL(getStylesheetURLs().getFirst());
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
                         String s = reader.readLine();
                         while (s != null) {
@@ -246,8 +248,8 @@ public class EditorPlatform {
         }
 
         @Override
-        public String getStylesheetURL() {
-            return GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css");
+        public List<String> getStylesheetURLs() {
+            return List.of(GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css"));
         }
     }
 
@@ -257,7 +259,7 @@ public class EditorPlatform {
 
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
-        return Theme.MODENA.getStylesheetURL();
+        return Theme.MODENA.getStylesheetURLs().getFirst();
     }
 
     public static String getGluonDocumentStylesheetURL() {
@@ -268,17 +270,17 @@ public class EditorPlatform {
         return theme.toString().startsWith("MODENA");
     }
     
-    public static boolean isModenaBlackonwhite(Theme theme) {
+    public static boolean isModenaBlackOnWhite(Theme theme) {
         return isModena(theme)
                 && theme.toString().contains("BLACK_ON_WHITE");
     }
     
-    public static boolean isModenaWhiteonblack(Theme theme) {
+    public static boolean isModenaWhiteOnBlack(Theme theme) {
         return isModena(theme)
                 && theme.toString().contains("WHITE_ON_BLACK");
     }
     
-    public static boolean isModenaYellowonblack(Theme theme) {
+    public static boolean isModenaYellowOnBlack(Theme theme) {
         return isModena(theme)
                 && theme.toString().contains("YELLOW_ON_BLACK");
     }
