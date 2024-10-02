@@ -2328,15 +2328,15 @@ public class MenuBarController {
                         res = (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST);
                         break;
                     case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
-                        res = EditorPlatform.isModenaBlackonwhite(currentTheme)
+                        res = EditorPlatform.isModenaBlackOnWhite(currentTheme)
                                 && EditorPlatform.isModenaHighContrast(currentTheme);
                         break;
                     case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                        res = EditorPlatform.isModenaWhiteonblack(currentTheme)
+                        res = EditorPlatform.isModenaWhiteOnBlack(currentTheme)
                                 && EditorPlatform.isModenaHighContrast(currentTheme);
                         break;
                     case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                        res = EditorPlatform.isModenaYellowonblack(currentTheme)
+                        res = EditorPlatform.isModenaYellowOnBlack(currentTheme)
                                 && EditorPlatform.isModenaHighContrast(currentTheme);
                         break;
                     case MODENA:

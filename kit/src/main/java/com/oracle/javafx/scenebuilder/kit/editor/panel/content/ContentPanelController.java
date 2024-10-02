@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -1091,8 +1091,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
             final EditorPlatform.Theme theme = getEditorController().getTheme();
             final EditorPlatform.GluonSwatch gluonSwatch = getEditorController().getGluonSwatch();
             final EditorPlatform.GluonTheme gluonTheme = getEditorController().getGluonTheme();
-            final String themeStyleSheet = theme.getStylesheetURL();
-            workspaceController.setThemeStyleSheet(themeStyleSheet, theme, gluonSwatch, gluonTheme);
+            workspaceController.setThemeStyleSheet(theme.getStylesheetURLs(), theme, gluonSwatch, gluonTheme);
         }
     }
     
