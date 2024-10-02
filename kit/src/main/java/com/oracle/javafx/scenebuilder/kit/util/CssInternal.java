@@ -64,6 +64,7 @@ import javafx.css.Selector;
 import javafx.css.Style;
 import javafx.css.Stylesheet;
 import javafx.css.CssParser;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -150,10 +151,10 @@ public class CssInternal {
 
     public static List<String> getThemeStyleClasses(Theme theme) {
         Set<String> themeClasses = new HashSet<>();
-        // For Theme css, we need to get the text css (.css) to be able to parse it.
-        // (instead of the default binary format .bss)
-        theme.getStylesheetURLs().forEach(themeStyleSheet ->
-            themeClasses.addAll(getStyleClasses(Deprecation.getThemeTextStylesheet(themeStyleSheet))));
+        theme.getStylesheetURLs().forEach(themeStyleSheet -> {
+            URL resource = Button.class.getResource("/" + themeStyleSheet);
+            themeClasses.addAll(getStyleClasses(resource));
+        });
         return new ArrayList<>(themeClasses);
     }
 

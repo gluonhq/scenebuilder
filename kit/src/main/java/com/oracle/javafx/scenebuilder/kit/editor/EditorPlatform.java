@@ -139,9 +139,9 @@ public class EditorPlatform {
         CASPIAN(CASPIAN_PATH + "caspian.css"),
         CASPIAN_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "highcontrast.css"),
         CASPIAN_EMBEDDED(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css"),
-        CASPIAN_EMBEDDED_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded", CASPIAN_PATH + "highcontrast.css"),
-        CASPIAN_EMBEDDED_QVGA(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded", CASPIAN_PATH + "embedded-qvga.css"),
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded", CASPIAN_PATH + "embedded-qvga", CASPIAN_PATH + "highcontrast.css");
+        CASPIAN_EMBEDDED_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "highcontrast.css"),
+        CASPIAN_EMBEDDED_QVGA(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css"),
+        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css", CASPIAN_PATH + "highcontrast.css");
 
         private final List<String> urls;
 
