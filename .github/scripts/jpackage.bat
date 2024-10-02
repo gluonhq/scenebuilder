@@ -8,7 +8,7 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --module-path %JAVAFX_HOME% ^
 --add-modules %JDEPS_MODULES%,%JAVAFX_MODULES% ^
 --output app/target/runtime ^
---strip-debug --compress zip-9 --no-header-files --no-man-pages
+--strip-debug --compress zip-6 --no-header-files --no-man-pages
 
 %JPACKAGE_HOME%\bin\jpackage ^
 --app-version %APP_VERSION% ^
