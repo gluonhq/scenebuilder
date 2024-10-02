@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -273,7 +273,7 @@ public final class PreviewWindowController extends AbstractWindowController {
             // => we must wrap the code into a Runnable object and call the Platform.runLater
             Platform.runLater(() -> {
                 final FXOMDocument fxomDocument = editorController.getFxomDocument();
-                String themeStyleSheetString = null;
+                List<String> themeStyleSheetsString = null;
                 if (fxomDocument != null) {
                     // We clone the FXOMDocument
                     FXOMDocument clone;
@@ -290,7 +290,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     }
 
                     Object sceneGraphRoot = clone.getDisplayNodeOrSceneGraphRoot();
-                    themeStyleSheetString = editorControllerTheme.getStylesheetURL();
+                    themeStyleSheetsString = editorControllerTheme.getStylesheetURLs();
 
                     if (sceneGraphRoot instanceof Parent) {
                         ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
@@ -341,16 +341,17 @@ public final class PreviewWindowController extends AbstractWindowController {
                 }
 
                 getScene().setRoot(getRoot());
-                if (themeStyleSheetString != null) {
+                if (themeStyleSheetsString != null) {
                     String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-                    String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURL();
-                    String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURL();
+                    String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURLs().getFirst();
+                    String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURLs().getFirst();
                     if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
                         ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
-
-                        if (!newStylesheets.contains(themeStyleSheetString)) {
-                            newStylesheets.add(themeStyleSheetString);
-                        }
+                        themeStyleSheetsString.forEach(themeStyleSheetString -> {
+                            if (!newStylesheets.contains(themeStyleSheetString)) {
+                                newStylesheets.add(themeStyleSheetString);
+                            }
+                        });
                         if (!newStylesheets.contains(gluonDocumentStylesheet)) {
                             newStylesheets.add(gluonDocumentStylesheet);
                         }
@@ -360,16 +361,14 @@ public final class PreviewWindowController extends AbstractWindowController {
                         if (!newStylesheets.contains(gluonThemeStylesheet)) {
                             newStylesheets.add(gluonThemeStylesheet);
                         }
-                        getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURL());
+                        getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURLs().getFirst());
                         getScene().getStylesheets().clear();
                         getScene().getStylesheets().addAll(newStylesheets);
                     } else {
-                        String gluonStylesheet = Theme.GLUON_MOBILE_LIGHT.getStylesheetURL();
-                        getScene().setUserAgentStylesheet(themeStyleSheetString);
-                        getScene().getStylesheets().remove(gluonStylesheet);
-                        getScene().getStylesheets().remove(gluonDocumentStylesheet);
-                        getScene().getStylesheets().remove(gluonSwatchStylesheet);
-                        getScene().getStylesheets().remove(gluonThemeStylesheet);
+                        getScene().setUserAgentStylesheet(themeStyleSheetsString.getFirst());
+                        ObservableList<String> newStylesheets = FXCollections.observableArrayList(themeStyleSheetsString);
+                        getScene().getStylesheets().clear();
+                        getScene().getStylesheets().addAll(newStylesheets);
                     }
                 }
                 updateWindowSize();
