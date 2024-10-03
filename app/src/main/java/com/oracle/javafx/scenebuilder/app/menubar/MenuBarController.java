@@ -431,6 +431,8 @@ public class MenuBarController {
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
 
+    private DocumentControlActionController previewController;
+
     static {
         if (EditorPlatform.IS_MAC) {
             modifier = KeyCombination.META_DOWN;
@@ -442,6 +444,12 @@ public class MenuBarController {
 
     public MenuBarController(DocumentWindowController documentWindowController) {
         this.documentWindowController = documentWindowController;
+    }
+
+    public void showPreview() {
+        if (previewController != null && previewController.canPerform()) {
+            previewController.perform();
+        }
     }
 
     public MenuBar getMenuBar() {
@@ -1036,7 +1044,10 @@ public class MenuBarController {
         /*
          * Preview menu
          */
-        showPreviewInWindowMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_WINDOW));
+        if (null == previewController) {
+            previewController = new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_WINDOW); 
+        }
+        showPreviewInWindowMenuItem.setUserData(previewController);
         showPreviewInWindowMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.P, modifier));
         showPreviewInDialogMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_DIALOG));
         caspianHighContrastThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST));
