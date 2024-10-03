@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,6 +44,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +55,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
@@ -81,10 +83,12 @@ public class FXOMDocument {
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
     private int updateDepth;
+    private final List<String> unresolvableImportTypes = new ArrayList<>();
 
     private boolean hasGluonControls;
     
     private List<Class<?>> initialDeclaredClasses;
+
     
     /**
      * Creates a new {@link FXOMDocument} from given FXML source. Depending on the
@@ -102,12 +106,13 @@ public class FXOMDocument {
      *                    (e.g. enforcing normalization)
      * @throws IOException when the fxmlText cannot be loaded
      */
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, FXOMDocumentSwitch... switches) throws IOException {
+    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources,
+                        FXOMDocumentSwitch... switches) throws IOException {
         this.glue = new GlueDocument(fxmlText);
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
-        initialDeclaredClasses = new ArrayList<>();
+        this.initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
             Set<FXOMDocumentSwitch> availableSwitches = Set.of(switches);
@@ -116,7 +121,7 @@ public class FXOMDocument {
                 fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
             }
             final FXOMLoader loader = new FXOMLoader(this);
-            loader.load(fxmlTextToLoad);
+            loader.load(fxmlTextToLoad, switches);
             if (availableSwitches.contains(FXOMDocumentSwitch.NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
@@ -129,6 +134,32 @@ public class FXOMDocument {
         }
 
         hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
+    }
+
+    /**
+     * Adds the name of a class or a name space which could not be resolved by
+     * FXMLLoader.
+     * 
+     * @param unresolvableImportType A class name from an import which is
+     *                               effectively not known to the FXMLLoader (the
+     *                               type is generally not known to the JVM).
+     */
+    public void addUnresolvableType(String unresolvableImportType) {
+        this.unresolvableImportTypes.add(unresolvableImportType);
+    }
+
+    /**
+     * If there were unresolved FXML import statements, affected fully qualified
+     * type names are provided here.
+     * 
+     * @return List of unresolved FXML import type names.
+     */
+    public List<String> getUnresolvableTypes() {
+        return this.unresolvableImportTypes;
+    }
+    
+    public boolean hasUnresolvableTypes() {
+        return !this.unresolvableImportTypes.isEmpty();
     }
         
     public FXOMDocument() {
@@ -489,6 +520,13 @@ public class FXOMDocument {
     }
     
     /**
+     * When true, then there are import statements with unknown types (not on classpath).
+     */
+    protected boolean hasUnresolvableImports() {
+        return !this.unresolvableImportTypes.isEmpty();
+    }
+    
+    /**
      * Depending on where the {@link FXOMDocument} shall be used, 
      * it is necessary to configure the {@link FXOMDocument} creation process.
      * The switches here can be used to configure the creation process in the desired way.
@@ -506,6 +544,44 @@ public class FXOMDocument {
          * configuration. One possible example here is the option to use the MacOS
          * system menu bar.
          */
-        FOR_PREVIEW;
+        FOR_PREVIEW,
+        
+        /**
+         * This flag ensures that the {@link FXOMLoader} preserves imports which were
+         * not resolvable by {@link FXMLLoader}. This behavior is controlled using
+         * Preferences-API.
+         */
+        PRESERVE_UNRESOLVED_IMPORTS;
+        
+        /**
+         * Creates a new array holding the set of existing switches including the new
+         * switch.
+         * 
+         * @param existingSwitches Array (usually var args) with existing values.
+         * @param newSwitch        New option to be added to the whole set.
+         * @return Array of unique FXOMDocumentSwitch items consisting of the given
+         *         existing switches and the new one.
+         */
+        public static FXOMDocumentSwitch[] combined(FXOMDocumentSwitch[] existingSwitches,
+                                                    FXOMDocumentSwitch newSwitch) {
+            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
+            options.addAll(Set.of(existingSwitches));
+            return options.toArray(new FXOMDocumentSwitch[0]);
+        }
+        
+        /**
+         * When the toggle is true, then a single item array is created.
+         * 
+         * @param toggle Any element, e.g. item/switch from Scene Builder preferences.
+         * @return When the toggle is true, then a single item array is created,
+         *         otherwise the resulting array will be empty.
+         */
+        public FXOMDocumentSwitch[] fromToggle(boolean toggle) {
+            if (toggle) {
+                return new FXOMDocumentSwitch[] {this};
+            } else {
+                return new FXOMDocumentSwitch[0];
+            }
+        }
     }
 }
