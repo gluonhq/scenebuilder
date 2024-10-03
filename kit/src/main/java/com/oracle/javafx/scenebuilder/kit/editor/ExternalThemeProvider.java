@@ -38,15 +38,51 @@ import java.util.function.Consumer;
 
 public interface ExternalThemeProvider {
 
+    /**
+     * Gets a list of possible themes from an external plugin
+     *
+     * @return list of themes
+     */
     List<EditorPlatform.Theme> getExternalThemes();
 
+    /**
+     * Gets a list of possible stylesheets from an external plugin
+     *
+     * @return a list of stylesheets
+     */
     List<String> getExternalStylesheets();
 
+    /**
+     * Verifies if a given text (either from a class name or an FXML file) contains
+     * package names of classes from a given plugin
+     *
+     * @param text the text to check
+     * @return true if the text contains package names from a plugin
+     */
     boolean hasClassFromExternalPlugin(String text);
 
+    /**
+     * If controls from an external plugin are added, but the current theme doesn't support those,
+     * it shows an alert that the theme from the plugin needs to be activated
+     *
+     * @param owner the stage that will own the alert
+     * @param currentTheme the current theme
+     * @param onSuccess if alert button is accepted, the external plugin will be applied
+     */
     void showThemeAlert(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess);
 
+    /**
+     * When a jar is imported as custom library, but there is a plugin with such
+     * jar, an alert is shown
+     *
+     * @param owner the stage that will own the alert
+     */
     void showImportAlert(Stage owner);
 
+    /**
+     * Returns a link to the javadoc URL of the plugin
+     *
+     * @return a valid link to javadoc
+     */
     String getExternalJavadocURL();
 }
