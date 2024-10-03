@@ -36,13 +36,17 @@ module com.gluonhq.scenebuilder.plugins {
     requires com.gluonhq.charm.glisten;
     requires com.gluonhq.attach.display;
 
+    opens com.gluonhq.scenebuilder.plugins.css;
     opens com.gluonhq.scenebuilder.plugins.editor.images.nodeicons to com.gluonhq.scenebuilder.kit;
     opens com.gluonhq.scenebuilder.plugins.hierarchy to com.gluonhq.scenebuilder.kit;
     opens com.gluonhq.scenebuilder.plugins.library.builtin to com.gluonhq.scenebuilder.kit;
 
+    provides com.oracle.javafx.scenebuilder.kit.editor.ExternalThemeProvider with com.gluonhq.scenebuilder.plugins.GluonExternalThemeProvider;
     provides com.oracle.javafx.scenebuilder.kit.library.ExternalSectionProvider with com.gluonhq.scenebuilder.plugins.GluonSectionProvider;
     provides com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider with com.gluonhq.scenebuilder.plugins.GluonMetadataProvider;
     provides com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider with com.gluonhq.scenebuilder.plugins.GluonDesignHierarchyMaskProvider;
 
     exports com.gluonhq.scenebuilder.plugins;
+    exports com.gluonhq.scenebuilder.plugins.editor;
+    exports com.gluonhq.scenebuilder.plugins.alert;
 }

@@ -60,19 +60,6 @@
             <version>3.3.9</version>
         </dependency>
 
-        <!-- Gluon Charm Glisten -->
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-glisten</artifactId>
-            <version>${charm.glisten.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.gluonhq.attach</groupId>
-            <artifactId>display</artifactId>
-            <version>${gluon.attach.version}</version>
-            <classifier>desktop</classifier>
-        </dependency>
-
         <!-- Rest API -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

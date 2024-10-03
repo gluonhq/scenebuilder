@@ -64,6 +64,7 @@ import javafx.css.Selector;
 import javafx.css.Style;
 import javafx.css.Stylesheet;
 import javafx.css.CssParser;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -77,22 +78,23 @@ public class CssInternal {
         // no-op
     }
 
-    private final static String[] themeUrls = {
-        Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST.getStylesheetURL(),
-        Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylesheetURL(),
-        Theme.CASPIAN_EMBEDDED_QVGA.getStylesheetURL(),
-        Theme.CASPIAN_EMBEDDED.getStylesheetURL(),
-        Theme.CASPIAN_HIGH_CONTRAST.getStylesheetURL(),
-        Theme.CASPIAN.getStylesheetURL(),
-        Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURL(),
-        Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURL(),
-        Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURL(),
-        Theme.MODENA.getStylesheetURL(),
-        Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURL(),
-        Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURL(),
-        Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURL(),
-        Theme.MODENA_TOUCH.getStylesheetURL()
-    };
+    private final static List<String> themeUrls;
+    static {
+        themeUrls = new ArrayList<>(Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST.getStylesheetURLs());
+        themeUrls.addAll(Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylesheetURLs());
+        themeUrls.addAll(Theme.CASPIAN_EMBEDDED_QVGA.getStylesheetURLs());
+        themeUrls.addAll(Theme.CASPIAN_EMBEDDED.getStylesheetURLs());
+        themeUrls.addAll(Theme.CASPIAN_HIGH_CONTRAST.getStylesheetURLs());
+        themeUrls.addAll(Theme.CASPIAN.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURLs());
+        themeUrls.addAll(Theme.MODENA_TOUCH.getStylesheetURLs());
+    }
 
     /**
      * Check if the input style is from a theme stylesheet (caspian or modena).
@@ -106,12 +108,12 @@ public class CssInternal {
 
     public static boolean isCaspianTheme(Style style) {
         return style.getDeclaration().getRule().getStylesheet().getUrl()
-                .endsWith(Theme.CASPIAN.getStylesheetURL());
+                .endsWith(Theme.CASPIAN.getStylesheetURLs().getFirst());
     }
 
     public static boolean isModenaTheme(Style style) {
         return style.getDeclaration().getRule().getStylesheet().getUrl()
-                .endsWith(Theme.MODENA.getStylesheetURL());
+                .endsWith(Theme.MODENA.getStylesheetURLs().getFirst());
     }
 
     public static String getThemeDisplayName(Style style) {
@@ -148,11 +150,11 @@ public class CssInternal {
     }
 
     public static List<String> getThemeStyleClasses(Theme theme) {
-        String themeStyleSheet = theme.getStylesheetURL();
         Set<String> themeClasses = new HashSet<>();
-        // For Theme css, we need to get the text css (.css) to be able to parse it.
-        // (instead of the default binary format .bss)
-        themeClasses.addAll(getStyleClasses(Deprecation.getThemeTextStylesheet(themeStyleSheet)));
+        theme.getStylesheetURLs().forEach(themeStyleSheet -> {
+            URL resource = Button.class.getResource("/" + themeStyleSheet);
+            themeClasses.addAll(getStyleClasses(resource));
+        });
         return new ArrayList<>(themeClasses);
     }
 

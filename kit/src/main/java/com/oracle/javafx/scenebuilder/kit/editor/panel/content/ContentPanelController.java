@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -90,9 +89,6 @@ import javafx.stage.Window;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SceneDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.WindowDriver;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
@@ -192,23 +188,11 @@ public class ContentPanelController extends AbstractFxmlPanelController
         this.pickModeController = new PickModeController(this);
         this.workspaceController = new WorkspaceController(editorController);
         
-        editorController.getDragController().dragSourceProperty().addListener((ChangeListener<AbstractDragSource>) (ov, t, t1) -> dragSourceDidChange()
-        );
-        
-        editorController.getDragController().dropTargetProperty().addListener((ChangeListener<AbstractDropTarget>) (ov, t, t1) -> dropTargetDidChange()
-        );
-        
-        editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> themeDidChange()
-        );
-
-        editorController.gluonSwatchProperty().addListener(((observable, oldValue, newValue) -> themeDidChange()));
-
-        editorController.gluonThemeProperty().addListener(((observable, oldValue, newValue) -> themeDidChange()));
-        
-        editorController.sceneStyleSheetProperty().addListener((ListChangeListener<File>) change -> sceneStyleSheetsDidChange()
-        );
-        editorController.pickModeEnabledProperty().addListener((ChangeListener<Boolean>) (ov, t, t1) -> pickModeDidChange()
-        );
+        editorController.getDragController().dragSourceProperty().addListener((ov, t, t1) -> dragSourceDidChange());
+        editorController.getDragController().dropTargetProperty().addListener((ov, t, t1) -> dropTargetDidChange());
+        editorController.themeProperty().addListener((ov, t, t1) -> themeDidChange());
+        editorController.sceneStyleSheetProperty().addListener((ListChangeListener<File>) change -> sceneStyleSheetsDidChange());
+        editorController.pickModeEnabledProperty().addListener((ov, t, t1) -> pickModeDidChange());
     }
 
     /**
@@ -1089,13 +1073,11 @@ public class ContentPanelController extends AbstractFxmlPanelController
     private void themeDidChange() {
         if (contentGroup != null) {
             final EditorPlatform.Theme theme = getEditorController().getTheme();
-            final EditorPlatform.GluonSwatch gluonSwatch = getEditorController().getGluonSwatch();
-            final EditorPlatform.GluonTheme gluonTheme = getEditorController().getGluonTheme();
-            final String themeStyleSheet = theme.getStylesheetURL();
-            workspaceController.setThemeStyleSheet(themeStyleSheet, theme, gluonSwatch, gluonTheme);
+            List<String> themeStylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
+            themeStylesheets.addAll(theme.getStylesheetURLs());
+            workspaceController.setThemeStyleSheet(themeStylesheets, theme);
         }
     }
-    
     
     private void sceneStyleSheetsDidChange() {
         if (contentGroup != null) {

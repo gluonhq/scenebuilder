@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -13,7 +13,7 @@
  *  - Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
+ *  - Neither the name of Gluon nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
@@ -29,7 +29,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.oracle.javafx.scenebuilder.kit.editor;
 
-@import "com/sun/javafx/scene/control/skin/modena/modena.css";
-@import "com/sun/javafx/scene/control/skin/modena/touch.css";
-@import "com/sun/javafx/scene/control/skin/modena/whiteOnBlack.css";
+import javafx.stage.Stage;
+
+import java.util.List;
+import java.util.function.Consumer;
+
+public interface ExternalThemeProvider {
+
+    List<EditorPlatform.Theme> getExternalThemes();
+
+    List<String> getExternalStylesheets();
+
+    boolean hasClassFromExternalPlugin(String text);
+
+    void showThemeAlert(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess);
+
+    void showImportAlert(Stage owner);
+
+    String getExternalJavadocURL();
+}

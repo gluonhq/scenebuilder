@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014, Oracle and/or its affiliates.
+ * Copyright (c) 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,7 +30,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.gluonhq.scenebuilder.plugins.i18n;
 
-@import "com/sun/javafx/scene/control/skin/caspian/caspian.css";
-@import "com/sun/javafx/scene/control/skin/caspian/embedded.css";
-@import "com/sun/javafx/scene/control/skin/caspian/embedded-qvga.css";
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
+
+/**
+ *
+ */
+public class I18N {
+    
+    private static ResourceBundle bundle;
+
+    I18N() {
+        // no-op
+    }
+
+    public static String getString(String key) {
+        return getBundle().getString(key);
+    }
+    
+    public static String getString(String key, Object... arguments) {
+        final String pattern = getString(key);
+        return MessageFormat.format(pattern, arguments);
+    }
+    
+    public static synchronized ResourceBundle getBundle() {
+        if (bundle == null) {
+            final String packageName = I18N.class.getPackage().getName();
+            bundle = ResourceBundle.getBundle(packageName + ".SceneBuilderPlugin"); //NOI18N
+        }
+        
+        return bundle;
+    }
+}

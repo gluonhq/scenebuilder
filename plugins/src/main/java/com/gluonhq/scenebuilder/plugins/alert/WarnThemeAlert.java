@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,16 +30,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.alert;
+package com.gluonhq.scenebuilder.plugins.alert;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.gluonhq.scenebuilder.plugins.i18n.I18N;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
+import java.util.function.Consumer;
 
 /**
  * Used when the user adds a Gluon control to the document or loads a document with a Gluon control and
@@ -47,9 +48,10 @@ import javafx.stage.Stage;
  * When a Gluon control is used, Gluon Mobile theme must be set in order for the control to work correctly.
  */
 public class WarnThemeAlert extends SBAlert {
+
     private static boolean hasBeenShown = false;
 
-    private WarnThemeAlert(EditorController editorController, Stage owner) {
+    private WarnThemeAlert(Stage owner, Consumer<EditorPlatform.Theme> onSuccess) {
         super(AlertType.WARNING, owner);
 
         setTitle(I18N.getString("alert.theme.gluon.mobile.title"));
@@ -62,25 +64,20 @@ public class WarnThemeAlert extends SBAlert {
         getButtonTypes().setAll(setGluonTheme, ignore);
 
         resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == setGluonTheme) {
-                editorController.setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+            if (newValue == setGluonTheme && onSuccess != null) {
+                System.out.println("apply gt ");
+                onSuccess.accept(GluonEditorPlatform.GLUON_MOBILE_LIGHT);
             }
         });
 
         setOnShown(event -> hasBeenShown = true);
     }
 
-    public static void showAlertIfRequired(EditorController editorController, FXOMObject fxomObject, Stage owner) {
-        if (!hasBeenShown && fxomObject != null && fxomObject.isGluon() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            new WarnThemeAlert(editorController, owner).showAndWait();
-        }
-    }
-
-    public static void showAlertIfRequired(EditorController editorController, FXOMDocument fxomDocument, Stage owner) {
-        if (!hasBeenShown && fxomDocument != null && fxomDocument.hasGluonControls() && (editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_LIGHT
-                && editorController.getTheme() != EditorPlatform.Theme.GLUON_MOBILE_DARK)) {
-            new WarnThemeAlert(editorController, owner).showAndWait();
+    public static void showAlertIfRequired(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess) {
+        if (!hasBeenShown &&
+            (!GluonEditorPlatform.isGluonMobileLight(currentTheme) && !GluonEditorPlatform.isGluonMobileDark(currentTheme))) {
+            System.out.println("theme was: " + currentTheme);
+            new WarnThemeAlert(owner, onSuccess).showAndWait();
         }
     }
 

@@ -947,6 +947,7 @@ public class DesignHierarchyMask {
         // no matches, object is resizable
         return false;
     }
+
     private List<DesignHierarchyMask.Accessory> getExternalAccessories() {
         List<DesignHierarchyMask.Accessory> result = new ArrayList<>();
         for (ExternalDesignHierarchyMaskProvider provider : externalDesignHierarchyMaskProviders) {
