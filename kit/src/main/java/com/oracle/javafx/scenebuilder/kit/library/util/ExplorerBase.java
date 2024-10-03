@@ -90,7 +90,7 @@ abstract class ExplorerBase {
                 || className.startsWith("com.oracle.javafx.scenebuilder.") //NOI18N
                 || className.startsWith("com.javafx.")
                 || className.startsWith("module-info")
-                || className.startsWith(EditorPlatform.GLUON_PACKAGE)) { //NOI18N
+                || EditorPlatform.hasClassFromExternalPlugin(className)) { // ignore classes from plugins, they are loaded in their own section
             status = JarReportEntry.Status.IGNORED;
             entryClass = null;
             entryException = null;

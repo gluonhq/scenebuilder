@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -160,32 +161,32 @@ public class BorderPaneTring extends AbstractNodeTring<BorderPane> {
          */
         
         final double xmin, ymin, xmax, ymax;
-        switch(area) {
-            case TOP:
+        switch (area.name()) {
+            case "TOP":
                 xmin = lb.getMinX();
                 ymin = lb.getMinY();
                 xmax = lb.getMaxX();
                 ymax = cb.getMinY();
                 break;
-            case BOTTOM:
+            case "BOTTOM":
                 xmin = lb.getMinX();
                 ymin = cb.getMaxY();
                 xmax = lb.getMaxX();
                 ymax = lb.getMaxY();
                 break;
-            case LEFT:
+            case "LEFT":
                 xmin = lb.getMinX();
                 ymin = cb.getMinY();
                 xmax = cb.getMinX();
                 ymax = cb.getMaxY();
                 break;
-            case RIGHT:
+            case "RIGHT":
                 xmin = cb.getMaxX();
                 ymin = cb.getMinY();
                 xmax = lb.getMaxX();
                 ymax = cb.getMaxY();
                 break;
-            case CENTER:
+            case "CENTER":
                 xmin = cb.getMinX();
                 ymin = cb.getMinY();
                 xmax = cb.getMaxX();
@@ -235,20 +236,20 @@ public class BorderPaneTring extends AbstractNodeTring<BorderPane> {
         rightLabel.setPrefSize(rightBounds.getWidth(), rightBounds.getHeight());
         
         final Label targetLabel;
-        switch(targetAccessory) {
-            case TOP:
+        switch (targetAccessory.name()) {
+            case "TOP":
                 targetLabel = topLabel;
                 break;
-            case BOTTOM:
+            case "BOTTOM":
                 targetLabel = bottomLabel;
                 break;
-            case LEFT:
+            case "LEFT":
                 targetLabel = leftLabel;
                 break;
-            case RIGHT:
+            case "RIGHT":
                 targetLabel = rightLabel;
                 break;
-            case CENTER:
+            case "CENTER":
                 targetLabel = centerLabel;
                 break;
             default:

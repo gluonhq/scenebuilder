@@ -13,6 +13,7 @@
     <modules>
         <module>kit</module>
         <module>app</module>
+        <module>gluon-plugin</module>
     </modules>
 
     <properties>
@@ -121,7 +122,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.5.0</version>
                     <configuration>
                         <configLocation>checkstyle.xml</configLocation>
                         <encoding>UTF-8</encoding>
@@ -133,7 +134,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.45.1</version>
+                            <version>10.18.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -421,7 +422,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.5.0</version>
             </plugin>
         </plugins>
     </reporting>

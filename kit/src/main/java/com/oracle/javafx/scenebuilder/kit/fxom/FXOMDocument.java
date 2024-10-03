@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -76,13 +76,13 @@ public class FXOMDocument {
     private FXOMObject fxomRoot;
     private Object sceneGraphRoot;
     private Node displayNode;
-    private ArrayList<String> displayStylesheets = new ArrayList<>();
+    private final ArrayList<String> displayStylesheets = new ArrayList<>();
     private final SimpleIntegerProperty sceneGraphRevision = new SimpleIntegerProperty();
     private final SimpleIntegerProperty cssRevision = new SimpleIntegerProperty();
     private SceneGraphHolder sceneGraphHolder;
     private int updateDepth;
 
-    private boolean hasGluonControls;
+    private boolean hasControlsFromExternalPlugin;
     
     private List<Class<?>> initialDeclaredClasses;
     
@@ -128,7 +128,7 @@ public class FXOMDocument {
             // Keeps this.sceneGraphRoot == null
         }
 
-        hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
+        hasControlsFromExternalPlugin = EditorPlatform.hasClassFromExternalPlugin(fxmlText);
     }
         
     public FXOMDocument() {
@@ -470,8 +470,8 @@ public class FXOMDocument {
         sceneGraphHolder = null;
     }
 
-    public boolean hasGluonControls() {
-        return hasGluonControls;
+    public boolean hasControlsFromExternalPlugin() {
+        return hasControlsFromExternalPlugin;
     }
     
     /**

@@ -32,6 +32,7 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -45,7 +46,6 @@ import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
-import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
 import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -439,23 +439,19 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         userLibrary.setOnUpdatedJarReports(jarReports -> {
             boolean shouldShowImportGluonJarAlert = false;
             for (JarReport jarReport : jarReports) {
-                if (jarReport.hasGluonControls()) {
+                if (jarReport.hasControlsFromExternalPlugin()) {
                     // We check if the jar has already been imported to avoid showing the import gluon jar
                     // alert every time Scene Builder starts for jars that have already been imported
                     if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
                         shouldShowImportGluonJarAlert = true;
+                        break;
                     }
                 }
             }
             if (shouldShowImportGluonJarAlert) {
                 Platform.runLater(() -> {
                     var dwc = findFirstUnusedDocumentWindowController().orElse(makeNewWindow());
-                    ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(dwc.getStage());
-                    AppSettings.setWindowIcon(alert);
-                    if (showWelcomeDialog) {
-                        alert.initOwner(WelcomeDialogWindowController.getInstance().getStage());
-                    }
-                    alert.showAndWait();
+                    EditorPlatform.showImportAlert(showWelcomeDialog ? WelcomeDialogWindowController.getInstance().getStage() : dwc.getStage());
                 });
             }
             updateImportedGluonJars(jarReports);
@@ -694,7 +690,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
         if (template.getType() == Type.PHONE) {
             documentWindowController.getEditorController().performEditAction(EditorController.EditAction.SET_SIZE_335x600);
-            documentWindowController.getEditorController().setTheme(EditorPlatform.Theme.GLUON_MOBILE_LIGHT);
+            documentWindowController.getEditorController().setTheme(GluonEditorPlatform.GLUON_MOBILE_LIGHT);
         }
 
         documentWindowController.openWindow();
@@ -1080,7 +1076,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
         List<String> jarReportCollection = new ArrayList<>();
         for (JarReport jarReport : jars) {
-            if (jarReport.hasGluonControls()) {
+            if (jarReport.hasControlsFromExternalPlugin()) {
                 jarReportCollection.add(jarReport.getJar().getFileName().toString());
             }
         }

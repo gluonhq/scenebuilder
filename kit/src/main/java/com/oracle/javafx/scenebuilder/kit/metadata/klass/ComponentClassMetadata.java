@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,10 +32,16 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.klass;
 
+import com.oracle.javafx.scenebuilder.kit.metadata.ExternalMetadataProvider;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 /**
@@ -152,16 +158,6 @@ public class ComponentClassMetadata extends ClassMetadata {
          * Group                        children
          * Panes                        children
          *
-         * ------------ Gluon ------------------
-         *
-         * BottomNavigation             actionItems
-         * CardPane                     items
-         * DropdownButton               items
-         * ExpansionPanelContainer      items
-         * ToggleButtonGroup            toggles
-         * CollapsedPanel               titleNodes
-         * SettingsPane                 options
-         *
          * ------------------------------------
          *
          * Other            null
@@ -201,24 +197,10 @@ public class ComponentClassMetadata extends ClassMetadata {
             result = childrenName;
         } else if (componentClass == javafx.scene.layout.Pane.class) {
             result = childrenName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.BottomNavigation.class) {
-            result = actionItemsName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.CardPane.class) {
-            result = itemsName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.DropdownButton.class) {
-            result = itemsName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanelContainer.class) {
-            result = itemsName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.ToggleButtonGroup.class) {
-            result = togglesName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.ExpansionPanel.CollapsedPanel.class) {
-            result = titleNodesName;
-        } else if (componentClass == com.gluonhq.charm.glisten.control.SettingsPane.class) {
-            result = optionsName;
         } else {
-            result = null;
+            result = getExternalSubComponentProperty(componentClass)
+                .orElse(null);
         }
-        
         return result;
     }
         
@@ -230,10 +212,23 @@ public class ComponentClassMetadata extends ClassMetadata {
     private static final PropertyName panesName = new PropertyName("panes");
     private static final PropertyName tabsName = new PropertyName("tabs");
     private static final PropertyName childrenName = new PropertyName("children");
-    // Gluon
-    private static final PropertyName actionItemsName = new PropertyName("actionItems");
-    private static final PropertyName togglesName = new PropertyName("toggles");
-    private static final PropertyName titleNodesName = new PropertyName("titleNodes");
-    private static final PropertyName optionsName = new PropertyName("options");
 
+    private static final Collection<ExternalMetadataProvider> externalMetadataProviders = getExternalMetadataProviders();
+
+    private static Optional<PropertyName> getExternalSubComponentProperty(Class<?> componentClass) {
+        for (ExternalMetadataProvider provider : externalMetadataProviders) {
+            Optional<PropertyName> externalSubComponentProperty = provider.getExternalSubComponentProperty(componentClass);
+            if (externalSubComponentProperty.isPresent()) {
+                return externalSubComponentProperty;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Collection<ExternalMetadataProvider> getExternalMetadataProviders() {
+        ServiceLoader<ExternalMetadataProvider> loader = ServiceLoader.load(ExternalMetadataProvider.class);
+        Collection<ExternalMetadataProvider> providers = new ArrayList<>();
+        loader.iterator().forEachRemaining(providers::add);
+        return providers;
+    }
 }

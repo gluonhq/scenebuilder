@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -304,7 +304,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
                         final HierarchyItem item = treeItem.getValue();
                         assert item != null;
 
-                        if (item.isPlaceHolder()) {
+                        if (item.isPlaceholder()) {
                             cell = HierarchyTreeCell.this;
                         } else if (accessoryDropTarget.getAccessory() == Accessory.GRAPHIC) {
                             // Check if an empty graphic TreeItem has been added
@@ -362,7 +362,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
                         final HierarchyItem item = treeItem.getValue();
                         assert item != null;
 
-                        if (item.isPlaceHolder() || item.getFxomObject() == dropTargetObject) {
+                        if (item.isPlaceholder() || item.getFxomObject() == dropTargetObject) {
                             // The place holder item is filled with a container
                             // accepting sub components
                             panelController.setBorder(HierarchyTreeCell.this, BorderSide.TOP_RIGHT_BOTTOM_LEFT);
@@ -711,7 +711,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
         }
 
         // Update ImageViews
-        final Image placeHolderImage = item.getPlaceHolderImage();
+        final Image placeHolderImage = item.getPlaceholderImage();
         placeHolderImageView.setImage(placeHolderImage);
         placeHolderImageView.setManaged(placeHolderImage != null);
 
@@ -747,7 +747,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
         }
 
         // Update Labels
-        final String placeHolderInfo = item.getPlaceHolderInfo();
+        final String placeHolderInfo = item.getPlaceholderInfo();
         placeHolderLabel.setText(placeHolderInfo);
         placeHolderLabel.setManaged(item.isEmpty());
         placeHolderLabel.setVisible(item.isEmpty());

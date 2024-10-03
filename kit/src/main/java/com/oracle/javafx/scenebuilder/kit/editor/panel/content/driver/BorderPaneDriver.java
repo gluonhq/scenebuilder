@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -96,10 +97,10 @@ public class BorderPaneDriver extends AbstractNodeDriver {
     @Override
     public AbstractTring<?> makeTring(AbstractDropTarget dropTarget) {
         assert dropTarget instanceof AccessoryDropTarget;
-        
-        final AccessoryDropTarget accessoryDropTarget 
-                = (AccessoryDropTarget) dropTarget;
-        return new BorderPaneTring(contentPanelController, 
+        if (!(dropTarget instanceof AccessoryDropTarget accessoryDropTarget)) {
+            return null;
+        }
+        return new BorderPaneTring(contentPanelController,
                 (FXOMInstance) dropTarget.getTargetObject(),
                 accessoryDropTarget.getAccessory());
     }

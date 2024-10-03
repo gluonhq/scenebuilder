@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,7 +44,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,7 +51,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.oracle.javafx.scenebuilder.kit.alert.ImportingGluonControlsAlert;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
@@ -467,7 +466,7 @@ public class ImportWindowController extends AbstractModalDialog {
                         = row -> row.importRequired();
                 importList.setCellFactory(CheckBoxListCell.forListView(importRequired));
 
-                boolean importingGluonControls = false;
+                boolean importingControlsFromExternalPlugin = false;
                 for (JarReport jarReport : jarReportList) {
                     Path file = jarReport.getJar();
                     String jarName = file.getName(file.getNameCount() - 1).toString();
@@ -501,24 +500,23 @@ public class ImportWindowController extends AbstractModalDialog {
                                 StringWriter sw = new StringWriter();
                                 PrintWriter pw = new PrintWriter(sw);
                                 e.getException().printStackTrace(pw);
-                                sb.append(">> " + sw.toString());
+                                sb.append(">> ").append(sw);
                             }
                         }
                     }
                     LOGGER.info(sb.toString());
 
-                    if (jarReport.hasGluonControls()) {
-                        importingGluonControls = true;
+                    if (jarReport.hasControlsFromExternalPlugin()) {
+                        importingControlsFromExternalPlugin = true;
                     }
                 }
 
-                if (importingGluonControls) {
-                    ImportingGluonControlsAlert alert = new ImportingGluonControlsAlert(owner);
-                    alert.showAndWait();
+                if (importingControlsFromExternalPlugin) {
+                    EditorPlatform.showImportAlert(owner);
                 }
 
                 // Sort based on the simple class name.
-                Collections.sort(importList.getItems(), new ImportRowComparator());
+                importList.getItems().sort(new ImportRowComparator());
 
                 final int numOfComponentToImport = getNumOfComponentToImport(importList);
                 updateOKButtonTitle(numOfComponentToImport);

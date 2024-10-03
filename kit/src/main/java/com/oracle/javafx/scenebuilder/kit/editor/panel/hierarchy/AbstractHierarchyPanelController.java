@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -649,33 +649,14 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         return treeItem;
     }
 
-    private TreeItem<HierarchyItem> makeTreeItemExpansionPanel(
-            final DesignHierarchyMask owner,
-            final FXOMObject fxomObject,
-            final Accessory accessory) {
-        final HierarchyItemExpansionPanel item = new HierarchyItemExpansionPanel(owner, fxomObject, accessory);
+    private TreeItem<HierarchyItem> makeTreeItem(HierarchyItem item, final FXOMObject fxomObject) {
         final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
         // Set back the TreeItem expanded property if any
         Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
         if (expanded != null) {
             treeItem.setExpanded(expanded);
         }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
-    }
-
-    private TreeItem<HierarchyItem> makeTreeItemExpandedPanel(final DesignHierarchyMask owner, final FXOMObject fxomObject) {
-        final HierarchyItemExpandedPanel item = new HierarchyItemExpandedPanel(owner, fxomObject);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        // Set back the TreeItem expanded property if any
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
+        // Mask may be null for empty placeholder
         if (item.getMask() != null) {
             updateTreeItem(treeItem);
         }
@@ -686,38 +667,16 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
             final Accessory accessory) {
-        final HierarchyItemBorderPane item
-                = new HierarchyItemBorderPane(owner, fxomObject, accessory);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        // Set back the TreeItem expanded property if any
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
+        final HierarchyItemBorderPane item = new HierarchyItemBorderPane(owner, fxomObject, accessory);
+        return makeTreeItem(item, fxomObject);
     }
 
     private TreeItem<HierarchyItem> makeTreeItemDialogPane(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
             final Accessory accessory) {
-        final HierarchyItemDialogPane item
-                = new HierarchyItemDialogPane(owner, fxomObject, accessory);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        // Set back the TreeItem expanded property if any
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
+        final HierarchyItemDialogPane item = new HierarchyItemDialogPane(owner, fxomObject, accessory);
+        return makeTreeItem(item, fxomObject);
     }
 
     /**
@@ -729,18 +688,8 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
     protected TreeItem<HierarchyItem> makeTreeItemGraphic(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject) {
-        final HierarchyItemGraphic item
-                = new HierarchyItemGraphic(owner, fxomObject);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
+        final HierarchyItemGraphic item = new HierarchyItemGraphic(owner, fxomObject);
+        return makeTreeItem(item, fxomObject);
     }
 
     protected void updateTreeItems() {
@@ -753,13 +702,13 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         final Label label = getPromptLabel();
         if (fxomDocument == null || fxomDocument.getFxomRoot() == null) {
             rootTreeItem = null;
-            // Add place holder to the parent
+            // Add placeholder to the parent
             if (fxomDocument == null) {
                 label.setText(I18N.getString("contant.label.status.fxomdocument.null"));
             } else {
                 label.setText(I18N.getString("content.label.status.invitation"));
             }
-            if (pane.getChildren().contains(label) == false) {
+            if (!pane.getChildren().contains(label)) {
                 // This may occur when closing en empty document
                 // => we switch from null FXOM root to null FXOM document
                 pane.getChildren().add(label);
@@ -767,7 +716,7 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         } else {
             rootTreeItem = makeTreeItem(fxomDocument.getFxomRoot());
             rootTreeItem.setExpanded(true);
-            // Remove place holder from the parent
+            // Remove placeholder from the parent
             ((Pane) parent).getChildren().remove(label);
         }
     }
@@ -870,22 +819,13 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
             }
         }
 
-        // Gluon ExpansionPanel
-        for (Accessory accessory: new Accessory[]{
-                Accessory.EXPANDED_CONTENT,
-                Accessory.COLLAPSED_CONTENT
-        }) {
+        // External Accessories
+        mask.getExternalHierarchyItemGeneratorMap().forEach((accessory, biFunction) -> {
             if (mask.isAcceptingAccessory(accessory)) {
-                final FXOMObject value = mask.getAccessory(accessory);
-                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
+                final FXOMObject fxom = mask.getAccessory(accessory);
+                treeItem.getChildren().add(makeTreeItem(biFunction.apply(mask, fxom), fxom));
             }
-        }
-
-        // Gluon ExpandedPanel
-        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
-            final FXOMObject value = mask.getAccessory(Accessory.EX_CONTENT);
-            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
-        }
+        });
 
         // Content (ScrollPane, Tab...)
         //---------------------------------
@@ -910,7 +850,7 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
             }
         }
 
-        // Positionning
+        // Positioning
         //---------------------------------
         for (Accessory accessory : new Accessory[]{
             Accessory.TOP,
@@ -1131,7 +1071,7 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         }
 
         final Selection selection = getEditorController().getSelection();
-        if (selection.isEmpty() == false) { // (1)
+        if (!selection.isEmpty()) { // (1)
             if (selection.getGroup() instanceof ObjectSelectionGroup) {
                 // A set of regular component (ie fxom objects) are selected
                 final ObjectSelectionGroup osg = (ObjectSelectionGroup) selection.getGroup();

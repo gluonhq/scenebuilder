@@ -84,8 +84,8 @@ class WorkspaceController {
     private boolean autoResize3DContent = true;
     private double scaling = 1.0;
     private RuntimeException layoutException;
-    private EditorController editorController;
-    private ArrayList<String> themeStylesheets = new ArrayList<String>();
+    private final EditorController editorController;
+    private final ArrayList<String> themeStylesheets = new ArrayList<>();
 
     private FXOMDocument fxomDocument;
 
@@ -163,46 +163,17 @@ class WorkspaceController {
         return Collections.unmodifiableList(themeStylesheets);
     }
     
-    public void setThemeStyleSheet(List<String> themeStyleSheets, EditorPlatform.Theme theme, EditorPlatform.GluonSwatch gluonSwatch, EditorPlatform.GluonTheme gluonTheme) {
+    public void setThemeStyleSheet(List<String> themeStyleSheets, EditorPlatform.Theme theme) {
         assert themeStyleSheets != null;
         assert theme != null;
-        assert gluonSwatch != null;
-        assert gluonTheme != null;
-        String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-        String gluonSwatchStylesheet = gluonSwatch.getStylesheetURLs().getFirst();
-        String gluonThemeStylesheet = gluonTheme.getStylesheetURLs().getFirst();
-        String previousGluonSwatchStylesheet = editorController.getGluonSwatch().getStylesheetURLs().getFirst();
-        String previousGluonThemeStylesheet = editorController.getGluonTheme().getStylesheetURLs().getFirst();
-        if (theme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || theme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-            contentSubScene.setUserAgentStylesheet(EditorPlatform.Theme.MODENA.getStylesheetURLs().getFirst());
-            ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(contentGroup.getStylesheets());
-            currentStyleSheets.remove(previousGluonSwatchStylesheet);
-            currentStyleSheets.remove(previousGluonThemeStylesheet);
-            themeStyleSheets.forEach(themeStyleSheet -> {
-                if (!currentStyleSheets.contains(themeStyleSheet)) {
-                    currentStyleSheets.add(themeStyleSheet);
-                }
-            });
-            if (!currentStyleSheets.contains(gluonDocumentStylesheet)) {
-                currentStyleSheets.add(gluonDocumentStylesheet);
-            }
-            if (!currentStyleSheets.contains(gluonSwatchStylesheet)) {
-                currentStyleSheets.add(gluonSwatchStylesheet);
-            }
-            if (!currentStyleSheets.contains(gluonThemeStylesheet)) {
-                currentStyleSheets.add(gluonThemeStylesheet);
-            }
-            themeStylesheets.clear();
-            themeStylesheets.addAll(currentStyleSheets);
-            contentGroupApplyCss();
-//            setPreviewStyleSheets(Arrays.asList(themeStyleSheet));
-        } else {
-            contentSubScene.setUserAgentStylesheet(themeStyleSheets.getFirst());
-            ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(themeStyleSheets);
-            themeStylesheets.clear();
-            themeStylesheets.addAll(currentStyleSheets);
-            contentGroupApplyCss();
-        }
+        List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
+        stylesheets.addAll(themeStyleSheets);
+        contentSubScene.setUserAgentStylesheet(stylesheets.getFirst());
+
+        ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(stylesheets);
+        themeStylesheets.clear();
+        themeStylesheets.addAll(currentStyleSheets);
+        contentGroupApplyCss();
 
         // Update scenegraph layout, etc
         FXOMDocument fxomDocument = editorController.getFxomDocument();
@@ -212,15 +183,12 @@ class WorkspaceController {
     }
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
-        EditorPlatform.Theme currentTheme = editorController.getTheme();
+        EditorPlatform.Theme theme = editorController.getTheme();
+        List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
+        stylesheets.addAll(previewStyleSheets);
+
         themeStylesheets.clear();
-        themeStylesheets.addAll(previewStyleSheets);
-        if (currentTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT || currentTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-            themeStylesheets.add(EditorPlatform.Theme.GLUON_MOBILE_LIGHT.getStylesheetURLs().getFirst()); // We can call this with GLUON_MOBILE_LIGHT or GLUON_MOBILE_DARK
-            themeStylesheets.add(editorController.getGluonSwatch().getStylesheetURLs().getFirst());
-            themeStylesheets.add(editorController.getGluonTheme().getStylesheetURLs().getFirst());
-            themeStylesheets.add(EditorPlatform.getGluonDocumentStylesheetURL());
-        }
+        themeStylesheets.addAll(stylesheets);
         contentGroupApplyCss();
     }
     

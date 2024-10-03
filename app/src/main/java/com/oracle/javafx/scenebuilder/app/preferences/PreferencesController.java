@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -45,7 +45,7 @@ import java.util.prefs.Preferences;
 /**
  * Defines preferences for Scene Builder App.
  */
-public class PreferencesController extends PreferencesControllerBase{
+public class PreferencesController extends PreferencesControllerBase {
 
     /***************************************************************************
      *                                                                         *
@@ -85,6 +85,9 @@ public class PreferencesController extends PreferencesControllerBase{
     static final String RIGHT_DIVIDER_HPOS = "rightDividerHPos"; //NOI18N
     static final String BOTTOM_DIVIDER_VPOS = "bottomDividerVPos"; //NOI18N
     static final String LEFT_DIVIDER_VPOS = "leftDividerVPos"; //NOI18N
+
+    static final String GLUON_SWATCH = "gluonSwatch";
+    static final String GLUON_THEME = "gluonTheme";
 
     private static PreferencesController singleton;
 

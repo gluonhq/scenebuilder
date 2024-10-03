@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -84,10 +85,10 @@ public class SetDocumentRootJob extends BatchSelectionJob {
                 result.add(new PrunePropertiesJob(newRoot, null, getEditorController()));
             }
             
-            // Adds job that effectively modifes the root
+            // Adds job that effectively modifies the root
             result.add(new SetFxomRootJob(newRoot, getEditorController()));
             
-            // If need, we add a job for resizing the root object
+            // If needed, we add a job for resizing the root object
             if ((newRoot != null) && usePredefinedSize) {
                 final DesignHierarchyMask mask = new DesignHierarchyMask(newRoot);
                 if (mask.needResizeWhenTopElement()) {

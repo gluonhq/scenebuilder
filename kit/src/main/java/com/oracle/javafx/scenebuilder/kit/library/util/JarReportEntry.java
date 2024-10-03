@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -83,10 +83,10 @@ public class JarReportEntry {
     }
     
     public boolean isNode() {
-        return (klass == null) ? false : Node.class.isAssignableFrom(klass);
+        return klass != null && Node.class.isAssignableFrom(klass);
     }
 
-    public boolean isGluon() { return className != null && className.startsWith(EditorPlatform.GLUON_PACKAGE); }
+    public boolean isClassFromExternalPlugin() { return EditorPlatform.hasClassFromExternalPlugin(className); }
     
     /*
      * Object

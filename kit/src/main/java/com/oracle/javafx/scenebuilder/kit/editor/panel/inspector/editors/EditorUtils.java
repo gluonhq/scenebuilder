@@ -430,7 +430,7 @@ public class EditorUtils {
         propNameStr = propNameStr.substring(0, 1).toUpperCase(Locale.ENGLISH) + propNameStr.substring(1);
         String methodName;
         String posfix;
-        if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
+        if (EditorPlatform.hasClassFromExternalPlugin(clazz.getName())) {
             posfix = "--";
         } else {
             posfix = "()";
@@ -443,12 +443,8 @@ public class EditorUtils {
             methodName = "get" + propNameStr + posfix; //NOI18N
         }
 
-        String url;
-        if (clazz.getName().startsWith(EditorPlatform.GLUON_PACKAGE)) {
-            url = DocumentationUrls.GLUON_JAVADOC_HOME.toString();
-        } else {
-            url = DocumentationUrls.JAVADOC_HOME.toString() + clazz.getModule().getName() + "/";
-        }
+        String url = EditorPlatform.getExternalJavadocURL(clazz.getName())
+            .orElse(DocumentationUrls.JAVADOC_HOME + clazz.getModule().getName() + "/");
         url += clazz.getName().replaceAll("\\.", "/") + ".html"; //NOI18N
         url += "#" + methodName; //NOI18N
         EditorPlatform.open(url);
