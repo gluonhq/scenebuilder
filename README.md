@@ -54,7 +54,7 @@ Alternatively, utilizing the Maven Wrapper, one can run:
 
 `./mvnw clean package`
 
-It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
+It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version-all.jar`, that doesn't include the JavaFX dependencies.
 
 ### How to run Scene Builder ###
 
@@ -67,14 +67,14 @@ Then Scene Builder can be started with Maven:
 
 `mvn javafx:run -f app`
 
-Alternatively, you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
+Alternatively, you can run the partial shadow jar in the classpath, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
 ```
-java 
+java \ 
 --module-path /path/to/javafx-sdk-$javafxVersion/lib \
 --add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media \
 --add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED \
--cp app/target/lib/scenebuilder-$version.jar \
+-cp app/target/lib/scenebuilder-$version-all.jar \
 com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 ```
 
@@ -111,7 +111,8 @@ mvn checkstyle:checkstyle
 
 There will be a report for each sub-project, one for `app` and one for `kit`.
 
-* Kit: `kit/target/site/checkstyle.html`
-* App: `app/target/site/checkstyle.html`
+* Kit: `kit/target/reports/checkstyle.html`
+* App: `app/target/reports/checkstyle.html`
+* Gluon-plugin: `gluon-plugin/target/reports/checkstyle.html`
 
 This project makes use of [EditorConfig](https://editorconfig.org/) which is [directly supported](https://editorconfig.org/#pre-installed) by IntelliJ IDEA. There are plugins for NetBeans, Eclipse and Visual Studio and [more](https://editorconfig.org/#download). EditorConfig ensures via configuration in `.editorconfig` file, that the proper indentation is used.
