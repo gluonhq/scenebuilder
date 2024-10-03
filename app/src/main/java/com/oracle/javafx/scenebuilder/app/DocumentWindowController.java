@@ -322,6 +322,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             }
             event.consume();
         }
+
+        if (modifierDown) {
+            menuBarController.handleAdditionalZoomAccelerators(event);
+        }
     };
     
     /*
