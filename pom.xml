@@ -13,7 +13,7 @@
     <modules>
         <module>kit</module>
         <module>app</module>
-        <module>plugins</module>
+        <module>gluon-plugin</module>
     </modules>
 
     <properties>

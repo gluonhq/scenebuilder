@@ -2082,8 +2082,6 @@ public class MenuBarController {
                             = documentWindowController.getEditorController().getTheme();
             EditorPlatform.Theme overridingTheme = theme;
 
-            System.out.println("theme = " + theme);
-            System.out.println("currentTheme = " + currentTheme);
             switch (theme.name()) {
                 case "CASPIAN":
                     if (caspianHighContrastThemeMenuItem.isSelected()) {

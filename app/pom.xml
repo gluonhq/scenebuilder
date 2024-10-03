@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>com.gluonhq.scenebuilder</groupId>
-            <artifactId>plugins</artifactId>
+            <artifactId>gluon-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

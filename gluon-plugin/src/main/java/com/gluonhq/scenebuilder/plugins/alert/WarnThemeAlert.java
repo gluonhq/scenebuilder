@@ -65,7 +65,6 @@ public class WarnThemeAlert extends SBAlert {
 
         resultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == setGluonTheme && onSuccess != null) {
-                System.out.println("apply gt ");
                 onSuccess.accept(GluonEditorPlatform.GLUON_MOBILE_LIGHT);
             }
         });
@@ -76,7 +75,6 @@ public class WarnThemeAlert extends SBAlert {
     public static void showAlertIfRequired(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess) {
         if (!hasBeenShown &&
             (!GluonEditorPlatform.isGluonMobileLight(currentTheme) && !GluonEditorPlatform.isGluonMobileDark(currentTheme))) {
-            System.out.println("theme was: " + currentTheme);
             new WarnThemeAlert(owner, onSuccess).showAndWait();
         }
     }
