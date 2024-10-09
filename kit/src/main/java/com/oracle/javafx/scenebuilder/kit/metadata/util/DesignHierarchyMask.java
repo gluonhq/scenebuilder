@@ -304,7 +304,8 @@ public class DesignHierarchyMask {
     /**
      * Returns the string value for this FXOM object description property.
      * If the value is internationalized, the returned value is the resolved one.
-     *
+     * If the value is a binding expression, the returned value is the expression 
+     * instead of the empty resolved one  
      * @return
      */
     public String getDescription() {
@@ -315,7 +316,9 @@ public class DesignHierarchyMask {
             final FXOMInstance fxomInstance = (FXOMInstance) fxomObject;
             final ValuePropertyMetadata vpm
                     = Metadata.getMetadata().queryValueProperty(fxomInstance, propertyName);
-            final Object description = vpm.getValueInSceneGraphObject(fxomInstance); // resolved value
+            final Object description = isBindingExpression() ? 
+            		vpm.getValueObject(fxomInstance): //original binding expression
+            		vpm.getValueInSceneGraphObject(fxomInstance); // resolved value
             return description == null ? null : description.toString();
         }
         return null;
@@ -407,6 +410,22 @@ public class DesignHierarchyMask {
             final Object description = vpm.getValueObject(fxomInstance); // unresolved value
             final PrefixedValue pv = new PrefixedValue(description.toString());
             return pv.isResourceKey();
+        }
+        return false;
+    }
+    
+    public boolean isBindingExpression() {
+        if (hasDescription()) { // (1)
+            // Retrieve the unresolved description
+            final PropertyName propertyName = getPropertyNameForDescription();
+            assert propertyName != null; // Because of (1)
+            assert fxomObject instanceof FXOMInstance; // Because of (1)
+            final FXOMInstance fxomInstance = (FXOMInstance) fxomObject;
+            final ValuePropertyMetadata vpm
+                    = Metadata.getMetadata().queryValueProperty(fxomInstance, propertyName);
+            final Object description = vpm.getValueObject(fxomInstance); // unresolved value
+            final PrefixedValue pv = new PrefixedValue(description.toString());
+            return pv.isBindingExpression();
         }
         return false;
     }
