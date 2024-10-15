@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -93,7 +94,7 @@ public class HierarchyItemGraphic extends HierarchyItem {
     }
 
     @Override
-    public boolean isPlaceHolder() {
+    public boolean isPlaceholder() {
         return true;
     }
 
@@ -112,12 +113,12 @@ public class HierarchyItemGraphic extends HierarchyItem {
     }
 
     @Override
-    public Image getPlaceHolderImage() {
+    public Image getPlaceholderImage() {
         return ImageUtils.getNodeIcon("Graphic.png"); //NOI18N
     }
 
     @Override
-    public String getPlaceHolderInfo() {
+    public String getPlaceholderInfo() {
         return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert.graphic"));
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,8 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.job.atomic;
 
-import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.job.Job;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -67,14 +67,17 @@ public class SetFxomRootJob extends Job {
         assert oldRoot == null;
 
         // Saves the current root
-        final FXOMDocument fxomDocument = getEditorController().getFxomDocument();
+        EditorController editorController = getEditorController();
+        final FXOMDocument fxomDocument = editorController.getFxomDocument();
         oldRoot = fxomDocument.getFxomRoot();
 
         fxomDocument.beginUpdate();
         fxomDocument.setFxomRoot(newRoot);
         fxomDocument.endUpdate();
 
-        WarnThemeAlert.showAlertIfRequired(getEditorController(), newRoot, getEditorController().getOwnerWindow());
+        if (newRoot != null && newRoot.isClassFromExternalPlugin()) {
+            EditorPlatform.showThemeAlert(editorController.getOwnerWindow(), editorController.getTheme(), editorController::setTheme);
+        }
     }
 
     @Override

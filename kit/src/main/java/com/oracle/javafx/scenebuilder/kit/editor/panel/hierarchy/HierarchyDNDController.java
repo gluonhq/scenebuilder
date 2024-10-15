@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -43,8 +43,14 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.DragEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 /**
  * Controller for all drag and drop gestures in hierarchy panel. This class does
@@ -257,17 +263,17 @@ public class HierarchyDNDController {
             final HierarchyItem item = treeItem.getValue();
             assert item != null;
 
-            // When the TreeItem is a place holder :
-            // - if the place holder is empty
-            //      the drop target is the place holder parent
-            //      the accessory is set to the place holder value
+            // When the TreeItem is a placeholder :
+            // - if the placeholder is empty
+            //      the drop target is the placeholder parent
+            //      the accessory is set to the placeholder value
             // whatever the location value is.
             // - otherwise
-            //      the drop target is the place holder item 
+            //      the drop target is the placeholder item
             //      the accessory is set to null
             //      the target index is set depending on the location value
             //------------------------------------------------------------------
-            if (item.isPlaceHolder()) { // (1)
+            if (item.isPlaceholder()) { // (1)
 
                 assert treeItem != rootTreeItem;
                 assert item instanceof HierarchyItemBorderPane
@@ -284,12 +290,9 @@ public class HierarchyDNDController {
                         accessory = ((HierarchyItemBorderPane) item).getPosition();
                     } else if (item instanceof HierarchyItemDialogPane) {
                         accessory = ((HierarchyItemDialogPane) item).getAccessory();
-                    } else if (item instanceof HierarchyItemExpansionPanel) {
-                        accessory = ((HierarchyItemExpansionPanel) item).getAccessory();
-                    } else if (item instanceof HierarchyItemExpandedPanel) {
-                        accessory = ((HierarchyItemExpandedPanel) item).getAccessory();
                     } else {
-                        accessory = Accessory.GRAPHIC;
+                        accessory = getExternalAccessoryForHierarchyItem(item)
+                            .orElse(Accessory.GRAPHIC);
                     }
                 } else {
                     // Set the drop target
@@ -465,5 +468,25 @@ public class HierarchyDNDController {
             }
         }
         return result;
+    }
+
+    // External providers
+    private final Collection<ExternalDesignHierarchyMaskProvider> externalDesignHierarchyMaskProviders = getExternalDesignHierarchyMaskProviders();
+
+    private Optional<Accessory> getExternalAccessoryForHierarchyItem(HierarchyItem item) {
+        for (ExternalDesignHierarchyMaskProvider provider : externalDesignHierarchyMaskProviders) {
+            Optional<Accessory> externalAccessoryForHierarchyItem = provider.getExternalAccessoryForHierarchyItem(item);
+            if (externalAccessoryForHierarchyItem.isPresent()) {
+                return externalAccessoryForHierarchyItem;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Collection<ExternalDesignHierarchyMaskProvider> getExternalDesignHierarchyMaskProviders() {
+        ServiceLoader<ExternalDesignHierarchyMaskProvider> loader = ServiceLoader.load(ExternalDesignHierarchyMaskProvider.class);
+        Collection<ExternalDesignHierarchyMaskProvider> providers = new ArrayList<>();
+        loader.iterator().forEachRemaining(providers::add);
+        return providers;
     }
 }

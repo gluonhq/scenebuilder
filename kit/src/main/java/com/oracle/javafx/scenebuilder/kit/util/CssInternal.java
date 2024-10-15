@@ -152,10 +152,8 @@ public class CssInternal {
     public static List<String> getThemeStyleClasses(Theme theme) {
         Set<String> themeClasses = new HashSet<>();
         theme.getStylesheetURLs().forEach(themeStyleSheet -> {
-            if (!themeStyleSheet.contains("glisten.css")) {
-                URL resource = Button.class.getResource("/" + themeStyleSheet);
-                themeClasses.addAll(getStyleClasses(resource));
-            }
+            URL resource = Button.class.getResource("/" + themeStyleSheet);
+            themeClasses.addAll(getStyleClasses(resource));
         });
         return new ArrayList<>(themeClasses);
     }

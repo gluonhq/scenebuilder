@@ -36,6 +36,7 @@ module com.gluonhq.scenebuilder.app {
     requires javafx.media;
     requires javafx.swing;
     requires transitive com.gluonhq.scenebuilder.kit;
+    requires transitive com.gluonhq.scenebuilder.gluon.plugin;
     requires java.logging;
     requires java.prefs;
     requires javax.json.api;
