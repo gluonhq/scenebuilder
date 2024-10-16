@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -105,14 +105,12 @@ public class MavenRepositorySystem {
     private BasicRepositoryConnectorFactory basicRepositoryConnectorFactory;
 
     private final String userM2Repository;
-    private final String tempM2Repository;
     private final RepositoryPreferences repositoryPreferences;
     
-    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository, String tempM2Repository,
+    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository,
                                  RepositoryPreferences repositoryPreferences) {
         this.onlyReleases = onlyReleases;
         this.userM2Repository = userM2Repository;
-        this.tempM2Repository = tempM2Repository;
         this.repositoryPreferences = repositoryPreferences;
         initRepositorySystem();
     }
@@ -251,10 +249,9 @@ public class MavenRepositorySystem {
     }
         
     public String resolveArtifacts(RemoteRepository remoteRepository, Artifact... artifact) {
-        
-        LocalRepository localTmpRepo = new LocalRepository(tempM2Repository);
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localTmpRepo));
-        
+
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+
         List<Artifact> artifacts = Stream.of(artifact)
                 .map(a -> {
                     ArtifactRequest artifactRequest = new ArtifactRequest();
@@ -272,9 +269,7 @@ public class MavenRepositorySystem {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()); 
-        
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        
+
         List<File> sha1Files = null;
         if (artifacts != null && !artifacts.isEmpty()) {
             sha1Files = artifacts.stream()
@@ -305,11 +300,7 @@ public class MavenRepositorySystem {
                     });
             }
         } catch (ArtifactResolutionException ex) { }
-        
-        try {
-            FileUtils.deleteDirectory(tempM2Repository);
-        } catch (IOException ex) { }
-        
+
         return absolutePath;
     }
         

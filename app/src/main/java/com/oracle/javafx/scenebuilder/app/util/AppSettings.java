@@ -78,10 +78,10 @@ public class AppSettings {
     private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     static {
-        initSceneBuiderVersion();
+        initSceneBuilderVersion();
     }
 
-    private static void initSceneBuiderVersion() {
+    private static void initSceneBuilderVersion() {
         try (InputStream in = AboutWindowController.class.getResourceAsStream("about.properties")) {
             if (in != null) {
                 Properties sbProps = new Properties();
@@ -206,11 +206,4 @@ public class AppSettings {
         return m2Path;
     }
 
-    public static String getTempM2Repository() {
-        String m2Path = System.getProperty("java.io.tmpdir") + File.separator + "m2Tmp"; //NOI18N
-
-        assert m2Path != null;
-
-        return m2Path;
-    }
 }
