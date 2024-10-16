@@ -3,6 +3,7 @@ name: Early Access
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 env:
   JAVA_RELEASE: '23'
