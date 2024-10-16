@@ -21,7 +21,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>23</javafx.version>
+        <javafx.version>23.0.1</javafx.version>
         <aether.version>1.1.0</aether.version>
         <charm.glisten.version>6.2.3</charm.glisten.version>
         <gluon.attach.version>4.0.21</gluon.attach.version>
