@@ -88,6 +88,7 @@ import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -210,7 +211,11 @@ public class MenuBarController {
     private MenuItem showSampleControllerMenuItem;
     @FXML
     private Menu zoomMenu;
-
+    
+    private ZoomInActionController zoomInController;
+    
+    private ZoomOutActionController zoomOutController;
+    
     // Modify
     @FXML
     private MenuItem fitToParentMenuItem;
@@ -1276,22 +1281,36 @@ public class MenuBarController {
      */
     
     final static double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
-    
+
     private void updateZoomMenu() {
         final double[] scalingTable = {0.25, 0.50, 0.75, 1.00, 1.50, 2.0, 4.0};
 
+        zoomInController = new ZoomInActionController();
         final MenuItem zoomInMenuItem = new MenuItem(I18N.getString("menu.title.zoom.in"));
-        zoomInMenuItem.setUserData(new ZoomInActionController());
-        zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); //NOI18N
+        zoomInMenuItem.setUserData(zoomInController);
         zoomMenu.getItems().add(zoomInMenuItem);
-        
+
+        zoomOutController = new ZoomOutActionController();
         final MenuItem zoomOutMenuItem = new MenuItem(I18N.getString("menu.title.zoom.out"));
-        zoomOutMenuItem.setUserData(new ZoomOutActionController());
-        zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("/", modifier));  //NOI18N
+        zoomOutMenuItem.setUserData(zoomOutController);
         zoomMenu.getItems().add(zoomOutMenuItem);
-        
+        if (EditorPlatform.IS_MAC) {
+            zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); // NOI18N
+            zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("-", modifier)); // NOI18N
+            // Neither KeyCode.MINUS or KeyCode.SUBTRACT seem to work on macOS.
+            // No chance to test on keyboard with num key pad yet.
+        } else {
+            // Accelerators for standard keyboard (not num key pad)
+            zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.PLUS, modifier)); // NOI18N
+            zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.MINUS, modifier)); // NOI18N
+            // Does not work on Windows:
+            // zoomInMenuItem.setAccelerator(new KeyCharacterCombination("+", modifier)); // NOI18N
+            //
+            // Works in Windows:
+            // zoomOutMenuItem.setAccelerator(new KeyCharacterCombination("-", modifier)); // NOI18N
+        }
         zoomMenu.getItems().add(new SeparatorMenuItem());
-        
+
         for (int i = 0; i < scalingTable.length; i++) {
             final double scaling = scalingTable[i];
             final String title = String.format("%.0f%%", scaling * 100); //NOI18N
@@ -1301,7 +1320,61 @@ public class MenuBarController {
         }
     }
 
-    
+    private void runActionController(MenuItemController controllerToRun, KeyEvent event) {
+        if (controllerToRun.canPerform()) {
+            controllerToRun.perform();
+        }
+        event.consume();
+    }
+
+    /**
+     * Provides handling for additional keyboard accelerators assigned to document view
+     * zoom in/out operation. Zoom is controllable via [+]/[-] keys on standard keyboard
+     * and on numerical key pad.
+     * 
+     * Additionally zoom in via arrow keys (up/right) and zoom out (left/down) is possible.
+     * 
+     * @param event {@link KeyEvent} If any action is triggered, the event will be consumed.
+     */
+    public void handleAdditionalZoomAccelerators(KeyEvent event) {
+        // For unknown reasons, on macOS 12.0.1 with  Java 17/JavaFX 19 the "-" key code
+        // is not properly accepted hence this handling here.
+        if (EditorPlatform.IS_MAC && "-".equals(event.getText())) {
+            runActionController(zoomOutController, event);
+            return;
+        }
+
+        if (EditorPlatform.IS_MAC && "+".equals(event.getText())) {
+            runActionController(zoomInController, event);
+            return;
+        }
+
+        if (event.isShiftDown()) {
+            handleArrowKeysForZoom(event);
+        } else {
+            handleNumPadKeys(event);
+        }
+    }
+
+    private void handleNumPadKeys(KeyEvent event) {
+        switch (event.getCode()) {
+            case ADD -> runActionController(zoomInController, event);
+            case SUBTRACT -> runActionController(zoomOutController, event);
+            default -> { /* no action*/ }
+        }
+    }
+
+    private void handleArrowKeysForZoom(KeyEvent event) {
+        switch (event.getCode()) {
+            case RIGHT -> runActionController(zoomInController, event);
+            case UP -> runActionController(zoomInController, event);
+            case LEFT -> runActionController(zoomOutController, event);
+            case DOWN -> runActionController(zoomOutController, event);
+            default -> { /* no action*/ }
+        }
+        return;
+    }
+
     private static int findZoomScaleIndex(double zoomScale) {
         int result = -1;
         
