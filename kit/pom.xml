@@ -60,22 +60,10 @@
             <version>3.3.9</version>
         </dependency>
 
-        <!-- Rest API -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-            <scope>runtime</scope>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.1</version>
         </dependency>
     </dependencies>
     

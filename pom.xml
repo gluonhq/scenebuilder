@@ -30,6 +30,7 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
+        <main.class.name/>
     </properties>
 
     <repositories>
