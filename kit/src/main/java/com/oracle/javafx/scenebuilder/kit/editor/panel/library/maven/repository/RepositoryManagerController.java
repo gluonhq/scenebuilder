@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -65,24 +65,22 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
     private ObservableList<RepositoryListItem> listItems;
 
     private final String userM2Repository;
-    private final String tempM2Repository;
     private final PreferencesControllerBase preferencesControllerBase;
     
     public RepositoryManagerController(EditorController editorController, String userM2Repository,
-                                       String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                       PreferencesControllerBase preferencesControllerBase,
                                        Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryManager.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userM2Repository = userM2Repository;
-        this.tempM2Repository = tempM2Repository;
         this.preferencesControllerBase = preferencesControllerBase;
     }
 
     @Override
     protected void controllerDidCreateStage() {
         if (this.owner == null) {
-            // Dialog will be appliation modal
+            // Dialog will be application modal
             getStage().initModality(Modality.APPLICATION_MODAL);
         } else {
             // Dialog will be window modal
@@ -137,7 +135,7 @@ public class RepositoryManagerController extends AbstractFxmlWindowController {
 
     private void repositoryDialog(Repository repository) {
         RepositoryDialogController repositoryDialogController = new RepositoryDialogController(editorController,
-                userM2Repository, tempM2Repository, preferencesControllerBase, getStage());
+                userM2Repository, preferencesControllerBase, getStage());
         repositoryDialogController.openWindow();
         repositoryDialogController.setRepository(repository);
         repositoryDialogController.getStage().showingProperty().addListener(new InvalidationListener() {

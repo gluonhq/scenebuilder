@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,22 +32,23 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import static org.apache.commons.codec.binary.Base64.encodeBase64;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
 public class NexusSearch implements Search {
@@ -65,12 +66,11 @@ public class NexusSearch implements Search {
             
     private static boolean first;
     private static int iteration;
-    private int totalCount = 0;
     private static final int ITEMS_ITERATION = 200;
     private static final int MAX_RESULTS = 2000;
     
     public NexusSearch(String name, String domain, String username, String password) {
-        client = HttpClients.createDefault();
+        client = HttpClient.newHttpClient();
         this.name = name;
         this.domain = domain;
         this.username = username;
@@ -83,18 +83,20 @@ public class NexusSearch implements Search {
     @Override
     public List<DefaultArtifact> getCoordinates(String query) {
         try {
-            HttpGet request = new HttpGet(domain + URL_PREFIX + query + (first ? "" : URL_SUFFIX + iteration * ITEMS_ITERATION));
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(domain + URL_PREFIX + query + (first ? "" : URL_SUFFIX + iteration * ITEMS_ITERATION)))
+                .header("Accept", "application/json");
             if (!username.isEmpty() && !password.isEmpty()) {
-                String authStringEnc = new String(encodeBase64((username + ":" + password).getBytes()));
-                request.addHeader("Authorization", "Basic " + authStringEnc);
+                String authStringEnc = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+                builder.header("Authorization", "Basic " + authStringEnc);
             }
-            request.setHeader("Accept", "application/json");
-            HttpResponse response = client.execute(request);
-            try (JsonReader rdr = Json.createReader(response.getEntity().getContent())) {
+            HttpRequest request = builder.build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            try (JsonReader rdr = Json.createReader(new StringReader(response.body()))) {
                 JsonObject obj = rdr.readObject();
                 if (first && obj != null && !obj.isEmpty() && obj.containsKey("totalCount")) {
                     first = false;
-                    totalCount = Math.min(obj.getInt("totalCount", 0), MAX_RESULTS);
+                    int totalCount = Math.min(obj.getInt("totalCount", 0), MAX_RESULTS);
                     if (totalCount > ITEMS_ITERATION) {
                         List<DefaultArtifact> coordinates = new ArrayList<>(processRequest(obj));
                         while (totalCount > ITEMS_ITERATION) {
@@ -104,7 +106,7 @@ public class NexusSearch implements Search {
                                     .filter(ga -> coordinates.stream()
                                             .noneMatch(ar -> ar.getGroupId().equals(ga.getGroupId()) &&
                                                              ar.getArtifactId().equals(ga.getArtifactId())))
-                                    .collect(Collectors.toList()));
+                                    .toList());
                             
                             totalCount -= ITEMS_ITERATION;
                         }
@@ -113,7 +115,7 @@ public class NexusSearch implements Search {
                 }
                 return processRequest(obj);
             }
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
             Logger.getLogger(NexusSearch.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

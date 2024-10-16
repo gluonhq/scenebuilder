@@ -1405,7 +1405,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void onManageJarFxml(ActionEvent event) {
         if(libraryDialogController==null){
             libraryDialogController = new LibraryDialogController(editorController, AppSettings.getUserM2Repository(),
-                    AppSettings.getTempM2Repository(), PreferencesController.getSingleton(), getStage());
+                    PreferencesController.getSingleton(), getStage());
             libraryDialogController.setOnAddJar(() -> onImportJarFxml(libraryDialogController.getStage()));
             libraryDialogController.setOnEditFXML(fxmlPath -> {
                     if (SceneBuilderApp.getSingleton().findFirstUnusedDocumentWindowController().isPresent()) {

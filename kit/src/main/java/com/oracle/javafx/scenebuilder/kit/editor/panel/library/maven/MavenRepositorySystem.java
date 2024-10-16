@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -34,32 +34,29 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.File;
+import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.codehaus.plexus.util.FileUtils;
 import org.eclipse.aether.AbstractRepositoryListener;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
+import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
 import org.eclipse.aether.metadata.DefaultMetadata;
@@ -73,108 +70,92 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import org.eclipse.aether.transfer.AbstractTransferListener;
 import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
-import org.eclipse.aether.util.artifact.JavaScopes;
-import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.version.Version;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 public class MavenRepositorySystem {
+
+    private static final Logger LOG = Logger.getLogger(MavenRepositorySystem.class.getName());
 
     // TODO: Manage List of Repositories
     // TODO: Manage private repositories and credentials
     
     private RepositorySystem system;
-    
-    private DefaultRepositorySystemSession session;
-    
+
+    private RepositorySystemSession session;
+
     private LocalRepository localRepo;
     
     private VersionRangeResult rangeResult;
     
     private final boolean onlyReleases;
-    
-    private BasicRepositoryConnectorFactory basicRepositoryConnectorFactory;
-
     private final String userM2Repository;
-    private final String tempM2Repository;
     private final RepositoryPreferences repositoryPreferences;
     
-    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository, String tempM2Repository,
+    public MavenRepositorySystem(boolean onlyReleases, String userM2Repository,
                                  RepositoryPreferences repositoryPreferences) {
         this.onlyReleases = onlyReleases;
         this.userM2Repository = userM2Repository;
-        this.tempM2Repository = tempM2Repository;
         this.repositoryPreferences = repositoryPreferences;
         initRepositorySystem();
     }
     
     private void initRepositorySystem() {
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-        locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
-            @Override
-            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-                throw new RuntimeException(exception);
-            }
-        });
-        
-        basicRepositoryConnectorFactory = new BasicRepositoryConnectorFactory();
-        basicRepositoryConnectorFactory.initService(locator);
-        
-        system = locator.getService(RepositorySystem.class);
+        system = new RepositorySystemSupplier().get();
+        if (system == null) {
+            throw new RuntimeException("Error initializing repository system");
+        }
+        localRepo = new LocalRepository(Path.of(userM2Repository));
 
-        session = MavenRepositorySystemUtils.newSession();
-
-        localRepo = new LocalRepository(new File(userM2Repository));
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-
-        // TODO: log file transfers
-        session.setTransferListener(new AbstractTransferListener() {
-            @Override
-            public void transferSucceeded(TransferEvent event) { }
-
-            @Override
-            public void transferFailed(TransferEvent event) { }
-        });
-        
-        // TODO: Log repository changes
-        session.setRepositoryListener(new AbstractRepositoryListener() {
-            @Override
-            public void artifactResolved(RepositoryEvent event) { }
-        });
-        
+        // Exclude test and provided dependencies
+        DependencySelector dependencySelector = new AndDependencySelector(
+            new ScopeDependencySelector("test", "provided"),
+            new OptionalDependencySelector(), new ExclusionDependencySelector()
+        );
+        session = system.createSessionBuilder()
+            .withTransferListener(new AbstractTransferListener() {
+                @Override
+                public void transferSucceeded(TransferEvent event) {
+                    LOG.finest("Transfer succeeded: " + event);
+                }
+                @Override
+                public void transferFailed(TransferEvent event) {
+                    LOG.finest("Transfer failed: " + event);
+                }
+            })
+            .withRepositoryListener(new AbstractRepositoryListener() {
+                @Override
+                public void artifactResolved(RepositoryEvent event) {
+                    LOG.finest("Artifact resolved: " + event);
+                }
+            })
+            .withLocalRepositories(localRepo)
+            .setDependencySelector(dependencySelector)
+            .build();
     }
 
-    public RepositorySystem getRepositorySystem() {
-        return system;
-    }
-    
-    public DefaultRepositorySystemSession getRepositorySession() {
-        return session;
-    }
-    
     public List<RemoteRepository> getRepositories() {
         final List<RemoteRepository> list = MavenPresets.getPresetRepositories().stream()
-                .filter(r -> !onlyReleases ||
-                        (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
+                .filter(r -> !onlyReleases || !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT"))
                 .map(this::createRepository)
                 .collect(Collectors.toList());
         list.addAll(repositoryPreferences.getRepositories().stream()
-                .filter(r -> !onlyReleases ||
-                        (onlyReleases && !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT")))
+                .filter(r -> !onlyReleases || !r.getId().toUpperCase(Locale.ROOT).contains("SNAPSHOT"))
                 .map(this::createRepository)
-                .collect(Collectors.toList()));
+                .toList());
         return list;
     }
     
@@ -187,17 +168,7 @@ public class MavenRepositorySystem {
                 .filter(r -> r.getId().equals(rangeResult.getRepository(version).getId()))
                 .findFirst()
                 .orElse(new RemoteRepository
-                        .Builder(MavenPresets.LOCAL, "default", session.getLocalRepository().getBasedir().getAbsolutePath())
-                        .build());
-    }
-    
-    public RemoteRepository getRemoteRepository(String name) {
-        return getRepositories()
-                .stream()
-                .filter(r -> r.getId().equals(name))
-                .findFirst()
-                .orElse(new RemoteRepository
-                        .Builder(MavenPresets.LOCAL, "default", session.getLocalRepository().getBasedir().getAbsolutePath())
+                        .Builder(MavenPresets.LOCAL, "default", session.getLocalRepository().getBasePath().toAbsolutePath().toString())
                         .build());
     }
     
@@ -210,7 +181,9 @@ public class MavenRepositorySystem {
             cleanMetadata(artifact);
             
             return rangeResult.getVersions();
-        } catch (VersionRangeResolutionException ex) { } 
+        } catch (VersionRangeResolutionException ex) {
+            LOG.finer("VersionRangeResolutionException finding version for artifact " + artifact + ": " + ex);
+        }
         return new ArrayList<>();
     }
     
@@ -221,72 +194,72 @@ public class MavenRepositorySystem {
         try {
             rangeResult = system.resolveVersionRange(session, rangeRequest);
             cleanMetadata(artifact);
-            return rangeResult.getVersions()
-                    .stream()
-                    .filter(v -> !v.toString().toLowerCase(Locale.ROOT).contains("snapshot"))
-                    .sorted((v1, v2) -> v2.compareTo(v1))
-                    .findFirst()
-                    .orElse(null);
-        } catch (VersionRangeResolutionException ex) { } 
+            return rangeResult.getVersions().stream()
+                .filter(v -> !v.toString().toLowerCase(Locale.ROOT).contains("snapshot"))
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+        } catch (VersionRangeResolutionException ex) {
+            LOG.finer("VersionRangeResolutionException finding latest version for artifact " + artifact + ": " + ex);
+        }
         return null;
     }
     
     private void cleanMetadata(Artifact artifact) {
-        final String path = localRepo.getBasedir().getAbsolutePath() + File.separator
-                        + artifact.getGroupId().replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator
-                        + artifact.getArtifactId() + File.separator;
+        final Path path = localRepo.getBasePath()
+            .resolve(artifact.getGroupId().replaceAll("\\.", Matcher.quoteReplacement(File.separator)))
+            .resolve(artifact.getArtifactId());
         final DefaultMetadata metadata = new DefaultMetadata("maven-metadata.xml", Metadata.Nature.RELEASE);
         getRepositories()
             .stream()
             .map(r -> session.getLocalRepositoryManager().getPathForRemoteMetadata(metadata, r, ""))
             .forEach(s -> {
-                File file = new File(path + s);
-                if (file.exists()) {
+                Path file = path.resolve(s);
+                if (Files.exists(file)) {
                     try {
-                        Files.delete(file.toPath());
-                        Files.delete(new File(path + s + ".sha1").toPath());
-                    } catch (IOException ex) { }
+                        Files.delete(file);
+                        Files.delete(new File(file + ".sha1").toPath());
+                    } catch (IOException ex) {
+                        LOG.finer("Error deleting file " + file + ": " + ex);
+                    }
                 }
             });
     }
         
     public String resolveArtifacts(RemoteRepository remoteRepository, Artifact... artifact) {
-        
-        LocalRepository localTmpRepo = new LocalRepository(tempM2Repository);
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localTmpRepo));
-        
+
         List<Artifact> artifacts = Stream.of(artifact)
                 .map(a -> {
                     ArtifactRequest artifactRequest = new ArtifactRequest();
                     artifactRequest.setArtifact(a);
-                    artifactRequest.setRepositories(remoteRepository == null ? getRepositories() : 
-                            Arrays.asList(remoteRepository));
+                    artifactRequest.setRepositories(remoteRepository == null ? getRepositories() : List.of(remoteRepository));
                     return artifactRequest;
                 })
                 .map(ar -> {
                     try {
                         ArtifactResult result = system.resolveArtifact(session, ar);
                         return result.getArtifact();
-                    } catch (ArtifactResolutionException ex) { }
+                    } catch (ArtifactResolutionException ex) {
+                        LOG.finer("ArtifactResolutionException for artifact request " + ar + ": " + ex);
+                    }
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList()); 
-        
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        
-        List<File> sha1Files = null;
-        if (artifacts != null && !artifacts.isEmpty()) {
-            sha1Files = artifacts.stream()
-                .filter(a -> a.getFile() != null)
-                .map(a -> new File(a.getFile().getAbsolutePath().concat(".sha1")))
-                .collect(Collectors.toList());
-        
+                .toList();
+
+        List<Path> sha1Paths = null;
+        if (!artifacts.isEmpty()) {
+            sha1Paths = artifacts.stream()
+                .filter(a -> a.getPath() != null)
+                .map(a -> Path.of(a.getPath().toAbsolutePath() + ".sha1"))
+                .toList();
+
             InstallRequest installRequest = new InstallRequest();
             installRequest.setArtifacts(artifacts);
             try {
                 system.install(session, installRequest);
-            } catch (InstallationException ex) { }
+            } catch (InstallationException ex) {
+                LOG.finer("InstallationException for install request " + installRequest + ": " + ex);
+            }
         } 
 
         // return path from local m2
@@ -294,42 +267,37 @@ public class MavenRepositorySystem {
         artifactRequest.setArtifact(artifact[0]);
         String absolutePath = "";
         try {
-            final File jarFile = system.resolveArtifact(session, artifactRequest).getArtifact().getFile();
-            absolutePath = jarFile.getAbsolutePath();
-            if (sha1Files != null) {
-                sha1Files.stream()
-                    .forEach(f -> {
-                        try {
-                            FileUtils.copyFile(f, new File(jarFile.getParent() + File.separator + f.getName()));
-                        } catch (IOException ex) { }
-                    });
+            final Path jarFile = system.resolveArtifact(session, artifactRequest).getArtifact().getPath();
+            absolutePath = jarFile.toAbsolutePath().toString();
+            if (sha1Paths != null) {
+                sha1Paths.forEach(path -> copyFile(path, jarFile.getParent().resolve(path.getFileName())));
             }
-        } catch (ArtifactResolutionException ex) { }
-        
-        try {
-            FileUtils.deleteDirectory(tempM2Repository);
-        } catch (IOException ex) { }
-        
+        } catch (ArtifactResolutionException ex) {
+            LOG.finer("ArtifactResolutionException for artifact request " + artifactRequest + ": " + ex);
+        }
+
         return absolutePath;
     }
         
     public String resolveDependencies(RemoteRepository remoteRepository, Artifact artifact) {
-        DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
         CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-        collectRequest.setRepositories(remoteRepository == null ? getRepositories() : 
-                Arrays.asList(remoteRepository));
+        collectRequest.setRoot(new Dependency(artifact, "compile"));
+        collectRequest.setRepositories(remoteRepository == null ? getRepositories() : List.of(remoteRepository));
 
-        DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, classpathFlter);
+        DependencyRequest dependencyRequest = new DependencyRequest();
+        dependencyRequest.setCollectRequest(collectRequest);
+
         try {
-            List<ArtifactResult> artifactResults = system.resolveDependencies(session, dependencyRequest)
-                    .getArtifactResults();
-            
+            DependencyResult dependencyResult = system.resolveDependencies(session, dependencyRequest);
+            List<ArtifactResult> artifactResults = dependencyResult.getArtifactResults();
+
             return artifactResults.stream()
                     .skip(1) // exclude jar itself
-                    .map(a -> a.getArtifact().getFile().getAbsolutePath())
+                    .map(a -> a.getArtifact().getPath().toAbsolutePath().toString())
                     .collect(Collectors.joining(File.pathSeparator));
-        } catch (DependencyResolutionException ex) { }
+        } catch (DependencyResolutionException ex) {
+            LOG.finer("DependencyResolutionException for artifact " + artifact + ": " + ex);
+        }
         return "";
     }
     
@@ -342,13 +310,12 @@ public class MavenRepositorySystem {
                     .addPassword(repository.getPassword())
                     .build();
         }
-        
-        final RemoteRepository repo = new RemoteRepository
+
+        return new RemoteRepository
                 .Builder(repository.getId() , repository.getType(), repository.getURL())
                 .setSnapshotPolicy(onlyReleases ? new RepositoryPolicy(false, null, null) : new RepositoryPolicy())
                 .setAuthentication(auth)
                 .build();
-        return repo;
     }
     
     public String validateRepository(Repository repository) {
@@ -356,11 +323,11 @@ public class MavenRepositorySystem {
         
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(new DefaultArtifact("test:test:1.0"));
-        artifactRequest.setRepositories(Arrays.asList(remoteRepository));
+        artifactRequest.setRepositories(List.of(remoteRepository));;
         try {
             system.resolveArtifact(session, artifactRequest);
         } catch (ArtifactResolutionException ex) {
-            final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(ex);
+            final String rootCauseMessage = getExceptionCause(ex).toString();
             if (rootCauseMessage != null && !rootCauseMessage.contains("ArtifactNotFoundException")) {
                 return rootCauseMessage;
             }
@@ -368,4 +335,23 @@ public class MavenRepositorySystem {
         
         return "";
     }
+
+    private static void copyFile(Path source, Path destination)  {
+        try {
+            Files.createDirectories(destination.getParent());
+            Files.copy(source, destination, REPLACE_EXISTING);
+        } catch (IOException ex) {
+            LOG.finer("Error copying file " + source + " to destination " + destination + ": " + ex);
+        }
+    }
+
+    private static Throwable getExceptionCause(Throwable e) {
+        Throwable t = e;
+        Throwable cause;
+        while (null != (cause = t.getCause()) && t != cause) {
+            t = cause;
+        }
+        return t;
+    }
+
 }

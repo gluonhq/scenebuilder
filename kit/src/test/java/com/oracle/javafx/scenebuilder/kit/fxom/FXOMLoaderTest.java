@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ public class FXOMLoaderTest {
         String validFxmlText = FXOMDocument.readContentFromURL(validResource);
         FXOMDocument document = new FXOMDocument(validFxmlText, validResource, null, null);
 
-        // When there are exceptions, than the error handler should store these here
+        // When there are exceptions, then the error handler should store these here
         Map<Class<?>, Throwable> handledErrors = new HashMap<>();
         
         // In Scene Builder, the error is displayed in an error dialog.
@@ -73,7 +74,7 @@ public class FXOMLoaderTest {
         FXOMLoader classUnderTest = new FXOMLoader(document, errorHandler);
         assertDoesNotThrow(()->classUnderTest.load(invalidXmlText));
 
-        assertTrue(handledErrors.containsKey(javax.xml.stream.XMLStreamException.class));
+        assertTrue(handledErrors.values().stream().anyMatch(v -> v instanceof XMLStreamException));
         assertTrue(handledErrors.containsKey(javafx.fxml.LoadException.class));
     }
 }

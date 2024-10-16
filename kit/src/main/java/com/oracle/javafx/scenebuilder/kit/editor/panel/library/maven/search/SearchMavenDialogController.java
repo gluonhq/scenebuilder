@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -66,7 +66,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -110,7 +109,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
     private final PreferencesControllerBase preferencesControllerBase;
     
     public SearchMavenDialogController(EditorController editorController, String userM2Repository,
-                                       String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                       PreferencesControllerBase preferencesControllerBase,
                                        Stage owner) {
         super(LibraryPanelController.class.getResource("SearchMavenDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.userLibrary = (UserLibrary) editorController.getLibrary();
@@ -118,7 +117,7 @@ public class SearchMavenDialogController extends AbstractFxmlWindowController {
         this.editorController = editorController;
         this.preferencesControllerBase = preferencesControllerBase;
         
-        maven = new MavenRepositorySystem(true, userM2Repository, tempM2Repository,
+        maven = new MavenRepositorySystem(true, userM2Repository,
                 preferencesControllerBase.getRepositoryPreferences()); // only releases
         
         searchService = new SearchService(userM2Repository);

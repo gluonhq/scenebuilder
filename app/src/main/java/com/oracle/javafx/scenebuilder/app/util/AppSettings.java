@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -40,10 +40,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonReaderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,10 +78,10 @@ public class AppSettings {
     private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     static {
-        initSceneBuiderVersion();
+        initSceneBuilderVersion();
     }
 
-    private static void initSceneBuiderVersion() {
+    private static void initSceneBuilderVersion() {
         try (InputStream in = AboutWindowController.class.getResourceAsStream("about.properties")) {
             if (in != null) {
                 Properties sbProps = new Properties();
@@ -206,11 +206,4 @@ public class AppSettings {
         return m2Path;
     }
 
-    public static String getTempM2Repository() {
-        String m2Path = System.getProperty("java.io.tmpdir") + File.separator + "m2Tmp"; //NOI18N
-
-        assert m2Path != null;
-
-        return m2Path;
-    }
 }

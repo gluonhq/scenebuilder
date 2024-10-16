@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -95,19 +95,17 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     private Runnable onAddFolder;
     private Consumer<Path> onEditFXML;
 
-    private String userM2Repository;
-    private String tempM2Repository;
+    private final String userM2Repository;
 
     private final PreferencesControllerBase preferencesControllerBase;
     
-    public LibraryDialogController(EditorController editorController, String userM2Repository, String tempM2Repository,
+    public LibraryDialogController(EditorController editorController, String userM2Repository,
                                    PreferencesControllerBase preferencesController, Stage owner) {
         super(LibraryPanelController.class.getResource("LibraryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userLibrary = (UserLibrary) editorController.getLibrary();
         this.userM2Repository = userM2Repository;
-        this.tempM2Repository = tempM2Repository;
         this.preferencesControllerBase = preferencesController;
     }
 
@@ -192,7 +190,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private void manage() {
         RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController,
-                userM2Repository, tempM2Repository, preferencesControllerBase, getStage());
+                userM2Repository, preferencesControllerBase, getStage());
         repositoryDialogController.openWindow();
     }
     
@@ -216,7 +214,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private void addRelease() {
         SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController,
-                userM2Repository, tempM2Repository, preferencesControllerBase, getStage());
+                userM2Repository, preferencesControllerBase, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
@@ -232,7 +230,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     @FXML
     private void addManually() {
         MavenDialogController mavenDialogController = new MavenDialogController(editorController, userM2Repository,
-                tempM2Repository, preferencesControllerBase, getStage());
+                preferencesControllerBase, getStage());
         mavenDialogController.openWindow();
         mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
             @Override
