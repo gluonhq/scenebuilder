@@ -9,6 +9,10 @@ on:
       project-version:
         required: true
         type: string
+      java-release:
+        default: '23'
+        required: false
+        type: string
       java-version:
         default: '23.0.1'
         required: false
@@ -39,7 +43,8 @@ jobs:
         uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
-          release: ${{ inputs.java-version }}
+          release: ${{ inputs.java-release }}
+          version: ${{ inputs.java-version }}
 
       - name: Setup JavaFX
         id: javafx
