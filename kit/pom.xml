@@ -3,12 +3,19 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kit</artifactId>
     <name>Scene Builder Kit</name>
-    
+    <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
+    <inceptionYear>2012</inceptionYear>
+    <url>https://github.com/gluonhq/scenebuilder</url>
+
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
         <version>24.0.0-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+    </properties>
 
     <dependencies>
         <!-- JavaFX -->
@@ -84,16 +91,52 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <finalName>scenebuilder-kit-${project.version}</finalName>
                     <outputDirectory>target/lib</outputDirectory>
-                    <archive>
-                        <manifestEntries>
-                            <Automatic-Module-Name>com.gluonhq.scenebuilder.kit</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.10.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <doclint>none</doclint>
+                            <jarOutputDirectory>${project.build.directory}/lib</jarOutputDirectory>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

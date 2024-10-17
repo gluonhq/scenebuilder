@@ -101,23 +101,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
                     </configuration>
                 </plugin>
 
-                <!-- Deploy to Maven Central -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                    <inherited>false</inherited>
-                </plugin>
-                
                 <!-- Enforce code formatting and style -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -202,7 +191,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.5.1</version>
+                <version>1.14.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -355,6 +344,24 @@
                                 </artifact>
                             </artifacts>
                         </files>
+                        <signing>
+                            <active>ALWAYS</active>
+                            <armored>true</armored>
+                        </signing>
+                        <deploy>
+                            <maven>
+                                <nexus2>
+                                    <maven-central>
+                                        <active>ALWAYS</active>
+                                        <url>https://s01.oss.sonatype.org/service/local</url>
+                                        <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
+                                        <closeRepository>true</closeRepository>
+                                        <releaseRepository>false</releaseRepository>
+                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                    </maven-central>
+                                </nexus2>
+                            </maven>
+                        </deploy>
                     </jreleaser>
                 </configuration>
             </plugin>
