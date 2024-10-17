@@ -15,6 +15,13 @@
         <gluon.attach.version>4.0.21</gluon.attach.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>gluon-nexus</id>
+            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.gluonhq.scenebuilder</groupId>

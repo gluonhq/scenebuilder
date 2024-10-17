@@ -149,14 +149,10 @@ jobs:
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
-      - name: JReleaser output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: jreleaser-logs
-          path: |
-            target/jreleaser/trace.log
-            target/jreleaser/output.properties
+      - name: Deploy parent pom and Kit to local staging
+        run: |
+          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
+          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
 
       - name: Publish Kit with JReleaser
         env:
@@ -167,5 +163,13 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
         run: |
-          mvn deploy -fkit
           mvn -B -ntp -pl :parent jreleaser:deploy
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-logs
+          path: |
+            target/jreleaser/trace.log
+            target/jreleaser/output.properties

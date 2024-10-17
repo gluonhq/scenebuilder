@@ -30,18 +30,8 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
+        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>gluon-nexus</id>
-            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -132,6 +122,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.2.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.3</version>
                 </plugin>
 
                 <!-- Ensure that available tests are executed -->
@@ -354,7 +350,7 @@
                                     <maven-central>
                                         <active>ALWAYS</active>
                                         <url>https://s01.oss.sonatype.org/service/local</url>
-                                        <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
+                                        <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots</snapshotUrl>
                                         <closeRepository>true</closeRepository>
                                         <releaseRepository>false</releaseRepository>
                                         <stagingRepositories>target/staging-deploy</stagingRepositories>
