@@ -167,8 +167,10 @@ class WorkspaceController {
         assert themeStyleSheets != null;
         assert theme != null;
         List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
-        stylesheets.addAll(themeStyleSheets);
-        contentSubScene.setUserAgentStylesheet(stylesheets.getFirst());
+        themeStyleSheets.stream()
+            .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
+            .forEach(stylesheets::add);
+        contentSubScene.setUserAgentStylesheet(stylesheets.stream().findFirst().orElse(null));
 
         ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(stylesheets);
         themeStylesheets.clear();
