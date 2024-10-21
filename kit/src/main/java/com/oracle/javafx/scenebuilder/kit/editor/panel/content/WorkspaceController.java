@@ -163,18 +163,18 @@ class WorkspaceController {
         return Collections.unmodifiableList(themeStylesheets);
     }
     
-    public void setThemeStyleSheet(List<String> themeStyleSheets, EditorPlatform.Theme theme) {
-        assert themeStyleSheets != null;
+    public void setThemeStylesheet(List<String> themeStylesheets, EditorPlatform.Theme theme) {
+        assert themeStylesheets != null;
         assert theme != null;
         List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
-        themeStyleSheets.stream()
+        themeStylesheets.stream()
             .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
             .forEach(stylesheets::add);
         contentSubScene.setUserAgentStylesheet(stylesheets.stream().findFirst().orElse(null));
 
-        ObservableList<String> currentStyleSheets = FXCollections.observableArrayList(stylesheets);
-        themeStylesheets.clear();
-        themeStylesheets.addAll(currentStyleSheets);
+        ObservableList<String> currentStylesheets = FXCollections.observableArrayList(stylesheets);
+        this.themeStylesheets.clear();
+        this.themeStylesheets.addAll(currentStylesheets);
         contentGroupApplyCss();
 
         // Update scenegraph layout, etc
