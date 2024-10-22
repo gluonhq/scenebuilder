@@ -216,6 +216,8 @@
                                 <branch>master</branch>
                                 <tagName>{{projectVersion}}</tagName>
                                 <files>false</files>
+                                <checksums>false</checksums>
+                                <signatures>false</signatures>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
                                     <preset>conventional-commits</preset>
