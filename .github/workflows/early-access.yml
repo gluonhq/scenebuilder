@@ -149,6 +149,22 @@ jobs:
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
+      - name: Deploy parent pom and Kit to local staging
+        run: |
+          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
+          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
+
+      - name: Publish Kit with JReleaser
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+          JRELEASER_NEXUS2_PASSWORD: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+        run: |
+          mvn -B -ntp -pl :parent jreleaser:deploy
+
       - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v4
