@@ -159,6 +159,11 @@ public class EditorPlatform {
         // no-op
     }
 
+    public static boolean isPlatformThemeStylesheetURL(String stylesheetURL) {
+        // Return USER_AGENT css, which is Modena for fx 8.0
+        return stylesheetURL != null && stylesheetURL.equals(Theme.MODENA.getStylesheetURLs().getFirst());
+    }
+
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
         return Theme.MODENA.getStylesheetURLs().getFirst();

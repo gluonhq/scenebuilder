@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -110,17 +110,15 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
     private final Service<String> testService;
 
     private final String userM2Repository;
-    private final String tempM2Repository;
     private final PreferencesControllerBase preferencesControllerBase;
     
     public RepositoryDialogController(EditorController editorController, String userM2Repository,
-                                      String tempM2Repository, PreferencesControllerBase preferencesControllerBase,
+                                      PreferencesControllerBase preferencesControllerBase,
                                       Stage owner) {
         super(LibraryPanelController.class.getResource("RepositoryDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         this.owner = owner;
         this.editorController = editorController;
         this.userM2Repository = userM2Repository;
-        this.tempM2Repository = tempM2Repository;
         this.preferencesControllerBase = preferencesControllerBase;
         
         testService = new Service<String>() {
@@ -221,7 +219,7 @@ public class RepositoryDialogController extends AbstractFxmlWindowController {
         passwordTextfield.disableProperty().bind(privateCheckBox.selectedProperty().not());
         progress.visibleProperty().bind(testService.runningProperty());
         resultLabel.setText("");
-        maven = new MavenRepositorySystem(false, userM2Repository, tempM2Repository,
+        maven = new MavenRepositorySystem(false, userM2Repository,
                 preferencesControllerBase.getRepositoryPreferences());
     }
     

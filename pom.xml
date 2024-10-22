@@ -22,7 +22,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <javafx.version>23.0.1</javafx.version>
-        <aether.version>1.1.0</aether.version>
+        <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
         <charm.glisten.version>6.2.3</charm.glisten.version>
         <gluon.attach.version>4.0.21</gluon.attach.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
@@ -31,6 +31,7 @@
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
         <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+        <main.class.name/>
     </properties>
 
     <dependencyManagement>

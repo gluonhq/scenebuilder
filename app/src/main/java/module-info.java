@@ -39,7 +39,7 @@ module com.gluonhq.scenebuilder.app {
     requires transitive com.gluonhq.scenebuilder.gluon.plugin;
     requires java.logging;
     requires java.prefs;
-    requires javax.json.api;
+    requires jakarta.json;
 
     opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;
