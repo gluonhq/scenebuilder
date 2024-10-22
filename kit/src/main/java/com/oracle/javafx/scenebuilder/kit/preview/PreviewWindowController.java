@@ -271,7 +271,9 @@ public final class PreviewWindowController extends AbstractWindowController {
 
                     Object sceneGraphRoot = clone.getDisplayNodeOrSceneGraphRoot();
                     themeStyleSheetsList = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(editorController.getTheme()));
-                    themeStyleSheetsList.addAll(editorControllerTheme.getStylesheetURLs());
+                    editorControllerTheme.getStylesheetURLs().stream()
+                        .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
+                            .forEach(themeStyleSheetsList::add);
 
                     if (sceneGraphRoot instanceof Parent) {
                         ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
