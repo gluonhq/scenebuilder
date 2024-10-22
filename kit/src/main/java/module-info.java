@@ -39,22 +39,15 @@ module com.gluonhq.scenebuilder.kit {
     requires transitive javafx.web;
     requires java.logging;
 
-    requires static javax.json.api;
+    requires java.net.http;
+    requires static jakarta.json;
     requires transitive static java.prefs;
 
-    requires transitive static aether.api;
-    requires static aether.connector.basic;
-    requires static aether.impl;
-    requires static aether.spi;
-    requires static aether.transport.file;
-    requires static aether.transport.http;
-    requires static aether.util;
-    requires static org.apache.commons.codec;
-    requires static org.apache.httpcomponents.httpclient;
-    requires static org.apache.httpcomponents.httpcore;
-    requires static commons.lang3;
-    requires static maven.aether.provider;
-    requires static plexus.utils;
+    requires org.apache.maven.resolver;
+    requires org.apache.maven.resolver.spi;
+    requires org.apache.maven.resolver.impl;
+    requires org.apache.maven.resolver.supplier;
+    requires org.apache.maven.resolver.util;
 
     opens com.oracle.javafx.scenebuilder.kit to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.alert;
