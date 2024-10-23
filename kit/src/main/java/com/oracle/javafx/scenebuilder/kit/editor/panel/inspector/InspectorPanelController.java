@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -377,25 +377,16 @@ public class InspectorPanelController extends AbstractFxmlPanelController {
         if (!isInspectorLoaded()) {
             return;
         }
-        final TitledPane tp;
-
-        switch (getExpandedSection()) {
-            case NONE:
-                tp = null;
-                break;
-            case PROPERTIES:
-                tp = propertiesTitledPane;
-                break;
-            case LAYOUT:
-                tp = layoutTitledPane;
-                break;
-            case CODE:
-                tp = codeTitledPane;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected section id " + getExpandedSection()); //NOI18N
-            }
-
+        SectionId expandedSection = getExpandedSection();
+        if (expandedSection == null) {
+            return;
+        }
+        final TitledPane tp = switch (expandedSection) {
+            case NONE -> null;
+            case PROPERTIES -> propertiesTitledPane;
+            case LAYOUT -> layoutTitledPane;
+            case CODE -> codeTitledPane;
+        };
         accordion.setExpandedPane(tp);
     }
 
