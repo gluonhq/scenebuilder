@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -164,7 +164,8 @@
 .theme-presets .property-sheet > .viewport, 
 .theme-presets .SBKIT-library-panel, 
 .theme-presets .SBKIT-library-panel .accordion > .titled-pane > .content,
-.theme-presets .SBKIT-hierarchy-panel .tree-view {
+.theme-presets .SBKIT-hierarchy-panel,
+.theme-presets .SBKIT-hierarchy-panel > .tree-view {
     -fx-border-color: null;
     -fx-border-width: 0;
     -fx-background-color: -sb-content-background;
