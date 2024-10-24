@@ -368,6 +368,8 @@ public class Metadata {
             new ComponentClassMetadata(javafx.scene.control.ContextMenu.class, PopupControlMetadata);
     private final ComponentClassMetadata CustomMenuItemMetadata = 
             new ComponentClassMetadata(javafx.scene.control.CustomMenuItem.class, MenuItemMetadata);
+    private final ComponentClassMetadata DialogPaneMetadata =
+            new ComponentClassMetadata(javafx.scene.control.DialogPane.class, PaneMetadata);
     private final ComponentClassMetadata HyperlinkMetadata =
             new ComponentClassMetadata(javafx.scene.control.Hyperlink.class, ButtonBaseMetadata);
     private final ComponentClassMetadata LabelMetadata = 
@@ -4821,6 +4823,7 @@ public class Metadata {
         componentClassMap.put(CubicCurveToMetadata.getKlass(), CubicCurveToMetadata);
         componentClassMap.put(CustomMenuItemMetadata.getKlass(), CustomMenuItemMetadata);
         componentClassMap.put(CylinderMetadata.getKlass(), CylinderMetadata);
+        componentClassMap.put(DialogPaneMetadata.getKlass(), DialogPaneMetadata);
         componentClassMap.put(EllipseMetadata.getKlass(), EllipseMetadata);
         componentClassMap.put(FlowPaneMetadata.getKlass(), FlowPaneMetadata);
         componentClassMap.put(GridPaneMetadata.getKlass(), GridPaneMetadata);
@@ -5124,6 +5127,17 @@ public class Metadata {
         CylinderMetadata.getProperties().add(height_Double_200_PropertyMetadata);
         CylinderMetadata.getProperties().add(pickOnBounds_false_PropertyMetadata);
         CylinderMetadata.getProperties().add(radius_100_PropertyMetadata);
+
+        DialogPaneMetadata.getProperties().add(buttonTypesPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(children_c1_PropertyMetadata);
+        DialogPaneMetadata.getProperties().add(content_Node_NULL_PropertyMetadata);
+        DialogPaneMetadata.getProperties().add(contentTextPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(expandableContentPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(expanded_false_PropertyMetadata);
+        DialogPaneMetadata.getProperties().add(graphicPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(headerPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(headerTextPropertyMetadata);
+        DialogPaneMetadata.getProperties().add(styleClass_c30_PropertyMetadata);
 
         EllipseMetadata.getProperties().add(accessibleRole_NODE_PropertyMetadata);
         EllipseMetadata.getProperties().add(centerXPropertyMetadata);
