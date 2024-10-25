@@ -43,11 +43,11 @@ module com.gluonhq.scenebuilder.kit {
     requires static jakarta.json;
     requires transitive static java.prefs;
 
-    requires org.apache.maven.resolver;
-    requires org.apache.maven.resolver.spi;
-    requires org.apache.maven.resolver.impl;
-    requires org.apache.maven.resolver.supplier;
-    requires org.apache.maven.resolver.util;
+    requires static org.apache.maven.resolver;
+    requires static org.apache.maven.resolver.spi;
+    requires static org.apache.maven.resolver.impl;
+    requires static org.apache.maven.resolver.supplier;
+    requires static org.apache.maven.resolver.util;
 
     opens com.oracle.javafx.scenebuilder.kit to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.alert;
