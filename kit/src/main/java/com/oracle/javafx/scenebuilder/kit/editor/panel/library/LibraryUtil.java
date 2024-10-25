@@ -35,18 +35,36 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.module.ModuleReference;
+import java.lang.module.ResolvedModule;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LibraryUtil {
 
     public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
+    private static Set<ResolvedModule> MODULES;
 
     LibraryUtil() {
         // no-op
+    }
+
+    public static Optional<ModuleReference> getModuleReference(Path path) {
+        if (path == null) {
+            return Optional.empty();
+        }
+        if (MODULES == null) {
+            MODULES = ModuleLayer.boot().configuration().modules();
+        }
+        return MODULES.stream()
+            .map(ResolvedModule::reference)
+            .filter(r -> path.equals(r.location().map(Path::of).orElse(null)))
+            .findFirst();
     }
 
     public static boolean isJarPath(Path path) {
