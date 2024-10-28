@@ -581,6 +581,16 @@ public class EditorController {
     }
 
     /**
+     * Refresh the theme and related stylesheets in different
+     * places (content, preview, ...)
+     */
+    public void refreshTheme() {
+        EditorPlatform.Theme currentTheme = getTheme();
+        setTheme(null);
+        setTheme(currentTheme);
+    }
+
+    /**
      * 
      * @return the list of scene style sheet used by this editor
      */

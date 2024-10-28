@@ -1074,7 +1074,9 @@ public class ContentPanelController extends AbstractFxmlPanelController
         if (contentGroup != null) {
             final EditorPlatform.Theme theme = getEditorController().getTheme();
             List<String> themeStylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
-            themeStylesheets.addAll(theme.getStylesheetURLs());
+            if (theme != null) {
+                themeStylesheets.addAll(theme.getStylesheetURLs());
+            }
             workspaceController.setThemeStylesheet(themeStylesheets, theme);
         }
     }

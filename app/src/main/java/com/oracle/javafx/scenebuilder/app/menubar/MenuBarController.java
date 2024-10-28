@@ -2343,6 +2343,8 @@ public class MenuBarController {
         @Override
         public void perform() {
             GluonEditorController.getInstance().setGluonSwatch(gluonSwatch);
+            // After swatch changes, force theme update to refresh the content
+            documentWindowController.getEditorController().refreshTheme();
         }
 
         @Override
