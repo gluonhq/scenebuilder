@@ -83,6 +83,7 @@ com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 [![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
 [![License](https://img.shields.io/github/license/gluonhq/scenebuilder)](https://opensource.org/licenses/GPL-3.0)
+[![javadoc](https://javadoc.io/badge2/com.gluonhq.scenebuilder/kit/javadoc.svg?color=blue)](https://javadoc.io/doc/com.gluonhq.scenebuilder/kit)
 
 Scene Builder Kit is published to Maven Central, and you can add it as a regular dependency to the build of your app:
 
