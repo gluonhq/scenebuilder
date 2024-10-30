@@ -80,12 +80,11 @@ com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 
 ## Scene Builder Kit ##
 
-To build and install the Scene Builder Kit in your local repository, run:
+[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
+[![License](https://img.shields.io/github/license/gluonhq/scenebuilder)](https://opensource.org/licenses/GPL-3.0)
 
-`mvn clean install -f kit`
-
-The custom controls of the Scene Builder kit can be used in your project.
-You can add it as a regular dependency to the build of your app:
+Scene Builder Kit is published to Maven Central, and you can add it as a regular dependency to the build of your app:
 
 ```
 <dependency>
@@ -94,6 +93,14 @@ You can add it as a regular dependency to the build of your app:
   <version>$version</version>
 </dependency>
 ```
+
+You can use Scene Builder Kit embedded in your project. A simple demo can be found here: https://github.com/gluonhq/EmbeddedSceneBuilderDemo
+
+Also you can use in your projects the controls available in Scene Builder Kit.
+
+If you want to build and install the Scene Builder Kit in your local repository, run:
+
+`mvn clean install -f kit`
 
 ## Code Style
 
