@@ -9,7 +9,7 @@ on:
         options:
           - RC
           - GA
-      version:
+      rc_version:
         type: string
         default: ''
         description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
@@ -57,7 +57,11 @@ jobs:
           S3_PATH=$PROJECT_VERSION
           CANDIDATE=${{ github.event.inputs.candidate }}
           if [[ "$CANDIDATE" == RC ]]; then
-              PROJECT_VERSION=${PROJECT_VERSION}-${{ github.event.inputs.version }}
+              RC_VERSION = ${{ github.event.inputs.rc_version }}
+              if [[ "$RC_VERSION" == "" ]]; then
+                RC_VERSION = "RC"
+              fi
+              PROJECT_VERSION=${PROJECT_VERSION}-${RC_VERSION}
               S3_PATH=RC/$PROJECT_VERSION
           fi
           echo "Releasing.. "$PROJECT_VERSION
