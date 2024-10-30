@@ -158,7 +158,7 @@ class FXOMLoader implements LoadListener {
     }
 
     private void handleKnownCauses(Exception x) throws IOException {
-        if (x.getCause().getClass() == XMLStreamException.class) {
+        if (x.getCause() instanceof XMLStreamException) {
             knownErrorsHandler.accept(x);
         } else {
             handleUnknownAndMissingCauses(x);

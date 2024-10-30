@@ -61,14 +61,8 @@ public class DocumentationUrlsTest {
     }
 
     @Test
-    public void that_platform_gluon_javadoc_url_matches_configuration() {
-        assertEquals("https://docs.gluonhq.com/charm/javadoc/latest/", 
-                DocumentationUrls.GLUON_JAVADOC_HOME.toString());
-    }
-
-    @Test
     public void that_platform_javadoc_url_matches_configuration() {
-        assertEquals("https://openjfx.io/javadoc/11/",
+        assertEquals("https://openjfx.io/javadoc/23/",
                 DocumentationUrls.JAVADOC_HOME.toString());
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2021, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.lang.module.ModuleReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -53,6 +54,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -66,6 +68,7 @@ import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
+import com.oracle.javafx.scenebuilder.kit.library.util.ModuleExplorer;
 
 /**
  *
@@ -348,49 +351,55 @@ class LibraryFolderWatcher implements Runnable {
     }
     
     
-    private void exploreAndUpdateLibrary(Collection<Path> jarsOrFolders) throws IOException {
+    private void exploreAndUpdateLibrary(Collection<Path> modulesOrJarsOrFolders) throws IOException {
 
         //  1) we create a classloader
-        //  2) we explore all the jars and folders
+        //  2) we explore all the modules, jars, and folders
         //  3) we construct a list of library items
         //  4) we update the user library with the class loader and items
         //  5) on startup only, we allow opening files that may/may not rely on the user library
 
         // 1)
         final ClassLoader classLoader;
-        if (jarsOrFolders.isEmpty()) {
+        if (modulesOrJarsOrFolders.isEmpty()) {
             classLoader = null;
         } else {
-            classLoader = new URLClassLoader(makeURLArrayFromPaths(jarsOrFolders));
+            classLoader = new URLClassLoader(makeURLArrayFromPaths(modulesOrJarsOrFolders));
         }
 
         // 2)
-        final List<JarReport> jarOrFolderReports = new ArrayList<>();
-//        boolean shouldShowImportGluonJarAlert = false;
-        for (Path currentJarOrFolder : jarsOrFolders) {
-            String jarName = currentJarOrFolder.getName(currentJarOrFolder.getNameCount() - 1).toString();
+        final List<JarReport> moduleOrJarOrFolderReports = new ArrayList<>();
+        for (Path currentModuleOrJarOrFolder : modulesOrJarsOrFolders) {
+            String jarName = currentModuleOrJarOrFolder.getName(currentModuleOrJarOrFolder.getNameCount() - 1).toString();
             if (JAVAFX_MODULES.stream().anyMatch(jarName::startsWith)) {
                 continue;
             }
 
             JarReport jarReport;
             String resultText = "";
-            if (LibraryUtil.isJarPath(currentJarOrFolder)) {
-                LOGGER.info(I18N.getString("log.info.explore.jar", currentJarOrFolder));
-                final JarExplorer explorer = new JarExplorer(currentJarOrFolder);
+            Optional<ModuleReference> moduleReference = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
+            if (moduleReference.isPresent()) {
+                LOGGER.info(I18N.getString("log.info.explore.module", moduleReference.get().descriptor()));
+                final ModuleExplorer explorer = new ModuleExplorer(moduleReference.get());
+                jarReport = explorer.explore();
+                resultText = I18N.getString("log.info.explore.module.results", jarName);
+            }
+            else if (LibraryUtil.isJarPath(currentModuleOrJarOrFolder)) {
+                LOGGER.info(I18N.getString("log.info.explore.jar", currentModuleOrJarOrFolder));
+                final JarExplorer explorer = new JarExplorer(currentModuleOrJarOrFolder);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.jar.results", jarName);
             }
-            else if (Files.isDirectory(currentJarOrFolder)) {
-                LOGGER.info(I18N.getString("log.info.explore.folder", currentJarOrFolder));
-                final FolderExplorer explorer = new FolderExplorer(currentJarOrFolder);
+            else if (Files.isDirectory(currentModuleOrJarOrFolder)) {
+                LOGGER.info(I18N.getString("log.info.explore.folder", currentModuleOrJarOrFolder));
+                final FolderExplorer explorer = new FolderExplorer(currentModuleOrJarOrFolder);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.folder.results", jarName);
             } else {
                 continue;
             }
 
-            jarOrFolderReports.add(jarReport);
+            moduleOrJarOrFolderReports.add(jarReport);
 
             StringBuilder sb = new StringBuilder(resultText).append("\n");
             if (jarReport.getEntries().isEmpty()) {
@@ -400,26 +409,13 @@ class LibraryFolderWatcher implements Runnable {
             }
             LOGGER.info(sb.toString());
 
-            LOGGER.info(I18N.getString("log.info.explore.end", currentJarOrFolder));
-            
-            //            if (jarReport.hasGluonControls()) {
-//                // We check if the jar has already been imported to avoid showing the import gluon jar
-//                // alert every time Scene Builder starts for jars that have already been imported
-//                if (!hasGluonJarBeenImported(jarReport.getJar().getFileName().toString())) {
-//                    shouldShowImportGluonJarAlert = true;
-//                }
-//
-//            }
+            LOGGER.info(I18N.getString("log.info.explore.end", currentModuleOrJarOrFolder));
         }
-
-//        if (shouldShowImportGluonJarAlert && onImportingGluonControls != null) {
-//            onImportingGluonControls.run();
-//        }
 
         // 3)
         final List<LibraryItem> newItems = new ArrayList<>();
-        for (JarReport jarOrFolderReport : jarOrFolderReports) {
-            newItems.addAll(makeLibraryItems(jarOrFolderReport));
+        for (JarReport moduleOrJarOrFolderReport : moduleOrJarOrFolderReports) {
+            newItems.addAll(makeLibraryItems(moduleOrJarOrFolderReport));
         }
 
         // 4)
@@ -429,8 +425,8 @@ class LibraryFolderWatcher implements Runnable {
                 .stream()
                 .distinct()
                 .collect(Collectors.toList()));
-        library.updateJarReports(new ArrayList<>(jarOrFolderReports));
-        library.getOnFinishedUpdatingJarReports().accept(jarOrFolderReports);
+        library.updateJarReports(new ArrayList<>(moduleOrJarOrFolderReports));
+        library.getOnFinishedUpdatingJarReports().accept(moduleOrJarOrFolderReports);
         library.updateExplorationDate(new Date());
         
         // 5
@@ -471,9 +467,9 @@ class LibraryFolderWatcher implements Runnable {
                 if (url.toString().endsWith(".jar")) {
                     result[i++] = new URL("jar", "", url + "!/"); // <-- jar:file/path/to/jar!/
                 } else {
-                    result[i++] = url; // <-- file:/path/to/folder/
+                    result[i++] = url; // <-- file:/path/to/folder/ or jrt:/module.name
                 }
-            } catch(MalformedURLException x) {
+            } catch (MalformedURLException x) {
                 throw new RuntimeException("Bug in " + getClass().getSimpleName(), x); //NOI18N
             }
         }

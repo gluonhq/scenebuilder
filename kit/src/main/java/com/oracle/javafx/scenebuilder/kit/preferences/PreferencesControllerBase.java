@@ -74,8 +74,6 @@ public abstract class PreferencesControllerBase {
     public static final String SCENE_STYLE_SHEETS = "sceneStyleSheets"; //NOI18N
     public static final String I18N_RESOURCE = "I18NResource"; //NOI18N
     public static final String THEME = "theme";
-    public static final String GLUON_SWATCH = "gluonSwatch";
-    public static final String GLUON_THEME = "gluonTheme";
 
     /***************************************************************************
      *                                                                         *

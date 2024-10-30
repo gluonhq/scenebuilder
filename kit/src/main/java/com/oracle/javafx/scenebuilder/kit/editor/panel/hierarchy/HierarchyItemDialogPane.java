@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -101,7 +102,7 @@ public class HierarchyItemDialogPane extends HierarchyItem {
     }
 
     @Override
-    public boolean isPlaceHolder() {
+    public boolean isPlaceholder() {
         return true;
     }
 
@@ -129,13 +130,13 @@ public class HierarchyItemDialogPane extends HierarchyItem {
     }
 
     @Override
-    public Image getPlaceHolderImage() {
+    public Image getPlaceholderImage() {
         return ImageUtils.getNodeIcon("DialogPane-" + accessory.toString().toLowerCase(Locale.ROOT) + ".png"); //NOI18N
     }
 
     @Override
-    public String getPlaceHolderInfo() {
-        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + accessory.toString().toUpperCase(Locale.getDefault()));
+    public String getPlaceholderInfo() {
+        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert", accessory.toString().toUpperCase(Locale.ROOT)));
     }
 
     @Override

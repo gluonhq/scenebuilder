@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -208,7 +209,7 @@ public class HierarchyItem {
         return option == INFO && mask.isResourceKey();
     }
 
-    public boolean isPlaceHolder() {
+    public boolean isPlaceholder() {
         return false;
     }
 
@@ -227,7 +228,7 @@ public class HierarchyItem {
     }
 
     public boolean hasDisplayInfo(final DisplayOption option) {
-        // Item has display info if we are not on place holder and :
+        // Item has display info if we are not on placeholder and :
         // - either we display the FX ID
         // - or we display the node ID
         // - or we display the description and the item defines one
@@ -237,13 +238,13 @@ public class HierarchyItem {
                 || (option == INFO && mask.hasDescription()));
     }
 
-    public Image getPlaceHolderImage() {
-        // No place holder
+    public Image getPlaceholderImage() {
+        // No placeholder
         return null;
     }
 
-    public String getPlaceHolderInfo() {
-        // No place holder
+    public String getPlaceholderInfo() {
+        // No placeholder
         return null;
     }
 

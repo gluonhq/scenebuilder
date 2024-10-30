@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.css.CssMetaData;
@@ -151,12 +152,12 @@ public class CssInternal {
 
     public static List<String> getThemeStyleClasses(Theme theme) {
         Set<String> themeClasses = new HashSet<>();
-        theme.getStylesheetURLs().forEach(themeStyleSheet -> {
-            if (!themeStyleSheet.contains("glisten.css")) {
+        theme.getStylesheetURLs().stream()
+            .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
+            .forEach(themeStyleSheet -> {
                 URL resource = Button.class.getResource("/" + themeStyleSheet);
                 themeClasses.addAll(getStyleClasses(resource));
-            }
-        });
+            });
         return new ArrayList<>(themeClasses);
     }
 
