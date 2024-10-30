@@ -57,9 +57,9 @@ jobs:
           S3_PATH=$PROJECT_VERSION
           CANDIDATE=${{ github.event.inputs.candidate }}
           if [[ "$CANDIDATE" == RC ]]; then
-              RC_VERSION = ${{ github.event.inputs.rc_version }}
+              RC_VERSION=${{ github.event.inputs.rc_version }}
               if [[ "$RC_VERSION" == "" ]]; then
-                RC_VERSION = "RC"
+                RC_VERSION="RC"
               fi
               PROJECT_VERSION=${PROJECT_VERSION}-${RC_VERSION}
               S3_PATH=RC/$PROJECT_VERSION
