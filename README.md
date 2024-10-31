@@ -1,4 +1,13 @@
+[![Gluon](.github/assets/gluon_logo.svg)](https://gluonhq.com)
+
 # Gluon Scene Builder #
+
+[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/gluonhq/scenebuilder)](https://opensource.org/licenses/GPL-3.0)
+
+Scene Builder Kit: 
+[![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
+[![javadoc](https://javadoc.io/badge2/com.gluonhq.scenebuilder/kit/javadoc.svg?color=blue)](https://javadoc.io/doc/com.gluonhq.scenebuilder/kit)
 
 Gluon [Scene Builder](http://gluonhq.com/products/scene-builder/) is a drag and drop UI designer tool allowing rapid desktop and mobile app development.
 Scene Builder separates design from logic, allowing team members to quickly and easily focus on their specific aspect of application development.
@@ -44,7 +53,7 @@ These are the requisites:
 
 ### How to build Scene Builder ###
 
-Scene Builder makes use of the Maven Wrapper to build and run the project. So there is no need to install Maven on the developers machine. To utilize Maven Wrapper, instead of calling `mvn`, one can run `./mvnw` on Linux or macOS or `mvnw` on Windows instead.
+Scene Builder makes use of the Maven Wrapper to build and run the project. So there is no need to install Maven on the developers machine. To utilize Maven Wrapper, instead of calling `mvn`, one can run `./mvnw` on Linux or macOS or `mvnw` on Windows.
 
 To build the Scene Builder services, on the project's root, run:
 
@@ -78,12 +87,27 @@ java \
 com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 ```
 
-## Scene Builder Kit ##
+## Scene Builder components ##
 
-[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
-[![License](https://img.shields.io/github/license/gluonhq/scenebuilder)](https://opensource.org/licenses/GPL-3.0)
-[![javadoc](https://javadoc.io/badge2/com.gluonhq.scenebuilder/kit/javadoc.svg?color=blue)](https://javadoc.io/doc/com.gluonhq.scenebuilder/kit)
+The Scene Builder project has three main components defined by three modules (that is, three Java modules defined in three Maven modules subprojects):
+
+- Scene Builder App
+- Scene Builder Kit
+- Gluon plugin
+
+### Scene Builder App ###
+
+Contains the JavaFX main application that embeds the Scene Builder Kit, and includes menus, preferences and dialogs to interact with it.
+
+### Scene Builder Kit ###
+
+Scene Builder Kit is the core of the project, defines three main areas: 
+
+- Left: Library of custom and built-in controls, Hierarchy and Controller of the FXML layout being edited
+- Center: Workspace area for displaying the content of the FXML layout that is being designed
+- Right: Inspector with properties, layout and event handlers of the components of the FXML layout.
+
+Kit is an API that allows the integration of these components and their functionallity with other applications or IDEs, being Scene Builder App the best example of such integration. Other basic example can be found here: [EmbeddedSceneBuilderDemo](https://github.com/gluonhq/EmbeddedSceneBuilderDemo). Also you can use in your projects the controls available in Scene Builder Kit.
 
 Scene Builder Kit is published to Maven Central, and you can add it as a regular dependency to the build of your app:
 
@@ -94,10 +118,6 @@ Scene Builder Kit is published to Maven Central, and you can add it as a regular
   <version>$version</version>
 </dependency>
 ```
-
-You can use Scene Builder Kit embedded in your project. A simple demo can be found here: https://github.com/gluonhq/EmbeddedSceneBuilderDemo
-
-Also you can use in your projects the controls available in Scene Builder Kit.
 
 If you want to build and install the Scene Builder Kit in your local repository, run:
 
@@ -117,7 +137,7 @@ To run the plugin:
 mvn checkstyle:checkstyle
 ```
 
-There will be a report for each sub-project, one for `app` and one for `kit`.
+There will be a report for each sub-project:
 
 * Kit: `kit/target/reports/checkstyle.html`
 * App: `app/target/reports/checkstyle.html`
