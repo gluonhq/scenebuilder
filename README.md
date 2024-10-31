@@ -70,11 +70,11 @@ It will create a partial shadow cross-platform jar under `app/target/lib/scenebu
 Before starting the app, all dependencies must be installed locally.
 This is achieved by:
 
-`mvn install`
+`./mvnw install`
 
 Then Scene Builder can be started with Maven:
 
-`mvn javafx:run -f app`
+`./wmvn javafx:run -f app`
 
 Alternatively, you can run the partial shadow jar in the classpath, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
@@ -121,7 +121,7 @@ Scene Builder Kit is published to Maven Central, and you can add it as a regular
 
 If you want to build and install the Scene Builder Kit in your local repository, run:
 
-`mvn clean install -f kit`
+`./mvnw clean install -f kit`
 
 ### Gluon plugin ###
 
@@ -140,7 +140,7 @@ Contributors can check for code-style violations in their code by running the Ch
 To run the plugin:
 
 ```
-mvn checkstyle:checkstyle
+./mvnw checkstyle:checkstyle
 ```
 
 There will be a report for each sub-project:
