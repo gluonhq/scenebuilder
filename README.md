@@ -3,7 +3,7 @@
 # Gluon Scene Builder #
 
 [![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
-[![License](https://img.shields.io/github/license/gluonhq/scenebuilder)](https://opensource.org/licenses/GPL-3.0)
+[![License](https://img.shields.io/badge/license-BSD-green)](./LICENSE)
 
 Scene Builder Kit: 
 [![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
