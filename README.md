@@ -123,6 +123,12 @@ If you want to build and install the Scene Builder Kit in your local repository,
 
 `mvn clean install -f kit`
 
+### Gluon plugin ###
+
+The Gluon section in the Library allows adding [Gluon Mobile](http://gluonhq.com/products/mobile) controls to the FXML layout, and setting the stylesheets from the Gluon themes and swatch colors.
+
+An easy way to get started is by selecting the Mobile Basic Screen from the available templates in the welcome dialog.
+
 ## Code Style
 
 To ensure that new code formatting matches the requirements for Pull Requests,
