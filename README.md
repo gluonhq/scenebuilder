@@ -74,7 +74,7 @@ This is achieved by:
 
 Then Scene Builder can be started with Maven:
 
-`./wmvn javafx:run -f app`
+`./mvnw javafx:run -f app`
 
 Alternatively, you can run the partial shadow jar in the classpath, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
