@@ -53,7 +53,7 @@ These are the requisites:
 
 ### How to build Scene Builder ###
 
-Scene Builder makes use of the Maven Wrapper to build and run the project. So there is no need to install Maven on the developers machine. To utilize Maven Wrapper, instead of calling `mvn`, one can run `./mvnw` on Linux or macOS or `mvnw` on Windows.
+Scene Builder uses Maven Wrapper to build and run the project. Run `./mvnw` on Linux or macOS and `mvnw` on Windows.
 
 To build the Scene Builder services, on the project's root, run:
 
@@ -101,13 +101,13 @@ Contains the JavaFX main application that embeds the Scene Builder Kit, and incl
 
 ### Scene Builder Kit ###
 
-Scene Builder Kit is the core of the project, defines three main areas: 
+Scene Builder Kit is the core of the project and defines three main areas: 
 
 - Left: Library of custom and built-in controls, Hierarchy and Controller of the FXML layout being edited
 - Center: Workspace area for displaying the content of the FXML layout that is being designed
 - Right: Inspector with properties, layout and event handlers of the components of the FXML layout.
 
-Kit is an API that allows the integration of these components and their functionallity with other applications or IDEs, being Scene Builder App the best example of such integration. Other basic example can be found here: [EmbeddedSceneBuilderDemo](https://github.com/gluonhq/EmbeddedSceneBuilderDemo). Also you can use in your projects the controls available in Scene Builder Kit.
+Scene Builder Kit contains an API that allows these components and their functionality to be integrated in other applications or IDEs. Scene Builder App is the best example of such integration. Another basic example can be found here: [EmbeddedSceneBuilderDemo](https://github.com/gluonhq/EmbeddedSceneBuilderDemo). You can also use the controls available in Scene Builder Kit in your project.
 
 Scene Builder Kit is published to Maven Central, and you can add it as a regular dependency to the build of your app:
 
