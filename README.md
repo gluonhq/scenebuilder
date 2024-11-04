@@ -5,7 +5,8 @@
 [![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/license-BSD-green)](./LICENSE)
 
-Scene Builder Kit: 
+#### Scene Builder Kit ####
+
 [![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
 [![javadoc](https://javadoc.io/badge2/com.gluonhq.scenebuilder/kit/javadoc.svg?color=blue)](https://javadoc.io/doc/com.gluonhq.scenebuilder/kit)
 
