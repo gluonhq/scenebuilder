@@ -2,7 +2,7 @@
 
 # Gluon Scene Builder #
 
-[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/build.yml)
+[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/early-access.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/early-access.yml)
 [![License](https://img.shields.io/badge/license-BSD-green)](./LICENSE)
 
 #### Scene Builder Kit ####
