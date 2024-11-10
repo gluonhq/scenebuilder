@@ -13,6 +13,7 @@
     <modules>
         <module>kit</module>
         <module>app</module>
+        <module>gluon-plugin</module>
     </modules>
 
     <properties>
@@ -20,8 +21,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>23</javafx.version>
-        <aether.version>1.1.0</aether.version>
+        <javafx.version>23.0.1</javafx.version>
+        <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
         <charm.glisten.version>6.2.3</charm.glisten.version>
         <gluon.attach.version>4.0.21</gluon.attach.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
@@ -29,18 +30,9 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
+        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+        <main.class.name/>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>gluon-nexus</id>
-            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -100,28 +92,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
                     </configuration>
                 </plugin>
 
-                <!-- Deploy to Maven Central -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                    <inherited>false</inherited>
-                </plugin>
-                
                 <!-- Enforce code formatting and style -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.5.0</version>
                     <configuration>
                         <configLocation>checkstyle.xml</configLocation>
                         <encoding>UTF-8</encoding>
@@ -133,7 +114,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.45.1</version>
+                            <version>10.18.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -142,6 +123,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.2.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.3</version>
                 </plugin>
 
                 <!-- Ensure that available tests are executed -->
@@ -201,7 +188,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.5.1</version>
+                <version>1.14.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -229,6 +216,8 @@
                                 <branch>master</branch>
                                 <tagName>{{projectVersion}}</tagName>
                                 <files>false</files>
+                                <checksums>false</checksums>
+                                <signatures>false</signatures>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
                                     <preset>conventional-commits</preset>
@@ -354,6 +343,25 @@
                                 </artifact>
                             </artifacts>
                         </files>
+                        <signing>
+                            <active>ALWAYS</active>
+                            <armored>true</armored>
+                        </signing>
+                        <deploy>
+                            <maven>
+                                <nexus2>
+                                    <maven-central>
+                                        <active>ALWAYS</active>
+                                        <url>https://oss.sonatype.org/service/local</url>
+                                        <snapshotSupported>true</snapshotSupported>
+                                        <snapshotUrl>https://oss.sonatype.org/content/repositories/snapshots</snapshotUrl>
+                                        <closeRepository>true</closeRepository>
+                                        <releaseRepository>false</releaseRepository>
+                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                    </maven-central>
+                                </nexus2>
+                            </maven>
+                        </deploy>
                     </jreleaser>
                 </configuration>
             </plugin>
@@ -421,7 +429,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.5.0</version>
             </plugin>
         </plugins>
     </reporting>

@@ -32,26 +32,22 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 /**
  * This class contains static methods that depends on the platform.
@@ -92,164 +88,70 @@ public class EditorPlatform {
     public static final boolean IS_WINDOWS = osName.contains("windows"); //NOI18N
 
     /**
-     * Gluon Glisten package
-     */
-    public static final String GLUON_PACKAGE = "com.gluonhq.charm.glisten";
-
-    /**
-     * scene builder specific tweaks to Gluon theme
-     */
-    public static final String GLUON_DOCUMENT_STYLESHEET = "com/oracle/javafx/scenebuilder/app/css/GluonDocument.css";
-
-    /**
      * Default theme
      */
     public static final Theme DEFAULT_THEME = Theme.MODENA;
 
     /**
-     * Default Gluon Swatch
-     */
-    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = GluonSwatch.BLUE;
-
-    /**
-     * Default Gluon Theme
-     */
-    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = GluonTheme.LIGHT;
-
-    interface StylesheetProvider {
-        List<String> getStylesheetURLs();
-    }
-
-    private static final String MODENA_PATH = "com/sun/javafx/scene/control/skin/modena/";
-    private static final String CASPIAN_PATH = "com/sun/javafx/scene/control/skin/caspian/";
-    /**
      * Themes supported by Scene Builder Kit.
      */
-    public enum Theme implements StylesheetProvider {
-        GLUON_MOBILE_LIGHT(GlistenStyleClasses.impl_loadResource("glisten.css")),
-        GLUON_MOBILE_DARK(GlistenStyleClasses.impl_loadResource("glisten.css")),
-        MODENA(MODENA_PATH + "modena.css"),
-        MODENA_TOUCH(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css"),
-        MODENA_HIGH_CONTRAST_BLACK_ON_WHITE(MODENA_PATH + "modena.css", MODENA_PATH + "blackOnWhite.css"),
-        MODENA_HIGH_CONTRAST_WHITE_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "whiteOnBlack.css"),
-        MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "yellowOnBlack.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "blackOnWhite.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "whiteOnBlack.css"),
-        MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK(MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "yellowOnBlack.css"),
-        CASPIAN(CASPIAN_PATH + "caspian.css"),
-        CASPIAN_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "highcontrast.css"),
-        CASPIAN_EMBEDDED(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css"),
-        CASPIAN_EMBEDDED_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "highcontrast.css"),
-        CASPIAN_EMBEDDED_QVGA(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css"),
-        CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST(CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css", CASPIAN_PATH + "highcontrast.css");
+    public record Theme(String name, String value, String... stylesheetURLs) {
 
-        private final List<String> urls;
+        private static final String MODENA_PATH = "com/sun/javafx/scene/control/skin/modena/";
+        private static final String CASPIAN_PATH = "com/sun/javafx/scene/control/skin/caspian/";
 
-        Theme(String... urls) {
-            this.urls = List.of(urls);
-        }
-
-        @Override
-        public List<String> getStylesheetURLs() {
-            return urls;
-        }
-
-        @Override
-        public String toString() {
-            String lowerCaseName = name().toLowerCase(Locale.ROOT);
-            return I18N.getString("title.theme." + lowerCaseName);
-        }
-    }
-
-    /**
-     * Gluon Swatch
-     */
-    public enum GluonSwatch implements StylesheetProvider {
-        BLUE,
-        CYAN,
-        DEEP_ORANGE,
-        DEEP_PURPLE,
-        GREEN,
-        INDIGO,
-        LIGHT_BLUE,
-        PINK,
-        PURPLE,
-        RED,
-        TEAL,
-        LIGHT_GREEN,
-        LIME,
-        YELLOW,
-        AMBER,
-        ORANGE,
-        BROWN,
-        GREY,
-        BLUE_GREY;
-
-        private static final String PRIMARY_SWATCH_500_STR = "-primary-swatch-500:";
-
-        Color color;
+        public static final Theme MODENA =
+            new Theme("MODENA", I18N.getString("title.theme.modena"), MODENA_PATH + "modena.css");
+        public static final Theme MODENA_TOUCH =
+            new Theme("MODENA_TOUCH", I18N.getString("title.theme.modena_touch"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css");
+        public static final Theme MODENA_HIGH_CONTRAST_BLACK_ON_WHITE =
+            new Theme("MODENA_HIGH_CONTRAST_BLACK_ON_WHITE", I18N.getString("title.theme.modena_high_contrast_black_on_white"), MODENA_PATH + "modena.css", MODENA_PATH + "blackOnWhite.css");
+        public static final Theme MODENA_HIGH_CONTRAST_WHITE_ON_BLACK =
+            new Theme("MODENA_HIGH_CONTRAST_WHITE_ON_BLACK", I18N.getString("title.theme.modena_high_contrast_white_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "whiteOnBlack.css");
+        public static final Theme MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK =
+            new Theme("MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK", I18N.getString("title.theme.modena_high_contrast_yellow_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "yellowOnBlack.css");
+        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE =
+            new Theme("MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE", I18N.getString("title.theme.modena_touch_high_contrast_black_on_white"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "blackOnWhite.css");
+        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK =
+            new Theme("MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK", I18N.getString("title.theme.modena_touch_high_contrast_white_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "whiteOnBlack.css");
+        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK =
+            new Theme("MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK", I18N.getString("title.theme.modena_touch_high_contrast_yellow_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "yellowOnBlack.css");
+        public static final Theme CASPIAN =
+            new Theme("CASPIAN", I18N.getString("title.theme.caspian"), CASPIAN_PATH + "caspian.css");
+        public static final Theme CASPIAN_HIGH_CONTRAST =
+            new Theme("CASPIAN_HIGH_CONTRAST", I18N.getString("title.theme.caspian_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "highcontrast.css");
+        public static final Theme CASPIAN_EMBEDDED =
+            new Theme("CASPIAN_EMBEDDED", I18N.getString("title.theme.caspian_embedded"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css");
+        public static final Theme CASPIAN_EMBEDDED_HIGH_CONTRAST =
+            new Theme("CASPIAN_EMBEDDED_HIGH_CONTRAST", I18N.getString("title.theme.caspian_embedded_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "highcontrast.css");
+        public static final Theme CASPIAN_EMBEDDED_QVGA =
+            new Theme("CASPIAN_EMBEDDED_QVGA", I18N.getString("title.theme.caspian_embedded_qvga"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css");
+        public static final Theme CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST =
+            new Theme("CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST", I18N.getString("title.theme.caspian_embedded_qvga_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css", CASPIAN_PATH + "highcontrast.css");
 
         @Override
         public String toString() {
-            String lowerCaseSwatch = "title.gluon.swatch." + name().toLowerCase(Locale.ROOT);
-            return I18N.getString(lowerCaseSwatch);
+            return value;
         }
 
-        @Override
         public List<String> getStylesheetURLs() {
-            return List.of(GlistenStyleClasses.impl_loadResource("swatch_" + name().toLowerCase(Locale.ROOT) + ".css"));
+            return List.of(stylesheetURLs);
         }
 
-        public Color getColor() {
-            if (color == null) {
-                URL url = null;
-                try {
-                    url = new URL(getStylesheetURLs().getFirst());
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                        String s = reader.readLine();
-                        while (s != null) {
-                            // Remove white spaces
-                            String trimmedString = s.replaceAll("\\s+", "");
-                            int indexOf = trimmedString.indexOf(PRIMARY_SWATCH_500_STR);
-                            if (indexOf != -1) {
-                                int indexOfSemiColon = trimmedString.indexOf(";");
-                                String colorString = trimmedString.substring(indexOf + PRIMARY_SWATCH_500_STR.length(), indexOfSemiColon);
-                                color = Color.web(colorString);
-                            }
-                            s = reader.readLine();
-                        }
-                    }
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Failed to get color from stylesheet: ", e);
-                }
-            }
-            return color;
+        public static List<Theme> getThemeList() {
+            List<Theme> themeList = new ArrayList<>(List.of(Theme.MODENA, Theme.MODENA_TOUCH, Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
+                Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK, Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK, Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE,
+                Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK, Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK,
+                Theme.CASPIAN, Theme.CASPIAN_EMBEDDED, Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST, Theme.CASPIAN_EMBEDDED_QVGA, Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST));
+            themeList.addAll(0, getExternalThemes());
+            return themeList;
         }
 
-        public Node createGraphic() {
-            Rectangle rect = new Rectangle(8, 8);
-            rect.setFill(getColor());
-            rect.setStroke(Color.BLACK);
-            return rect;
-        }
-    }
-
-    /**
-     * Gluon Theme
-     */
-    public enum GluonTheme implements StylesheetProvider {
-        LIGHT,
-        DARK;
-
-        @Override
-        public String toString() {
-            String lowerCaseName = "title.gluon.theme." + name().toLowerCase(Locale.ROOT);
-            return I18N.getString(lowerCaseName);
-        }
-
-        @Override
-        public List<String> getStylesheetURLs() {
-            return List.of(GlistenStyleClasses.impl_loadResource("theme_" + name().toLowerCase(Locale.ROOT) + ".css"));
+        public static Theme valueOf(String themeName) {
+            return getThemeList().stream()
+                .filter(t -> t.name().equals(themeName))
+                .findFirst()
+                .orElse(DEFAULT_THEME);
         }
     }
 
@@ -257,13 +159,14 @@ public class EditorPlatform {
         // no-op
     }
 
+    public static boolean isPlatformThemeStylesheetURL(String stylesheetURL) {
+        // Return USER_AGENT css, which is Modena for fx 8.0
+        return stylesheetURL != null && stylesheetURL.equals(Theme.MODENA.getStylesheetURLs().getFirst());
+    }
+
     public static String getPlatformThemeStylesheetURL() {
         // Return USER_AGENT css, which is Modena for fx 8.0
         return Theme.MODENA.getStylesheetURLs().getFirst();
-    }
-
-    public static String getGluonDocumentStylesheetURL() {
-        return GLUON_DOCUMENT_STYLESHEET;
     }
 
     public static boolean isModena(Theme theme) {
@@ -303,12 +206,6 @@ public class EditorPlatform {
     
     public static boolean isCaspian(Theme theme) {
         return theme.toString().startsWith("CASPIAN");
-    }
-
-    public static boolean isGluonMobileLight(Theme theme) { return theme == Theme.GLUON_MOBILE_LIGHT; }
-
-    public static boolean isGluonMobileDark(Theme theme) {
-        return theme == Theme.GLUON_MOBILE_DARK;
     }
 
     /**
@@ -431,7 +328,7 @@ public class EditorPlatform {
      */
     private static void executeDaemon(List<String> cmd, File wDir, int exitCodeOk)
             throws IOException, FileBrowserRevealException {
-        var cmdLine = cmd.stream().collect(Collectors.joining(" "));
+        var cmdLine = String.join(" ", cmd);
         long timeoutSec = 5;
         try {
             int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
@@ -450,10 +347,67 @@ public class EditorPlatform {
             LOGGER.log(Level.SEVERE, "Process timeout after {0}s: {1} in {2}",
                     new Object[] { timeoutSec, cmdLine, wDir });
             Thread.currentThread().interrupt();
-            String msg = "The command to reval the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
+            String msg = "The command to reveal the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
                     .formatted(cmdLine, wDir, timeoutSec);
             String detailMsg = msg + "\n" + e.getMessage();
             throw new IOException(detailMsg);
         }
+    }
+
+    //  External
+    private static final Collection<ExternalThemeProvider> externalThemeProviders = getExternalThemeProviders();
+
+    private static List<EditorPlatform.Theme> getExternalThemes() {
+        List<EditorPlatform.Theme> result = new ArrayList<>();
+        for (ExternalThemeProvider provider : externalThemeProviders) {
+            result.addAll(provider.getExternalThemes());
+        }
+        return result;
+    }
+
+    public static List<String> getStylesheetsForTheme(Theme theme) {
+        if (getExternalThemes().contains(theme)) {
+            for (ExternalThemeProvider provider : externalThemeProviders) {
+                return provider.getExternalStylesheets();
+            }
+        }
+        return List.of();
+    }
+
+    public static void showThemeAlert(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess) {
+        for (ExternalThemeProvider provider : externalThemeProviders) {
+            provider.showThemeAlert(owner, currentTheme, onSuccess);
+        }
+    }
+
+    public static void showImportAlert(Stage owner) {
+        for (ExternalThemeProvider provider : externalThemeProviders) {
+            provider.showImportAlert(owner);
+        }
+    }
+
+    public static boolean hasClassFromExternalPlugin(String text) {
+        for (ExternalThemeProvider provider : externalThemeProviders) {
+            if (provider.hasClassFromExternalPlugin(text)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Optional<String> getExternalJavadocURL(String classname) {
+        for (ExternalThemeProvider provider : externalThemeProviders) {
+            if (provider.hasClassFromExternalPlugin(classname)) {
+                return Optional.of(provider.getExternalJavadocURL());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Collection<ExternalThemeProvider> getExternalThemeProviders() {
+        ServiceLoader<ExternalThemeProvider> loader = ServiceLoader.load(ExternalThemeProvider.class);
+        Collection<ExternalThemeProvider> providers = new ArrayList<>();
+        loader.iterator().forEachRemaining(providers::add);
+        return providers;
     }
 }
