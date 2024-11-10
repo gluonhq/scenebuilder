@@ -531,7 +531,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         EditorController.updateNextInitialDirectory(fileObjs.get(0));
         
         Consumer<Map<File, Exception>> onError = errors -> showFileOpenErrors(errors, 
-                                                            () -> WelcomeDialogWindowController.getInstance().getStage());
+                                                            () -> WelcomeDialogWindowController.getInstance()
+                                                                                               .getStage());
         
         // Fix for #45
         if (userLibrary.isFirstExplorationCompleted()) {
@@ -715,10 +716,14 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void performOpenFiles(List<File> fxmlFiles) {
-        performOpenFiles(fxmlFiles, r -> showFileOpenErrors(r, getOwnerWindow()), () -> { /* no action here */ } );
+        performOpenFiles(fxmlFiles, 
+                         r -> showFileOpenErrors(r, getOwnerWindow()),
+                         () -> { /* no action here */ } );
     }
 
-    private void performOpenFiles(List<File> fxmlFiles, Consumer<Map<File, Exception>> onError, Runnable onSuccess) {
+    private void performOpenFiles(List<File> fxmlFiles, 
+                                  Consumer<Map<File, Exception>> onError,
+                                  Runnable onSuccess) {
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
@@ -740,6 +745,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.openWindow();
                     openedFiles.add(fxmlFile);
                     LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
+                    hostWindow.showMissingTypesNotificationIfNeeded(fxmlFile);
                 }
             } catch (Exception xx) {
                 LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);
@@ -752,7 +758,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             final PreferencesController pc = PreferencesController.getSingleton();
             pc.getRecordGlobal().addRecentItems(openedFiles);
         }
-
+        
         if (exceptionsPerFile.isEmpty()) {
             LOGGER.log(Level.FINE, "Successfully opened all files.");
             onSuccess.run();
