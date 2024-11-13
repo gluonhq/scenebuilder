@@ -21,7 +21,7 @@ env:
 
 jobs:
   precheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
       JAVA_RELEASE: ${{ env.JAVA_RELEASE }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
@@ -136,7 +136,7 @@ jobs:
 
   release:
     needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
