@@ -58,18 +58,25 @@ import javafx.scene.layout.Priority;
 public class I18nStringEditor extends PropertyEditor {
 
     private static final String PERCENT_STR = "%"; //NOI18N
+    private static final String EXPR_STR = "${"; //NOI18N
+    private static final String EXPR_STR_END = "}"; //NOI18N
     private TextInputControl textNode = new TextField();
     private HBox i18nHBox = null;
+    private HBox exprHBox = null;
     private EventHandler<ActionEvent> valueListener;
     private final MenuItem i18nMenuItem = new MenuItem();
     private final String I18N_ON = I18N.getString("inspector.i18n.on");
     private final String I18N_OFF = I18N.getString("inspector.i18n.off");
+    private final MenuItem exprMenuItem = new MenuItem();
+    private final String EXPR_ON = I18N.getString("inspector.bindingexpression.on");
+    private final String EXPR_OFF = I18N.getString("inspector.bindingexpression.off");
     private final MenuItem multilineMenuItem = new MenuItem();
     private final String MULTI_LINE = I18N.getString("inspector.i18n.multiline");
     private final String SINGLE_LINE = I18N.getString("inspector.i18n.singleline");
     private boolean multiLineSupported = false;
     // Specific states
     private boolean i18nMode = false;
+    private boolean exprMode = false;
     private boolean multiLineMode = false;
 
     public I18nStringEditor(ValuePropertyMetadata propMeta, Set<Class<?>> selectedClasses, boolean multiLineSupported) {
@@ -86,6 +93,7 @@ public class I18nStringEditor extends PropertyEditor {
         setTextEditorBehavior(this, textNode, valueListener);
 
         getMenu().getItems().add(i18nMenuItem);
+        getMenu().getItems().add(exprMenuItem);
         getMenu().getItems().add(multilineMenuItem);
 
         i18nMenuItem.setOnAction(e -> {
@@ -93,6 +101,15 @@ public class I18nStringEditor extends PropertyEditor {
                 setValue(new PrefixedValue(PrefixedValue.Type.RESOURCE_KEY, I18N.getString("inspector.i18n.dummykey")).toString());
             } else {
                 setValue(""); //NOI18N
+            }
+            I18nStringEditor.this.getCommitListener().handle(null);
+            updateMenuItems();
+        });
+        exprMenuItem.setOnAction(e -> {
+            if (!exprMode) {
+                setValue(new PrefixedValue(PrefixedValue.Type.BINDING_EXPRESSION, I18N.getString("inspector.bindingexpression.dummyvalue")).toString());
+            } else {
+                setValue(""); //NOEXPR
             }
             I18nStringEditor.this.getCommitListener().handle(null);
             updateMenuItems();
@@ -121,6 +138,8 @@ public class I18nStringEditor extends PropertyEditor {
         String val = textNode.getText();
         if (i18nMode) {
             val = new PrefixedValue(PrefixedValue.Type.RESOURCE_KEY, val).toString();
+        } else if (exprMode) {
+        	val = new PrefixedValue(PrefixedValue.Type.BINDING_EXPRESSION, val).toString();
         } else {
             val = EditorUtils.getPlainString(val);
         }
@@ -143,39 +162,42 @@ public class I18nStringEditor extends PropertyEditor {
         PrefixedValue prefixedValue = new PrefixedValue(val);
         String suffix = prefixedValue.getSuffix();
 
+        if (i18nMode) {
+            // no percent + i18nMode
+            unwrapI18nFromHBox();
+            i18nMode = false;
+        }
+        
+        if (exprMode) {
+            // no percent + i18nMode
+            unwrapExprFromHBox();
+            exprMode = false;
+        }
+        
+        if (multiLineMode) {
+            multiLineMode = false;
+            switchToTextField();
+        }
+        
         // Handle i18n
         if (prefixedValue.isResourceKey()) {
-            if (!i18nMode) {
-                wrapInHBox();
-                i18nMode = true;
-            }
-        } else if (i18nMode) {
-            // no percent + i18nMode
-            unwrapHBox();
-            i18nMode = false;
+        	wrapI18nInHBox();
+            i18nMode = true;
+        }
+        
+        // Handle expression
+        if (prefixedValue.isBindingExpression()) {
+        	wrapExprInHBox();
+            exprMode = true;
         }
 
         // Handle multi-line
         if (containsLineFeed(prefixedValue.toString())) {
-            if (i18nMode) {
-                // multi-line + i18n ==> set as i18n only
-                multiLineMode = false;
-                switchToTextField();
-            } else {
-                if (!multiLineMode) {
-                    multiLineMode = true;
-                    switchToTextArea();
-                }
-            }
-        } else {
-            // no line feed
-            if (multiLineMode) {
-                multiLineMode = false;
-                switchToTextField();
-            }
+        	multiLineMode = true;
+            switchToTextArea();
         }
 
-        if (i18nMode) {
+        if (i18nMode || exprMode) {
             textNode.setText(suffix);
         } else {
             // We may have other special characters (@, $, ...) to display in the text field
@@ -195,6 +217,8 @@ public class I18nStringEditor extends PropertyEditor {
         Node valueEditor;
         if (i18nMode) {
             valueEditor = i18nHBox;
+        } else if (exprMode) { 
+        	valueEditor = exprHBox;
         } else {
             valueEditor = textNode;
         }
@@ -240,7 +264,7 @@ public class I18nStringEditor extends PropertyEditor {
         textNode = textField;
     }
 
-    private void wrapInHBox() {
+    private void wrapI18nInHBox() {
         i18nHBox = new HBox();
         i18nHBox.setAlignment(Pos.CENTER);
         EditorUtils.replaceNode(textNode, i18nHBox, null);
@@ -253,12 +277,33 @@ public class I18nStringEditor extends PropertyEditor {
         textNode.setPrefWidth(30.0);
         HBox.setHgrow(textNode, Priority.ALWAYS);
     }
+    
+    private void wrapExprInHBox() {
+        exprHBox = new HBox();
+        exprHBox.setAlignment(Pos.CENTER);
+        EditorUtils.replaceNode(textNode, exprHBox, null);
+        Label expreLabel = new Label(EXPR_STR);
+        Label expreSuffixLabel = new Label(EXPR_STR_END);
+        expreLabel.getStyleClass().add("symbol-prefix"); //NOI18N
+        exprHBox.getChildren().addAll(expreLabel, textNode, expreSuffixLabel);
+        HBox.setHgrow(expreLabel, Priority.NEVER);
+        HBox.setHgrow(expreSuffixLabel, Priority.NEVER);
+        // we have to set a small pref width for the text node else it will
+        // revert to it's API set pref width which is too wide
+        textNode.setPrefWidth(30.0);
+        HBox.setHgrow(textNode, Priority.ALWAYS);
+    }
 
-    private void unwrapHBox() {
+    private void unwrapI18nFromHBox() {
         i18nHBox.getChildren().remove(textNode);
         EditorUtils.replaceNode(i18nHBox, textNode, null);
     }
-
+    
+    private void unwrapExprFromHBox() {
+    	exprHBox.getChildren().remove(textNode);
+        EditorUtils.replaceNode(exprHBox, textNode, null);
+    }
+    
     private static boolean containsLineFeed(String str) {
         return str.contains("\n"); //NOI18N
     }
@@ -271,19 +316,31 @@ public class I18nStringEditor extends PropertyEditor {
     private void updateMenuItems() {
         if (i18nMode) {
             i18nMenuItem.setText(I18N_OFF);
+            exprMenuItem.setDisable(true);
             multilineMenuItem.setDisable(true);
         } else {
             i18nMenuItem.setText(I18N_ON);
-            multilineMenuItem.setDisable(false);
+        }
+        
+        if (exprMode) {
+        	exprMenuItem.setText(EXPR_OFF);
+        	i18nMenuItem.setDisable(true);
+            multilineMenuItem.setDisable(true);
+        } else {
+        	exprMenuItem.setText(EXPR_ON);
         }
 
         if (multiLineMode) {
             multilineMenuItem.setText(SINGLE_LINE);
             i18nMenuItem.setDisable(true);
+            exprMenuItem.setDisable(true);
         } else {
             multilineMenuItem.setText(MULTI_LINE);
-            i18nMenuItem.setDisable(false);
         }
+        
+        i18nMenuItem.setDisable(exprMode || multiLineMode);
+        exprMenuItem.setDisable(i18nMode || multiLineMode);
+        multilineMenuItem.setDisable(exprMode || i18nMode);
         
         if (!multiLineSupported) {
             multilineMenuItem.setDisable(true);
