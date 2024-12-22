@@ -3,7 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kit</artifactId>
     <name>Scene Builder Kit</name>
-    
+    <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
+    <inceptionYear>2012</inceptionYear>
+    <url>https://github.com/gluonhq/scenebuilder</url>
+
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
@@ -28,67 +31,17 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- Eclipse Aether -->
+        <!-- Maven Resolver -->
         <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-api</artifactId>
-            <version>${aether.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-impl</artifactId>
-            <version>${aether.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-connector-basic</artifactId>
-            <version>${aether.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-transport-file</artifactId>
-            <version>${aether.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-transport-http</artifactId>
-            <version>${aether.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-aether-provider</artifactId>
-            <version>3.3.9</version>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-supplier</artifactId>
+            <version>${maven.resolver.version}</version>
         </dependency>
 
-        <!-- Gluon Charm Glisten -->
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-glisten</artifactId>
-            <version>${charm.glisten.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.gluonhq.attach</groupId>
-            <artifactId>display</artifactId>
-            <version>${gluon.attach.version}</version>
-            <classifier>desktop</classifier>
-        </dependency>
-
-        <!-- Rest API -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-            <scope>runtime</scope>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.1</version>
         </dependency>
     </dependencies>
     
@@ -97,16 +50,47 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <finalName>scenebuilder-kit-${project.version}</finalName>
                     <outputDirectory>target/lib</outputDirectory>
-                    <archive>
-                        <manifestEntries>
-                            <Automatic-Module-Name>com.gluonhq.scenebuilder.kit</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.10.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <doclint>none</doclint>
+                            <jarOutputDirectory>${project.build.directory}/lib</jarOutputDirectory>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

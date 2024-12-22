@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,14 +32,13 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.BACKGROUND_IMAGE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_SWATCH;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_HEIGHT;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.ROOT_CONTAINER_WIDTH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.HIERARCHY_DISPLAY_OPTION;
@@ -49,6 +48,8 @@ import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControll
 
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.ACCORDION_ANIMATION;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.CSS_TABLE_COLUMNS_ORDERING_REVERSED;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_SWATCH;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_THEME;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RECENT_ITEMS_SIZE;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.TOOL_THEME;
@@ -58,10 +59,10 @@ import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesControll
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_ALIGNMENT_GUIDES_COLOR;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_BACKGROUND_IMAGE;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_PARENT_RING_COLOR;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_SWATCH;
 import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase.DEFAULT_THEME;
 
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_TOOL_THEME;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_GLUON_SWATCH;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.recentItemsSizes;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_HIERARCHY_DISPLAY_OPTION;
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal.DEFAULT_LIBRARY_DISPLAY_OPTION;
@@ -82,7 +83,6 @@ import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.Mode;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -137,7 +137,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
     @FXML
     private ChoiceBox<EditorPlatform.Theme> themes;
     @FXML
-    private ChoiceBox<EditorPlatform.GluonSwatch> gluonSwatch;
+    private ChoiceBox<EditorPlatform.Theme> gluonSwatch;
     @FXML
     private CheckBox animateAccordion;
     @FXML
@@ -245,14 +245,11 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         cssAnalyzerColumnsOrder.getSelectionModel().selectedItemProperty().addListener(new ColumnOrderListener());
 
         // Theme and Gluon Theme
-        themes.getItems().setAll(Arrays.asList(EditorPlatform.Theme.class.getEnumConstants()));
+        themes.getItems().setAll(EditorPlatform.Theme.getThemeList());
         themes.setValue(recordGlobal.getTheme());
         themes.getSelectionModel().selectedItemProperty().addListener(new ThemesListener());
 
-        List<EditorPlatform.GluonSwatch> gluonSwatches = Arrays.asList(EditorPlatform.GluonSwatch.class.getEnumConstants());
-        // Sort alphabetically
-        gluonSwatches.sort((s1, s2) -> s1.toString().compareTo(s2.toString()));
-        gluonSwatch.getItems().setAll(gluonSwatches);
+        gluonSwatch.getItems().setAll(GluonEditorPlatform.getGluonSwatchList());
         gluonSwatch.setValue(recordGlobal.getSwatch());
         gluonSwatch.getSelectionModel().selectedItemProperty().addListener(new SwatchListener());
         
@@ -342,7 +339,7 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         themes.setValue(DEFAULT_THEME);
 
         // Default Gluon swatch
-        gluonSwatch.setValue(DEFAULT_SWATCH);
+        gluonSwatch.setValue(DEFAULT_GLUON_SWATCH);
 
         // Default Accordion Animation
         animateAccordion.setSelected(DEFAULT_ACCORDION_ANIMATION);
@@ -461,9 +458,9 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         }
     }
 
-    private static class SwatchListener implements ChangeListener<EditorPlatform.GluonSwatch> {
+    private static class SwatchListener implements ChangeListener<EditorPlatform.Theme> {
         @Override
-        public void changed(ObservableValue<? extends EditorPlatform.GluonSwatch> observable, EditorPlatform.GluonSwatch oldValue, EditorPlatform.GluonSwatch newValue) {
+        public void changed(ObservableValue<? extends EditorPlatform.Theme> observable, EditorPlatform.Theme oldValue, EditorPlatform.Theme newValue) {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal
@@ -477,9 +474,9 @@ public class PreferencesWindowController extends AbstractFxmlWindowController {
         }
     }
 
-    private static class GluonThemeListener implements ChangeListener<EditorPlatform.GluonTheme> {
+    private static class GluonThemeListener implements ChangeListener<EditorPlatform.Theme> {
         @Override
-        public void changed(ObservableValue<? extends EditorPlatform.GluonTheme> observable, EditorPlatform.GluonTheme oldValue, EditorPlatform.GluonTheme newValue) {
+        public void changed(ObservableValue<? extends EditorPlatform.Theme> observable, EditorPlatform.Theme oldValue, EditorPlatform.Theme newValue) {
             final PreferencesController preferencesController
                     = PreferencesController.getSingleton();
             final PreferencesRecordGlobal recordGlobal

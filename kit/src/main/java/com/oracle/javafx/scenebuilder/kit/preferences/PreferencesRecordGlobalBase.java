@@ -1,3 +1,34 @@
+/*
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
+ * All rights reserved. Use is subject to license terms.
+ *
+ * This file is available and licensed under the following license:
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  - Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the distribution.
+ *  - Neither the name of Oracle Corporation nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -53,8 +84,6 @@ public abstract class PreferencesRecordGlobalBase {
     public static final Color DEFAULT_ALIGNMENT_GUIDES_COLOR = Color.RED;
     public static final Color DEFAULT_PARENT_RING_COLOR = Color.rgb(238, 168, 47);
     public static final EditorPlatform.Theme DEFAULT_THEME = EditorPlatform.DEFAULT_THEME;
-    public static final EditorPlatform.GluonSwatch DEFAULT_SWATCH = EditorPlatform.DEFAULT_SWATCH;
-    public static final EditorPlatform.GluonTheme DEFAULT_GLUON_THEME = EditorPlatform.DEFAULT_GLUON_THEME;
 
     /***************************************************************************
      *                                                                         *
@@ -71,8 +100,6 @@ public abstract class PreferencesRecordGlobalBase {
     protected Color parentRingColor = DEFAULT_PARENT_RING_COLOR;
 
     protected EditorPlatform.Theme theme = DEFAULT_THEME;
-    protected EditorPlatform.GluonSwatch gluonSwatch = DEFAULT_SWATCH;
-    protected EditorPlatform.GluonTheme gluonTheme = DEFAULT_GLUON_THEME;
 
     /***************************************************************************
      *                                                                         *
@@ -139,14 +166,6 @@ public abstract class PreferencesRecordGlobalBase {
 
     public void setTheme(EditorPlatform.Theme theme) { this.theme = theme; }
 
-    public EditorPlatform.GluonSwatch getSwatch() { return gluonSwatch; }
-
-    public void setSwatch(EditorPlatform.GluonSwatch swatch) { this.gluonSwatch = swatch; }
-
-    public EditorPlatform.GluonTheme getGluonTheme() { return gluonTheme; }
-
-    public void setGluonTheme(EditorPlatform.GluonTheme theme) { this.gluonTheme = theme; }
-
     /**
      * Read data from the java preferences DB and initialize properties.
      */
@@ -180,11 +199,6 @@ public abstract class PreferencesRecordGlobalBase {
         // Document theme
         String themeName = applicationRootPreferences.get(PreferencesControllerBase.THEME, DEFAULT_THEME.name());
         theme = EditorPlatform.Theme.valueOf(themeName);
-        String swatchName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_SWATCH, DEFAULT_SWATCH.name());
-        gluonSwatch = EditorPlatform.GluonSwatch.valueOf(swatchName);
-        String gluonThemeName = applicationRootPreferences.get(PreferencesControllerBase.GLUON_THEME, DEFAULT_GLUON_THEME.name());
-        gluonTheme = EditorPlatform.GluonTheme.valueOf(gluonThemeName);
-
     }
 
     public void writeToJavaPreferences(String key) {
@@ -208,12 +222,6 @@ public abstract class PreferencesRecordGlobalBase {
                 break;
             case PreferencesControllerBase.THEME:
                 applicationRootPreferences.put(PreferencesControllerBase.THEME, getTheme().name());
-                break;
-            case PreferencesControllerBase.GLUON_SWATCH:
-                applicationRootPreferences.put(PreferencesControllerBase.GLUON_SWATCH, getSwatch().name());
-                break;
-            case PreferencesControllerBase.GLUON_THEME:
-                applicationRootPreferences.put(PreferencesControllerBase.GLUON_THEME, getGluonTheme().name());
                 break;
             default:
                 assert false;

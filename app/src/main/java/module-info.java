@@ -36,9 +36,15 @@ module com.gluonhq.scenebuilder.app {
     requires javafx.media;
     requires javafx.swing;
     requires transitive com.gluonhq.scenebuilder.kit;
+    requires transitive com.gluonhq.scenebuilder.gluon.plugin;
     requires java.logging;
     requires java.prefs;
-    requires javax.json.api;
+    requires jakarta.json;
+    requires org.apache.maven.resolver;
+    requires org.apache.maven.resolver.spi;
+    requires org.apache.maven.resolver.impl;
+    requires org.apache.maven.resolver.supplier;
+    requires org.apache.maven.resolver.util;
 
     opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;

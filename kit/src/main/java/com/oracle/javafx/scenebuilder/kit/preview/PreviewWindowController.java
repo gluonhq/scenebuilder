@@ -35,7 +35,6 @@ package com.oracle.javafx.scenebuilder.kit.preview;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
@@ -47,7 +46,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -86,8 +84,6 @@ public final class PreviewWindowController extends AbstractWindowController {
     private boolean autoResize3DContent = true;
     private static final String NID_PREVIEW_ROOT = "previewRoot"; //NOI18N
     private EditorPlatform.Theme editorControllerTheme;
-    private EditorPlatform.GluonTheme editorControllerGluonTheme;
-    private EditorPlatform.GluonSwatch editorControllerGluonSwatch;
     private ObservableList<File> sceneStyleSheet;
     private Size currentSize = Size.SIZE_PREFERRED;
     private boolean sizeChangedFromMenu = false;
@@ -114,18 +110,18 @@ public final class PreviewWindowController extends AbstractWindowController {
         super(owner);
         this.editorController = editorController;
         this.editorController.fxomDocumentProperty().addListener(
-                (ChangeListener<FXOMDocument>) (ov, od, nd) -> {
-                    assert editorController.getFxomDocument() == nd;
-                    if (od != null) {
-                        od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
-                        od.cssRevisionProperty().removeListener(cssRevisionListener);
-                    }
-                    if (nd != null) {
-                        nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
-                        nd.cssRevisionProperty().addListener(cssRevisionListener);
-                        requestUpdate(DELAYED);
-                    }
-                });
+            (ov, od, nd) -> {
+                assert editorController.getFxomDocument() == nd;
+                if (od != null) {
+                    od.sceneGraphRevisionProperty().removeListener(fxomDocumentRevisionListener);
+                    od.cssRevisionProperty().removeListener(cssRevisionListener);
+                }
+                if (nd != null) {
+                    nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
+                    nd.cssRevisionProperty().addListener(cssRevisionListener);
+                    requestUpdate(DELAYED);
+                }
+            });
 
         if (editorController.getFxomDocument() != null) {
             editorController.getFxomDocument().sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
@@ -133,39 +129,23 @@ public final class PreviewWindowController extends AbstractWindowController {
         }
 
         this.editorControllerTheme = editorController.getTheme();
-        this.editorController.themeProperty().addListener((ChangeListener<Theme>) (ov, t, t1) -> {
+        this.editorController.themeProperty().addListener((ov, t, t1) -> {
             if (t1 != null) {
                 editorControllerTheme = t1;
                 requestUpdate(DELAYED);
             }
         });
 
-        this.editorControllerGluonSwatch = editorController.getGluonSwatch();
-        this.editorController.gluonSwatchProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                editorControllerGluonSwatch = newValue;
-                requestUpdate(DELAYED);
-            }
-        }));
-
-        this.editorControllerGluonTheme = editorController.getGluonTheme();
-        this.editorController.gluonThemeProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                editorControllerGluonTheme = newValue;
-                requestUpdate(DELAYED);
-            }
-        }));
-
         this.sceneStyleSheet = editorController.getSceneStyleSheets();
-        this.editorController.sceneStyleSheetProperty().addListener((ChangeListener<ObservableList<File>>) (ov, t, t1) -> {
+        this.editorController.sceneStyleSheetProperty().addListener((ov, t, t1) -> {
             if (t1 != null) {
                 sceneStyleSheet = t1;
                 requestUpdate(DELAYED);
             }
         });
 
-        this.editorController.resourcesProperty().addListener((ChangeListener<ResourceBundle>) (ov, t, t1) -> requestUpdate(DELAYED));
-        this.editorController.sampleDataEnabledProperty().addListener((ChangeListener<Boolean>) (ov, t, t1) -> requestUpdate(DELAYED));
+        this.editorController.resourcesProperty().addListener((ov, t, t1) -> requestUpdate(DELAYED));
+        this.editorController.sampleDataEnabledProperty().addListener((ov, t, t1) -> requestUpdate(DELAYED));
     }
 
     /*
@@ -273,7 +253,7 @@ public final class PreviewWindowController extends AbstractWindowController {
             // => we must wrap the code into a Runnable object and call the Platform.runLater
             Platform.runLater(() -> {
                 final FXOMDocument fxomDocument = editorController.getFxomDocument();
-                List<String> themeStyleSheetsString = null;
+                List<String> themeStyleSheetsList = null;
                 if (fxomDocument != null) {
                     // We clone the FXOMDocument
                     FXOMDocument clone;
@@ -290,7 +270,10 @@ public final class PreviewWindowController extends AbstractWindowController {
                     }
 
                     Object sceneGraphRoot = clone.getDisplayNodeOrSceneGraphRoot();
-                    themeStyleSheetsString = editorControllerTheme.getStylesheetURLs();
+                    themeStyleSheetsList = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(editorController.getTheme()));
+                    editorControllerTheme.getStylesheetURLs().stream()
+                        .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
+                            .forEach(themeStyleSheetsList::add);
 
                     if (sceneGraphRoot instanceof Parent) {
                         ((Parent) sceneGraphRoot).setId(NID_PREVIEW_ROOT);
@@ -341,35 +324,11 @@ public final class PreviewWindowController extends AbstractWindowController {
                 }
 
                 getScene().setRoot(getRoot());
-                if (themeStyleSheetsString != null) {
-                    String gluonDocumentStylesheet = EditorPlatform.getGluonDocumentStylesheetURL();
-                    String gluonSwatchStylesheet = editorControllerGluonSwatch.getStylesheetURLs().getFirst();
-                    String gluonThemeStylesheet = editorControllerGluonTheme.getStylesheetURLs().getFirst();
-                    if (editorControllerTheme == Theme.GLUON_MOBILE_LIGHT || editorControllerTheme == Theme.GLUON_MOBILE_DARK) {
-                        ObservableList<String> newStylesheets = FXCollections.observableArrayList(getScene().getStylesheets());
-                        themeStyleSheetsString.forEach(themeStyleSheetString -> {
-                            if (!newStylesheets.contains(themeStyleSheetString)) {
-                                newStylesheets.add(themeStyleSheetString);
-                            }
-                        });
-                        if (!newStylesheets.contains(gluonDocumentStylesheet)) {
-                            newStylesheets.add(gluonDocumentStylesheet);
-                        }
-                        if (!newStylesheets.contains(gluonSwatchStylesheet)) {
-                            newStylesheets.add(gluonSwatchStylesheet);
-                        }
-                        if (!newStylesheets.contains(gluonThemeStylesheet)) {
-                            newStylesheets.add(gluonThemeStylesheet);
-                        }
-                        getScene().setUserAgentStylesheet(Theme.MODENA.getStylesheetURLs().getFirst());
-                        getScene().getStylesheets().clear();
-                        getScene().getStylesheets().addAll(newStylesheets);
-                    } else {
-                        getScene().setUserAgentStylesheet(themeStyleSheetsString.getFirst());
-                        ObservableList<String> newStylesheets = FXCollections.observableArrayList(themeStyleSheetsString);
-                        getScene().getStylesheets().clear();
-                        getScene().getStylesheets().addAll(newStylesheets);
-                    }
+                if (themeStyleSheetsList != null && !themeStyleSheetsList.isEmpty()) {
+                    getScene().setUserAgentStylesheet(themeStyleSheetsList.getFirst());
+                    ObservableList<String> newStylesheets = FXCollections.observableArrayList(themeStyleSheetsList);
+                    getScene().getStylesheets().clear();
+                    getScene().getStylesheets().addAll(newStylesheets);
                 }
                 updateWindowSize();
                 updateWindowTitle();

@@ -1,4 +1,14 @@
+[![Gluon](.github/assets/gluon_logo.svg)](https://gluonhq.com)
+
 # Gluon Scene Builder #
+
+[![Build](https://github.com/gluonhq/scenebuilder/actions/workflows/early-access.yml/badge.svg)](https://github.com/gluonhq/scenebuilder/actions/workflows/early-access.yml)
+[![License](https://img.shields.io/badge/license-BSD-green)](./LICENSE)
+
+#### Scene Builder Kit ####
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq.scenebuilder/kit)](https://search.maven.org/#search|ga|1|com.gluonhq.scenebuilder)
+[![javadoc](https://javadoc.io/badge2/com.gluonhq.scenebuilder/kit/javadoc.svg?color=blue)](https://javadoc.io/doc/com.gluonhq.scenebuilder/kit)
 
 Gluon [Scene Builder](http://gluonhq.com/products/scene-builder/) is a drag and drop UI designer tool allowing rapid desktop and mobile app development.
 Scene Builder separates design from logic, allowing team members to quickly and easily focus on their specific aspect of application development.
@@ -44,7 +54,7 @@ These are the requisites:
 
 ### How to build Scene Builder ###
 
-Scene Builder makes use of the Maven Wrapper to build and run the project. So there is no need to install Maven on the developers machine. To utilize Maven Wrapper, instead of calling `mvn`, one can run `./mvnw` on Linux or macOS or `mvnw` on Windows instead.
+Scene Builder uses Maven Wrapper to build and run the project. Run `./mvnw` on Linux or macOS and `mvnw` on Windows.
 
 To build the Scene Builder services, on the project's root, run:
 
@@ -54,38 +64,53 @@ Alternatively, utilizing the Maven Wrapper, one can run:
 
 `./mvnw clean package`
 
-It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version.jar`, that doesn't include the JavaFX dependencies.
+It will create a partial shadow cross-platform jar under `app/target/lib/scenebuilder-$version-all.jar`, that doesn't include the JavaFX dependencies.
 
 ### How to run Scene Builder ###
 
 Before starting the app, all dependencies must be installed locally.
 This is achieved by:
 
-`mvn install`
+`./mvnw install`
 
 Then Scene Builder can be started with Maven:
 
-`mvn javafx:run -f app`
+`./mvnw javafx:run -f app`
 
-Alternatively, you can run the partial shadow jar, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
+Alternatively, you can run the partial shadow jar in the classpath, providing you have downloaded the JavaFX SDK from [here](https://gluonhq.com/products/javafx/):
 
 ```
-java 
+java \ 
 --module-path /path/to/javafx-sdk-$javafxVersion/lib \
 --add-modules javafx.web,javafx.fxml,javafx.swing,javafx.media \
 --add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED \
--cp app/target/lib/scenebuilder-$version.jar \
+-cp app/target/lib/scenebuilder-$version-all.jar \
 com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 ```
 
-## Scene Builder Kit ##
+## Scene Builder components ##
 
-To build and install the Scene Builder Kit in your local repository, run:
+The Scene Builder project has three main components defined by three modules (that is, three Java modules defined in three Maven modules subprojects):
 
-`mvn clean install -f kit`
+- Scene Builder App
+- Scene Builder Kit
+- Gluon plugin
 
-The custom controls of the Scene Builder kit can be used in your project.
-You can add it as a regular dependency to the build of your app:
+### Scene Builder App ###
+
+Contains the JavaFX main application that embeds the Scene Builder Kit, and includes menus, preferences and dialogs to interact with it.
+
+### Scene Builder Kit ###
+
+Scene Builder Kit is the core of the project and defines three main areas: 
+
+- Left: Library of custom and built-in controls, Hierarchy and Controller of the FXML layout being edited
+- Center: Workspace area for displaying the content of the FXML layout that is being designed
+- Right: Inspector with properties, layout and event handlers of the components of the FXML layout.
+
+Scene Builder Kit contains an API that allows these components and their functionality to be integrated in other applications or IDEs. Scene Builder App is the best example of such integration. Another basic example can be found here: [EmbeddedSceneBuilderDemo](https://github.com/gluonhq/EmbeddedSceneBuilderDemo). You can also use the controls available in Scene Builder Kit in your project.
+
+Scene Builder Kit is published to Maven Central, and you can add it as a regular dependency to the build of your app:
 
 ```
 <dependency>
@@ -94,6 +119,16 @@ You can add it as a regular dependency to the build of your app:
   <version>$version</version>
 </dependency>
 ```
+
+If you want to build and install the Scene Builder Kit in your local repository, run:
+
+`./mvnw clean install -f kit`
+
+### Gluon plugin ###
+
+The Gluon section in the Library allows adding [Gluon Mobile](http://gluonhq.com/products/mobile) controls to the FXML layout, and setting the stylesheets from the Gluon themes and swatch colors.
+
+An easy way to get started is by selecting the Mobile Basic Screen from the available templates in the welcome dialog.
 
 ## Code Style
 
@@ -106,12 +141,13 @@ Contributors can check for code-style violations in their code by running the Ch
 To run the plugin:
 
 ```
-mvn checkstyle:checkstyle
+./mvnw checkstyle:checkstyle
 ```
 
-There will be a report for each sub-project, one for `app` and one for `kit`.
+There will be a report for each sub-project:
 
-* Kit: `kit/target/site/checkstyle.html`
-* App: `app/target/site/checkstyle.html`
+* Kit: `kit/target/reports/checkstyle.html`
+* App: `app/target/reports/checkstyle.html`
+* Gluon-plugin: `gluon-plugin/target/reports/checkstyle.html`
 
 This project makes use of [EditorConfig](https://editorconfig.org/) which is [directly supported](https://editorconfig.org/#pre-installed) by IntelliJ IDEA. There are plugins for NetBeans, Eclipse and Visual Studio and [more](https://editorconfig.org/#download). EditorConfig ensures via configuration in `.editorconfig` file, that the proper indentation is used.

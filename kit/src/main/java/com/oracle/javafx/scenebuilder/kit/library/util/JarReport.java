@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -37,7 +37,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,19 +47,16 @@ public class JarReport {
     
     private final Path jar;
     private final ObservableList<JarReportEntry> entries = FXCollections.observableArrayList();
-    private boolean hasGluonControls = false;
+    private boolean hasControlsFromExternalPlugin = false;
 
     public JarReport(Path jar) {
         this.jar = jar;
-        this.entries.addListener(new ListChangeListener<JarReportEntry>() {
-            @Override
-            public void onChanged(Change<? extends JarReportEntry> c) {
-                while (c.next()) {
-                    if (c.wasAdded()) {
-                        for (JarReportEntry entry : c.getAddedSubList()) {
-                            if (entry.isGluon()) {
-                                hasGluonControls = true;
-                            }
+        this.entries.addListener((ListChangeListener<JarReportEntry>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (JarReportEntry entry : c.getAddedSubList()) {
+                        if (entry.isClassFromExternalPlugin()) {
+                            hasControlsFromExternalPlugin = true;
                         }
                     }
                 }
@@ -76,6 +72,6 @@ public class JarReport {
         return entries;
     }
 
-    public boolean hasGluonControls() { return hasGluonControls; }
+    public boolean hasControlsFromExternalPlugin() { return hasControlsFromExternalPlugin; }
     
 }

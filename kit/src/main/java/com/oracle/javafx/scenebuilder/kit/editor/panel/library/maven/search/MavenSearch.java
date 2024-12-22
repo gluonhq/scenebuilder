@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -33,35 +33,36 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
 public class MavenSearch implements Search {
 
     // maven
-    private static final String URL_PREFIX = "http://search.maven.org/solrsearch/select?q=";
+    private static final String URL_PREFIX = "https://search.maven.org/solrsearch/select?q=";
     private static final String URL_SUFFIX = "&rows=200&wt=json";
     
-    private static final String URL_PREFIX_FULLCLASS = "http://search.maven.org/solrsearch/select?q=fc:%22";
+    private static final String URL_PREFIX_FULLCLASS = "https://search.maven.org/solrsearch/select?q=fc:%22";
     private static final String URL_SUFFIX_FULLCLASS = "%22&rows=200&wt=json";
     
     private final HttpClient client;
             
     public MavenSearch() {
-        client = HttpClients.createDefault();
+        client = HttpClient.newHttpClient();
     }
     
     @Override
@@ -71,9 +72,11 @@ public class MavenSearch implements Search {
         map.put("Repository", MavenPresets.MAVEN);
     
         try {
-            HttpGet request = new HttpGet(URL_PREFIX + query + URL_SUFFIX);
-            HttpResponse response = client.execute(request);
-            try (JsonReader rdr = Json.createReader(response.getEntity().getContent())) {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(URL_PREFIX + query + URL_SUFFIX))
+                .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            try (JsonReader rdr = Json.createReader(new StringReader(response.body()))) {
                 JsonObject obj = rdr.readObject();
                 if (obj != null && !obj.isEmpty() && obj.containsKey("response")) {
                     JsonObject jsonResponse = obj.getJsonObject("response");
@@ -88,7 +91,7 @@ public class MavenSearch implements Search {
                     }
                 }
             }
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
             Logger.getLogger(MavenSearch.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
