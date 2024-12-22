@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -337,7 +337,7 @@ public class StyleEditor extends InlineListEditor {
         @Override
         public Object getValue() {
             String value;
-            if (propertyTf.getText().isEmpty() && valueTf.getText().isEmpty()) {
+            if (propertyTf.getText().isEmpty() || valueTf.getText().isEmpty()) {
                 return ""; //NOI18N
             } else {
                 String propertyVal = EditorUtils.getPlainString(propertyTf.getText()).trim();

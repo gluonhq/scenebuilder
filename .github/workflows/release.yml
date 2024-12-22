@@ -9,17 +9,23 @@ on:
         options:
           - RC
           - GA
+      rc_version:
+        type: string
+        default: ''
+        description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
 
 env:
-  JAVAFX_VERSION: '23'
-  JAVA_VERSION: '23'
+  JAVA_RELEASE: '23'
+  JAVA_VERSION: '23.0.1'
+  JAVAFX_VERSION: '23.0.1'
 
 jobs:
   precheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
-      JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
+      JAVA_RELEASE: ${{ env.JAVA_RELEASE }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
+      JAVAFX_VERSION: ${{ env.JAVAFX_VERSION }}
       APP_VERSION: ${{ steps.vars.outputs.APP_VERSION }}
       PROJECT_VERSION: ${{ steps.vars.outputs.PROJECT_VERSION }}
       S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
@@ -31,7 +37,8 @@ jobs:
         uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
-          release: ${{ env.JAVA_VERSION }}
+          release: ${{ env.JAVA_RELEASE }}
+          version: ${{ env.JAVA_VERSION }}
 
       - name: Cache Maven packages
         uses: actions/cache@v4
@@ -50,7 +57,11 @@ jobs:
           S3_PATH=$PROJECT_VERSION
           CANDIDATE=${{ github.event.inputs.candidate }}
           if [[ "$CANDIDATE" == RC ]]; then
-              PROJECT_VERSION=${PROJECT_VERSION}-RC
+              RC_VERSION=${{ github.event.inputs.rc_version }}
+              if [[ "$RC_VERSION" == "" ]]; then
+                RC_VERSION="RC"
+              fi
+              PROJECT_VERSION=${PROJECT_VERSION}-${RC_VERSION}
               S3_PATH=RC/$PROJECT_VERSION
           fi
           echo "Releasing.. "$PROJECT_VERSION
@@ -125,7 +136,7 @@ jobs:
 
   release:
     needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -136,7 +147,8 @@ jobs:
         uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
-          release: ${{ needs.precheck.outputs.JAVA_VERSION }}
+          release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
+          version: ${{ needs.precheck.outputs.JAVA_VERSION }}
 
       - name: Cache Maven packages
         uses: actions/cache@v4
@@ -156,9 +168,19 @@ jobs:
           mvn -B -ntp -q versions:set -DnewVersion=${{ needs.precheck.outputs.PROJECT_VERSION }} -DgenerateBackupPoms=false
           mvn -pl :parent process-resources
 
+      - name: Deploy parent pom and Kit to local staging
+        run: |
+          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
+          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
+
       - name: Release with JReleaser
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+          JRELEASER_NEXUS2_PASSWORD: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_S3_GLUON_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           JRELEASER_S3_GLUON_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           JRELEASER_S3_GLUON_REGION: us-east-1

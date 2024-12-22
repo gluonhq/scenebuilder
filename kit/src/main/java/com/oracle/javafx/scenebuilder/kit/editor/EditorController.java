@@ -33,7 +33,6 @@
 package com.oracle.javafx.scenebuilder.kit.editor;
 
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
-import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
@@ -269,10 +268,6 @@ public class EditorController {
             = new SimpleObjectProperty<>(new BuiltinGlossary());
     private final ObjectProperty<ResourceBundle> resourcesProperty
             = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty
-            = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_GLUON_THEME);
-    private final ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty
-            = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_SWATCH);
     private final ListProperty<File> sceneStyleSheetProperty
             = new SimpleListProperty<>();
     private final BooleanProperty pickModeEnabledProperty
@@ -294,7 +289,7 @@ public class EditorController {
      * Creates an empty editor controller (ie it has no associated fxom document).
      */
     public EditorController() {
-        jobManager.revisionProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> jobManagerRevisionDidChange());
+        jobManager.revisionProperty().addListener((ov, t, t1) -> jobManagerRevisionDidChange());
     }
 
     /**
@@ -546,6 +541,7 @@ public class EditorController {
     // -- Theme property
     private final ObjectProperty<Theme> themeProperty
             = new SimpleObjectProperty<>(EditorPlatform.DEFAULT_THEME) {
+
         @Override
         protected void invalidated() {
             FXOMDocument fxomDocument = getFxomDocument();
@@ -585,61 +581,13 @@ public class EditorController {
     }
 
     /**
-     * Returns the gluon theme used by this editor
-     *
-     * @return the gluon theme used by this editor
+     * Refresh the theme and related stylesheets in different
+     * places (content, preview, ...)
      */
-    public EditorPlatform.GluonTheme getGluonTheme() {
-        return gluonThemeProperty.get();
-    }
-
-    /**
-     * Sets the gluon theme used by this editor.
-     * Content and Preview panels sharing this editor will update
-     * their content to use this new theme.
-     *
-     * @param theme the theme to be used in this editor
-     */
-    public void setGluonTheme(EditorPlatform.GluonTheme theme) {
-        gluonThemeProperty.set(theme);
-    }
-
-    /**
-     * The property holding the gluon theme used by this editor
-     *
-     * @return the property holding the gluon theme used by this editor.
-     */
-    public ObjectProperty<EditorPlatform.GluonTheme> gluonThemeProperty() {
-        return gluonThemeProperty;
-    }
-
-    /**
-     * Sets the gluon swatch used by this editor.
-     * Content and Preview panels sharing this editor will update
-     * their content to use this new swatch.
-     *
-     * @param swatch the swatch to be used in this editor
-     */
-    public void setGluonSwatch(EditorPlatform.GluonSwatch swatch) {
-        gluonSwatchProperty.set(swatch);
-    }
-
-    /**
-     * Returns the gluon swatch used by this editor
-     *
-     * @return the gluon swatch used by this editor
-     */
-    public EditorPlatform.GluonSwatch getGluonSwatch() {
-        return gluonSwatchProperty.get();
-    }
-
-    /**
-     * The property holding the gluon swatch used by this editor
-     *
-     * @return the property holding the gluon swatch used by this editor.
-     */
-    public ObjectProperty<EditorPlatform.GluonSwatch> gluonSwatchProperty() {
-        return gluonSwatchProperty;
+    public void refreshTheme() {
+        EditorPlatform.Theme currentTheme = getTheme();
+        setTheme(null);
+        setTheme(currentTheme);
     }
 
     /**
@@ -1790,7 +1738,9 @@ public class EditorController {
 
         jobManager.push(job);
 
-        WarnThemeAlert.showAlertIfRequired(this, newObject, ownerWindow);
+        if (newObject.isClassFromExternalPlugin()) {
+            EditorPlatform.showThemeAlert(ownerWindow, getTheme(), this::setTheme);
+        }
     }
 
     /**
@@ -2553,7 +2503,7 @@ public class EditorController {
             final ObjectSelectionGroup osg = (ObjectSelectionGroup) asg;
             for (FXOMObject fxomObject : osg.getItems()) {
                 final boolean isControl = fxomObject.getSceneGraphObject() instanceof Control;
-                if (isControl == false) {
+                if (!isControl) {
                     return false;
                 }
             }
@@ -2579,8 +2529,8 @@ public class EditorController {
         
         watchingController.fxomDocumentDidChange();
 
-        if (checkTheme) {
-            WarnThemeAlert.showAlertIfRequired(this, newFxomDocument, ownerWindow);
+        if (checkTheme && newFxomDocument != null && newFxomDocument.hasControlsFromExternalPlugin()) {
+            EditorPlatform.showThemeAlert(getOwnerWindow(), getTheme(), this::setTheme);
         }
     }
     

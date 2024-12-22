@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -120,7 +120,7 @@ class FXOMLoader implements LoadListener {
     }
 
     private void handleKnownCauses(Exception x) throws IOException {
-        if (x.getCause().getClass() == XMLStreamException.class) {
+        if (x.getCause() instanceof XMLStreamException) {
             knownErrorsHandler.accept(x);
         } else {                    
             handleUnknownAndMissingCauses(x);

@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.app.menubar;
 
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorController;
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.DocumentControlAction;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.DocumentEditAction;
@@ -68,7 +70,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -431,6 +432,8 @@ public class MenuBarController {
     private static final KeyCombination.Modifier modifier;
     private final Map<KeyCombination, MenuItem> keyToMenu = new HashMap<>();
 
+    private DocumentControlActionController previewController;
+
     static {
         if (EditorPlatform.IS_MAC) {
             modifier = KeyCombination.META_DOWN;
@@ -442,6 +445,12 @@ public class MenuBarController {
 
     public MenuBarController(DocumentWindowController documentWindowController) {
         this.documentWindowController = documentWindowController;
+    }
+
+    public void showPreview() {
+        if (previewController != null && previewController.canPerform()) {
+            previewController.perform();
+        }
     }
 
     public MenuBar getMenuBar() {
@@ -1036,7 +1045,10 @@ public class MenuBarController {
         /*
          * Preview menu
          */
-        showPreviewInWindowMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_WINDOW));
+        if (null == previewController) {
+            previewController = new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_WINDOW); 
+        }
+        showPreviewInWindowMenuItem.setUserData(previewController);
         showPreviewInWindowMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.P, modifier));
         showPreviewInDialogMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_DIALOG));
         caspianHighContrastThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST));
@@ -1044,57 +1056,57 @@ public class MenuBarController {
         caspianEmbeddedThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED));
         caspianEmbeddedQVGAThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA));
 
-        gluonMobileLightThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_LIGHT));
-        gluonMobileDarkThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.GLUON_MOBILE_DARK));
+        gluonMobileLightThemeMenuItem.setUserData(new SetThemeActionController(GluonEditorPlatform.GLUON_MOBILE_LIGHT));
+        gluonMobileDarkThemeMenuItem.setUserData(new SetThemeActionController(GluonEditorPlatform.GLUON_MOBILE_DARK));
         modenaThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA));
         modenaTouchThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_TOUCH));
         modenaHighContrastBlackonwhiteThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE));
         modenaHighContrastWhiteonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK));
         modenaHighContrastYellowonblackThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK));
 
-        blueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE));
+        blueSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_BLUE));
         addSwatchGraphic(blueSwatch);
-        cyanSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.CYAN));
+        cyanSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_CYAN));
         addSwatchGraphic(cyanSwatch);
-        deepOrangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_ORANGE));
+        deepOrangeSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_DEEP_ORANGE));
         addSwatchGraphic(deepOrangeSwatch);
-        deepPurpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.DEEP_PURPLE));
+        deepPurpleSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_DEEP_PURPLE));
         addSwatchGraphic(deepPurpleSwatch);
-        greenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREEN));
+        greenSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_GREEN));
         addSwatchGraphic(greenSwatch);
-        indigoSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.INDIGO));
+        indigoSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_INDIGO));
         addSwatchGraphic(indigoSwatch);
-        lightBlueSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_BLUE));
+        lightBlueSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_LIGHT_BLUE));
         addSwatchGraphic(lightBlueSwatch);
-        pinkSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PINK));
+        pinkSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_PINK));
         addSwatchGraphic(pinkSwatch);
-        purpleSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.PURPLE));
+        purpleSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_PURPLE));
         addSwatchGraphic(purpleSwatch);
-        redSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.RED));
+        redSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_RED));
         addSwatchGraphic(redSwatch);
-        tealSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.TEAL));
+        tealSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_TEAL));
         addSwatchGraphic(tealSwatch);
-        lightGreenSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIGHT_GREEN));
+        lightGreenSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_LIGHT_GREEN));
         addSwatchGraphic(lightGreenSwatch);
-        limeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.LIME));
+        limeSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_LIME));
         addSwatchGraphic(limeSwatch);
-        yellowSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.YELLOW));
+        yellowSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_YELLOW));
         addSwatchGraphic(yellowSwatch);
-        amberSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.AMBER));
+        amberSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_AMBER));
         addSwatchGraphic(amberSwatch);
-        orangeSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.ORANGE));
+        orangeSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_ORANGE));
         addSwatchGraphic(orangeSwatch);
-        brownSwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BROWN));
+        brownSwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_BROWN));
         addSwatchGraphic(brownSwatch);
-        greySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.GREY));
+        greySwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_GREY));
         addSwatchGraphic(greySwatch);
-        blueGreySwatch.setUserData(new GluonActionController(EditorPlatform.GluonSwatch.BLUE_GREY));
+        blueGreySwatch.setUserData(new GluonActionController(GluonEditorPlatform.GLUON_SWATCH_BLUE_GREY));
         addSwatchGraphic(blueGreySwatch);
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
         if (documentWindowController != null) {
-            this.documentWindowController.getEditorController().sceneStyleSheetProperty().addListener((ChangeListener<ObservableList<File>>) (ov, t, t1) -> {
+            this.documentWindowController.getEditorController().sceneStyleSheetProperty().addListener((ov, t, t1) -> {
                 if (t1 != null) {
                     updateOpenAndRemoveSceneStyleSheetMenus();
                     setupMenuItemHandlers(removeSceneStyleSheetMenu);
@@ -1185,7 +1197,8 @@ public class MenuBarController {
     }
 
     private void addSwatchGraphic(RadioMenuItem swatchMenuItem) {
-        swatchMenuItem.setGraphic(((GluonActionController)swatchMenuItem.getUserData()).getSwatch().createGraphic());
+        EditorPlatform.Theme swatch = ((GluonActionController) swatchMenuItem.getUserData()).getSwatch();
+        swatchMenuItem.setGraphic(GluonEditorPlatform.createGraphicForSwatch(swatch));
     }
 
     /*
@@ -2080,50 +2093,50 @@ public class MenuBarController {
                             = documentWindowController.getEditorController().getTheme();
             EditorPlatform.Theme overridingTheme = theme;
 
-            switch (theme) {
-                case CASPIAN:
+            switch (theme.name()) {
+                case "CASPIAN":
                     if (caspianHighContrastThemeMenuItem.isSelected()) {
                         overridingTheme = EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST;
                     }
                     break;
-                case CASPIAN_EMBEDDED:
+                case "CASPIAN_EMBEDDED":
                     if (caspianHighContrastThemeMenuItem.isSelected()) {
                         overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST;
                     }
                     break;
-                case CASPIAN_EMBEDDED_QVGA:
+                case "CASPIAN_EMBEDDED_QVGA":
                     if (caspianHighContrastThemeMenuItem.isSelected()) {
                         overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST;
                     }
                     break;
-                case CASPIAN_HIGH_CONTRAST:
-                    switch (currentTheme) {
-                        case CASPIAN:
+                case "CASPIAN_HIGH_CONTRAST":
+                    switch (currentTheme.name()) {
+                        case "CASPIAN":
                             if (caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST;
                             }
                             break;
-                        case CASPIAN_EMBEDDED:
+                        case "CASPIAN_EMBEDDED":
                             if (caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST;
                             }
                             break;
-                        case CASPIAN_EMBEDDED_QVGA:
+                        case "CASPIAN_EMBEDDED_QVGA":
                             if (caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST;
                             }
                             break;
-                        case CASPIAN_HIGH_CONTRAST:
+                        case "CASPIAN_HIGH_CONTRAST":
                             if (!caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN;
                             }
                             break;
-                        case CASPIAN_EMBEDDED_HIGH_CONTRAST:
+                        case "CASPIAN_EMBEDDED_HIGH_CONTRAST":
                             if (!caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED;
                             }
                             break;
-                        case CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST:
+                        case "CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST":
                             if (!caspianHighContrastThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA;
                             }
@@ -2134,7 +2147,7 @@ public class MenuBarController {
                             break;
                     }
                     break;
-                case MODENA:
+                case "MODENA":
                     if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                         overridingTheme = EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE;
                     } else if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
@@ -2143,7 +2156,7 @@ public class MenuBarController {
                         overridingTheme = EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK;
                     }
                     break;
-                case MODENA_TOUCH:
+                case "MODENA_TOUCH":
                     if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                         overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE;
                     } else if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
@@ -2152,38 +2165,33 @@ public class MenuBarController {
                         overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK;
                     }
                     break;
-                case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
-                    switch (currentTheme) {
-                        case MODENA:
+                case "MODENA_HIGH_CONTRAST_BLACK_ON_WHITE":
+                    switch (currentTheme.name()) {
+                        case "MODENA":
                             if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE;
                             }
                             break;
-                        case MODENA_TOUCH:
+                        case "MODENA_TOUCH":
                             if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE;
                             }
                             break;
-                        case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_HIGH_CONTRAST_BLACK_ON_WHITE":
                             if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA;
                             }
                             break;
-                        case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
+                        case "MODENA_HIGH_CONTRAST_WHITE_ON_BLACK":
+                        case "MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             break;
-                        case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                            break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE":
                             if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH;
                             }
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK:
-                            if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
-                                overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE;
-                            }
-                            break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK":
+                        case "MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             if (modenaHighContrastBlackonwhiteThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE;
                             }
@@ -2192,38 +2200,38 @@ public class MenuBarController {
                             break;
                     }
                 break;
-                case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                    switch (currentTheme) {
-                        case MODENA:
+                case "MODENA_HIGH_CONTRAST_WHITE_ON_BLACK":
+                    switch (currentTheme.name()) {
+                        case "MODENA":
                                 if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK;
                             }
                             break;
-                        case MODENA_TOUCH:
+                        case "MODENA_TOUCH":
                                 if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK;
                             }
                             break;
-                        case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_HIGH_CONTRAST_BLACK_ON_WHITE":
                             break;
-                        case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
+                        case "MODENA_HIGH_CONTRAST_WHITE_ON_BLACK":
                             if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA;
                             }
                             break;
-                        case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
+                        case "MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE":
                             if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK;
                             }
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK":
                             if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH;
                             }
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             if (modenaHighContrastWhiteonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK;
                             }
@@ -2232,38 +2240,33 @@ public class MenuBarController {
                             break;
                     }
                 break;
-                case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                    switch (currentTheme) {
-                        case MODENA:
+                case "MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK":
+                    switch (currentTheme.name()) {
+                        case "MODENA":
                             if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK;
                             }
                             break;
-                        case MODENA_TOUCH:
+                        case "MODENA_TOUCH":
                             if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK;
                             }
                             break;
-                        case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_HIGH_CONTRAST_BLACK_ON_WHITE":
+                        case "MODENA_HIGH_CONTRAST_WHITE_ON_BLACK":
                             break;
-                        case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                            break;
-                        case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
+                        case "MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA;
                             }
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE":
+                        case "MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK":
                             if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK;
                             }
                             break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK:
-                            if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
-                                overridingTheme = EditorPlatform.Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK;
-                            }
-                            break;
-                        case MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK:
+                        case "MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK":
                             if (modenaHighContrastYellowonblackThemeMenuItem.isSelected()) {
                                 overridingTheme = EditorPlatform.Theme.MODENA_TOUCH;
                             }
@@ -2278,10 +2281,10 @@ public class MenuBarController {
             }
 
             documentWindowController.getEditorController().setTheme(overridingTheme);
-            if (overridingTheme == EditorPlatform.Theme.GLUON_MOBILE_LIGHT) {
-                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.LIGHT);
-            } else if (overridingTheme == EditorPlatform.Theme.GLUON_MOBILE_DARK) {
-                documentWindowController.getEditorController().setGluonTheme(EditorPlatform.GluonTheme.DARK);
+            if (GluonEditorPlatform.isGluonMobileLight(overridingTheme)) {
+                GluonEditorController.getInstance().setGluonTheme(GluonEditorPlatform.GLUON_MOBILE_LIGHT);
+            } else if (GluonEditorPlatform.isGluonMobileDark(overridingTheme)) {
+                GluonEditorController.getInstance().setGluonTheme(GluonEditorPlatform.GLUON_MOBILE_DARK);
             }
         }
 
@@ -2295,52 +2298,34 @@ public class MenuBarController {
                 final EditorPlatform.Theme currentTheme
                         = documentWindowController.getEditorController().getTheme();
 
-                switch (theme) {
-                    case GLUON_MOBILE_LIGHT:
-                        res = EditorPlatform.isGluonMobileLight(currentTheme);
-                        break;
-                    case GLUON_MOBILE_DARK:
-                        res = EditorPlatform.isGluonMobileDark(currentTheme);
-                        break;
+                res = switch (theme.name()) {
+                    case "GLUON_MOBILE_LIGHT" -> GluonEditorPlatform.GLUON_MOBILE_LIGHT == currentTheme;
+                    case "GLUON_MOBILE_DARK" -> GluonEditorPlatform.GLUON_MOBILE_DARK == currentTheme;
                     // CASPIAN_HIGH_CONTRAST can be selected only if another CASPIAN
                     // theme is active.
-                    case CASPIAN_HIGH_CONTRAST:
-                        res = EditorPlatform.isCaspian(currentTheme);
-                        break;
-                    case CASPIAN:
-                        res = (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST);
-                        break;
-                    case CASPIAN_EMBEDDED:
-                        res = (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST);
-                        break;
-                    case CASPIAN_EMBEDDED_QVGA:
-                        res = (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST);
-                        break;
-                    case MODENA_HIGH_CONTRAST_BLACK_ON_WHITE:
-                        res = EditorPlatform.isModenaBlackOnWhite(currentTheme)
-                                && EditorPlatform.isModenaHighContrast(currentTheme);
-                        break;
-                    case MODENA_HIGH_CONTRAST_WHITE_ON_BLACK:
-                        res = EditorPlatform.isModenaWhiteOnBlack(currentTheme)
-                                && EditorPlatform.isModenaHighContrast(currentTheme);
-                        break;
-                    case MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK:
-                        res = EditorPlatform.isModenaYellowOnBlack(currentTheme)
-                                && EditorPlatform.isModenaHighContrast(currentTheme);
-                        break;
-                    case MODENA:
-                        res = (currentTheme == theme
-                                || (EditorPlatform.isModenaHighContrast(currentTheme)
-                                    && !EditorPlatform.isModenaTouch(currentTheme)));
-                        break;
-                    case MODENA_TOUCH:
-                        res = (currentTheme == theme || EditorPlatform.isModenaTouchHighContrast(currentTheme));
-                        break;
-                    default:
+                    case "CASPIAN_HIGH_CONTRAST" -> EditorPlatform.isCaspian(currentTheme);
+                    case "CASPIAN" ->
+                        (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_HIGH_CONTRAST);
+                    case "CASPIAN_EMBEDDED" ->
+                        (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST);
+                    case "CASPIAN_EMBEDDED_QVGA" ->
+                        (currentTheme == theme || currentTheme == EditorPlatform.Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST);
+                    case "MODENA_HIGH_CONTRAST_BLACK_ON_WHITE" -> EditorPlatform.isModenaBlackOnWhite(currentTheme)
+                        && EditorPlatform.isModenaHighContrast(currentTheme);
+                    case "MODENA_HIGH_CONTRAST_WHITE_ON_BLACK" -> EditorPlatform.isModenaWhiteOnBlack(currentTheme)
+                        && EditorPlatform.isModenaHighContrast(currentTheme);
+                    case "MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK" -> EditorPlatform.isModenaYellowOnBlack(currentTheme)
+                        && EditorPlatform.isModenaHighContrast(currentTheme);
+                    case "MODENA" -> (currentTheme == theme
+                        || (EditorPlatform.isModenaHighContrast(currentTheme)
+                        && !EditorPlatform.isModenaTouch(currentTheme)));
+                    case "MODENA_TOUCH" ->
+                        (currentTheme == theme || EditorPlatform.isModenaTouchHighContrast(currentTheme));
+                    default -> {
                         assert false;
-                        res = false;
-                        break;
-                }
+                        yield false;
+                    }
+                };
             }
 
             return res;
@@ -2349,13 +2334,13 @@ public class MenuBarController {
 
     class GluonActionController extends MenuItemController {
 
-        private EditorPlatform.GluonSwatch gluonSwatch;
+        private final EditorPlatform.Theme gluonSwatch;
 
-        public GluonActionController(EditorPlatform.GluonSwatch gluonSwatch) {
+        public GluonActionController(EditorPlatform.Theme gluonSwatch) {
             this.gluonSwatch = gluonSwatch;
         }
 
-        public EditorPlatform.GluonSwatch getSwatch() {
+        public EditorPlatform.Theme getSwatch() {
             return gluonSwatch;
         }
 
@@ -2363,12 +2348,14 @@ public class MenuBarController {
         public boolean canPerform() {
             EditorPlatform.Theme currentTheme
                     = documentWindowController.getEditorController().getTheme();
-            return currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_LIGHT) || currentTheme.equals(EditorPlatform.Theme.GLUON_MOBILE_DARK);
+            return GluonEditorPlatform.isGluonMobileLight(currentTheme) || GluonEditorPlatform.isGluonMobileDark(currentTheme);
         }
 
         @Override
         public void perform() {
-            documentWindowController.getEditorController().setGluonSwatch(gluonSwatch);
+            GluonEditorController.getInstance().setGluonSwatch(gluonSwatch);
+            // After swatch changes, force theme update to refresh the content
+            documentWindowController.getEditorController().refreshTheme();
         }
 
         @Override
@@ -2377,7 +2364,7 @@ public class MenuBarController {
             if (documentWindowController == null) {
                 res = false;
             } else if (gluonSwatch != null) {
-                res = gluonSwatch == documentWindowController.getEditorController().getGluonSwatch();
+                res = gluonSwatch == GluonEditorController.getInstance().getGluonSwatch();
             }
             return res;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -73,8 +73,6 @@ public abstract class PreferencesControllerBase {
     public static final String SCENE_STYLE_SHEETS = "sceneStyleSheets"; //NOI18N
     public static final String I18N_RESOURCE = "I18NResource"; //NOI18N
     public static final String THEME = "theme";
-    public static final String GLUON_SWATCH = "gluonSwatch";
-    public static final String GLUON_THEME = "gluonTheme";
 
     /***************************************************************************
      *                                                                         *

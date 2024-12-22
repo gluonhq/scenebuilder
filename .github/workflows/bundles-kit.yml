@@ -6,14 +6,18 @@ on:
       project-version:
         required: true
         type: string
-      java-version:
+      java-release:
         default: '23'
+        required: false
+        type: string
+      java-version:
+        default: '23.0.1'
         required: false
         type: string
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +25,8 @@ jobs:
         uses: oracle-actions/setup-java@v1.4.0
         with:
           website: jdk.java.net
-          release: ${{ inputs.java-version }}
+          release: ${{ inputs.java-release }}
+          version: ${{ inputs.java-version }}
 
       - name: Cache Maven packages
         uses: actions/cache@v4

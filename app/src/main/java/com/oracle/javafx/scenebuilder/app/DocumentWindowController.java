@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
+import com.gluonhq.scenebuilder.plugins.alert.WarnThemeAlert;
+import com.gluonhq.scenebuilder.plugins.editor.GluonEditorController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
@@ -41,7 +43,6 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
-import com.oracle.javafx.scenebuilder.kit.alert.WarnThemeAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -322,6 +323,13 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             }
             event.consume();
         }
+        
+        // Keep preview function working even if preview accelerator is 
+        // already occupied in FXML
+        if (KeyCode.P.equals(event.getCode()) && modifierDown) {
+            menuBarController.showPreview();
+            event.consume();
+        }
     };
     
     /*
@@ -407,7 +415,9 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         updateFromDocumentPreferences(true);
         watchingController.update();
 
-        WarnThemeAlert.showAlertIfRequired(editorController, editorController.getFxomDocument(), getStage());
+        if (editorController.getFxomDocument().hasControlsFromExternalPlugin()) {
+            WarnThemeAlert.showAlertIfRequired(getStage(), editorController.getTheme(), editorController::setTheme);
+        }
     }
     
     public void loadFromURL(URL fxmlURL, boolean refreshThemeFromDocumentPreferences) {
@@ -557,13 +567,11 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     }
 
     public void refreshSwatch(PreferencesRecordGlobal preferencesRecordGlobal) {
-        final EditorController ec = getEditorController();
-        ec.setGluonSwatch(preferencesRecordGlobal.getSwatch());
+        GluonEditorController.getInstance().setGluonSwatch(preferencesRecordGlobal.getSwatch());
     }
 
     public void refreshGluonTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
-        final EditorController ec = getEditorController();
-        ec.setGluonTheme(preferencesRecordGlobal.getGluonTheme());
+        GluonEditorController.getInstance().setGluonTheme(preferencesRecordGlobal.getGluonTheme());
     }
 
     public void refreshAccordionAnimation(PreferencesRecordGlobal preferencesRecordGlobal) {
@@ -1404,7 +1412,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void onManageJarFxml(ActionEvent event) {
         if(libraryDialogController==null){
             libraryDialogController = new LibraryDialogController(editorController, AppSettings.getUserM2Repository(),
-                    AppSettings.getTempM2Repository(), PreferencesController.getSingleton(), getStage());
+                    PreferencesController.getSingleton(), getStage());
             libraryDialogController.setOnAddJar(() -> onImportJarFxml(libraryDialogController.getStage()));
             libraryDialogController.setOnEditFXML(fxmlPath -> {
                     if (SceneBuilderApp.getSingleton().findFirstUnusedDocumentWindowController().isPresent()) {
