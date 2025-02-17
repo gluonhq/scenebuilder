@@ -16,7 +16,7 @@ on:
 
 env:
   JAVA_RELEASE: '23'
-  JAVA_VERSION: '23.0.1'
+  JAVA_VERSION: 'latest'
   JAVAFX_VERSION: '23.0.1'
 
 jobs:
