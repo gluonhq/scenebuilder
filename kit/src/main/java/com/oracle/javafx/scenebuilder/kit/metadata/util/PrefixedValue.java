@@ -177,7 +177,7 @@ public class PrefixedValue {
             case BINDING_EXPRESSION: {
                 assert value.startsWith(FXMLLoader.BINDING_EXPRESSION_PREFIX);
                 assert value.endsWith(FXMLLoader.BINDING_EXPRESSION_SUFFIX);
-                result = value.substring(FXMLLoader.BINDING_EXPRESSION_PREFIX.length() - FXMLLoader.BINDING_EXPRESSION_SUFFIX.length());
+                result = value.substring(FXMLLoader.BINDING_EXPRESSION_PREFIX.length(), value.length() - FXMLLoader.BINDING_EXPRESSION_SUFFIX.length());
                 break;
             }
             case PLAIN_STRING: {
