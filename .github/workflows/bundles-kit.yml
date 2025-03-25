@@ -7,11 +7,11 @@ on:
         required: true
         type: string
       java-release:
-        default: '23'
+        default: '24'
         required: false
         type: string
       java-version:
-        default: '23.0.1'
+        default: '24'
         required: false
         type: string
 

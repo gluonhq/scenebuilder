@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -44,7 +44,7 @@ public enum DocumentationUrls {
     /**
      * Javadoc home (for Inspector and CSS Analyzer properties)
      */
-    JAVADOC_HOME("https://openjfx.io/javadoc/23/"),
+    JAVADOC_HOME("https://openjfx.io/javadoc/24/"),
     
     /**
      * This URL is where you go when the user takes Scene Builder Help action (shortcut F1)
@@ -65,7 +65,7 @@ public enum DocumentationUrls {
      */
     JFXCENTRAL_HOMEPAGE("https://www.jfx-central.com");
 
-    private static final String SAFE_DEFAULT_VERSION = "21";
+    private static final String SAFE_DEFAULT_VERSION = "22";
 
     private static String javaFxMajorVersion = null;
     
