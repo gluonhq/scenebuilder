@@ -65,7 +65,7 @@ public enum DocumentationUrls {
      */
     JFXCENTRAL_HOMEPAGE("https://www.jfx-central.com");
 
-    private static final String SAFE_DEFAULT_VERSION = "22";
+    private static final String SAFE_DEFAULT_VERSION = "21";
 
     private static String javaFxMajorVersion = null;
     
