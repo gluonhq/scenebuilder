@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  JAVA_RELEASE: '23'
+  JAVA_RELEASE: '24'
   JAVA_VERSION: 'latest'
-  JAVAFX_VERSION: '23.0.1'
+  JAVAFX_VERSION: '24'
 
 jobs:
   precheck:
