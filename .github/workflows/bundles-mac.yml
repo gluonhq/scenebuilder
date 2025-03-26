@@ -10,16 +10,13 @@ on:
         required: true
         type: string
       java-release:
-        default: '24'
-        required: false
+        required: true
         type: string
       java-version:
-        default: '24'
-        required: false
+        required: true
         type: string
       javafx-version:
-        default: '24'
-        required: false
+        required: true
         type: string
       test:
         default: false

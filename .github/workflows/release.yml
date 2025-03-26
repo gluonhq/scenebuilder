@@ -74,6 +74,7 @@ jobs:
     uses: ./.github/workflows/bundles-linux.yml
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -88,6 +89,7 @@ jobs:
       WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -105,6 +107,7 @@ jobs:
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -122,6 +125,7 @@ jobs:
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -131,6 +135,7 @@ jobs:
     needs: [precheck]
     uses: ./.github/workflows/bundles-kit.yml
     with:
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
