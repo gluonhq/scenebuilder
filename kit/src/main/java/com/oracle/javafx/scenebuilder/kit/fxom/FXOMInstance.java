@@ -189,8 +189,17 @@ public class FXOMInstance extends FXOMObject {
                     FXOMPropertyC propertyC = (FXOMPropertyC) property;
                     final Iterator<FXOMObject> itValue = propertyC.getValues().iterator();
                     while ((result == null) && itValue.hasNext()) {
-                        final FXOMObject value = itValue.next();
-                        result = value.searchWithSceneGraphObject(sceneGraphObject);
+                        FXOMObject value = itValue.next();
+                        // Temporarily treat the node as FXOMInstance so that the intrinsic node can be searched.
+                        if(value instanceof FXOMIntrinsic) {
+                            FXOMObject fxomObject = ((FXOMIntrinsic) value).createFxomInstanceFromIntrinsic();
+                            result = fxomObject.searchWithSceneGraphObject(sceneGraphObject);
+                            if(result != null) {
+                                result = value;
+                            }
+                        } else {
+                            result = value.searchWithSceneGraphObject(sceneGraphObject);
+                        }
                     }
                 }
             }
