@@ -728,11 +728,16 @@ implements AbstractGesture.Observer {
             final DesignHierarchyMask m
                     = new DesignHierarchyMask(hitObject);
             // Do not allow inline editing of the I18N value
-            if (m.isResourceKey() == false) {
+            if (m.isResourceKey() == false && m.isBindingExpression() == false) {
                 handleInlineEditing((FXOMInstance) selectAndMoveGesture.getHitObject());
             } else {
                 final MessageLog ml = contentPanelController.getEditorController().getMessageLog();
-                ml.logWarningMessage("log.warning.inline.edit.internationalized.strings");
+                if (m.isResourceKey()) {
+                	ml.logWarningMessage("log.warning.inline.edit.internationalized.strings");
+                }
+                if (m.isBindingExpression()) {
+                	ml.logWarningMessage("log.warning.inline.edit.bindingexpression.strings");
+                }
             }
         }
     }
