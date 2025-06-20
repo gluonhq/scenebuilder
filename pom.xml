@@ -189,7 +189,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.14.0</version>
+                <version>1.17.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -350,17 +350,17 @@
                         </signing>
                         <deploy>
                             <maven>
-                                <nexus2>
+                                <mavenCentral>
                                     <maven-central>
                                         <active>ALWAYS</active>
-                                        <url>https://oss.sonatype.org/service/local</url>
+                                        <url>https://central.sonatype.com/api/v1/publisher</url>
                                         <snapshotSupported>true</snapshotSupported>
-                                        <snapshotUrl>https://oss.sonatype.org/content/repositories/snapshots</snapshotUrl>
-                                        <closeRepository>true</closeRepository>
-                                        <releaseRepository>false</releaseRepository>
-                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                        <applyMavenCentralRules>true</applyMavenCentralRules>
+                                        <stagingRepositories>
+                                            <stagingRepository>target/staging-deploy</stagingRepository>
+                                        </stagingRepositories>
                                     </maven-central>
-                                </nexus2>
+                                </mavenCentral>
                             </maven>
                         </deploy>
                     </jreleaser>
@@ -413,17 +413,6 @@
         <connection>scm:git:${repository.url}.git</connection>
         <developerConnection>scm:git:${repository.url}.git</developerConnection>
     </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <reporting>
         <plugins>
