@@ -85,6 +85,8 @@
                             <option>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</option>
                             <option>--add-opens=javafx.controls/com.sun.javafx.scene.control.skin.caspian=com.gluonhq.scenebuilder.kit</option>
                             <option>--add-opens=javafx.controls/com.sun.javafx.scene.control.skin.modena=com.gluonhq.scenebuilder.kit</option>
+                            <option>--enable-native-access=javafx.graphics</option>
+                            <option>--sun-misc-unsafe-memory-access=allow</option>
                         </options>
                     </configuration>
                 </plugin>
