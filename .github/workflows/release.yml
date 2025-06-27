@@ -17,7 +17,7 @@ on:
 env:
   JAVA_RELEASE: '24'
   JAVA_VERSION: 'latest'
-  JAVAFX_VERSION: '24'
+  JAVAFX_VERSION: '24.0.1'
 
 jobs:
   precheck:
