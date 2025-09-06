@@ -98,10 +98,16 @@ public class PrefixedValue {
                 break;
             }
             case PLAIN_STRING: {
-                if (suffix.startsWith(FXMLLoader.ESCAPE_PREFIX) 
-                        || suffix.startsWith(FXMLLoader.RELATIVE_PATH_PREFIX) 
-                        || suffix.startsWith(FXMLLoader.RESOURCE_KEY_PREFIX)
-                        || suffix.startsWith(FXMLLoader.EXPRESSION_PREFIX)) {
+                // The escape-prefix has already been added, so don't add the prefix again
+                if (suffix.startsWith(FXMLLoader.ESCAPE_PREFIX + FXMLLoader.ESCAPE_PREFIX)
+                        || suffix.startsWith(FXMLLoader.ESCAPE_PREFIX + FXMLLoader.RELATIVE_PATH_PREFIX)
+                        || suffix.startsWith(FXMLLoader.ESCAPE_PREFIX + FXMLLoader.RESOURCE_KEY_PREFIX)
+                        || suffix.startsWith(FXMLLoader.ESCAPE_PREFIX + FXMLLoader.EXPRESSION_PREFIX)) {
+                    this.value = suffix;
+                } else if (suffix.startsWith(FXMLLoader.ESCAPE_PREFIX)
+                               || suffix.startsWith(FXMLLoader.RELATIVE_PATH_PREFIX)
+                               || suffix.startsWith(FXMLLoader.RESOURCE_KEY_PREFIX)
+                               || suffix.startsWith(FXMLLoader.EXPRESSION_PREFIX)) {
                     this.value = FXMLLoader.ESCAPE_PREFIX + suffix;
                 } else {
                     this.value = suffix;
