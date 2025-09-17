@@ -15,9 +15,9 @@ on:
         description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
 
 env:
-  JAVA_RELEASE: '24'
+  JAVA_RELEASE: '25'
   JAVA_VERSION: 'latest'
-  JAVAFX_VERSION: '24.0.1'
+  JAVAFX_VERSION: '25'
 
 jobs:
   precheck:
