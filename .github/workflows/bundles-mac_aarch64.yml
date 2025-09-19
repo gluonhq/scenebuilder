@@ -45,11 +45,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup JPackage JDK
-        uses: oracle-actions/setup-java@v1.4.0
+        uses: actions/setup-java@v5
         with:
-          website: jdk.java.net
-          release: 24
-          version: ${{ inputs.java-version }}
+          distribution: 'temurin'
+          java-version: '24'
 
       - name: Setup Java
         uses: oracle-actions/setup-java@v1.4.0
