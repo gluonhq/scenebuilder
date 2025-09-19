@@ -44,6 +44,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup JPackage JDK
+        uses: oracle-actions/setup-java@v1.4.0
+        with:
+          website: jdk.java.net
+          release: 24
+          version: ${{ inputs.java-version }}
+
       - name: Setup Java
         uses: oracle-actions/setup-java@v1.4.0
         with:
@@ -86,6 +93,8 @@ jobs:
       - name: Create Bundle using JPackage
         id: outputfile
         run: |
+          echo $JPACKAGE_HOME
+          echo $JAVA_HOME
           .github/scripts/jpackage.sh \
             --icon app/assets/osx/icon-mac.icns \
             --java-options '"-Djavafx.allowjs=true"' \
@@ -104,7 +113,7 @@ jobs:
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}/
-          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME_24_aarch64 }}
           MACSIGN_PREFIX: ${{ secrets.MACSIGN_PREFIX }}
           MACSIGN_USER: ${{ secrets.MACSIGN_USER }}
           PROJECT_VERSION: ${{ inputs.project-version }}
