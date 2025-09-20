@@ -43,6 +43,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup JPackage JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Setup Java
         uses: oracle-actions/setup-java@v1.4.0
         with:
@@ -103,7 +109,7 @@ jobs:
         env:
           MAIN_CLASS: com.oracle.javafx.scenebuilder.app.SceneBuilderApp
           JAVAFX_HOME: /tmp/javafx-jmods-${{ steps.javafx.outputs.JAVAFX_MAJOR_VERSION }}/
-          JPACKAGE_HOME: ${{ env.JAVA_HOME }}
+          JPACKAGE_HOME: ${{ env.JAVA_HOME_24_X64 }}
           MACSIGN_PREFIX: ${{ secrets.MACSIGN_PREFIX }}
           MACSIGN_USER: ${{ secrets.MACSIGN_USER }}
           PROJECT_VERSION: ${{ inputs.project-version }}
