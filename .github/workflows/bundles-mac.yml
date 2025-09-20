@@ -91,8 +91,6 @@ jobs:
       - name: Create Bundle using JPackage
         id: outputfile
         run: |
-          echo $JPACKAGE_HOME
-          echo $JAVA_HOME
           .github/scripts/jpackage.sh \
             --icon app/assets/osx/icon-mac.icns \
             --java-options '"-Djavafx.allowjs=true"' \
