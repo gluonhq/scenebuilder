@@ -15,9 +15,9 @@ on:
         description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
 
 env:
-  JAVA_RELEASE: '24'
+  JAVA_RELEASE: '25'
   JAVA_VERSION: 'latest'
-  JAVAFX_VERSION: '24.0.1'
+  JAVAFX_VERSION: '25'
 
 jobs:
   precheck:
@@ -103,6 +103,7 @@ jobs:
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
       NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
       NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      NOTARIZATION_TEAMID: ${{ secrets.NOTARIZATION_TEAMID }}
       MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
@@ -121,6 +122,7 @@ jobs:
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
       NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
       NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      NOTARIZATION_TEAMID: ${{ secrets.NOTARIZATION_TEAMID }}
       MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:

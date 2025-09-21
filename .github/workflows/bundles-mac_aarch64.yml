@@ -31,6 +31,8 @@ on:
         required: true
       NOTARIZATION_PASSWORD:
         required: true
+      NOTARIZATION_TEAMID:
+        required: true
       MACSIGN_USER:
         required: true
       MACSIGN_PREFIX:
@@ -115,7 +117,7 @@ jobs:
           product-path: ${{ steps.outputfile.outputs.path }}
           apple-id: ${{ secrets.NOTARIZATION_USERNAME }}
           app-password: ${{ secrets.NOTARIZATION_PASSWORD }}
-          team-id: ${{ secrets.MACSIGN_PREFIX }}
+          team-id: ${{ secrets.NOTARIZATION_TEAMID }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

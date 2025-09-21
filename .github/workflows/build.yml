@@ -3,7 +3,7 @@ on:
   pull_request:
 
 env:
-  JAVA_RELEASE: '24'
+  JAVA_RELEASE: '25'
   JAVA_VERSION: 'latest'
 
 jobs:
