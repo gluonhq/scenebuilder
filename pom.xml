@@ -142,7 +142,10 @@
                     <configuration>
                         <reuseForks>false</reuseForks>
                         <forkCount>1</forkCount>
-                        <argLine>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit -Djavafx.allowjs=true --enable-native-access=javafx.graphics</argLine>
+                        <argLine>
+                            --add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit -Djavafx.allowjs=true --enable-native-access=javafx.graphics
+                            --add-opens com.gluonhq.scenebuilder.kit/com.oracle.javafx.scenebuilder.kit.metadata.util=ALL-UNNAMED
+                        </argLine>
                     </configuration>
                 </plugin>
             </plugins>
