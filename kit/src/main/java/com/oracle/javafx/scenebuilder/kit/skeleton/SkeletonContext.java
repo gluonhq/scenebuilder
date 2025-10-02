@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
@@ -41,11 +42,14 @@ import javafx.fxml.FXML;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SkeletonContext {
 
@@ -135,12 +139,40 @@ public class SkeletonContext {
 
         public void addFxId(FXOMObject value) {
             String fxId = value.getFxId();
-            Class<?> type = value.getSceneGraphObject().getClass();
-
+            getSceneGraphType(value).ifPresent(type -> addToSkeleton(type, fxId));           
+        }
+        
+        private void addToSkeleton(Class<?> type, String fxId) {
             addImportsFor(FXML.class, type);
-
             variables.put(fxId, type);
             assertions.add(fxId);
+        }
+
+        private Optional<Class<?>> getSceneGraphType(FXOMObject value) {
+            /*
+             * For fx:include elements, the FXOMIntrinsic objects deliver null values 
+             * when the method getSceneGraphObject() is called, which is inherited 
+             * from FXOMObject. But when calling getSourceSceneGraphObject()
+             * the root node of the included FXML is exposed and one can
+             * obtain its type.
+             * 
+             */
+            Object node = null;
+            if (value instanceof FXOMIntrinsic intrinsic
+                    && FXOMIntrinsic.Type.FX_INCLUDE.equals(intrinsic.getType())) {
+                node = intrinsic.getSourceSceneGraphObject();
+            } else {
+                node = value.getSceneGraphObject();
+            }
+            
+            if (null == node) {
+                String message = "Failed to obtain type for: <%s fx:id=\"%s\" />";
+                Logger.getLogger(getClass().getName())
+                      .log(Level.WARNING, message.formatted(value.getGlueElement().getTagName(), value.getFxId()));
+                return Optional.empty();
+            }
+
+            return Optional.of(node.getClass());
         }
 
         public void addEventHandler(FXOMPropertyT eventHandler) {
