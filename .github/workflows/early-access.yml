@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  JAVA_RELEASE: '23'
-  JAVA_VERSION: '23.0.1'
-  JAVAFX_VERSION: '23.0.1'
+  JAVA_RELEASE: '25'
+  JAVA_VERSION: 'latest'
+  JAVAFX_VERSION: '25'
 
 jobs:
   precheck:
@@ -53,6 +53,7 @@ jobs:
     uses: ./.github/workflows/bundles-linux.yml
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -67,6 +68,7 @@ jobs:
       WINDOWS_CERTNAME: ${{ secrets.WINDOWS_CERTNAME }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -80,10 +82,12 @@ jobs:
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
       NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
       NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      NOTARIZATION_TEAMID: ${{ secrets.NOTARIZATION_TEAMID }}
       MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -97,10 +101,12 @@ jobs:
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
       NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
       NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+      NOTARIZATION_TEAMID: ${{ secrets.NOTARIZATION_TEAMID }}
       MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
       MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       app-version: ${{ needs.precheck.outputs.APP_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
@@ -110,6 +116,7 @@ jobs:
     needs: [precheck]
     uses: ./.github/workflows/bundles-kit.yml
     with:
+      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
@@ -151,8 +158,8 @@ jobs:
       - name: Release with JReleaser
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
-          JRELEASER_NEXUS2_PASSWORD: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_USERNAME }}
+          JRELEASER_NEXUS2_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}

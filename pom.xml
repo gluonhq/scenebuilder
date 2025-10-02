@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>24.0.0-SNAPSHOT</version>
+    <version>25.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -17,14 +17,14 @@
     </modules>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>23</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>23.0.1</javafx.version>
+        <javafx.version>25</javafx.version>
         <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
         <charm.glisten.version>6.2.3</charm.glisten.version>
-        <gluon.attach.version>4.0.21</gluon.attach.version>
+        <gluon.attach.version>4.0.22</gluon.attach.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
@@ -80,10 +80,13 @@
                     <configuration>
                         <mainClass>${main.class.name}</mainClass>
                         <options>
+                            <option>-Djavafx.allowjs=true</option>
                             <option>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.app</option>
                             <option>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</option>
                             <option>--add-opens=javafx.controls/com.sun.javafx.scene.control.skin.caspian=com.gluonhq.scenebuilder.kit</option>
                             <option>--add-opens=javafx.controls/com.sun.javafx.scene.control.skin.modena=com.gluonhq.scenebuilder.kit</option>
+                            <option>--enable-native-access=javafx.graphics</option>
+                            <option>--sun-misc-unsafe-memory-access=allow</option>
                         </options>
                     </configuration>
                 </plugin>
@@ -139,7 +142,10 @@
                     <configuration>
                         <reuseForks>false</reuseForks>
                         <forkCount>1</forkCount>
-                        <argLine>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</argLine>
+                        <argLine>
+                            --add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit -Djavafx.allowjs=true --enable-native-access=javafx.graphics
+                            --add-opens com.gluonhq.scenebuilder.kit/com.oracle.javafx.scenebuilder.kit.metadata.util=ALL-UNNAMED
+                        </argLine>
                     </configuration>
                 </plugin>
             </plugins>
@@ -188,7 +194,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.14.0</version>
+                <version>1.18.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -349,16 +355,28 @@
                         </signing>
                         <deploy>
                             <maven>
-                                <nexus2>
+                                <mavenCentral>
                                     <maven-central>
-                                        <active>ALWAYS</active>
-                                        <url>https://oss.sonatype.org/service/local</url>
-                                        <snapshotSupported>true</snapshotSupported>
-                                        <snapshotUrl>https://oss.sonatype.org/content/repositories/snapshots</snapshotUrl>
-                                        <closeRepository>true</closeRepository>
-                                        <releaseRepository>false</releaseRepository>
-                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                        <active>RELEASE</active>
+                                        <url>https://central.sonatype.com/api/v1/publisher</url>
+                                        <snapshotSupported>false</snapshotSupported>
+                                        <applyMavenCentralRules>true</applyMavenCentralRules>
+                                        <stagingRepositories>
+                                            <stagingRepository>target/staging-deploy</stagingRepository>
+                                        </stagingRepositories>
                                     </maven-central>
+                                </mavenCentral>
+                                <nexus2>
+                                    <snapshot-deploy>
+                                        <active>SNAPSHOT</active>
+                                        <url>https://central.sonatype.com/api/v1/publisher</url>
+                                        <snapshotUrl>https://central.sonatype.com/repository/maven-snapshots/</snapshotUrl>
+                                        <snapshotSupported>true</snapshotSupported>
+                                        <applyMavenCentralRules>true</applyMavenCentralRules>
+                                        <closeRepository>true</closeRepository>
+                                        <releaseRepository>true</releaseRepository>
+                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                    </snapshot-deploy>
                                 </nexus2>
                             </maven>
                         </deploy>
@@ -412,17 +430,6 @@
         <connection>scm:git:${repository.url}.git</connection>
         <developerConnection>scm:git:${repository.url}.git</developerConnection>
     </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <reporting>
         <plugins>

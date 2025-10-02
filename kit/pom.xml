@@ -10,7 +10,7 @@
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
-        <version>24.0.0-SNAPSHOT</version>
+        <version>25.0.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>

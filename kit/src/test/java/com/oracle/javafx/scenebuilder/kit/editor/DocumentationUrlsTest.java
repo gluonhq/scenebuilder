@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -62,7 +62,7 @@ public class DocumentationUrlsTest {
 
     @Test
     public void that_platform_javadoc_url_matches_configuration() {
-        assertEquals("https://openjfx.io/javadoc/23/",
+        assertEquals("https://openjfx.io/javadoc/24/",
                 DocumentationUrls.JAVADOC_HOME.toString());
     }
 
