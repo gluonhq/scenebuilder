@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,15 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.preview;
 
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -49,7 +40,16 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
 import com.oracle.javafx.scenebuilder.kit.util.Utils;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -75,7 +75,7 @@ import javafx.stage.WindowEvent;
  * Controller for Window when calling "Show Preview in Window"
  */
 public final class PreviewWindowController extends AbstractWindowController {
-
+    
     private final EditorController editorController;
     private Timer timer = null;
     private final int WIDTH_WHEN_EMPTY = 320;
@@ -256,10 +256,9 @@ public final class PreviewWindowController extends AbstractWindowController {
                 List<String> themeStyleSheetsList = null;
                 if (fxomDocument != null) {
                     // We clone the FXOMDocument
-                    FXOMDocument clone;
-
-                    try {
-                        clone = new FXOMDocument(fxomDocument.getFxmlText(false),
+                    FXOMDocument clone;                   
+                    try {                       
+                        clone = new FXOMDocument(fxomDocument.getFxmlTextOmmitingUnresolvableTypes(false),
                                 fxomDocument.getLocation(),
                                 fxomDocument.getClassLoader(),
                                 fxomDocument.getResources(),
