@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -45,10 +45,10 @@ class FXOMImportsRemover {
     
     private static final Logger LOGGER = Logger.getLogger(FXOMImportsRemover.class.getName());
 
-    private Consumer<String> removedTypeConsumer;
+    private final Consumer<String> removedTypeConsumer;
     
     FXOMImportsRemover() {
-        this(type->{
+        this(_ -> {
             /* no operation here by default  */
         });
     }
@@ -70,7 +70,7 @@ class FXOMImportsRemover {
             return sourceFxml;
         }
         
-        LOGGER.log(Level.INFO, "Removing FXML imports.");
+        LOGGER.log(Level.FINE, "Removing FXML imports.");
         
         /* 
          * The predicate detects specific imports.
@@ -118,7 +118,7 @@ class FXOMImportsRemover {
             for (Entry<String,Pattern> entry : typesToRemove.entrySet()) {
                 var pattern = entry.getValue().matcher(lineToTest);
                 if (pattern.matches()) {
-                    LOGGER.log(Level.INFO, "Import to ignore: {0}", lineToTest);
+                    LOGGER.log(Level.FINE, "Ignoring FXML import: {0}", lineToTest);
                     matchingTypeConsumer.accept(entry.getKey());
                     return false;
                 }

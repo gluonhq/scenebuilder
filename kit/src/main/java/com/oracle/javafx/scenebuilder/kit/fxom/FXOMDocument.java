@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -50,18 +50,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.sampledata.SampleDataGenerator;
+import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
+import com.oracle.javafx.scenebuilder.kit.util.URLUtils;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-
-import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.sampledata.SampleDataGenerator;
-import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
-import com.oracle.javafx.scenebuilder.kit.util.URLUtils;
 import javafx.scene.Parent;
 
 /**
@@ -88,7 +89,6 @@ public class FXOMDocument {
     private boolean hasControlsFromExternalPlugin;
     
     private List<Class<?>> initialDeclaredClasses;
-
     
     /**
      * Creates a new {@link FXOMDocument} from given FXML source. Depending on the
@@ -145,7 +145,7 @@ public class FXOMDocument {
      *                               type is generally not known to the JVM).
      */
     public void addUnresolvableType(String unresolvableImportType) {
-        this.unresolvableImportTypes.add(unresolvableImportType);
+        unresolvableImportTypes.add(unresolvableImportType);
     }
 
     /**
@@ -320,6 +320,27 @@ public class FXOMDocument {
      */
     public Object getDisplayNodeOrSceneGraphRoot() {
         return displayNode != null ? displayNode : sceneGraphRoot;
+    }
+    
+    /**
+     * In case this {@link FXOMDocument} references types which cannot be resolved
+     * (e.g. not available via Library Manager), those types are removed from the
+     * FXML text.
+     * 
+     * @param wildcardImports Forces consolidated import statements using the
+     *                        asterisk as a wildcard.
+     * @return The FXML string representation. This can be empty if current root is
+     *         null. This FXML will only hold imports which can be resolved (e.g.
+     *         are provided by the library manager).
+     */
+    public String getFxmlTextOmmitingUnresolvableTypes(boolean wildcardImports) {
+        if (!hasUnresolvableTypes()) {
+            return getFxmlText(wildcardImports);
+        }
+        
+        String fxmlText = getFxmlText(wildcardImports);
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Detected unresolved imports.");
+        return new FXOMImportsRemover().removeImports(fxmlText, getUnresolvableTypes());
     }
 
     /**
@@ -564,8 +585,9 @@ public class FXOMDocument {
          */
         public static FXOMDocumentSwitch[] combined(FXOMDocumentSwitch[] existingSwitches,
                                                     FXOMDocumentSwitch newSwitch) {
-            Set<FXOMDocumentSwitch> options = EnumSet.of(FXOMDocumentSwitch.NORMALIZED);
+            Set<FXOMDocumentSwitch> options = EnumSet.noneOf(FXOMDocumentSwitch.class);
             options.addAll(Set.of(existingSwitches));
+            options.add(newSwitch);
             return options.toArray(new FXOMDocumentSwitch[0]);
         }
         
@@ -580,7 +602,7 @@ public class FXOMDocument {
             if (toggle) {
                 return new FXOMDocumentSwitch[] {this};
             } else {
-                return new FXOMDocumentSwitch[0];
+                return new FXOMDocumentSwitch[] {};
             }
         }
     }

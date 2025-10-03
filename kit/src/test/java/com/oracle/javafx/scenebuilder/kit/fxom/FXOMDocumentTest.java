@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -283,7 +283,6 @@ public class FXOMDocumentTest {
         assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
     
-
     @Test
     public void that_unresolvable_imports_cause_exception_by_default() throws Exception {
         
@@ -295,11 +294,14 @@ public class FXOMDocumentTest {
         FXOMDocumentSwitch[] switches = new FXOMDocumentSwitch[0]; 
         
         Throwable t = assertThrows(ExecutionException.class, 
-                ()->waitFor(()->new FXOMDocument(fxmlText, location, classLoader, resources, switches)));
+                ()->waitFor(()->new FXOMDocument(fxmlText, location, classLoader, resources, switches)));      
         
-        if (t.getCause() != null) {
+        while (t.getCause() != null) {
             t = t.getCause();
         }
+        
+        assertTrue(t instanceof java.lang.ClassNotFoundException);
+        assertEquals("another.unresolvable.Dependency", t.getMessage());
     }
     
     @Test

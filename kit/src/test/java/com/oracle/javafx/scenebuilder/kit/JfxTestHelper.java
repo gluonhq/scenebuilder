@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -50,7 +50,7 @@ public class JfxTestHelper {
         if (Platform.isFxApplicationThread()) {
             return callable.call();
         } else {
-            Platform.runLater(()->task.run());
+            Platform.runLater(task);
             return task.get();
         }
     }

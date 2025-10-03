@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2025 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -49,8 +49,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -58,19 +56,9 @@ import java.util.logging.Logger;
  */
 class FXOMRefresher {
     
-    private static final Logger LOGGER = Logger.getLogger(FXOMRefresher.class.getName());
-
     public void refresh(FXOMDocument document) {
-        String fxmlText = null;
+        String fxmlText = document.getFxmlTextOmmitingUnresolvableTypes(false);
         try {
-            fxmlText = document.getFxmlText(false);
-
-            if (document.hasUnresolvableImports()) {
-                LOGGER.log(Level.INFO, "Detected unresolved imports.");
-                FXOMImportsRemover importRemover = new FXOMImportsRemover();
-                fxmlText = importRemover.removeImports(fxmlText, document.getUnresolvableTypes());
-            }
-
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),
