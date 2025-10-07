@@ -256,7 +256,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                 List<String> themeStyleSheetsList = null;
                 if (fxomDocument != null) {
                     // We clone the FXOMDocument
-                    FXOMDocument clone;  
+                    FXOMDocument clone;
 
                     try {
                         clone = new FXOMDocument(fxomDocument.getFxmlTextOmittingUnresolvableTypes(false),
