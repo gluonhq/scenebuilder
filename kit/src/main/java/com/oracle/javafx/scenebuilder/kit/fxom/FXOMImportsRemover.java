@@ -41,20 +41,77 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * This class provides the functionality to remove import declarations from a
+ * given FXML text by comparing the FXML text to the collection of fully
+ * qualified type names provided. <br>
+ * <br>
+ * Important, this class only remove such import statements, it does not verify
+ * if an import declaration is valid and a type exists. <br>
+ * <br>
+ * Example:
+ * 
+ *
+ * <pre>{@code
+ * Set<String> detectedUnresolvableTypes = new HashSet<>();
+ *
+ * String sourceFxmlText = """
+ *         <?xml version="1.0" encoding="UTF-8"?>
+ *         <?import javafx.scene.control.*?>
+ *         <?import another.unresolvable.Dependency?>
+ *         <?import also.an.unresolvable.Dependency?>
+ *         <?import this.namespace.is.unknown.*?>
+ *         <AnchorPane>
+ *             <children>
+ *                 <Button layoutX="302.0" layoutY="27.0" text="Button" />
+ *                 <ComboBox layoutX="46.0" layoutY="175.0" prefWidth="150.0" />
+ *                 <TextField layoutX="345.0" layoutY="264.0" />
+ *                 <Button layoutX="84.0" layoutY="252.0" text="Button" />
+ *                 <UnknownElement layoutX="84.0" layoutY="87.0" text="Some Content" />
+ *             </children>
+ *         </AnchorPane>
+ *         """;
+ *
+ * List<String> importsToRemove = List.of("another.unresolvable.Dependency", 
+ *                                        "also.an.unresolvable.Dependency");
+ *
+ * FXOMImportsRemover remover = new FXOMImportsRemover(detectedUnresolvableTypes::add);
+ * String cleanedFxmlText = remover.removeImports(sourceFxmlText, importsToRemove);
+ *
+ * }</pre>
+ * 
+ */
 class FXOMImportsRemover {
     
     private static final Logger LOGGER = Logger.getLogger(FXOMImportsRemover.class.getName());
 
     private final Consumer<String> removedTypeConsumer;
-    
+
+    /**
+     * By default, FXOMImportsRemover instances will remove imports which cannot 
+     * be resolved without triggering additional actions. If a different behavior
+     * is desired, one can use the constructor which accepts a {@code Consumer<String>} 
+     * process the declared types (fully qualified name). 
+     */
     FXOMImportsRemover() {
         this(_ -> {
             /* no operation here by default  */
         });
     }
-    
-    FXOMImportsRemover(Consumer<String> matchingTypeConsumer) {
-        this.removedTypeConsumer = matchingTypeConsumer;
+
+    /**
+     * This constructor allows to assign a custom handler which is notified for each
+     * type which is about to removed from the FXML text which is about to be
+     * processed.
+     * 
+     * @param unresolvedTypeHandler This consumer of String must not be null. It
+     *                              will be notified for each type (fully qualified
+     *                              name) which cannot be resolved and is about to
+     *                              be ignored.
+     * @throws NullPointerException if {@code unresolvedTypeHandler} is {@code null}
+     */
+    FXOMImportsRemover(Consumer<String> unresolvedTypeHandler) {
+        this.removedTypeConsumer = unresolvedTypeHandler;
     }
     
     /**
