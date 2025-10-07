@@ -38,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static com.oracle.javafx.scenebuilder.kit.JfxTestHelper.waitFor;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -55,7 +57,6 @@ import org.xml.sax.SAXParseException;
 
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
-import static com.oracle.javafx.scenebuilder.kit.JfxTestHelper.waitFor;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuBar;
