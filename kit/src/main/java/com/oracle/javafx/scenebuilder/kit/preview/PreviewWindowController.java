@@ -75,7 +75,7 @@ import javafx.stage.WindowEvent;
  * Controller for Window when calling "Show Preview in Window"
  */
 public final class PreviewWindowController extends AbstractWindowController {
-    
+
     private final EditorController editorController;
     private Timer timer = null;
     private final int WIDTH_WHEN_EMPTY = 320;
