@@ -112,7 +112,7 @@ public class FXOMDocument {
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
-        this.initialDeclaredClasses = new ArrayList<>();
+        initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
             String fxmlTextToLoad = fxmlText;
             Set<FXOMDocumentSwitch> availableSwitches = Set.of(switches);
