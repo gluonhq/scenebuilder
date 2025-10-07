@@ -57,7 +57,7 @@ import java.util.Set;
 class FXOMRefresher {
     
     public void refresh(FXOMDocument document) {
-        String fxmlText = document.getFxmlTextOmmitingUnresolvableTypes(false);
+        String fxmlText = document.getFxmlTextOmittingUnresolvableTypes(false);
         try {
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,

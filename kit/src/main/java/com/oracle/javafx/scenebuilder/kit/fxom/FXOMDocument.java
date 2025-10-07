@@ -328,12 +328,12 @@ public class FXOMDocument {
      * FXML text.
      * 
      * @param wildcardImports Forces consolidated import statements using the
-     *                        asterisk as a wildcard.
+     *                        asterisk as a wild card.
      * @return The FXML string representation. This can be empty if current root is
      *         null. This FXML will only hold imports which can be resolved (e.g.
      *         are provided by the library manager).
      */
-    public String getFxmlTextOmmitingUnresolvableTypes(boolean wildcardImports) {
+    public String getFxmlTextOmittingUnresolvableTypes(boolean wildcardImports) {
         if (!hasUnresolvableTypes()) {
             return getFxmlText(wildcardImports);
         }

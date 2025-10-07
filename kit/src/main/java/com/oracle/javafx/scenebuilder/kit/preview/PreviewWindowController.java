@@ -258,7 +258,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     // We clone the FXOMDocument
                     FXOMDocument clone;                   
                     try {                       
-                        clone = new FXOMDocument(fxomDocument.getFxmlTextOmmitingUnresolvableTypes(false),
+                        clone = new FXOMDocument(fxomDocument.getFxmlTextOmittingUnresolvableTypes(false),
                                 fxomDocument.getLocation(),
                                 fxomDocument.getClassLoader(),
                                 fxomDocument.getResources(),
