@@ -61,7 +61,7 @@ class FXOMImportsRemover {
      * Removes all imports from a given FXML for the given type names.
      * 
      * @param sourceFxml The source FXML.
-     * @param typesToRemoveThe type names which shall be removed. 
+     * @param typesToRemove Type names which shall be removed. 
      * @return FXML text without the previously removed types
      */
     public String removeImports(String sourceFxml, Collection<String> typesToRemove) {
