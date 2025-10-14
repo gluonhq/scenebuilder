@@ -39,6 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -114,7 +115,8 @@ public class SkeletonBufferJavaTest {
         
         // when
         List<String> skeleton = skeletonBuffer.toString().lines().toList();
-                
+
+        assertTrue(skeleton.size() > 20);
         assertEquals("@FXML", skeleton.get(19).trim());
         assertEquals("private Pane includedPane;", skeleton.get(20).trim());
     }
