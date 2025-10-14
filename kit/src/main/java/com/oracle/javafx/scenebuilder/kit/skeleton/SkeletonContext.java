@@ -37,6 +37,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.ImportBuilder;
+
 import javafx.fxml.FXML;
 
 import java.util.Collections;
@@ -149,22 +150,7 @@ public class SkeletonContext {
         }
 
         private Optional<Class<?>> getSceneGraphType(FXOMObject value) {
-            /*
-             * For fx:include elements, the FXOMIntrinsic objects deliver null values 
-             * when the method getSceneGraphObject() is called, which is inherited 
-             * from FXOMObject. But when calling getSourceSceneGraphObject()
-             * the root node of the included FXML is exposed and one can
-             * obtain its type.
-             * 
-             */
-            Object node = null;
-            if (value instanceof FXOMIntrinsic intrinsic
-                    && FXOMIntrinsic.Type.FX_INCLUDE.equals(intrinsic.getType())) {
-                node = intrinsic.getSourceSceneGraphObject();
-            } else {
-                node = value.getSceneGraphObject();
-            }
-            
+            Object node = getSceneGraphObject(value);
             if (null == node) {
                 String message = "Failed to obtain type for: <%s fx:id=\"%s\" />";
                 Logger.getLogger(getClass().getName())
@@ -172,7 +158,29 @@ public class SkeletonContext {
                 return Optional.empty();
             }
 
-            return Optional.of(node.getClass());
+            return TypeLookup.findFXTypes(node); 
+        }
+
+        /**
+         * For fx:include elements, the FXOMIntrinsic objects deliver null values when
+         * the method getSceneGraphObject() is called, which is inherited from
+         * FXOMObject. But when calling getSourceSceneGraphObject() the root node of the
+         * included FXML is exposed and one can obtain its type. Hence this function
+         * controls, depending on the {@link FXOMObject} implementation, which object
+         * must be used as the Scene Graph representative.
+         * 
+         * @param value {@link FXOMObject} any instance
+         * @return Any SceneGraph element provided by the {@link FXOMObject}. This can
+         *         also be a null value.
+         * 
+         */
+        private Object getSceneGraphObject(FXOMObject value) {
+            if (value instanceof FXOMIntrinsic intrinsic 
+                    && FXOMIntrinsic.Type.FX_INCLUDE.equals(intrinsic.getType())) {
+                return intrinsic.getSourceSceneGraphObject();
+            } else {
+                return value.getSceneGraphObject();
+            }
         }
 
         public void addEventHandler(FXOMPropertyT eventHandler) {
