@@ -84,7 +84,9 @@ class TypeLookup {
          * For top level classes, no further investigation is needed as long these
          * classes are already members of the package space.
          */
-        if (clazz.getPackageName().startsWith(packageNamePrefix) && !clazz.getName().contains("$")) {
+        if (clazz.getPackageName().startsWith(packageNamePrefix)
+                && !clazz.getName().contains("$")
+                && Modifier.isPublic(clazz.getModifiers())) {
             return Optional.of(clazz);
         }
 
