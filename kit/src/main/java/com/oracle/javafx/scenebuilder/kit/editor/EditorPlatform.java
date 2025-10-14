@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -217,10 +218,11 @@ public class EditorPlatform {
      * @throws FileBrowserRevealException in case the application opened indicates an error (unexpected return code).
      */
     public static void open(String path) throws IOException, FileBrowserRevealException {
+        Path file = Path.of(path).normalize().toAbsolutePath();
         List<String> args = new ArrayList<>();
         if (EditorPlatform.IS_MAC) {
             args.add("open"); //NOI18N
-            args.add(path);
+            args.add(file.toString());
         } else if (EditorPlatform.IS_WINDOWS) {
             args.add("cmd"); //NOI18N
             args.add("/c"); //NOI18N
@@ -230,16 +232,16 @@ public class EditorPlatform {
                 args.add("\"html\""); //NOI18N
             }
 
-            args.add(path);
+            args.add(file.toString());
         } else if (EditorPlatform.IS_LINUX) {
             // xdg-open does fine on Ubuntu, which is a Debian.
             // I've no idea how it does with other Linux flavors.
             args.add("xdg-open"); //NOI18N
-            args.add(path);
+            args.add(file.toString());
         }
 
         if (!args.isEmpty()) {
-            executeDaemon(args, null, 0);
+            executeDaemon(args, file.getParent().toFile(), 0);
         }
     }
     
@@ -330,6 +332,7 @@ public class EditorPlatform {
             throws IOException, FileBrowserRevealException {
         var cmdLine = String.join(" ", cmd);
         long timeoutSec = 5;
+        LOGGER.log(Level.FINE, "Attempting to run: {0} in {1}",new Object[] {cmdLine, wDir});
         try {
             int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
             if (exitCodeOk != exitValue) {
