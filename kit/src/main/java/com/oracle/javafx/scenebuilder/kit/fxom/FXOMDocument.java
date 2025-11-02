@@ -588,7 +588,7 @@ public class FXOMDocument {
             Set<FXOMDocumentSwitch> options = EnumSet.noneOf(FXOMDocumentSwitch.class);
             options.addAll(Set.of(existingSwitches));
             options.add(newSwitch);
-            return options.toArray(new FXOMDocumentSwitch[0]);
+            return options.toArray(new FXOMDocumentSwitch[] {});
         }
         
         /**
