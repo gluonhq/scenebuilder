@@ -2393,7 +2393,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                                     Integer.toString(missingTypes.size())));
 
         String allMissing = missingTypes.stream()
-                                        .collect(Collectors.joining(";"+System.lineSeparator()));
+                                        .collect(Collectors.joining(";" + System.lineSeparator()));
 
         errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice",
                                  allMissing, missingTypes.size()));
