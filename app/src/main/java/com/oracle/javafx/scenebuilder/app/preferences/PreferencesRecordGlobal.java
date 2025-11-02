@@ -403,7 +403,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     }
 
     public boolean isPreserveUnresolvedImports() {
-        return this.preserveUnresolvedImports;
+        return preserveUnresolvedImports;
     }
 
     public void setPreserveUnresolvedImports(boolean preserveUnresolvedImports) {
