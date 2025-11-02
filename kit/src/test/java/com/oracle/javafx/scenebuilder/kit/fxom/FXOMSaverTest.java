@@ -76,14 +76,7 @@ class FXOMSaverTest {
                 <?import javafx.scene.layout.AnchorPane?>""";
 
         assertEquals(expectedImports, generatedImports);
-        
-        /*
-         * TODO: Questions
-         * 
-         * 1) Keep unknown wildcard imports or not? (<?import this.namespace.is.unknown.*?>)
-         * 2) Keep input order OR allow the Glue process to handle ordering?
-         * 
-         */
+
     }
     
     @Test

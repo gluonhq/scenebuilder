@@ -50,7 +50,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" prefHeight="-Infinity" prefWidth="550.0" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane hgap="6.0" maxWidth="1.7976931348623157E308" styleClass="theme-presets" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <Label text="%prefs.doc.width" GridPane.columnIndex="0" GridPane.rowIndex="0" />
     <DoubleField fx:id="rootContainerWidth" prefWidth="200.0" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" />

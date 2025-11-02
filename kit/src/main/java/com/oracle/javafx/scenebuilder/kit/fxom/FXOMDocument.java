@@ -155,7 +155,7 @@ public class FXOMDocument {
      * @return List of unresolved FXML import type names.
      */
     public List<String> getUnresolvableTypes() {
-        return this.unresolvableImportTypes;
+        return unresolvableImportTypes;
     }
     
     public boolean hasUnresolvableTypes() {
