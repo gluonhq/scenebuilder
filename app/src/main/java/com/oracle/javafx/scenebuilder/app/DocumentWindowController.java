@@ -2379,7 +2379,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     private void notifyUserAboutUnresolvableImports(File fxmlFile, List<String> missingTypes, Stage owner) {
         LOGGER.log(Level.WARNING, "Detected unresolved types in FXML: {0}: {1}",
-                               new Object[] {fxmlFile, missingTypes.stream().collect(Collectors.joining(","))});
+                               new Object[] {fxmlFile, String.join(",", missingTypes) });
 
         final ErrorDialog errorDialog = new ErrorDialog(owner);
         String first10 = missingTypes.stream()
