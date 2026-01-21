@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -31,19 +31,23 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static com.oracle.javafx.scenebuilder.kit.JfxTestHelper.waitFor;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,7 +59,6 @@ import org.xml.sax.SAXParseException;
 import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuBar;
 
@@ -281,14 +284,63 @@ public class FXOMDocumentTest {
         assertEquals(IllegalStateException.class, t.getClass());
         assertTrue(t.getMessage().contains("Bug in FXOMRefresher"));
     }
-
-    private <T> T waitFor(Callable<T> callable) throws Exception {
-        FutureTask<T> task = new FutureTask<T>(callable);
-        if (Platform.isFxApplicationThread()) {
-            return callable.call();
-        } else {
-            Platform.runLater(()->task.run());
-            return task.get();
+    
+    @Test
+    public void that_unresolvable_imports_cause_exception_by_default() throws Exception {
+        
+        URL location = getClass().getResource("UnresolvableImports.fxml");
+        String fxmlText = FXOMDocument.readContentFromURL(location);
+        
+        ClassLoader classLoader = null;
+        ResourceBundle resources = null;
+        FXOMDocumentSwitch[] switches = new FXOMDocumentSwitch[0]; 
+        
+        Throwable t = assertThrows(ExecutionException.class, 
+                ()->waitFor(()->new FXOMDocument(fxmlText, location, classLoader, resources, switches)));      
+        
+        while (t.getCause() != null) {
+            t = t.getCause();
         }
+        
+        assertInstanceOf(java.lang.ClassNotFoundException.class, t, "");
+        assertEquals("another.unresolvable.Dependency", t.getMessage());
     }
+    
+    @Test
+    public void that_unresolvable_imports_can_be_ignored_via_switch() throws Exception {
+        URL resource = getClass().getResource("UnresolvableImports.fxml");
+        String validFxmlText = FXOMDocument.readContentFromURL(resource);
+        
+        FXOMDocument document = assertDoesNotThrow(
+                ()->waitFor(
+                        ()->new FXOMDocument(validFxmlText, resource, null, null, FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS)
+                        ));
+        
+        List<String> unresolvableImports = document.getUnresolvableTypes();
+        assertEquals(2, unresolvableImports.size());
+        assertEquals("another.unresolvable.Dependency", unresolvableImports.get(0));
+        assertEquals("also.an.unresolvable.Dependency", unresolvableImports.get(1));
+    }
+    
+    @Test
+    public void that_document_can_be_created_even_with_unresolvable_imports() throws Exception {
+        
+        URL location = getClass().getResource("UnresolvableImports.fxml");
+        String fxmlText = FXOMDocument.readContentFromURL(location);
+        
+        ClassLoader classLoader = null;
+        ResourceBundle resources = null;
+        FXOMDocumentSwitch[] switches = new FXOMDocumentSwitch[]{FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS};
+        
+        var newDocument = assertDoesNotThrow(()->waitFor(()->new FXOMDocument(fxmlText,
+                                                                  location,
+                                                                  classLoader,
+                                                                  resources,
+                                                                  switches)));
+        
+        assertNotNull(newDocument);
+        assertTrue(newDocument.hasUnresolvableImports());
+        
+    }
+
 }

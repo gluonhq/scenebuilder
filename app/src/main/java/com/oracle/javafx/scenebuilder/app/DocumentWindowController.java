@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -69,6 +69,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.search.SearchController;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.AbstractSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMNodes;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
@@ -98,6 +99,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -125,6 +127,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -409,7 +412,11 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void loadFromFile(File fxmlFile) throws IOException {
         final URL fxmlURL = fxmlFile.toURI().toURL();
         final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
-        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
+        
+        FXOMDocumentSwitch[] options = FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS
+                                                         .fromToggle(getPreferencesRecordGlobal().isPreserveUnresolvedImports());
+
+        editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false, options);
         updateLoadFileTime();
         updateStageTitle(); // No-op if fxml has not been loaded yet
         updateFromDocumentPreferences(true);
@@ -2361,6 +2368,37 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
             recordGlobal = preferencesController.getRecordGlobal();
         }
         return recordGlobal;
+    }
+
+    public void showMissingTypesNotificationIfNeeded(File fxmlFile) {
+        FXOMDocument doc = getEditorController().getFxomDocument();
+        if (doc.hasUnresolvableTypes()) {
+            notifyUserAboutUnresolvableImports(fxmlFile, doc.getUnresolvableTypes(), getStage());
+        }
+    }
+    
+    private void notifyUserAboutUnresolvableImports(File fxmlFile, List<String> missingTypes, Stage owner) {
+        LOGGER.log(Level.WARNING, "Detected unresolved types in FXML: {0}: {1}",
+                               new Object[] {fxmlFile, String.join(",", missingTypes) });
+
+        final ErrorDialog errorDialog = new ErrorDialog(owner);
+        String first10 = missingTypes.stream()
+                                     .limit(10)
+                                     .collect(Collectors.joining(";" + System.lineSeparator()));
+
+        errorDialog.setMessage(I18N.getString("alert.open.failure.unresolved.imports",
+                               Integer.toString(missingTypes.size())));
+        errorDialog.setDetails(I18N.getString("alert.open.failure.unresolved.imports.details", first10));
+        errorDialog.setDetailsTitle(I18N.getString("alert.open.failure.unresolved.imports",
+                                    Integer.toString(missingTypes.size())));
+
+        String allMissing = missingTypes.stream()
+                                        .collect(Collectors.joining(";" + System.lineSeparator()));
+
+        errorDialog.setDebugInfo(I18N.getString("alert.open.failure.unresolved.imports.advice",
+                                 allMissing, missingTypes.size()));
+        errorDialog.setTitle(I18N.getString("alert.title.open") + ": " + fxmlFile.getName());
+        errorDialog.showAndWait();
     }
 }
 

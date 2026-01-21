@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import javafx.fxml.LoadListener;
@@ -48,8 +49,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -58,6 +63,7 @@ import java.util.function.Consumer;
  */
 class FXOMLoader implements LoadListener {
 
+    private static final Logger LOGGER = Logger.getLogger(FXOMLoader.class.getName());
     private final FXOMDocument document;
     private final Consumer<Exception> knownErrorsHandler;
     private TransientNode currentTransientNode;
@@ -78,7 +84,7 @@ class FXOMLoader implements LoadListener {
         this.knownErrorsHandler = Objects.requireNonNull(knownErrorsHandler);
     }
 
-    public void load(String fxmlText) throws java.io.IOException {
+    public void load(String fxmlText, FXOMDocumentSwitch ... switches) throws java.io.IOException {
         assert fxmlText != null;
 
         final ClassLoader classLoader;
@@ -102,9 +108,41 @@ class FXOMLoader implements LoadListener {
             assert is.markSupported();
             is.reset();
             setSceneGraphRoot(fxmlLoader.load(is));
-        } catch (RuntimeException | IOException x) {
-            handleFxmlLoadingError(x);
+        } catch (RuntimeException | IOException fxmlLoaderError) {
+            showErrorOrHandleUnresolvedImports(fxmlText, fxmlLoaderError, switches);
         }
+    }
+
+    private void showErrorOrHandleUnresolvedImports(String fxmlText, Exception fxmlLoaderError,
+            FXOMDocumentSwitch... switches) throws IOException {
+        Throwable cause = fxmlLoaderError.getCause();
+        if (handlingOfUnresolvedImportsIsEnabled(cause, switches)) {
+            handleUnresolvedImports(fxmlText, cause, switches);
+        } else {
+            handleFxmlLoadingError(fxmlLoaderError);
+        }
+    }
+
+    private void handleUnresolvedImports(String fxmlText, Throwable cause, FXOMDocumentSwitch... switches)
+            throws IOException {
+        String missingClassName = cause.getMessage();
+        LOGGER.log(Level.WARNING, "Failed to resolve class from FXML imports. "
+                + "Now trying loading FXML without {0}", missingClassName);
+        String modifiedFxml = removeUnresolvableTypeFromFXML(fxmlText, missingClassName);
+        load(modifiedFxml, switches);
+    }
+
+    private boolean handlingOfUnresolvedImportsIsEnabled(Throwable cause, FXOMDocumentSwitch... switches) {
+        if (!(cause instanceof ClassNotFoundException)) {
+            return false;
+        }
+        return Set.of(switches).contains(FXOMDocumentSwitch.PRESERVE_UNRESOLVED_IMPORTS) 
+                || document.hasUnresolvableImports();
+    }
+
+    private String removeUnresolvableTypeFromFXML(String fxmlText, String unresolvableType) {
+        FXOMImportsRemover remover = new FXOMImportsRemover(document::addUnresolvableType);
+        return remover.removeImports(fxmlText, List.of(unresolvableType));
     }
 
     private void handleFxmlLoadingError(Exception x) throws IOException {
@@ -122,7 +160,7 @@ class FXOMLoader implements LoadListener {
     private void handleKnownCauses(Exception x) throws IOException {
         if (x.getCause() instanceof XMLStreamException) {
             knownErrorsHandler.accept(x);
-        } else {                    
+        } else {
             handleUnknownAndMissingCauses(x);
         }
     }
