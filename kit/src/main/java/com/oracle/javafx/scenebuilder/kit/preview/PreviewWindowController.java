@@ -36,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.Size;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractWindowController;
+import com.oracle.javafx.scenebuilder.kit.fxom.BindingExpressionDisabler;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
@@ -265,6 +266,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                                 fxomDocument.getResources(),
                                 FXOMDocumentSwitch.FOR_PREVIEW);
                         clone.setSampleDataEnabled(fxomDocument.isSampleDataEnabled());
+                        BindingExpressionDisabler.disable(clone);
                     } catch (IOException ex) {
                         throw new RuntimeException("Bug in PreviewWindowController::requestUpdate", ex); //NOI18N
                     }
