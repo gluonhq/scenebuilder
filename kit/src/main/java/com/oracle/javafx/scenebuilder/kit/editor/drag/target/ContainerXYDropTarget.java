@@ -94,11 +94,14 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
             result = false;
         } else {
             boolean containsIntrinsic = false;
+            // Intrinsic node also should be accepted as drag source ?
+            /*
             for (FXOMObject draggedObject : dragSource.getDraggedObjects()) {
                 if (draggedObject instanceof FXOMIntrinsic) {
                     containsIntrinsic = true;
                 }
             }
+             */
             if (containsIntrinsic) {
                 result = false;
             } else {
@@ -114,10 +117,17 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
     public Job makeDropJob(AbstractDragSource dragSource, EditorController editorController) {
         assert acceptDragSource(dragSource);
         assert editorController != null;
-        
-        
+
         final List<FXOMObject> draggedObjects = dragSource.getDraggedObjects();
-        final FXOMObject hitObject = dragSource.getHitObject();
+        final Map<FXOMObject, FXOMObject> intrinsicInstanceMap = new HashMap<>();
+
+        // Treat FXOMIntrinsic as FXOMInstance to calculate layout temporarily.
+        draggedObjects.stream().filter(draggedObject -> draggedObject instanceof FXOMIntrinsic)
+                .forEach(draggedObject -> intrinsicInstanceMap.put(draggedObject, ((FXOMIntrinsic) draggedObject).createFxomInstanceFromIntrinsic()));
+        FXOMObject hitObject = dragSource.getHitObject();
+        if(hitObject instanceof FXOMIntrinsic)
+            hitObject = ((FXOMIntrinsic) hitObject).createFxomInstanceFromIntrinsic();
+
         final double hitX = dragSource.getHitX();
         final double hitY = dragSource.getHitY();
         final FXOMObject currentParent = hitObject.getParentObject();
@@ -163,7 +173,7 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
                 result.addSubJob(new InsertAsSubComponentJob(
                         draggedObject, targetContainer, -1, editorController));
             }
-            
+
             // Computes dragged object positions relatively to hitObject
             assert hitObject.getSceneGraphObject() instanceof Node;
             final Node hitNode = (Node) hitObject.getSceneGraphObject();
@@ -171,8 +181,11 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
             final double layoutY0 = hitNode.getLayoutY();
             final Map<FXOMObject, Point2D> layoutDXY = new HashMap<>();
             for (FXOMObject draggedObject : draggedObjects) {
-                assert draggedObject.getSceneGraphObject() instanceof Node;
-                final Node draggedNode = (Node) draggedObject.getSceneGraphObject();
+                FXOMObject instanceObject = draggedObject;
+                if (draggedObject instanceof FXOMIntrinsic)
+                    instanceObject = intrinsicInstanceMap.get(draggedObject);
+                assert instanceObject.getSceneGraphObject() instanceof Node;
+                final Node draggedNode = (Node) instanceObject.getSceneGraphObject();
                 final double layoutDX = draggedNode.getLayoutX() - layoutX0;
                 final double layoutDY = draggedNode.getLayoutY() - layoutY0;
                 layoutDXY.put(draggedObject, new Point2D(layoutDX, layoutDY));
@@ -191,12 +204,15 @@ public class ContainerXYDropTarget extends AbstractDropTarget {
             final double targetOriginY = targetCenter.getY() + currentDY;
             
             for (FXOMObject draggedObject : draggedObjects) {
-                assert draggedObject instanceof FXOMInstance;
+                FXOMObject instanceObject = draggedObject;
+                if (draggedObject instanceof FXOMIntrinsic)
+                    instanceObject = intrinsicInstanceMap.get(draggedObject);
+                assert instanceObject instanceof FXOMInstance;
                 final Point2D dxy = layoutDXY.get(draggedObject);
                 assert dxy != null;
                 final double newLayoutX = Math.round(targetOriginX + dxy.getX());
                 final double newLayoutY = Math.round(targetOriginY + dxy.getY());
-                result.addSubJob(new RelocateNodeJob((FXOMInstance)draggedObject, 
+                result.addSubJob(new RelocateNodeJob((FXOMInstance)instanceObject,
                         newLayoutX, newLayoutY, editorController));
             }
         }
