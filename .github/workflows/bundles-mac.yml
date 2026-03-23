@@ -39,7 +39,7 @@ on:
         required: true
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-14-large
     steps:
       - uses: actions/checkout@v4
 
