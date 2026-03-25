@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2021, 2025, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -39,12 +39,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 
 public class SkeletonBufferJavaTest {
 
@@ -103,6 +105,20 @@ public class SkeletonBufferJavaTest {
 
         // then
         assertEqualsFileContent("skeleton_java_full.txt", skeleton);
+    }
+    
+    @Test
+    public void that_fxinclude_elements_with_fxid_are_properly_referenced() throws IOException {
+        // given
+        SkeletonBuffer skeletonBuffer = load("fxinclude_with_fxid_outer.fxml");
+        skeletonBuffer.setFormat(SkeletonSettings.FORMAT_TYPE.FULL);
+        
+        // when
+        List<String> skeleton = skeletonBuffer.toString().lines().toList();
+
+        assertTrue(skeleton.size() > 20);
+        assertEquals("@FXML", skeleton.get(19).trim());
+        assertEquals("private Pane includedPane;", skeleton.get(20).trim());
     }
 
     private void assertEqualsFileContent(String fileName, String actual) {
