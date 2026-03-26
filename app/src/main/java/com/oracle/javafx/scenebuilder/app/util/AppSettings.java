@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2026, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -59,8 +59,8 @@ public class AppSettings {
 
     private static final Logger LOGGER = Logger.getLogger(AppSettings.class.getName());
 
-    public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
-    public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
+    public static final Image APP_ICON_16 = new Image(SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString());
+    public static final Image APP_ICON_32 = new Image(SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString());
 
     public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
     public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
@@ -97,9 +97,7 @@ public class AppSettings {
         setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
     }
     public static void setWindowIcon(Stage stage) {
-        Image icon16 = new Image(AppSettings.APP_ICON_16);
-        Image icon32 = new Image(AppSettings.APP_ICON_32);
-        stage.getIcons().addAll(icon16, icon32);
+        stage.getIcons().addAll(APP_ICON_16, APP_ICON_32);
     }
 
     public static String getSceneBuilderVersion() {

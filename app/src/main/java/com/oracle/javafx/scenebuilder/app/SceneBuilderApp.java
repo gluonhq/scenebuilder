@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2026, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -64,9 +64,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -89,7 +88,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -124,8 +122,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private UserLibrary userLibrary;
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
-    private final ObservableList<Runnable> startupTasks = FXCollections.observableArrayList();
-    private final BooleanBinding startupTasksFinished = Bindings.isEmpty(startupTasks);
+    private final BooleanProperty startupFinished = new SimpleBooleanProperty(false);
 
     static {
         try {
@@ -163,8 +160,12 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         });
     }
 
-    public BooleanBinding startupTasksFinishedBinding() {
-        return startupTasksFinished;
+    public final BooleanProperty startupFinishedProperty() {
+        return startupFinished;
+    }
+
+    public final boolean isStartupFinished() {
+        return startupFinished.get();
     }
 
     public void performControlAction(ApplicationControlAction a, DocumentWindowController source) {
@@ -369,64 +370,53 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
      */
     @Override
     public void handleLaunch(List<String> files) {
-        var latch = new CountDownLatch(1);
-
-        startupTasksFinished.addListener((observableValue, aBoolean, isFinished) -> {
-            if (isFinished) {
-                latch.countDown();
-            }
-        });
-
-        boolean showWelcomeDialog = files.isEmpty();
+        boolean noFilesToLaunch = files.isEmpty();
 
         setApplicationUncaughtExceptionHandler();
 
-        startInBackground("Set up Scene Builder", () -> {
-            backgroundStart();
-            setUpUserLibrary(showWelcomeDialog);
-            createEmptyDocumentWindow();
-        });
-
-        if (showWelcomeDialog) {
-            // Unless we're on a Mac we're starting SB directly (fresh start)
-            // so we're not opening any file and as such we should show the Welcome Dialog
+        // No files should be opened initially, so show the welcome dialog instead.
+        if (noFilesToLaunch) {
             WelcomeDialogWindowController.getInstance().getStage().show();
-        } else {
-            // Open files passed as arguments by the platform
-
-            // we need an extra thread so that synchronized AppPlatform.getUserLibraryFolder() can finish
-            new Thread(
-                    () -> {
-                        if (!startupTasksFinished.get()) {
-                            // no blocking threads, so block manually until startup tasks finish
-                            try {
-                                latch.await();
-                            } catch (InterruptedException e) {
-                                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An exception was thrown:", e);
-                            }
-                        }
-
-                        Platform.runLater(() -> handleOpenFilesAction(files));
-                    }
-            ).start();
         }
+
+        startInBackground("Set up Scene Builder Thread", () -> {
+            preload();
+            setUpUserLibrary(noFilesToLaunch);
+        }, () -> {
+            createEmptyDocumentWindow();
+            startupFinished.set(true);
+
+            if (!noFilesToLaunch) {
+                handleOpenFilesAction(files);
+            }
+        });
     }
 
     /**
-     * Creates and starts a new daemon thread with [taskName] to executive given [task].
-     * The [task] is added to [startupTasks] to keep track of active background tasks.
-     * When the [task] is finished, it is removed from [startupTasks].
+     * Runs the task in the background {@link Thread} with the given taskName.
+     * @param taskName the name of the task and therefore {@link Thread}
+     * @param task the task that should run
+     * @param onSuccess handler that is run in the UI Thread after the task succeeded
+     * @param <T> the return type of the result from the task, that the onSuccess handler will receive
      */
-    private void startInBackground(String taskName, Runnable task) {
-        var t = new Thread(() -> {
+    public static <T> void startInBackground(String taskName, Supplier<T> task, Consumer<T> onSuccess) {
+        Thread.ofVirtual().name(taskName).start(() -> {
+            T result = task.get();
+            Platform.runLater(() -> onSuccess.accept(result));
+        });
+    }
+
+    /**
+     * Runs the task in the background {@link Thread} with the given taskName.
+     * @param taskName the name of the task and therefore {@link Thread}
+     * @param task the task that should run
+     * @param onSuccess handler that is run in the UI Thread after the task succeeded
+     */
+    public static void startInBackground(String taskName, Runnable task, Runnable onSuccess) {
+        startInBackground(taskName, () -> {
             task.run();
-
-            startupTasks.remove(task);
-        }, taskName + " Thread");
-        t.setDaemon(true);
-        t.start();
-
-        startupTasks.add(task);
+            return null;
+        }, _ -> onSuccess.run());
     }
 
     private void setUpUserLibrary(boolean showWelcomeDialog) {
@@ -457,7 +447,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             updateImportedGluonJars(jarReports);
         });
 
-        userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
+        userLibrary.explorationCountProperty().addListener((ov, t, t1) -> userLibraryExplorationCountDidChange());
 
         userLibrary.startWatching();
 
@@ -892,7 +882,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     /**
      * This runs in a background thread to speed up SB startup.
      */
-    private void backgroundStart() {
+    private void preload() {
         PreferencesController.getSingleton();
         Metadata.getMetadata();
         BuiltinLibrary.getLibrary();
@@ -957,46 +947,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 }
                 break;
         }
-    }
-
-    private void showUpdateDialogIfRequired(DocumentWindowController dwc) {
-        AppSettings.getLatestVersion(latestVersion -> {
-            if (latestVersion == null) {
-                // This can be because the url was not reachable so we don't show the update dialog.
-                return;
-            }
-            try {
-                boolean showUpdateDialog = true;
-                if (AppSettings.getSceneBuilderVersion().contains("SNAPSHOT")) {
-                    showUpdateDialog = false;
-                } else if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                    PreferencesController pc = PreferencesController.getSingleton();
-                    PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-
-                    if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                        showUpdateDialog = false;
-                    }
-
-                    if (!isUpdateDialogDateReached(recordGlobal)) {
-                        showUpdateDialog = false;
-                    }
-                } else {
-                    showUpdateDialog = false;
-                }
-
-                if (showUpdateDialog) {
-                    String latestVersionText = AppSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
-                    Platform.runLater(() -> {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
-                                latestVersionAnnouncementURL, dwc.getStage());
-                        dialog.showAndWait();
-                    });
-                }
-            } catch (NumberFormatException ex) {
-                Platform.runLater(() -> showVersionNumberFormatError(dwc));
-            }
-        });
     }
 
     private void checkUpdates(DocumentWindowController source) {
