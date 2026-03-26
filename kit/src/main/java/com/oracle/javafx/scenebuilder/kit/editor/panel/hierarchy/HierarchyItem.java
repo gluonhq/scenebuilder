@@ -208,6 +208,14 @@ public class HierarchyItem {
         }
         return option == INFO && mask.isResourceKey();
     }
+    
+    public boolean isBindingExpression(final DisplayOption option) {
+        // Place holder items do not have display info
+        if (mask == null) {
+            return false;
+        }
+        return option == INFO && mask.isBindingExpression();
+    }
 
     public boolean isPlaceholder() {
         return false;
