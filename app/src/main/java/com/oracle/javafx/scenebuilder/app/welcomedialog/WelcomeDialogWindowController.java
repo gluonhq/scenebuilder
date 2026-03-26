@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2026, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -58,6 +58,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
@@ -118,7 +119,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         getStage().setTitle(I18N.getString("welcome.title"));
         getStage().initModality(Modality.APPLICATION_MODAL);
     }
-    
+
     @FXML
     void handleFileDraggedOver(DragEvent event) {
         if (event.getDragboard().hasFiles()) {
@@ -165,51 +166,40 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
         Label loadingRecentItems = new Label(I18N.getString("welcome.recent.items.loading"));
         loadingRecentItems.getStyleClass().add("no-recent-items-label");
 
-        recentDocuments.getChildren().add(loadingRecentItems);
+        recentDocuments.getChildren().setAll(loadingRecentItems);
 
-        var t = new Thread(() -> {
-            PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController
-                    .getSingleton().getRecordGlobal();
-            List<String> recentItems = preferencesRecordGlobal.getRecentItems();
+        SceneBuilderApp.startInBackground("Recent Items Loading Thread",
+            this::createRecentItems, recentItems -> recentDocuments.getChildren().setAll(recentItems)
+        );
+    }
 
-            Platform.runLater(() -> recentDocuments.getChildren().clear());
+    private List<Control> createRecentItems() {
+        PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController.getSingleton().getRecordGlobal();
+        final List<String> recentItems = preferencesRecordGlobal.getRecentItems();
 
-            if (recentItems.size() == 0) {
-                Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
-                noRecentItems.getStyleClass().add("no-recent-items-label");
+        if (recentItems.isEmpty()) {
+            Label noRecentItems = new Label(I18N.getString("welcome.recent.items.no.recent.items"));
+            noRecentItems.getStyleClass().add("no-recent-items-label");
 
-                Platform.runLater(() -> {
-                    recentDocuments.getChildren().add(noRecentItems);
-                });
-            }
+            return List.of(noRecentItems);
+        }
 
-            List<Button> recentDocumentButtons = new ArrayList<>();
+        List<Control> recentDocumentButtons = new ArrayList<>(recentItems.size());
+        for (String recentItem : recentItems) {
+            File recentItemFile = new File(recentItem);
+            String recentItemTitle = recentItemFile.getName();
+            Button recentDocument = new Button(recentItemTitle);
+            recentDocument.getStyleClass().add("recent-document");
+            recentDocument.setMaxWidth(Double.MAX_VALUE);
+            recentDocument.setAlignment(Pos.BASELINE_LEFT);
+            recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
+            recentDocument.setTooltip(new Tooltip(recentItem));
+            /* if MnemonicParsing is enabled, file names with underscores are displayed incorrectly */
+            recentDocument.setMnemonicParsing(false);
+            recentDocumentButtons.add(recentDocument);
+        }
 
-            for (int row = 0; row < preferencesRecordGlobal.getRecentItemsSize(); ++row) {
-                if (recentItems.size() < row + 1) {
-                    break;
-                }
-
-                String recentItem = recentItems.get(row);
-                File recentItemFile = new File(recentItems.get(row));
-                String recentItemTitle = recentItemFile.getName();
-                Button recentDocument = new Button(recentItemTitle);
-                recentDocument.getStyleClass().add("recent-document");
-                recentDocument.setMaxWidth(Double.MAX_VALUE);
-                recentDocument.setAlignment(Pos.BASELINE_LEFT);
-                recentDocument.setOnAction(event -> fireOpenRecentProject(event, recentItem));
-                recentDocument.setTooltip(new Tooltip(recentItem));
-                /* if MnemonicParsing is enabled, file names with underscores are displayed incorrectly */
-                recentDocument.setMnemonicParsing(false);
-                recentDocumentButtons.add(recentDocument);
-            }
-
-            Platform.runLater(() -> {
-                recentDocumentButtons.forEach(btn -> recentDocuments.getChildren().add(btn));
-            });
-        }, "Recent Items Loading Thread");
-        t.setDaemon(true);
-        t.start();
+        return recentDocumentButtons;
     }
 
     public static WelcomeDialogWindowController getInstance() {
@@ -224,15 +214,10 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void fireSelectTemplate(Template template) {
-        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
+        showMasker(() -> {
             sceneBuilderApp.performNewTemplate(template);
             getStage().hide();
-        } else {
-            showMasker(() -> {
-                sceneBuilderApp.performNewTemplate(template);
-                getStage().hide();
-            });
-        }
+        });
     }
 
     private void fireOpenRecentProject(ActionEvent event, String projectPath) {
@@ -304,11 +289,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void attemptOpenExistingFiles(List<String> paths) {
-        if (sceneBuilderApp.startupTasksFinishedBinding().get()) {
-            openFilesAndHideStage(paths);
-        } else {
-            showMasker(() -> openFilesAndHideStage(paths));
-        }
+        showMasker(() -> openFilesAndHideStage(paths));
     }
 
     private void openFilesAndHideStage(List<String> files) {
@@ -340,7 +321,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
                 missingFiles.add(file);
             }
         });
-        
+
         missingFilesHandler.accept(missingFiles);
 
         if (existingFiles.isEmpty()) {
@@ -357,22 +338,24 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void showMasker(Runnable onEndAction) {
+        if (sceneBuilderApp.isStartupFinished()) {
+            onEndAction.run();
+            return;
+        }
+
         contentPane.setDisable(true);
         masker.setVisible(true);
 
         // force progress indicator to render
         progress.setProgress(-1);
 
-        sceneBuilderApp.startupTasksFinishedBinding().addListener((o, old, isFinished) -> {
-            if (isFinished) {
-                Platform.runLater(() -> {
-                    onEndAction.run();
-                    // restore state in case welcome dialog is opened again
-                    contentPane.setDisable(false);
-                    masker.setVisible(false);
-                });
+        sceneBuilderApp.startupFinishedProperty().addListener(_ -> {
+            if (sceneBuilderApp.isStartupFinished()) {
+                onEndAction.run();
+                // restore state in case welcome dialog is opened again
+                contentPane.setDisable(false);
+                masker.setVisible(false);
             }
         });
     }
 }
-
