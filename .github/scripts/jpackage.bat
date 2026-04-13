@@ -25,6 +25,8 @@ REM set MODULES=java.desktop,java.logging,java.naming,java.prefs,java.security.j
 --type msi ^
 --java-options "-Djavafx.allowjs=true" ^
 --java-options "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED" ^
+--java-options "--enable-native-access=javafx.graphics" ^
+--java-options "--sun-misc-unsafe-memory-access=allow" ^
 --java-options "-Djava.library.path=runtime\bin;runtime\lib" ^
 --icon app/assets/windows/icon-windows.ico ^
 --win-dir-chooser ^

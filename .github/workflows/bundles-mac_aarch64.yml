@@ -10,16 +10,13 @@ on:
         required: true
         type: string
       java-release:
-        default: '23'
-        required: false
+        required: true
         type: string
       java-version:
-        default: '23.0.1'
-        required: false
+        required: true
         type: string
       javafx-version:
-        default: '23.0.1'
-        required: false
+        required: true
         type: string
       test:
         default: false
@@ -33,6 +30,8 @@ on:
       NOTARIZATION_USERNAME:
         required: true
       NOTARIZATION_PASSWORD:
+        required: true
+      NOTARIZATION_TEAMID:
         required: true
       MACSIGN_USER:
         required: true
@@ -91,6 +90,8 @@ jobs:
             --icon app/assets/osx/icon-mac.icns \
             --java-options '"-Djavafx.allowjs=true"' \
             --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --java-options '"--enable-native-access=javafx.graphics"' \
+            --java-options '"--sun-misc-unsafe-memory-access=allow"' \
             --type dmg \
             --mac-package-identifier com.gluonhq.scenebuilder \
             --mac-package-name 'Scene Builder' \
@@ -116,7 +117,7 @@ jobs:
           product-path: ${{ steps.outputfile.outputs.path }}
           apple-id: ${{ secrets.NOTARIZATION_USERNAME }}
           app-password: ${{ secrets.NOTARIZATION_PASSWORD }}
-          team-id: ${{ secrets.MACSIGN_PREFIX }}
+          team-id: ${{ secrets.NOTARIZATION_TEAMID }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
