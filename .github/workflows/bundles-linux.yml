@@ -10,16 +10,13 @@ on:
         required: true
         type: string
       java-release:
-        default: '23'
-        required: false
+        required: true
         type: string
       java-version:
-        default: '23.0.1'
-        required: false
+        required: true
         type: string
       javafx-version:
-        default: '23.0.1'
-        required: false
+        required: true
         type: string
       test:
         default: false
@@ -76,8 +73,10 @@ jobs:
           # Create DEB
           .github/scripts/jpackage.sh \
             --icon app/assets/linux/icon-linux.png \
-            --java-options '"-Djdk.gtk.version=2"' \
+            --java-options '"-Djavafx.allowjs=true"' \
             --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --java-options '"--enable-native-access=javafx.graphics"' \
+            --java-options '"--sun-misc-unsafe-memory-access=allow"' \
             --java-options '"-Djava.library.path=/opt/scenebuilder/lib/runtime/bin:/opt/scenebuilder/lib/runtime/lib"' \
             --linux-menu-group '"Development;Building;GUIDesigner;Java;"' \
             --resource-dir app/assets/linux \
@@ -87,8 +86,10 @@ jobs:
           # Create RPM
           .github/scripts/jpackage.sh \
             --icon app/assets/linux/icon-linux.png \
-            --java-options '"-Djdk.gtk.version=2"' \
+            --java-options '"-Djavafx.allowjs=true"' \
             --java-options '"--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED"' \
+            --java-options '"--enable-native-access=javafx.graphics"' \
+            --java-options '"--sun-misc-unsafe-memory-access=allow"' \
             --linux-menu-group '"Development;Building;GUIDesigner;Java;"' \
             --resource-dir app/assets/linux \
             --install-dir /opt \

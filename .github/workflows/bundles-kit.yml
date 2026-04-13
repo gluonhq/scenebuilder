@@ -7,12 +7,10 @@ on:
         required: true
         type: string
       java-release:
-        default: '23'
-        required: false
+        required: true
         type: string
       java-version:
-        default: '23.0.1'
-        required: false
+        required: true
         type: string
 
 jobs:
