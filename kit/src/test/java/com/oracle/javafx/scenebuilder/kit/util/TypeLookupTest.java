@@ -163,7 +163,7 @@ public class TypeLookupTest {
         assertEquals(javafx.css.Styleable.class, result.get());
     }
 
-    class CustomJavaFxType implements Styleable {
+    static class CustomJavaFxType implements Styleable {
 
         @Override
         public String getTypeSelector() { return null; }
