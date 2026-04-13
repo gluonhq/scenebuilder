@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Gluon and/or its affiliates.
+ * Copyright (c) 2026, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.skeleton;
+package com.oracle.javafx.scenebuilder.kit.util;
 
 import java.lang.reflect.Modifier;
 import java.util.Optional;
@@ -37,9 +37,9 @@ import java.util.Optional;
 /**
  * Utility class to provide lookup of Types within a given package name space.
  */
-class TypeLookup {
+public class TypeLookup {
 
-    private String packageNamePrefix;
+    private final String packageNamePrefix;
 
     TypeLookup(String packageNamePrefix) {
         this.packageNamePrefix = packageNamePrefix;
@@ -68,7 +68,7 @@ class TypeLookup {
         return new TypeLookup("javafx.").findFirstPublicInterfaceOrSuperclass(source);
     }
 
-    public Optional<Class<?>> findFirstPublicInterfaceOrSuperclass(Object obj) {
+    Optional<Class<?>> findFirstPublicInterfaceOrSuperclass(Object obj) {
         if (obj == null || packageNamePrefix == null) {
             return Optional.empty();
         }

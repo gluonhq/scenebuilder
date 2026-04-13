@@ -34,6 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyT;
+import com.oracle.javafx.scenebuilder.kit.util.TypeLookup;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.EventNames;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.FindEventNamesUtil;
 import com.oracle.javafx.scenebuilder.kit.util.eventnames.ImportBuilder;

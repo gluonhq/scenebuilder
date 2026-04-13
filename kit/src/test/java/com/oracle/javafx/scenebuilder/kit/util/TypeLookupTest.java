@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Gluon and/or its affiliates.
+ * Copyright (c) 2026, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.oracle.javafx.scenebuilder.kit.skeleton;
+package com.oracle.javafx.scenebuilder.kit.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
