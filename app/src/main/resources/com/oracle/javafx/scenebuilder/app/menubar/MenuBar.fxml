@@ -182,6 +182,31 @@
             <MenuItem fx:id="bringForwardMenuItem" mnemonicParsing="true" text="%menu.title.forward" />
             <MenuItem fx:id="sendBackwardMenuItem" mnemonicParsing="true" text="%menu.title.backward" />
             <SeparatorMenuItem mnemonicParsing="false" />
+            <Menu mnemonicParsing="true" text="%menu.title.align">
+              <items>
+                <MenuItem fx:id="alignLeftMenuItem" text="%menu.title.align.left" />
+                <MenuItem fx:id="alignHorizontalCenterMenuItem" text="%menu.title.align.horizontal.center" />
+                <MenuItem fx:id="alignRightMenuItem" text="%menu.title.align.right" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem fx:id="alignTopMenuItem" text="%menu.title.align.top" />
+                <MenuItem fx:id="alignVerticalCenterMenuItem" text="%menu.title.align.vertical.center" />
+                <MenuItem fx:id="alignBottomMenuItem" text="%menu.title.align.bottom" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="true" text="%menu.title.distribute">
+              <items>
+                <MenuItem fx:id="distributeHorizontalMenuItem" text="%menu.title.distribute.horizontal" />
+                <MenuItem fx:id="distributeVerticalMenuItem" text="%menu.title.distribute.vertical" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="true" text="%menu.title.match.size">
+              <items>
+                <MenuItem fx:id="sameWidthMenuItem" text="%menu.title.match.width" />
+                <MenuItem fx:id="sameHeightMenuItem" text="%menu.title.match.height" />
+                <MenuItem fx:id="sameSizeMenuItem" text="%menu.title.match.both" />
+              </items>
+            </Menu>
+            <SeparatorMenuItem mnemonicParsing="false" />
             <Menu fx:id="wrapMenu" mnemonicParsing="true" text="%menu.title.wrap">
               <items>
                 <MenuItem fx:id="wrapInAnchorPaneMenuItem" mnemonicParsing="false" text="AnchorPane" />

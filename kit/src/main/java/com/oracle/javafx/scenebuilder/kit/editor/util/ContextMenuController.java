@@ -77,6 +77,9 @@ public class ContextMenuController {
     private MenuItem sendToBackMenuItem;
     private MenuItem bringForwardMenuItem;
     private MenuItem sendBackwardMenuItem;
+    private Menu alignMenu;
+    private Menu distributeMenu;
+    private Menu matchSizeMenu;
     private Menu wrapInMenu;
     private MenuItem wrapInAnchorPaneMenuItem;
     private MenuItem wrapInBorderPaneMenuItem;
@@ -195,6 +198,10 @@ public class ContextMenuController {
                         sendToBackMenuItem,
                         bringForwardMenuItem,
                         sendBackwardMenuItem,
+                        new SeparatorMenuItem(),
+                        alignMenu,
+                        distributeMenu,
+                        matchSizeMenu,
                         new SeparatorMenuItem(),
                         wrapInMenu,
                         unwrapMenuItem);
@@ -387,6 +394,24 @@ public class ContextMenuController {
         sendBackwardMenuItem = new MenuItem(I18N.getString("menu.title.backward"));
         sendBackwardMenuItem.setOnAction(onActionEventHandler);
         sendBackwardMenuItem.setUserData(new EditActionController(EditAction.SEND_BACKWARD));
+        alignMenu = new Menu(I18N.getString("menu.title.align"));
+        alignMenu.getItems().setAll(
+                makeEditMenuItem("menu.title.align.left", EditAction.ALIGN_LEFT),
+                makeEditMenuItem("menu.title.align.horizontal.center", EditAction.ALIGN_HORIZONTAL_CENTER),
+                makeEditMenuItem("menu.title.align.right", EditAction.ALIGN_RIGHT),
+                new SeparatorMenuItem(),
+                makeEditMenuItem("menu.title.align.top", EditAction.ALIGN_TOP),
+                makeEditMenuItem("menu.title.align.vertical.center", EditAction.ALIGN_VERTICAL_CENTER),
+                makeEditMenuItem("menu.title.align.bottom", EditAction.ALIGN_BOTTOM));
+        distributeMenu = new Menu(I18N.getString("menu.title.distribute"));
+        distributeMenu.getItems().setAll(
+                makeEditMenuItem("menu.title.distribute.horizontal", EditAction.DISTRIBUTE_HORIZONTAL),
+                makeEditMenuItem("menu.title.distribute.vertical", EditAction.DISTRIBUTE_VERTICAL));
+        matchSizeMenu = new Menu(I18N.getString("menu.title.match.size"));
+        matchSizeMenu.getItems().setAll(
+                makeEditMenuItem("menu.title.match.width", EditAction.SAME_WIDTH),
+                makeEditMenuItem("menu.title.match.height", EditAction.SAME_HEIGHT),
+                makeEditMenuItem("menu.title.match.both", EditAction.SAME_SIZE));
         wrapInMenu = new Menu(I18N.getString("menu.title.wrap"));
         wrapInAnchorPaneMenuItem = new MenuItem("AnchorPane");
         wrapInAnchorPaneMenuItem.setOnAction(onActionEventHandler);
@@ -514,7 +539,17 @@ public class ContextMenuController {
         decreaseColumnSpan.setUserData(new EditActionController(EditAction.DECREASE_COLUMN_SPAN));
 
         wrapInMenu.setOnShowing(onShowingMenuEventHandler);
+        alignMenu.setOnShowing(onShowingMenuEventHandler);
+        distributeMenu.setOnShowing(onShowingMenuEventHandler);
+        matchSizeMenu.setOnShowing(onShowingMenuEventHandler);
         gridPaneMenu.setOnShowing(onShowingMenuEventHandler);
+    }
+
+    private MenuItem makeEditMenuItem(String titleKey, EditAction action) {
+        final MenuItem item = new MenuItem(I18N.getString(titleKey));
+        item.setOnAction(onActionEventHandler);
+        item.setUserData(new EditActionController(action));
+        return item;
     }
 
     class EditActionController extends MenuItemController {

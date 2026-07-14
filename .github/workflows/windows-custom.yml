@@ -1,0 +1,110 @@
+name: Windows Custom Bundles
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_VERSION: 26.0.0
+  PROJECT_VERSION: 26.0.0-custom
+  JAVAFX_VERSION: 26
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 26
+        uses: oracle-actions/setup-java@v1.4.0
+        with:
+          website: jdk.java.net
+          release: 26
+          version: latest
+
+      - name: Set up JavaFX jmods
+        shell: pwsh
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://download2.gluonhq.com/openjfx/26/openjfx-${env:JAVAFX_VERSION}_windows-x64_bin-jmods.zip" `
+            -OutFile "${env:RUNNER_TEMP}\javafx-jmods.zip"
+          Expand-Archive -Force "${env:RUNNER_TEMP}\javafx-jmods.zip" D:\
+          "JAVAFX_HOME=D:\javafx-jmods-26" >> $env:GITHUB_ENV
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: windows-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: windows-m2-
+
+      - name: Build application
+        shell: cmd
+        run: |
+          call mvnw.cmd -B -ntp versions:set -DnewVersion=%APP_VERSION% -DgenerateBackupPoms=false
+          call mvnw.cmd -B -ntp clean package -Dmaven.test.skip=true
+
+      - name: Create runtime, portable app and MSI
+        shell: pwsh
+        run: |
+          $jar = "app\target\lib\scenebuilder-${env:APP_VERSION}-all.jar"
+          $deps = & "$env:JAVA_HOME\bin\jdeps.exe" `
+            --module-path $env:JAVAFX_HOME `
+            --print-module-deps --ignore-missing-deps $jar
+          $modules = "$deps,javafx.fxml,javafx.media,javafx.swing,javafx.web"
+
+          & "$env:JAVA_HOME\bin\jlink.exe" `
+            --module-path $env:JAVAFX_HOME `
+            --add-modules $modules `
+            --output app\target\runtime `
+            --strip-debug --compress zip-6 --no-header-files --no-man-pages
+
+          $common = @(
+            '--app-version', $env:APP_VERSION,
+            '--input', 'app\target\lib',
+            '--license-file', 'LICENSE.txt',
+            '--main-jar', "scenebuilder-${env:APP_VERSION}-all.jar",
+            '--main-class', 'com.oracle.javafx.scenebuilder.app.SceneBuilderApp',
+            '--name', 'SceneBuilder',
+            '--description', 'Scene Builder with alignment, sizing and distribution tools',
+            '--vendor', 'Gluon / Custom build',
+            '--runtime-image', 'app\target\runtime',
+            '--icon', 'app\assets\windows\icon-windows.ico',
+            '--java-options', '-Djavafx.allowjs=true',
+            '--java-options', '--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED',
+            '--java-options', '--enable-native-access=javafx.graphics',
+            '--java-options', '--sun-misc-unsafe-memory-access=allow',
+            '--java-options', '-Djava.library.path=runtime\bin;runtime\lib'
+          )
+
+          New-Item -ItemType Directory -Force app\target\windows | Out-Null
+          & "$env:JAVA_HOME\bin\jpackage.exe" @common `
+            --type app-image --dest app\target\windows
+          Compress-Archive -Force `
+            app\target\windows\SceneBuilder `
+            "app\target\windows\SceneBuilder-${env:PROJECT_VERSION}-windows-x64-portable.zip"
+
+          & "$env:JAVA_HOME\bin\jpackage.exe" @common `
+            --type msi --dest app\target\windows `
+            --win-dir-chooser --win-menu --win-menu-group 'Scene Builder' `
+            --win-per-user-install --win-shortcut
+          Rename-Item `
+            "app\target\windows\SceneBuilder-${env:APP_VERSION}.msi" `
+            "SceneBuilder-${env:PROJECT_VERSION}-windows-x64.msi"
+
+      - name: Upload portable application
+        uses: actions/upload-artifact@v4
+        with:
+          name: SceneBuilder-${{ env.PROJECT_VERSION }}-windows-x64-portable
+          path: app/target/windows/*-portable.zip
+          if-no-files-found: error
+
+      - name: Upload MSI installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: SceneBuilder-${{ env.PROJECT_VERSION }}-windows-x64-msi
+          path: app/target/windows/*.msi
+          if-no-files-found: error

@@ -38,6 +38,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.job.AddContextMenuToSelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.AddTooltipToSelectionJob;
+import com.oracle.javafx.scenebuilder.kit.editor.job.AlignSelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.ModifySelectionJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.BringForwardJob;
 import com.oracle.javafx.scenebuilder.kit.editor.job.BringToFrontJob;
@@ -185,6 +186,17 @@ public class EditorController {
         SEND_TO_BACK,
         BRING_FORWARD,
         SEND_BACKWARD,
+        ALIGN_LEFT,
+        ALIGN_HORIZONTAL_CENTER,
+        ALIGN_RIGHT,
+        ALIGN_TOP,
+        ALIGN_VERTICAL_CENTER,
+        ALIGN_BOTTOM,
+        DISTRIBUTE_HORIZONTAL,
+        DISTRIBUTE_VERTICAL,
+        SAME_WIDTH,
+        SAME_HEIGHT,
+        SAME_SIZE,
         UNWRAP,
         WRAP_IN_ANCHOR_PANE,
         WRAP_IN_BORDER_PANE,
@@ -1027,6 +1039,22 @@ public class EditorController {
                 jobManager.push(job);
                 break;
             }
+            case ALIGN_LEFT:
+            case ALIGN_HORIZONTAL_CENTER:
+            case ALIGN_RIGHT:
+            case ALIGN_TOP:
+            case ALIGN_VERTICAL_CENTER:
+            case ALIGN_BOTTOM:
+            case DISTRIBUTE_HORIZONTAL:
+            case DISTRIBUTE_VERTICAL:
+            case SAME_WIDTH:
+            case SAME_HEIGHT:
+            case SAME_SIZE: {
+                final AlignSelectionJob job = new AlignSelectionJob(this,
+                        AlignSelectionJob.Mode.valueOf(editAction.name()));
+                jobManager.push(job);
+                break;
+            }
             case BRING_TO_FRONT: {
                 final BringToFrontJob job = new BringToFrontJob(this);
                 jobManager.push(job);
@@ -1284,6 +1312,22 @@ public class EditorController {
             }
             case BRING_FORWARD: {
                 final BringForwardJob job = new BringForwardJob(this);
+                result = job.isExecutable();
+                break;
+            }
+            case ALIGN_LEFT:
+            case ALIGN_HORIZONTAL_CENTER:
+            case ALIGN_RIGHT:
+            case ALIGN_TOP:
+            case ALIGN_VERTICAL_CENTER:
+            case ALIGN_BOTTOM:
+            case DISTRIBUTE_HORIZONTAL:
+            case DISTRIBUTE_VERTICAL:
+            case SAME_WIDTH:
+            case SAME_HEIGHT:
+            case SAME_SIZE: {
+                final AlignSelectionJob job = new AlignSelectionJob(this,
+                        AlignSelectionJob.Mode.valueOf(editAction.name()));
                 result = job.isExecutable();
                 break;
             }

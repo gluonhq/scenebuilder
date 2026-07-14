@@ -267,6 +267,28 @@ public class MenuBarController {
     @FXML
     private MenuItem sendBackwardMenuItem;
     @FXML
+    private MenuItem alignLeftMenuItem;
+    @FXML
+    private MenuItem alignHorizontalCenterMenuItem;
+    @FXML
+    private MenuItem alignRightMenuItem;
+    @FXML
+    private MenuItem alignTopMenuItem;
+    @FXML
+    private MenuItem alignVerticalCenterMenuItem;
+    @FXML
+    private MenuItem alignBottomMenuItem;
+    @FXML
+    private MenuItem distributeHorizontalMenuItem;
+    @FXML
+    private MenuItem distributeVerticalMenuItem;
+    @FXML
+    private MenuItem sameWidthMenuItem;
+    @FXML
+    private MenuItem sameHeightMenuItem;
+    @FXML
+    private MenuItem sameSizeMenuItem;
+    @FXML
     private MenuItem wrapInAnchorPaneMenuItem;
     @FXML
     private MenuItem wrapInBorderPaneMenuItem;
@@ -1017,6 +1039,17 @@ public class MenuBarController {
         sendBackwardMenuItem.setUserData(new EditActionController(EditAction.SEND_BACKWARD));
         sendBackwardMenuItem.setAccelerator(
                 new KeyCharacterCombination("[", modifier)); //NOI18N
+        alignLeftMenuItem.setUserData(new EditActionController(EditAction.ALIGN_LEFT));
+        alignHorizontalCenterMenuItem.setUserData(new EditActionController(EditAction.ALIGN_HORIZONTAL_CENTER));
+        alignRightMenuItem.setUserData(new EditActionController(EditAction.ALIGN_RIGHT));
+        alignTopMenuItem.setUserData(new EditActionController(EditAction.ALIGN_TOP));
+        alignVerticalCenterMenuItem.setUserData(new EditActionController(EditAction.ALIGN_VERTICAL_CENTER));
+        alignBottomMenuItem.setUserData(new EditActionController(EditAction.ALIGN_BOTTOM));
+        distributeHorizontalMenuItem.setUserData(new EditActionController(EditAction.DISTRIBUTE_HORIZONTAL));
+        distributeVerticalMenuItem.setUserData(new EditActionController(EditAction.DISTRIBUTE_VERTICAL));
+        sameWidthMenuItem.setUserData(new EditActionController(EditAction.SAME_WIDTH));
+        sameHeightMenuItem.setUserData(new EditActionController(EditAction.SAME_HEIGHT));
+        sameSizeMenuItem.setUserData(new EditActionController(EditAction.SAME_SIZE));
         wrapInAnchorPaneMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_ANCHOR_PANE));
         wrapInBorderPaneMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_BORDER_PANE));
         wrapInButtonBarMenuItem.setUserData(new EditActionController(EditAction.WRAP_IN_BUTTON_BAR));
