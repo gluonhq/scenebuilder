@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: oracle-actions/setup-java@v1.4.0
+        uses: oracle-actions/setup-java@v1.5.0
         with:
           website: jdk.java.net
           release: ${{ inputs.java-release }}
@@ -65,7 +65,7 @@ jobs:
           unzip /tmp/openjfx-${{ inputs.javafx-version }}_osx-aarch64_bin-jmods.zip -d /tmp
 
       - name: Cache Maven packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -120,7 +120,7 @@ jobs:
           team-id: ${{ secrets.NOTARIZATION_TEAMID }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: SceneBuilder-${{ inputs.project-version }}-aarch64.dmg
           path: ${{ steps.outputfile.outputs.path }}

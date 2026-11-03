@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.gluonhq.scenebuilder</groupId>
         <artifactId>parent</artifactId>
-        <version>26.0.0-SNAPSHOT</version>
+        <version>27.0.1-SNAPSHOT</version>
     </parent>
 
     <properties>
         <charm.glisten.version>6.2.3</charm.glisten.version>
-        <gluon.attach.version>4.0.22</gluon.attach.version>
+        <gluon.attach.version>4.0.26</gluon.attach.version>
     </properties>
 
     <repositories>
@@ -34,12 +34,24 @@
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-glisten</artifactId>
             <version>${charm.glisten.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.gluonhq.attach</groupId>
             <artifactId>display</artifactId>
             <version>${gluon.attach.version}</version>
             <classifier>desktop</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
