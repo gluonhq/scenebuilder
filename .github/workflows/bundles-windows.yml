@@ -34,7 +34,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Java
         uses: oracle-actions/setup-java@v1.5.0

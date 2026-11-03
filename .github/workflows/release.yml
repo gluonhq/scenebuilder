@@ -31,7 +31,7 @@ jobs:
       S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Java
         uses: oracle-actions/setup-java@v1.5.0
@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
