@@ -15,9 +15,9 @@ on:
         description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
 
 env:
-  JAVA_RELEASE: '26'
+  JAVA_RELEASE: '27'
   JAVA_VERSION: 'latest'
-  JAVAFX_VERSION: '26'
+  JAVAFX_VERSION: '27.0.1'
 
 jobs:
   precheck:
@@ -31,17 +31,17 @@ jobs:
       S3_PATH: ${{ steps.vars.outputs.S3_PATH }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Java
-        uses: oracle-actions/setup-java@v1.4.0
+        uses: oracle-actions/setup-java@v1.5.0
         with:
           website: jdk.java.net
           release: ${{ env.JAVA_RELEASE }}
           version: ${{ env.JAVA_VERSION }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -95,25 +95,6 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
       test: true
 
-  mac-bundles:
-    needs: [precheck]
-    uses: ./.github/workflows/bundles-mac.yml
-    secrets:
-      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
-      NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
-      NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
-      NOTARIZATION_TEAMID: ${{ secrets.NOTARIZATION_TEAMID }}
-      MACSIGN_USER: ${{ secrets.GLUON_MACSIGN_USER }}
-      MACSIGN_PREFIX: ${{ secrets.GLUON_MACSIGN_PREFIX }}
-    with:
-      javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
-      java-release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
-      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      app-version: ${{ needs.precheck.outputs.APP_VERSION }}
-      project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
-      test: true
-
   mac_aarch64-bundles:
     needs: [precheck]
     uses: ./.github/workflows/bundles-mac_aarch64.yml
@@ -142,30 +123,30 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   release:
-    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
+    needs: [precheck, linux-bundles, windows-bundles, mac_aarch64-bundles, kit-bundles]
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Java
-        uses: oracle-actions/setup-java@v1.4.0
+        uses: oracle-actions/setup-java@v1.5.0
         with:
           website: jdk.java.net
           release: ${{ needs.precheck.outputs.JAVA_RELEASE }}
           version: ${{ needs.precheck.outputs.JAVA_VERSION }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Download all build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
@@ -202,7 +183,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jreleaser-logs
           path: |

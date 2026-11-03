@@ -4,7 +4,7 @@
     <groupId>com.gluonhq.scenebuilder</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>26.0.0-SNAPSHOT</version>
+    <version>27.0.0-SNAPSHOT</version>
     <name>Scene Builder</name>
     <description>Scene Builder is a visual, drag n drop, layout tool for designing JavaFX application user interfaces</description>
     <inceptionYear>2012</inceptionYear>
@@ -17,15 +17,13 @@
     </modules>
 
     <properties>
-        <java.version>24</java.version>
+        <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>26</javafx.version>
+        <javafx.version>27.0.1</javafx.version>
         <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
-        <charm.glisten.version>6.2.3</charm.glisten.version>
-        <gluon.attach.version>4.0.22</gluon.attach.version>
-        <junit.jupiter.version>5.10.0</junit.jupiter.version>
+        <junit.jupiter.version>6.1.3</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
@@ -65,7 +63,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.19.0</version>
+            <version>3.27.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -95,7 +93,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.16.0</version>
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
                     </configuration>
@@ -194,7 +192,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.18.0</version>
+                <version>1.27.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <jreleaser>
@@ -286,15 +284,8 @@
                                 </snap>
                                 <artifacts>
                                     <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-amd64.dmg</path>
-                                        <platform>osx-x86_64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                    <artifact>
                                         <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64.dmg</path>
-                                        <platform>osx-aarch64</platform>
+                                        <platform>osx-aarch_64</platform>
                                         <extraProperties>
                                             <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
                                         </extraProperties>
