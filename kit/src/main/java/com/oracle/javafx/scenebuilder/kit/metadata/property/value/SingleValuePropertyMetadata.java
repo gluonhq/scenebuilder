@@ -77,11 +77,7 @@ public abstract class SingleValuePropertyMetadata<T> extends ValuePropertyMetada
             } else if (fxomProperty instanceof FXOMPropertyT) {
                 final FXOMPropertyT fxomPropertyT = (FXOMPropertyT) fxomProperty;
                 final PrefixedValue pv = new PrefixedValue(fxomPropertyT.getValue());
-                if (pv.isBindingExpression()) {
-                    result = getDefaultValue();
-                } else {
-                    result = makeValueFromProperty(fxomPropertyT);
-                }
+                result = makeValueFromProperty(fxomPropertyT);
             } else if (fxomProperty instanceof FXOMPropertyC) {
                 final FXOMPropertyC fxomPropertyC = (FXOMPropertyC) fxomProperty;
                 assert fxomPropertyC.getValues().isEmpty() == false;
