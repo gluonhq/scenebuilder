@@ -175,11 +175,14 @@ jobs:
           JRELEASER_S3_GLUON_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
           FILES_ACTIVE="RELEASE"
-          if [[ "$PROJECT_VERSION" == *-RC* ]]; then
+          EXTRA_ARGS=""
+          if [[ "${{ needs.precheck.outputs.PROJECT_VERSION }}" == *-RC* ]]; then
+              # RC builds don't publish update files nor Maven Central artifacts
               FILES_ACTIVE="NEVER"
+              EXTRA_ARGS="-Djreleaser.excluded.deployers=mavenCentral"
           fi
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \
-            -Djreleaser.files.active=$FILES_ACTIVE jreleaser:release
+            -Djreleaser.files.active=$FILES_ACTIVE $EXTRA_ARGS jreleaser:release
 
       - name: JReleaser output
         if: always()
