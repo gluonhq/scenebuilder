@@ -103,7 +103,7 @@ jobs:
 
   early-access:
     needs: [precheck, linux-bundles, windows-bundles, mac_aarch64-bundles, kit-bundles]
-    if: endsWith(${{ needs.precheck.outputs.PROJECT_VERSION }}, '-SNAPSHOT')
+    if: endsWith(needs.precheck.outputs.PROJECT_VERSION, '-SNAPSHOT')
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
