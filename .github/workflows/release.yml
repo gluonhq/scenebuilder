@@ -179,7 +179,7 @@ jobs:
           if [[ "${{ needs.precheck.outputs.PROJECT_VERSION }}" == *-RC* ]]; then
               # RC builds don't publish update files nor Maven Central artifacts
               FILES_ACTIVE="NEVER"
-              EXTRA_ARGS="-Djreleaser.excluded.deployers=mavenCentral"
+              EXTRA_ARGS="-Djreleaser.excluded.deployer.names=maven-central"
           fi
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \
             -Djreleaser.files.active=$FILES_ACTIVE $EXTRA_ARGS jreleaser:release
