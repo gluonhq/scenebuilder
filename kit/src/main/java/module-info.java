@@ -122,7 +122,7 @@ module com.gluonhq.scenebuilder.kit {
     opens com.oracle.javafx.scenebuilder.kit.selectionbar to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.skeleton to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.template;
-    opens com.oracle.javafx.scenebuilder.kit.util to javafx.fxml;
+    opens com.oracle.javafx.scenebuilder.kit.util;
     opens com.oracle.javafx.scenebuilder.kit.util.control.effectpicker to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.editors to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.util.control.paintpicker to javafx.fxml;

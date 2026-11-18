@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections ?>
+<?import java.lang.String ?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <fx:include fx:id="includedPane" source="fxinclude_with_fxid_inner.fxml" />
+            <Label fx:id="myLabel" text="Label" />
+            <Label fx:id="myLabel" text="Label" />
+			<ComboBox fx:id="descriptionFilter" editable="true" layoutX="226.0" layoutY="55.0" prefHeight="25.0" prefWidth="204.0" promptText="Series Description">
+				<items>
+					<FXCollections fx:id="myItems" fx:factory="observableArrayList">
+						<String fx:value="1" />
+						<String fx:value="20" />
+						<String fx:value="300" />
+					</FXCollections>
+				</items>
+			</ComboBox>
+         </children>
+      </HBox>
+
+   </children>
+</Pane>
