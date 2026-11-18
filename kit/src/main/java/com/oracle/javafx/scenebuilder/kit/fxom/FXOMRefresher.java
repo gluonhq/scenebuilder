@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2025 Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -57,9 +57,8 @@ import java.util.Set;
 class FXOMRefresher {
 
     public void refresh(FXOMDocument document) {
-        String fxmlText = null;
+        String fxmlText = document.getFxmlTextOmittingUnresolvableTypes(false);
         try {
-            fxmlText = document.getFxmlText(false);
             final FXOMDocument newDocument
                     = new FXOMDocument(fxmlText,
                     document.getLocation(),

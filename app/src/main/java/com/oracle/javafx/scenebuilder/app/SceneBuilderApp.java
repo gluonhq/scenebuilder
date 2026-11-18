@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -740,6 +740,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.openWindow();
                     openedFiles.add(fxmlFile);
                     LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
+                    hostWindow.showMissingTypesNotificationIfNeeded(fxmlFile);
                 }
             } catch (Exception xx) {
                 LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);

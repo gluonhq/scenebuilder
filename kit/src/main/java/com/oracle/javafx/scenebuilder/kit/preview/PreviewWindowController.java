@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2025, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -259,7 +259,7 @@ public final class PreviewWindowController extends AbstractWindowController {
                     FXOMDocument clone;
 
                     try {
-                        clone = new FXOMDocument(fxomDocument.getFxmlText(false),
+                        clone = new FXOMDocument(fxomDocument.getFxmlTextOmittingUnresolvableTypes(false),
                                 fxomDocument.getLocation(),
                                 fxomDocument.getClassLoader(),
                                 fxomDocument.getResources(),
