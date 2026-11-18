@@ -32,17 +32,23 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import com.oracle.javafx.scenebuilder.app.util.MessageBox;
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_LINUX;
 import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_MAC;
-import static com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.IS_WINDOWS;
+
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import com.oracle.javafx.scenebuilder.app.util.AppSettings;
+import com.oracle.javafx.scenebuilder.app.util.MessageBox;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.OS;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -62,46 +68,80 @@ public class AppPlatform {
     }
 
     public static synchronized String getApplicationDataFolder() {
-        
+        return getApplicationDataFolder(OS.get());
+    }
+
+    static synchronized String getApplicationDataFolder(OS operatingSystem) {
+        return getApplicationDataFolder(System.getenv(),
+                                        System.getProperties(),
+                                        operatingSystem,
+                                        AppSettings.getSceneBuilderVersion());
+    }
+    
+    static synchronized String getApplicationDataFolder(Map<String, String> sysenv, Properties system,
+            OS operatingSystem, String version) {
         if (applicationDataFolder == null) {
-            final String appName = "Scene Builder"; //NOI18N
-            
-            if (IS_WINDOWS) {
-                applicationDataFolder 
-                        = System.getenv("APPDATA") + "\\" + appName; //NOI18N
-            } else if (IS_MAC) {
-                applicationDataFolder 
-                        = System.getProperty("user.home") //NOI18N
-                        + "/Library/Application Support/" //NOI18N
-                        + appName;
-            } else if (IS_LINUX) {
-                applicationDataFolder
-                        = System.getProperty("user.home") + "/.scenebuilder"; //NOI18N
+            final String appName = "Scene Builder"; // NOI18N
+            switch (operatingSystem) {
+            case WINDOWS:
+                applicationDataFolder = sysenv.get("APPDATA") + "\\" + appName + "\\" + version; // NOI18N
+                break;
+            case MAC:
+                applicationDataFolder = system.getProperty("user.home") // NOI18N
+                        + "/Library/Application Support/" // NOI18N
+                        + appName + "/" + version;
+                break;
+            case LINUX:
+                applicationDataFolder = system.getProperty("user.home") + "/.scenebuilder/" + version; // NOI18N
+                break;
             }
         }
-        
-        assert applicationDataFolder != null;
-        
+
+        assert applicationDataFolder != null;        
         return applicationDataFolder;
     }
     
+    /**
+     * Clears application data folder, user library folder, message box folder and logs folder.
+     * Those locations will be determined on next occasion.
+     */
+    protected static synchronized void clear() {
+        applicationDataFolder = null;
+        userLibraryFolder = null;
+        messageBoxFolder = null;
+        logsFolder = null;
+    }
     
     public static synchronized String getUserLibraryFolder() {
-        
+        return getUserLibraryFolder(OS.get());
+    }
+    
+    static synchronized String getUserLibraryFolder(OS operatingSystem) {
         if (userLibraryFolder == null) {
-            userLibraryFolder = getApplicationDataFolder() + "/Library"; //NOI18N
+            if (OS.WINDOWS.equals(operatingSystem)) {
+                userLibraryFolder = getApplicationDataFolder(operatingSystem) + "\\" + "Library"; // NOI18N
+            } else {
+                userLibraryFolder = getApplicationDataFolder(operatingSystem) + "/" + "Library"; // NOI18N
+            }
         }
-        
         return userLibraryFolder;
     }
-
+    
     /**
      * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
      * @return Directory path for Scene Builder logs
      */
     public static synchronized String getLogFolder() {
+        return getLogFolder(System.getProperties(), OS.get());
+    }
+    
+    static synchronized String getLogFolder(Properties system, OS operatingSystem) {
         if (logsFolder == null) {
-            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
+            if (OS.WINDOWS.equals(operatingSystem)) {
+                logsFolder = system.getProperty("user.home") + "\\.scenebuilder\\logs"; //NOI18N
+            } else {
+                logsFolder = system.getProperty("user.home") + "/.scenebuilder/logs"; //NOI18N
+            }
         }
         return logsFolder;
     }
@@ -124,7 +164,6 @@ public class AppPlatform {
         public void handleMessageBoxFailure(Exception x);
         public void handleQuitAction();
     }
-    
     
     /*
      * Private (requestStartGeneric)
@@ -165,15 +204,21 @@ public class AppPlatform {
                 throw new IOException(x);
             }
         }
-        
         return result;
     }
     
-    private static String getMessageBoxFolder() {
+    protected static String getMessageBoxFolder() {
+        return getMessageBoxFolder(OS.get());
+    }
+
+    protected static String getMessageBoxFolder(OS operatingSystem) {
         if (messageBoxFolder == null) {
-            messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
+            if (OS.WINDOWS.equals(operatingSystem)) {
+                messageBoxFolder = getApplicationDataFolder() + "\\MB"; //NOI18N
+            } else {
+                messageBoxFolder = getApplicationDataFolder() + "/MB"; //NOI18N
+            }
         }
-        
         return messageBoxFolder;
     }
     
