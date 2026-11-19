@@ -21,7 +21,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <javafx.version>27.0.1</javafx.version>
+        <javafx.version>27.0.1.1</javafx.version>
         <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
         <junit.jupiter.version>6.1.3</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
