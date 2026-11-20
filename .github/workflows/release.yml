@@ -13,6 +13,10 @@ on:
         type: string
         default: ''
         description: 'If candidate is RC, set a version like RC1 or RC2, else leave it empty'
+      skip_central:
+        type: boolean
+        default: false
+        description: 'Skip Maven Central (always skipped for RC). Use it to retry a GA release that was already published to Maven Central'
 
 env:
   JAVA_RELEASE: '27'
@@ -179,6 +183,9 @@ jobs:
           if [[ "${{ needs.precheck.outputs.PROJECT_VERSION }}" == *-RC* ]]; then
               # RC builds don't publish update files nor Maven Central artifacts
               FILES_ACTIVE="NEVER"
+              EXTRA_ARGS="-Djreleaser.excluded.deployer.names=maven-central"
+          elif [[ "${{ inputs.skip_central }}" == "true" ]]; then
+              # Retry of a release that is already in Maven Central, which rejects existing versions
               EXTRA_ARGS="-Djreleaser.excluded.deployer.names=maven-central"
           fi
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts -Ds3Path=${{ needs.precheck.outputs.S3_PATH }} \
