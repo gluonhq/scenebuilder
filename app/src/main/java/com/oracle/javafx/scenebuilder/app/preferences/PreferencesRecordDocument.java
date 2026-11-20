@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2026, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -630,8 +630,10 @@ public class PreferencesRecordDocument {
         // Scene style sheets
         final String items = documentPreferences.get(SCENE_STYLE_SHEETS, null);
         if (items != null) {
-            final String[] itemsArray = items.split(File.pathSeparator); //NOI18N
-            sceneStyleSheets.addAll(Arrays.asList(itemsArray));
+            List<String> stylesheets = Arrays.stream(items.split(File.pathSeparator))
+                .filter(str -> !str.isEmpty())
+                .toList();
+            sceneStyleSheets.addAll(stylesheets);
         }
 
         // I18NResource
